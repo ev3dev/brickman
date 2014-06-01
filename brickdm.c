@@ -1,3 +1,4 @@
+#include <curses.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -26,7 +27,6 @@ GMainLoop *loop;
 u8g_t u8g;
 uint8_t needs_redraw = TRUE;
 int vtnum;
-gboolean owns_vt = FALSE;
 
 gboolean brickdm_sigterm_handler(gpointer user_data)
 {
@@ -38,25 +38,24 @@ gboolean brickdm_sighup_handler(gpointer user_data)
 {
   int vtfd = GPOINTER_TO_INT(user_data);
   struct vt_stat vtstat;
-
-  if (owns_vt) {
-    if (ioctl(vtfd, VT_RELDISP, 1) == 0)
-      owns_vt = FALSE;
-  } else {
+  if (isendwin()) {
     if (ioctl(vtfd, VT_GETSTATE, &vtstat) == 0) {
       if (vtstat.v_active == vtnum) {
         ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
+        refresh();
         needs_redraw = TRUE;
-        owns_vt = TRUE;
       }
     }
+  } else {
+    if (ioctl(vtfd, VT_RELDISP, 1) == 0)
+      endwin();
   }
   return TRUE;
 }
 
 gboolean timer_handler(gpointer user_data)
 {
-  if (owns_vt) {
+  if (!isendwin()) {
     m2_CheckKey();
     needs_redraw |= m2_HandleKey();
     if (needs_redraw)
@@ -98,6 +97,8 @@ M2_ALIGN(main_menu, "-1|1W64H64", &main_menu_hlist);
 int main(void)
 {
   int vtfd;
+  FILE *in, *out;
+  SCREEN *term;
   char device[32];
   struct vt_stat vtstat;
   int exit_value = 0;
@@ -131,6 +132,11 @@ int main(void)
 
   close (vtfd);
   vtfd = open(device, O_RDWR, 0);
+  in = fdopen(vtfd, "r");
+  out = fdopen(vtfd, "w");
+  term = newterm("linux", in, out);
+  /* we are using ncurses for keyboard input only - see brickdm_event.c */
+
   do
   {
     if (ioctl(vtfd, KDSETMODE, KD_GRAPHICS) < 0)
@@ -140,17 +146,14 @@ int main(void)
       break;
     }
 
-    owns_vt = TRUE;
     if (ioctl(vtfd, VT_SETMODE, &mode) < 0)
     {
       perror("Could not set virtual console to VT_PROCESS mode.");
+      exit_value = 1;
       break;
     }
 
-    /*
-     * we are now free to directly access the framebuffer and take over the
-     * event subsystem.
-     */
+    /* we are now free to directly access the framebuffer */
 
     u8g_Init(&u8g, &u8g_dev_linux_fb);
     m2_Init(&main_menu, brickdm_event_source, m2_eh_6bs, m2_gh_u8g_bfs);
@@ -159,25 +162,29 @@ int main(void)
     m2_SetFont(1, u8g_font_m2icon_9);
 
     loop = g_main_loop_new (NULL, FALSE);
-    g_timeout_add(100, timer_handler, NULL);
-    // TODO: glib >= 2.36 can handle user signals - this would be better as SIGUSR1
+    g_timeout_add(50, timer_handler, NULL);
+    // TODO: glib >= 2.36 can handle user signals
+    // This would be better as SIGUSR1
     g_unix_signal_add(SIGHUP, brickdm_sighup_handler, GINT_TO_POINTER(vtfd));
     g_unix_signal_add(SIGINT, brickdm_sigterm_handler, NULL);
     g_unix_signal_add(SIGTERM, brickdm_sigterm_handler, NULL);
     g_main_loop_run(loop);
-    brickdm_event_destroy();
     u8g_Stop(&u8g);
-  } while(FALSE);
+  } while(0);
 
   /* tear down and cleanup */
+  ioctl(vtfd, KDSETMODE, KD_TEXT);
   mode.mode = VT_AUTO;
   ioctl(vtfd, VT_SETMODE, &mode);
-  ioctl(vtfd, KDSETMODE, KD_TEXT);
-  if (owns_vt) {
+  if (!isendwin()) {
+    endwin();
     ioctl(vtfd, VT_ACTIVATE, vtstat.v_active);
     ioctl(vtfd, VT_WAITACTIVE, vtstat.v_active);
   }
   ioctl(vtfd, VT_DISALLOCATE, vtnum);
+  delscreen(term);
+  fclose(in);
+  fclose(out);
   close(vtfd);
 
   return exit_value;
