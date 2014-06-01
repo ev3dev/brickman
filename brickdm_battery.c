@@ -16,11 +16,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __BRICKDM_H
-#define __BRICKDM_H
-
-/* brickdm_input.c */
-extern uint8_t brickdm_event_source(m2_p ep, uint8_t msg);
-
-#endif /* __BRICKDM_H */
