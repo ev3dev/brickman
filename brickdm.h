@@ -20,7 +20,29 @@
 #ifndef __BRICKDM_H
 #define __BRICKDM_H
 
-/* brickdm_input.c */
+#include <glib.h>
+#include <m2ghu8g.h>
+
+/* m2tk format string for root ALIGN elemets */
+#define BRICKDM_ROOT_FMT "-1|1W64H56"
+
+/* globals */
+extern u8g_t u8g;
+extern gboolean brickdm_needs_redraw;
+
+/* brickdm_home.c */
+M2_EXTERN_ALIGN(brickdm_home_root);
+extern m2_menu_entry main_menu_data[];
+
+/* brickdm_power.c */
+M2_EXTERN_ALIGN(brickdm_battery_root);
+extern void brickdm_power_init(void);
+extern void brickdm_power_draw_battery_status(void);
+
+/* brickdm_event.c */
 extern uint8_t brickdm_event_source(m2_p ep, uint8_t msg);
+
+/* brickdm_graphcics.c */
+extern uint8_t brickdm_gh_bfs(m2_gfx_arg_p arg);
 
 #endif /* __BRICKDM_H */

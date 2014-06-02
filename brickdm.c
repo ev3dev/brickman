@@ -41,19 +41,15 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <glib.h>
 #include <glib-object.h>
 #include <glib-unix.h>
-
-#include <u8g.h>
-#include <m2.h>
-#include <m2ghu8g.h>
 
 #include "brickdm.h"
 
 GMainLoop *loop;
 u8g_t u8g;
-uint8_t needs_redraw = TRUE;
+gboolean brickdm_needs_redraw = TRUE;
+gboolean brickdm_show_statusbar = TRUE;
 int vtnum;
 
 gboolean brickdm_sigterm_handler(gpointer user_data)
@@ -71,7 +67,7 @@ gboolean brickdm_sighup_handler(gpointer user_data)
       if (vtstat.v_active == vtnum) {
         ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
         refresh();
-        needs_redraw = TRUE;
+        brickdm_needs_redraw = TRUE;
       }
     }
   } else {
@@ -85,42 +81,42 @@ gboolean timer_handler(gpointer user_data)
 {
   if (!isendwin()) {
     m2_CheckKey();
-    needs_redraw |= m2_HandleKey();
-    if (needs_redraw)
+    brickdm_needs_redraw |= m2_HandleKey();
+    if (brickdm_needs_redraw)
     {
       u8g_BeginDraw(&u8g);
       m2_Draw();
+      if (brickdm_show_statusbar) {
+        /* m2_draw can change colors on us */
+        u8g_SetDefaultBackgroundColor(&u8g);
+        u8g_SetDefaultForegroundColor(&u8g);
+        brickdm_power_draw_battery_status();
+        u8g_DrawLine(&u8g, 0, 15, u8g_GetWidth(&u8g), 15);
+      }
       u8g_EndDraw(&u8g);
+      brickdm_needs_redraw = FALSE;
     }
-    needs_redraw = 0;
   }
   return TRUE;
 }
 
-M2_EXTERN_ALIGN(main_menu);
-
-M2_LABEL(battery_label, NULL, "Battery");
-M2_ROOT(goto_main, NULL, " Goto Main Menu ", &main_menu);
-M2_LIST(battery_list) = { &battery_label, &goto_main };
-M2_VLIST(battery_dialog, NULL, battery_list);
-
-m2_menu_entry menu_data[] = {
-  { "Info", NULL },
-  { ". Battery", &battery_dialog },
-  { ". Network", &battery_dialog },
-  { "Other", NULL },
-  { NULL, NULL }
-};
-
-uint8_t main_menu_first = 0;
-uint8_t main_menu_cnt = 6;
-
-M2_2LMENU(main_menu_menu, "l7e20W42", &main_menu_first, &main_menu_cnt, menu_data, '+', '-', '\0');
-M2_SPACE(main_menu_space, "W1h1");
-M2_VSB(main_menu_scroll, "l4W2r1", &main_menu_first, &main_menu_cnt);
-M2_LIST(main_menu_list_data) = { &main_menu_menu, &main_menu_space, &main_menu_scroll };
-M2_HLIST(main_menu_hlist, NULL, main_menu_list_data);
-M2_ALIGN(main_menu, "-1|1W64H64", &main_menu_hlist);
+void brickdm_root_changed_callback(m2_rom_void_p new_root,
+                                   m2_rom_void_p old_root, uint8_t change_value)
+{
+  g_debug("%s: new_root: %p, old_root: %p, change_value: %d\n", __func__,
+          new_root, old_root, change_value);
+  /* This selects the previously selected item in the main menu */
+  if (new_root == &brickdm_home_root) {
+    m2_menu_entry *entry = main_menu_data;
+    while (entry->label) {
+      if (entry->element == old_root)
+        break;
+      m2_SetKey(M2_KEY_NEXT);
+      m2_HandleKey();
+      entry++;
+    }
+  }
+}
 
 int main(void)
 {
@@ -135,6 +131,8 @@ int main(void)
     .relsig = SIGHUP,
     .acqsig = SIGHUP,
   };
+
+   g_type_init();
 
   vtfd = open("/dev/tty0", O_RDWR, 0);
   if (vtfd < 0) {
@@ -184,7 +182,8 @@ int main(void)
     /* we are now free to directly access the framebuffer */
 
     u8g_Init(&u8g, &u8g_dev_linux_fb);
-    m2_Init(&main_menu, brickdm_event_source, m2_eh_6bs, m2_gh_u8g_bfs);
+    m2_Init(&brickdm_home_root, brickdm_event_source, m2_eh_6bs, m2_gh_u8g_bfs);
+    m2_SetRootChangeCallback(brickdm_root_changed_callback);
     m2_SetU8g(&u8g, m2_u8g_box_icon);
     m2_SetFont(0, u8g_font_7x13);
     m2_SetFont(1, u8g_font_m2icon_9);
@@ -196,6 +195,9 @@ int main(void)
     g_unix_signal_add(SIGHUP, brickdm_sighup_handler, GINT_TO_POINTER(vtfd));
     g_unix_signal_add(SIGINT, brickdm_sigterm_handler, NULL);
     g_unix_signal_add(SIGTERM, brickdm_sigterm_handler, NULL);
+
+    brickdm_power_init();
+
     g_main_loop_run(loop);
     u8g_Stop(&u8g);
   } while(0);
