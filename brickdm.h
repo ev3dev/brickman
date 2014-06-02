@@ -43,6 +43,7 @@ M2_EXTERN_ALIGN(brickdm_home_root);
 
 /* brickdm_power.c */
 M2_EXTERN_ALIGN(brickdm_battery_root);
+M2_EXTERN_ALIGN(brickdm_shutdown_root);
 extern void brickdm_power_init(void);
 extern void brickdm_power_draw_battery_status(void);
 

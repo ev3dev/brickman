@@ -201,6 +201,7 @@ int main(void)
     m2_SetU8g(&u8g, m2_u8g_box_icon);
     m2_SetFont(0, u8g_font_7x13);
     m2_SetFont(1, u8g_font_m2icon_9);
+    m2_SetU8gAdditionalTextXBorder(3);
 
     loop = g_main_loop_new (NULL, FALSE);
     g_timeout_add(50, timer_handler, NULL);

@@ -30,6 +30,7 @@
 
 m2_xmenu_entry main_menu_data[] = {
   { "Battery", &brickdm_battery_root, NULL },
+  { "Shutdown", &brickdm_shutdown_root, NULL },
   { NULL, NULL }
 };
 

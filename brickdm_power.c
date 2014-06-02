@@ -39,6 +39,8 @@ gchar *current_device;
 gchar battery_voltage[BATTERY_VOLTAGE_SIZE+1];
 gchar technology_name[TECHNOLOGY_NAME_SIZE+1];
 
+/* battery screen definitions */
+
 M2_LABEL(battery_hist_label, NULL, "History:");
 M2_ALIGN(brickdm_battery_hist_root, BRICKDM_ROOT_FMT, &battery_hist_label);
 
@@ -66,6 +68,17 @@ M2_LIST(battery_list_data) = { &battery_label, &battery_label_underline,
   &list_space, &data_gird_list, &list_space, &button_hlist };
 M2_VLIST(battery_vlist, NULL, battery_list_data);
 M2_ALIGN(brickdm_battery_root, BRICKDM_ROOT_FMT, &battery_vlist);
+
+/* shutdown screen definitions */
+
+void shutdown_button_callback(m2_el_fnarg_p fnarg);
+void restart_button_callback(m2_el_fnarg_p fnarg);
+
+M2_BUTTON(shutdown_button, "f12W32", "Shutdown", shutdown_button_callback);
+M2_BUTTON(restart_button, "f12W32", "Restart", restart_button_callback);
+M2_LIST(shutdown_list_data) = { &shutdown_button, &list_space, &restart_button };
+M2_VLIST(shutdown_vlist, NULL, shutdown_list_data);
+M2_ALIGN(brickdm_shutdown_root, BRICKDM_ROOT_FMT, &shutdown_vlist);
 
 void brickdm_power_draw_battery_status(void)
 {
@@ -139,4 +152,20 @@ void brickdm_power_init(void)
     if (g_strcmp0(BRICKDM_POWER_EV3_BATTERY_PATH, object_path) == 0)
       brickdm_power_update_status(device);
   }
+}
+
+void run_command(const char *command)
+{
+  g_spawn_command_line_sync(command, NULL, NULL, NULL, NULL);
+  // TODO: would be nice to check for errors
+}
+
+void shutdown_button_callback(m2_el_fnarg_p fnarg)
+{
+  run_command("poweroff");
+}
+
+void restart_button_callback(m2_el_fnarg_p fnarg)
+{
+  run_command("reboot");
 }
