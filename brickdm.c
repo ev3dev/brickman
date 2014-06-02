@@ -48,6 +48,7 @@
 
 GMainLoop *loop;
 u8g_t u8g;
+GSList *root_stack = NULL;
 gboolean brickdm_needs_redraw = TRUE;
 gboolean brickdm_show_statusbar = TRUE;
 int vtnum;
@@ -100,21 +101,33 @@ gboolean timer_handler(gpointer user_data)
   return TRUE;
 }
 
+brickdm_root_info *brickdm_pop_root_stack(void)
+{
+  GSList *last_root = root_stack;
+  brickdm_root_info *info = NULL;
+
+  if (last_root) {
+    GSList *dbg = last_root;
+    while(dbg) {
+      g_debug("root_stack:");
+      g_debug("element: %p, value:%d", ((brickdm_root_info*)dbg->data)->element,
+              ((brickdm_root_info*)dbg->data)->value);
+      dbg = g_slist_next(dbg);
+    }
+    info = last_root->data;
+    root_stack = g_slist_delete_link(root_stack, last_root);
+  }
+  return info;
+}
+
 void brickdm_root_changed_callback(m2_rom_void_p new_root,
                                    m2_rom_void_p old_root, uint8_t change_value)
 {
-  g_debug("%s: new_root: %p, old_root: %p, change_value: %d\n", __func__,
-          new_root, old_root, change_value);
-  /* This selects the previously selected item in the main menu */
-  if (new_root == &brickdm_home_root) {
-    m2_menu_entry *entry = main_menu_data;
-    while (entry->label) {
-      if (entry->element == old_root)
-        break;
-      m2_SetKey(M2_KEY_NEXT);
-      m2_HandleKey();
-      entry++;
-    }
+  if (change_value != BRICKDM_MAX_USER_VALUE) {
+    brickdm_root_info *info = g_new(brickdm_root_info, 1);
+    info->element = old_root;
+    info->value = change_value;
+    root_stack = g_slist_prepend(root_stack, info);
   }
 }
 
@@ -182,7 +195,8 @@ int main(void)
     /* we are now free to directly access the framebuffer */
 
     u8g_Init(&u8g, &u8g_dev_linux_fb);
-    m2_Init(&brickdm_home_root, brickdm_event_source, m2_eh_6bs, m2_gh_u8g_bfs);
+    m2_Init(&brickdm_home_root, brickdm_event_source, brickdm_event_handler,
+            m2_gh_u8g_bfs);
     m2_SetRootChangeCallback(brickdm_root_changed_callback);
     m2_SetU8g(&u8g, m2_u8g_box_icon);
     m2_SetFont(0, u8g_font_7x13);

@@ -28,18 +28,16 @@
 
 #include "brickdm.h"
 
-m2_menu_entry main_menu_data[] = {
-  { "Info", NULL },
-  { ". Battery", &brickdm_battery_root },
-  { ". Network", &brickdm_battery_root },
+m2_xmenu_entry main_menu_data[] = {
+  { "Battery", &brickdm_battery_root, NULL },
   { NULL, NULL }
 };
 
 uint8_t main_menu_first = 0;
 uint8_t main_menu_cnt = 6;
 
-M2_2LMENU(main_menu, "l7e20W42", &main_menu_first, &main_menu_cnt,
-          main_menu_data, '+', '-', '\0');
+M2_X2LMENU(main_menu, "l7e20W42", &main_menu_first, &main_menu_cnt,
+           main_menu_data, '+', '-', '\0');
 M2_SPACE(main_menu_space, "W1h1");
 M2_VSB(main_menu_scroll, "l4w4r1", &main_menu_first, &main_menu_cnt);
 M2_LIST(main_menu_list_data) = { &main_menu, &main_menu_space, &main_menu_scroll };

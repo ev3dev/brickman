@@ -39,6 +39,12 @@ gchar *current_device;
 gchar battery_voltage[BATTERY_VOLTAGE_SIZE+1];
 gchar technology_name[TECHNOLOGY_NAME_SIZE+1];
 
+M2_LABEL(battery_hist_label, NULL, "History:");
+M2_ALIGN(brickdm_battery_hist_root, BRICKDM_ROOT_FMT, &battery_hist_label);
+
+M2_LABEL(battery_stats_label, NULL, "Statistics:");
+M2_ALIGN(brickdm_battery_stats_root, BRICKDM_ROOT_FMT, &battery_stats_label);
+
 M2_LABEL(battery_label, NULL, "Battery Info:");
 M2_BOX(battery_label_underline, "h1W48");
 M2_LABEL(technology_label, NULL, "Type:");
@@ -51,11 +57,9 @@ M2_LIST(data_grid_list_data) = {
   &voltage_label, &grid_space, &voltage_value,
 };
 M2_GRIDLIST(data_gird_list, "c3", data_grid_list_data);
-M2_ROOT(goto_stats_button, "f4", " Stats ", &brickdm_home_root);
-M2_ROOT(goto_hist_button, "f4", " Hist ", &brickdm_home_root);
-M2_ROOT(goto_main_button, "f4", " Back ", &brickdm_home_root);
-M2_LIST(button_list_data) = { &goto_stats_button, &goto_hist_button,
-  &goto_main_button };
+M2_ROOT(goto_hist_button, "f4", " Hist ", &brickdm_battery_hist_root);
+M2_ROOT(goto_stats_button, "f4", " Stats ", &brickdm_battery_stats_root);
+M2_LIST(button_list_data) = { &goto_hist_button, &goto_stats_button };
 M2_HLIST(button_hlist, NULL, button_list_data);
 M2_SPACE(list_space, "h5");
 M2_LIST(battery_list_data) = { &battery_label, &battery_label_underline,
