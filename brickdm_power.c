@@ -34,18 +34,30 @@
   "/org/freedesktop/UPower/devices/battery_legoev3_battery"
 #define BATTERY_VOLTAGE_SIZE 6
 #define TECHNOLOGY_NAME_SIZE 30
+#define BATTERY_HIST_GRAPH_WIDTH 150
+#define BATTERY_HIST_GRAPH_HEIGHT 100
+#define BATTERY_HIST_GRAPH_FMT(width,height) "w"#width"h"#height
 
 gchar *current_device;
 gchar battery_voltage[BATTERY_VOLTAGE_SIZE+1];
 gchar technology_name[TECHNOLOGY_NAME_SIZE+1];
+int battery_hist_data[BATTERY_HIST_GRAPH_WIDTH];
+
+/* battery history screen definitions */
+
+void battery_hist_graph_callback(m2_el_fnargp_fnarg);
+
+M2_LABEL(battery_hist_label, NULL, "History:");
+M2_SPACECB(battery_hist_graph, BATTERY_HIST_GRAPH_FMT(BATTERY_HIST_GRAPH_WIDTH,
+           BATTERY_HIST_GRAPH_HEIGHT), battery_hist_graph_callback);
+M2_ALIGN(brickdm_battery_hist_root, BRICKDM_ROOT_FMT, &battery_hist_label);
 
 /* battery screen definitions */
 
-M2_LABEL(battery_hist_label, NULL, "History:");
-M2_ALIGN(brickdm_battery_hist_root, BRICKDM_ROOT_FMT, &battery_hist_label);
-
 M2_LABEL(battery_stats_label, NULL, "Statistics:");
 M2_ALIGN(brickdm_battery_stats_root, BRICKDM_ROOT_FMT, &battery_stats_label);
+
+/* battery statictics screen definitions */
 
 M2_LABEL(battery_label, NULL, "Battery Info:");
 M2_BOX(battery_label_underline, "h1W48");
@@ -59,7 +71,7 @@ M2_LIST(data_grid_list_data) = {
   &voltage_label, &grid_space, &voltage_value,
 };
 M2_GRIDLIST(data_gird_list, "c3", data_grid_list_data);
-M2_ROOT(goto_hist_button, "f4", " Hist ", &brickdm_battery_hist_root);
+M2_BUTTON(goto_hist_button, "f4", " Hist ", battery_hist_button_callback);
 M2_ROOT(goto_stats_button, "f4", " Stats ", &brickdm_battery_stats_root);
 M2_LIST(button_list_data) = { &goto_hist_button, &goto_stats_button };
 M2_HLIST(button_hlist, NULL, button_list_data);
@@ -79,6 +91,45 @@ M2_BUTTON(restart_button, "f12W32", "Restart", restart_button_callback);
 M2_LIST(shutdown_list_data) = { &shutdown_button, &list_space, &restart_button };
 M2_VLIST(shutdown_vlist, NULL, shutdown_list_data);
 M2_ALIGN(brickdm_shutdown_root, BRICKDM_ROOT_FMT, &shutdown_vlist);
+
+gpm_point_obj_free
+
+void update_battery_hist_data(UpDevice *device)
+{
+  GPtrArray *array;
+  UpHistoryItem *item;
+  int i;
+
+  array = up_device_get_history_sync(device, "rate", 3600,
+                                     BATTERY_HIST_GRAPH_WIDTH, NULL, NULL);
+  if(!array) {
+    g_debug("Failed to get history.");
+    // TODO: show error on screen
+    return;
+  }
+  for (i=0; i<array->len; i++) {
+    item = g_ptr_array_index(array, i);
+    battery_hist_data[i] = item->value;
+  }
+  brickdm_needs_redraw = TRUE;
+}
+
+void battery_hist_button_callback(m2_el_fnarg_p fnarg)
+{
+  UpDevice *device = up_device_new();
+  up_device_set_object_path_sync(device, BRICKDM_POWER_EV3_BATTERY_PATH, NULL, NULL);
+  update_battery_hist_data(device);
+  g_object_unref(device);
+  m2_SetRoot(&brickdm_battery_hist_root);
+}
+
+void battery_hist_graph_callback(m2_el_fnarg_p fnarg)
+{
+  int i;
+  
+  for (i=0; i<BATTERY_HIST_GRAPH_WIDTH; i++)
+    u8g_DrawPixel(&u8g, i, battery_hist_data[i]);
+}
 
 void brickdm_power_draw_battery_status(void)
 {
@@ -111,17 +162,22 @@ void brickdm_power_update_status(UpDevice *device)
 }
 
 static void
-brickdm_power_device_changed_cb (UpClient *client, UpDevice *device,
-                                 gpointer user_data)
+brickdm_power_device_changed_cb(UpClient *client, UpDevice *device,
+                                gpointer user_data)
 {
   const gchar *object_path;
+  m2_rom_void_p root = m2_GetRoot();
 
   object_path = up_device_get_object_path (device);
   g_debug("changed:   %s", object_path);
   if (object_path == NULL)
     return;
-  if (g_strcmp0(BRICKDM_POWER_EV3_BATTERY_PATH, object_path) == 0)
-    brickdm_power_update_status(device);
+  if (g_strcmp0(BRICKDM_POWER_EV3_BATTERY_PATH, object_path) == 0) {
+    if (brickdm_show_statusbar || root == &battery_root)
+      brickdm_power_update_status(device);
+    if (root == &battery_hist_root)
+      update_battery_hist_data(device);
+  }
 }
 
 void brickdm_power_init(void)
