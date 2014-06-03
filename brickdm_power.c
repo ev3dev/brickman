@@ -32,25 +32,30 @@
 
 #define BRICKDM_POWER_EV3_BATTERY_PATH \
   "/org/freedesktop/UPower/devices/battery_legoev3_battery"
-#define BATTERY_VOLTAGE_SIZE 6
+#define BATTERY_STRING_SIZE 10
 #define TECHNOLOGY_NAME_SIZE 30
 #define BATTERY_HIST_GRAPH_WIDTH 150
 #define BATTERY_HIST_GRAPH_HEIGHT 100
 #define BATTERY_HIST_GRAPH_FMT(width,height) "w"#width"h"#height
 
 gchar *current_device;
-gchar battery_voltage[BATTERY_VOLTAGE_SIZE+1];
+gchar battery_voltage[BATTERY_STRING_SIZE+1];
+gchar battery_voltage2[BATTERY_STRING_SIZE+1];
+gchar battery_current[BATTERY_STRING_SIZE+1];
+gchar battery_power[BATTERY_STRING_SIZE+1];
 gchar technology_name[TECHNOLOGY_NAME_SIZE+1];
-int battery_hist_data[BATTERY_HIST_GRAPH_WIDTH];
+gdouble battery_hist_data[BATTERY_HIST_GRAPH_WIDTH];
 
 /* battery history screen definitions */
 
-void battery_hist_graph_callback(m2_el_fnargp_fnarg);
+void battery_hist_graph_callback(m2_el_fnarg_p fnarg);
 
 M2_LABEL(battery_hist_label, NULL, "History:");
 M2_SPACECB(battery_hist_graph, BATTERY_HIST_GRAPH_FMT(BATTERY_HIST_GRAPH_WIDTH,
            BATTERY_HIST_GRAPH_HEIGHT), battery_hist_graph_callback);
-M2_ALIGN(brickdm_battery_hist_root, BRICKDM_ROOT_FMT, &battery_hist_label);
+M2_LIST(battery_hist_list_data) = { &battery_hist_label, &battery_hist_graph };
+M2_VLIST(battery_hist_vlist, NULL, battery_hist_list_data);
+M2_ALIGN(brickdm_battery_hist_root, BRICKDM_ROOT_FMT, &battery_hist_vlist);
 
 /* battery screen definitions */
 
@@ -59,16 +64,24 @@ M2_ALIGN(brickdm_battery_stats_root, BRICKDM_ROOT_FMT, &battery_stats_label);
 
 /* battery statictics screen definitions */
 
+void battery_hist_button_callback(m2_el_fnarg_p fnarg);
+
 M2_LABEL(battery_label, NULL, "Battery Info:");
 M2_BOX(battery_label_underline, "h1W48");
 M2_LABEL(technology_label, NULL, "Type:");
 M2_LABELP(technology_value, NULL, technology_name);
 M2_LABEL(voltage_label, NULL, "Voltage:");
 M2_LABELP(voltage_value, NULL, battery_voltage);
+M2_LABEL(current_label, NULL, "Current:");
+M2_LABELP(current_value, NULL, battery_current);
+M2_LABEL(power_label, NULL, "Power:");
+M2_LABELP(power_value, NULL, battery_power);
 M2_SPACE(grid_space, "w2");
 M2_LIST(data_grid_list_data) = {
   &technology_label, &grid_space, &technology_value,
   &voltage_label, &grid_space, &voltage_value,
+  &current_label, &grid_space, &current_value,
+  &power_label, &grid_space, &power_value,
 };
 M2_GRIDLIST(data_gird_list, "c3", data_grid_list_data);
 M2_BUTTON(goto_hist_button, "f4", " Hist ", battery_hist_button_callback);
@@ -92,14 +105,13 @@ M2_LIST(shutdown_list_data) = { &shutdown_button, &list_space, &restart_button }
 M2_VLIST(shutdown_vlist, NULL, shutdown_list_data);
 M2_ALIGN(brickdm_shutdown_root, BRICKDM_ROOT_FMT, &shutdown_vlist);
 
-gpm_point_obj_free
-
 void update_battery_hist_data(UpDevice *device)
 {
   GPtrArray *array;
   UpHistoryItem *item;
   int i;
 
+  g_debug("Getting history.");
   array = up_device_get_history_sync(device, "rate", 3600,
                                      BATTERY_HIST_GRAPH_WIDTH, NULL, NULL);
   if(!array) {
@@ -109,8 +121,11 @@ void update_battery_hist_data(UpDevice *device)
   }
   for (i=0; i<array->len; i++) {
     item = g_ptr_array_index(array, i);
-    battery_hist_data[i] = item->value;
+    battery_hist_data[i] = up_history_item_get_value (item);
+    g_debug("time: %d, state: %d, value: %.2f", up_history_item_get_time(item),
+      up_history_item_get_state (item), battery_hist_data[i]);
   }
+  g_ptr_array_unref (array);
   brickdm_needs_redraw = TRUE;
 }
 
@@ -126,9 +141,9 @@ void battery_hist_button_callback(m2_el_fnarg_p fnarg)
 void battery_hist_graph_callback(m2_el_fnarg_p fnarg)
 {
   int i;
-  
+  g_debug("Drawing graph.");
   for (i=0; i<BATTERY_HIST_GRAPH_WIDTH; i++)
-    u8g_DrawPixel(&u8g, i, battery_hist_data[i]);
+    u8g_DrawPixel(&u8g, i, (battery_hist_data[i]*20));
 }
 
 void brickdm_power_draw_battery_status(void)
@@ -145,17 +160,21 @@ void brickdm_power_draw_battery_status(void)
      batt_height - 2 * end_y_ofs);
 
    u8g_SetFont(&u8g, u8g_font_04b_03b);
-   u8g_DrawStr(&u8g, x + 2, y + batt_height - 2, battery_voltage);
+   u8g_DrawStr(&u8g, x + 2, y + batt_height - 2, battery_voltage2);
 }
 
 void brickdm_power_update_status(UpDevice *device)
 {
-  gdouble voltage;
+  gdouble voltage, rate;
   UpDeviceTechnology technology;
 
-  g_object_get(device, "voltage", &voltage, NULL);
-  g_snprintf(battery_voltage, BATTERY_VOLTAGE_SIZE, "%0.2f", voltage);
-  g_object_get(device, "technology", &technology, NULL);
+  g_object_get(device, "voltage", &voltage,
+                       "energy-rate", &rate,
+                       "technology", &technology, NULL);
+  g_snprintf(battery_voltage, BATTERY_STRING_SIZE, "%0.2f V", voltage);
+  g_snprintf(battery_voltage2, BATTERY_STRING_SIZE, "%0.2f", voltage);
+  g_snprintf(battery_current, BATTERY_STRING_SIZE, "%0.0f mA", rate / voltage * 1000.0);
+  g_snprintf(battery_power, BATTERY_STRING_SIZE, "%0.2f W", rate);
   g_strlcpy(technology_name, up_device_technology_to_string(technology),
     TECHNOLOGY_NAME_SIZE);
   brickdm_needs_redraw = TRUE;
@@ -173,9 +192,9 @@ brickdm_power_device_changed_cb(UpClient *client, UpDevice *device,
   if (object_path == NULL)
     return;
   if (g_strcmp0(BRICKDM_POWER_EV3_BATTERY_PATH, object_path) == 0) {
-    if (brickdm_show_statusbar || root == &battery_root)
+    if (brickdm_show_statusbar || root == &brickdm_battery_root)
       brickdm_power_update_status(device);
-    if (root == &battery_hist_root)
+    if (root == &brickdm_battery_hist_root)
       update_battery_hist_data(device);
   }
 }

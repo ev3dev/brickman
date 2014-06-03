@@ -107,13 +107,6 @@ brickdm_root_info *brickdm_pop_root_stack(void)
   brickdm_root_info *info = NULL;
 
   if (last_root) {
-    GSList *dbg = last_root;
-    while(dbg) {
-      g_debug("root_stack:");
-      g_debug("element: %p, value:%d", ((brickdm_root_info*)dbg->data)->element,
-              ((brickdm_root_info*)dbg->data)->value);
-      dbg = g_slist_next(dbg);
-    }
     info = last_root->data;
     root_stack = g_slist_delete_link(root_stack, last_root);
   }

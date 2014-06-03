@@ -36,6 +36,7 @@ typedef struct _brickdm_root_info brickdm_root_info;
 /* brickdm.c */
 extern u8g_t u8g;
 extern gboolean brickdm_needs_redraw;
+extern gboolean brickdm_show_statusbar;
 extern brickdm_root_info *brickdm_pop_root_stack(void);
 
 /* brickdm_home.c */
