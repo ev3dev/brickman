@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+vapigen --directory ${DIR} --pkg gio-2.0 --metadatadir ${DIR} --library upower /usr/share/gir-1.0/UPowerGlib-1.0.gir

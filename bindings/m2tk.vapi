@@ -4,7 +4,7 @@ namespace M2tk {
 
     /* enums */
 
-    [CCode (cname = "uint8_t", cprefix = "M2_KEY_")]
+    [CCode (cname = "uint8_t", cprefix = "M2_KEY_", has_type_id = false)]
     [Flags]
     public enum Key {
         NONE,
@@ -59,13 +59,13 @@ namespace M2tk {
         EVENT
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_ES_MSG_")]
+    [CCode (cname = "uint8_t", cprefix = "M2_ES_MSG_", has_type_id = false)]
     public enum EventSourceMessage {
         GET_KEY,
         INIT
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_EP_MSG_")]
+    [CCode (cname = "uint8_t", cprefix = "M2_EP_MSG_", has_type_id = false)]
     public enum EventHandlerMessage {
         SELECT,
         NEXT,
@@ -101,7 +101,7 @@ namespace M2tk {
         KEYPAD_9,
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_EL_MSG_")]
+    [CCode (cname = "uint8_t", cprefix = "M2_EL_MSG_", has_type_id = false)]
     public enum ElementCallbackMessage {
         GET_LIST_LEN,
         GET_LIST_ELEMENT,
@@ -147,7 +147,48 @@ namespace M2tk {
         KEYPAD_9,
     }
 
-    [CCode (cname = "uint8_t")]
+    [CCode (cname = "uint8_t", cprefix = "M2_U8_MSG_", has_type_id = false)]
+    public enum U8FuncMessage {
+        GET_VALUE,
+        SET_VALUE
+    }
+
+    [CCode (cname = "uint8_t", cprefix = "M2_S8_MSG_", has_type_id = false)]
+    public enum S8FuncMessage {
+        GET_VALUE,
+        SET_VALUE
+    }
+
+    [CCode (cname = "uint8_t", cprefix = "M2_U32_MSG_", has_type_id = false)]
+    public enum U32FuncMessage {
+        GET_VALUE,
+        SET_VALUE
+    }
+
+    [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_", has_type_id = false)]
+    public enum StringListMessage {
+        GET_STR,
+        SELECT,
+        GET_EXTENDED_STR,
+        NEW_DIALOG,
+    }
+
+    [CCode (cname = "uint8_t", cprefix = "M2_COMBOFN_MSG_", has_type_id = false)]
+    public enum ComboFuncMessage {
+        GET_VALUE,
+        SET_VALUE,
+        GET_STRING,
+    }
+
+    [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_", has_type_id = false)]
+    public enum StringListFuncMessage {
+        GET_STR,
+        SELECT,
+        SET_EXTENDED_STR,
+        NEW_DIALIG,
+    }
+
+    [CCode (cname = "uint8_t", has_type_id = false)]
     public enum FontIndex {
         [CCode (cname = "0")] F0,
         [CCode (cname = "1")] F1,
@@ -155,7 +196,7 @@ namespace M2tk {
         [CCode (cname = "3")] F3
     }
 
-    [CCode (cname = "uint8_t")]
+    [CCode (cname = "uint8_t", has_type_id = false)]
     [Flags]
     public enum FontSpec
     {
@@ -167,37 +208,44 @@ namespace M2tk {
         [CCode (cname = "8")] CENTER
     }
 
-    [CCode (cname = "int")]
+    [CCode (cname = "int", has_type_id = false)]
     public enum IconType
     {
         [CCode (cname = "0")] FONT,
         [CCode (cname = "1")] BOX
     }
 
+    [CCode (cname = "uint8_t", has_type_id = false)]
+    public enum HideState {
+        [CCode (cname = "0")] VISIBLE,
+        [CCode (cname = "1")] HIDDEN_KEEP_SIZE,
+        [CCode (cname = "2")] HIDDEN_NO_SIZE,
+    }
+
     /* main functions */
 
     [CCode (cname = "m2_Init")]
-    static void init(Element? root_element,
+    static void init(Element root_element,
         EventSourceFunc? event_source,
         EventHandlerFunc? event_handler,
         GraphicsFunc graphics_handler);
     [CCode (cname = "m2_CheckKey")]
     public static void check_key();
     [CCode (cname = "m2_HandleKey")]
-    public static uchar handle_key();
+    public static uint8 handle_key();
     [CCode (cname = "m2_Draw")]
     public static void draw();
     [CCode (cname = "m2_SetKey")]
-    public static void put_key(uchar key);
+    public static void put_key(uint8 key);
     [CCode (cname = "m2_GetKey")]
-    public static uchar get_key();
+    public static uint8 get_key();
     [CCode (cname = "m2_SetFont")]
     public static void set_font(FontIndex index, U8g.Font? font);
     [CCode (cname = "m2_GetRoot")]
-    static Element get_root();
+    static unowned Element get_root();
     [CCode (cname = "m2_SetRootExtended")]
-    static void set_root(Element element, uchar next_count = 0,
-        uchar callback_value = 0);
+    static void set_root(Element element, uint8 next_count = 0,
+        uint8 callback_value = 0);
     [CCode (cname = "m2_SetHome")]
     static void set_home(Element element);
     [CCode (cname = "m2_SetHome2")]
@@ -208,23 +256,23 @@ namespace M2tk {
     /* private functions */
 
     [CCode (cname = "m2_fn_arg_call")]
-    static uchar call_element_function(uchar msg);
+    static uint8 call_element_function(uint8 msg);
 
     /* u8g functions */
 
     [CCode (cname = "m2_gh_u8g_fb", has_type_id = false)]
-    public static uchar U8gFrameBoxGraphicsHandler(GraphicsArgs arg);
+    public static uint8 U8gFrameBoxGraphicsHandler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_bf", has_type_id = false)]
-    public static uchar U8gBoxFrameGraphicsHandler(GraphicsArgs arg);
+    public static uint8 U8gBoxFrameGraphicsHandler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_bfs", has_type_id = false)]
-    public static uchar U8gBoxShadowFrameGraphicsHandler(GraphicsArgs arg);
+    public static uint8 U8gBoxShadowFrameGraphicsHandler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_ffs", has_type_id = false)]
-    public static uchar U8gFrameShadowFrameGraphicsHandler(GraphicsArgs arg);
+    public static uint8 U8gFrameShadowFrameGraphicsHandler(GraphicsArgs arg);
 
     [CCode (cname = "m2_u8g_font_icon")]
-    static uchar U8fFontIconHandler(GraphicsArgs arg);
+    static uint8 U8fFontIconHandler(GraphicsArgs arg);
     [CCode (cname = "m2_u8g_box_icon")]
-    static uchar U8gBoxIconHandler(GraphicsArgs arg);
+    static uint8 U8gBoxIconHandler(GraphicsArgs arg);
     [CCode (cname = "m2_SetU8g")]
     static void set_u8g_internal(U8g.Graphics u8g, GraphicsFunc draw_icon);
     public static void set_u8g(U8g.Graphics u8g, IconType icon_type)
@@ -235,11 +283,67 @@ namespace M2tk {
             set_u8g_internal(u8g, U8gBoxIconHandler);
     }
     [CCode (cname = "m2_SetU8gInvisibleFrameXBorder")]
-    public static void set_u8g_invisible_frame_x_border(uchar width);
+    public static void set_u8g_invisible_frame_x_border(uint8 width);
     [CCode (cname = "m2_SetU8gAdditionalTextXBorder")]
-    public static void set_u8g_additional_text_x_border(uchar width);
+    public static void set_u8g_additional_text_x_border(uint8 width);
     [CCode (cname = "m2_SetU8gAdditionalReadOnlyXBorder")]
-    public static void set_u8g_additional_read_only_x_border(uchar width);
+    public static void set_u8g_additional_read_only_x_border(uint8 width);
+
+    /* delegates */
+
+    [CCode (cname = "m2_es_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint8 EventSourceFunc(M2 m2, EventSourceMessage msg);
+
+    [CCode (cname = "m2_eh_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint8 EventHandlerFunc(M2 m2, EventHandlerMessage msg, uint8 arg1, uint8 arg2);
+
+    [CCode (cname = "m2_gfx_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint8 GraphicsFunc(GraphicsArgs arg);
+
+    [CCode (cname = "m2_root_change_fnptr", has_target = false, has_type_id = false)]
+    public delegate void RootChangeFunc(Element? new_root, Element? old_root, uint8 change_value);
+
+    [CCode (cname = "m2_get_str_fnptr", has_target = false, has_type_id = false)]
+    public delegate string GetStringFunc(uint8 index);
+
+    [CCode (cname = "m2_el_fnptr", has_target = false, has_type_id = false)]
+    delegate uint8 ElementFunc(ElementFuncArgs arg);
+
+    [CCode (cname = "m2_button_fnptr", has_target = false, has_type_id = false)]
+    public delegate void ButtonFunc(ElementFuncArgs arg);
+
+    [CCode (cname = "m2_labelfn_fnptr", has_target = false, has_type_id = false)]
+    public delegate string LabelFunc(Element element);
+
+    [CCode (cname = "m2_u8fn_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint8 U8Func(Element element, U8FuncMessage msg, uint8 value);
+
+    [CCode (cname = "m2_s8fn_fnptr", has_target = false, has_type_id = false)]
+    public delegate char S8Func(Element element, S8FuncMessage msg, char value);
+
+    [CCode (cname = "m2_u32fn_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint U32Func(Element element, U32FuncMessage msg, uint value);
+
+    [CCode (cname = "m2_u32fn_fnptr", has_target = false, has_type_id = false)]
+    public delegate string ComboFunc(Element element, ComboFuncMessage msg, ref uint8 value);
+
+    [CCode (cname = "m2_strlist_cb_fnptr", has_target = false, has_type_id = false)]
+    public delegate string StringListFunc(uint8 index, StringListFuncMessage msg);
+
+    /* structs */
+
+    [CCode (cname = "m2_menu_entry", destroy_function = "",  has_type_id = false)]
+    public struct MenuEntry {
+        string label;
+        Element element;
+    }
+
+    [CCode (cname = "m2_xmenu_entry", destroy_function = "",  has_type_id = false)]
+    public struct ExtendedMenuEntry {
+        string label;
+        Element element;
+        StringListFunc func;
+    }
 
     /* classes */
 
@@ -252,17 +356,17 @@ namespace M2tk {
     [CCode (cname = "m2_nav_t", cprefix = "m2_nav_", has_type_id = false)]
     [Compact]
     public class Nav {
-        public uchar user_up();
-        public uchar user_down(bool is_msg);
-        public uchar user_prev();
-        public uchar user_first();
-        public uchar user_next();
-        public uchar data_up();
-        public uchar data_down();
-        public uchar quick_key(Key quick_key)
+        public uint8 user_up();
+        public uint8 user_down(bool is_msg);
+        public uint8 user_prev();
+        public uint8 user_first();
+        public uint8 user_next();
+        public uint8 data_up();
+        public uint8 data_down();
+        public uint8 quick_key(Key quick_key)
             requires(quick_key >= Key.Q1 && quick_key <= Key.LOOP_END);
-        uchar prepare_fn_arg_current_element();
-        public uchar data_char(uchar c) {
+        uint8 prepare_fn_arg_current_element();
+        public uint8 data_char(uint8 c) {
             prepare_fn_arg_current_element();
             return call_element_function(c); // assign the char
         }
@@ -276,25 +380,22 @@ namespace M2tk {
     public class GraphicsArgs {
     }
 
-    [CCode (cname = "const m2_rom_void", free_function = "g_free", has_type_id = false)]
+    [CCode (cname = "m2_el_fnfmt_t", free_function = "g_free", has_type_id = false)]
     [Compact]
     public class Element {
+        [CCode (cname = "fmt")]
+        internal unowned string? format;
     }
 
-    /* delegates */
-
-    [CCode (cname = "m2_es_fnptr", has_target = false, has_type_id = false)]
-    public delegate uchar EventSourceFunc(M2 m2, EventSourceMessage msg);
-    [CCode (cname = "m2_eh_fnptr", has_target = false, has_type_id = false)]
-    public delegate uchar EventHandlerFunc(M2 m2, EventHandlerMessage msg,
-        uchar arg1, uchar arg2);
-    [CCode (cname = "m2_gfx_fnptr", has_target = false, has_type_id = false)]
-    public delegate uchar GraphicsFunc(GraphicsArgs arg);
-    [CCode (cname = "m2_root_change_fnptr", has_target = false, has_type_id = false)]
-    public delegate void RootChangeFunc(Element new_root, Element old_root, uchar change_value);
-
-    [CCode (cname = "m2_get_str_fnptr", has_target = false, has_type_id = false)]
-    public delegate string GetStringFunc(uchar index);
+    [CCode (cname = "m2_el_fnarg_t", has_type_id = false)]
+    [Compact]
+    public class ElementFuncArgs {
+        public Element element;
+        public ElementCallbackMessage msg;
+        public uint8 arg;
+        public void* data;
+        public Nav? nav;
+    }
 
     [CCode (cname = "m2_el_space_t", free_function = "g_free", has_type_id = false)]
     public class Space : Element {
@@ -302,12 +403,12 @@ namespace M2tk {
         struct SpaceStruct {}
 
         [CCode (cname = "m2_el_space_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
 
         [CCode (cname = "g_malloc")]
         Space(size_t size = sizeof(SpaceStruct))
@@ -316,7 +417,7 @@ namespace M2tk {
         public static Space create(string? format = null)
         {
             var element = new Space();
-            element.func = Func;
+            element.func = (ElementFunc)Func;
             element.format = format;
             return element;
         }
@@ -328,12 +429,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_box_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
 
         [CCode (cname = "g_malloc")]
         Box(size_t size = sizeof(MallocStruct))
@@ -341,7 +442,7 @@ namespace M2tk {
 
         public static Box create(string? format = null) {
             var element = new Box();
-            element.func = Func;
+            element.func = (ElementFunc)Func;
             element.format = format;
             return element;
         }
@@ -353,12 +454,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_spacecb_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "el_space.ff.fn")]
         ElementFunc func;
         [CCode (cname = "el_space.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "new_dialog_callback")]
         ButtonFunc callback;
 
@@ -382,20 +483,20 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_str_up_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "str")]
-        public unowned string? text;
+        internal unowned string text;
 
         [CCode (cname = "g_malloc")]
         StringUp(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static StringUp create(string? text = null, string? format = null) {
+        public static StringUp create(string text, string? format = null) {
             var element = new StringUp();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -410,20 +511,20 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_label_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "str")]
-        public unowned string? text;
+        internal unowned string text;
 
         [CCode (cname = "g_malloc")]
         Label(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static Label create(string? text = null, string? format = null) {
+        public static Label create(string text, string? format = null) {
             var element = new Label();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -438,12 +539,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_labelfn_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "label_callback")]
         LabelFunc callback;
 
@@ -467,22 +568,22 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_root_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "el_str.ff.fn")]
         ElementFunc func;
         [CCode (cname = "el_str.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "el_str.str")]
-        public unowned string? text;
+        internal unowned string text;
         [CCode (cname = "element")]
-        public unowned Element? element;
+        unowned Element? element;
 
         [CCode (cname = "g_malloc")]
         Root(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static Root create(Element? new_root_element = null, string? text = null, string? format = null) {
+        public static Root create(Element? new_root_element, string text, string? format = null) {
             var element = new Root();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -498,14 +599,14 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_button_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "el_str.ff.fn")]
         ElementFunc func;
         [CCode (cname = "el_str.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "el_str.str")]
-        public unowned string? text;
+        internal unowned string text;
         [CCode (cname = "button_callback")]
         public ButtonFunc callback;
 
@@ -513,7 +614,7 @@ namespace M2tk {
         Button(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static Button create(ButtonFunc callback, string? text = null, string? format = null) {
+        public static Button create(ButtonFunc callback, string text, string? format = null) {
             var element = new Button();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -529,12 +630,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_s8num_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "s8.ff.fn")]
         ElementFunc func;
         [CCode (cname = "s8.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "s8.min")]
         public char min;
         [CCode (cname = "s8.max")]
@@ -563,12 +664,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_s8numfn_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "s8.ff.fn")]
         ElementFunc func;
         [CCode (cname = "s8.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "s8.min")]
         public char min;
         [CCode (cname = "s8.max")]
@@ -597,24 +698,24 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u8num_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "u8.ff.fn")]
         ElementFunc func;
         [CCode (cname = "u8.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "u8.min")]
-        public char min;
+        public uint8 min;
         [CCode (cname = "u8.max")]
-        public char max;
+        public uint8 max;
         [CCode (cname = "val")]
-        public char *value;
+        public uint8 *value;
 
         [CCode (cname = "g_malloc")]
         U8Num(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static U8Num create(ref char value, char min, char max, string? format = null) {
+        public static U8Num create(ref uint8 value, uint8 min, uint8 max, string? format = null) {
             var element = new U8Num();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -631,16 +732,16 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u8numfn_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "u8.ff.fn")]
         ElementFunc func;
         [CCode (cname = "u8.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "u8.min")]
-        public char min;
+        public uint8 min;
         [CCode (cname = "u8.max")]
-        public char max;
+        public uint8 max;
         [CCode (cname = "u8_callback")]
         public U8Func callback;
 
@@ -648,7 +749,7 @@ namespace M2tk {
         U8NumWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static U8NumWithFunc create(U8Func func, char min, char max, string? format = null) {
+        public static U8NumWithFunc create(U8Func func, uint8 min, uint8 max, string? format = null) {
             var element = new U8NumWithFunc();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -665,28 +766,28 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_vlist_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "len")]
-        uchar length;
+        internal uint8 length;
         [CCode (cname = "el_list")]
-        unowned Element *list;
+        internal Element *list;
 
         [CCode (cname = "g_malloc")]
         VList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
         public static VList create(Element[] list, string? format = null)
-            requires (list.length <= (uchar)(-1))
+            requires (list.length <= (uint8)(-1))
         {
             var element = new VList();
             element.func = (ElementFunc)Func;
             element.format = format;
-            element.length = (uchar)list.length;
+            element.length = (uint8)list.length;
             element.list = list;
             return element;
         }
@@ -698,14 +799,14 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_hlist_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "len")]
-        uchar length;
+        uint8 length;
         [CCode (cname = "el_list")]
         Element *list;
 
@@ -714,12 +815,12 @@ namespace M2tk {
             requires (size == sizeof(MallocStruct));
 
         public static HList create(Element[] list, string? format = null)
-            requires (list.length <= (uchar)(-1))
+            requires (list.length <= (uint8)(-1))
         {
             var element = new HList();
             element.func = (ElementFunc)Func;
             element.format = format;
-            element.length = (uchar)list.length;
+            element.length = (uint8)list.length;
             element.list = list;
             return element;
         }
@@ -731,14 +832,14 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_gridlist_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "len")]
-        uchar length;
+        uint8 length;
         [CCode (cname = "el_list")]
         Element *list;
 
@@ -747,12 +848,12 @@ namespace M2tk {
             requires (size == sizeof(MallocStruct));
 
         public static GridList create(Element[] list, string? format = null)
-            requires (list.length <= (uchar)(-1))
+            requires (list.length <= (uint8)(-1))
         {
             var element = new GridList();
             element.func = (ElementFunc)Func;
             element.format = format;
-            element.length = (uchar)list.length;
+            element.length = (uint8)list.length;
             element.list = list;
             return element;
         }
@@ -764,14 +865,14 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_xylist_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "len")]
-        uchar length;
+        uint8 length;
         [CCode (cname = "el_list")]
         Element *list;
 
@@ -780,12 +881,12 @@ namespace M2tk {
             requires (size == sizeof(MallocStruct));
 
         public static XYList create(Element[] list, string? format = null)
-            requires (list.length <= (uchar)(-1))
+            requires (list.length <= (uint8)(-1))
         {
             var element = new XYList();
             element.func = (ElementFunc)Func;
             element.format = format;
-            element.length = (uchar)list.length;
+            element.length = (uint8)list.length;
             element.list = list;
             return element;
         }
@@ -797,16 +898,16 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_text_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "text")]
         char *text;
         [CCode (cname = "len")]
-        uchar length;
+        uint8 length;
 
         [CCode (cname = "g_malloc")]
         Text(size_t size = sizeof(MallocStruct))
@@ -817,7 +918,7 @@ namespace M2tk {
             element.func = (ElementFunc)Func;
             element.format = format;
             element.text = text;
-            element.length = (uchar)text.length;
+            element.length = (uint8)text.length;
             return element;
         }
     }
@@ -828,12 +929,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u32_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "val")]
         uint *value;
 
@@ -856,12 +957,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u32fn_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "u32_callback")]
         U32Func callback;
 
@@ -884,14 +985,14 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_align_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "element")]
-        unowned Element child;
+        internal unowned Element child;
 
         [CCode (cname = "g_malloc")]
         Align(size_t size = sizeof(MallocStruct))
@@ -912,12 +1013,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_hide_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "align.ff.fn")]
         ElementFunc func;
         [CCode (cname = "align.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "align.element")]
         unowned Element child;
         [CCode (cname = "val")]
@@ -943,12 +1044,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_toggle_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "val")]
         bool *value;
 
@@ -971,12 +1072,12 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_toggle_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "val")]
         bool *value;
 
@@ -999,16 +1100,16 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_combo_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "setval.ff.fn")]
         ElementFunc func;
         [CCode (cname = "setval.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "setval.val")]
-        uchar *value;
+        uint8 *value;
         [CCode (cname = "cnt")]
-        uchar count;
+        uint8 count;
         [CCode (cname = "get_str_fnptr")]
         GetStringFunc callback;
 
@@ -1016,7 +1117,7 @@ namespace M2tk {
         Combo(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static Combo create(GetStringFunc func, uchar count, ref uchar value, string? format = null) {
+        public static Combo create(GetStringFunc func, uint8 count, ref uint8 value, string? format = null) {
             var element = new Combo();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1033,16 +1134,16 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_combofn_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "setval.ff.fn")]
         ElementFunc func;
         [CCode (cname = "setval.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "setval.val")]
-        uchar *value;
+        uint8 *value;
         [CCode (cname = "cnt")]
-        uchar count;
+        uint8 count;
         [CCode (cname = "fnptr")]
         ComboFunc callback;
 
@@ -1050,7 +1151,7 @@ namespace M2tk {
         ComboWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static ComboWithFunc create(ComboFunc func, uchar count, ref uchar value, string? format = null) {
+        public static ComboWithFunc create(ComboFunc func, uint8 count, ref uint8 value, string? format = null) {
             var element = new ComboWithFunc();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1067,22 +1168,22 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_vsb_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
         ElementFunc func;
         [CCode (cname = "ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "top")]
-        uchar *top;
+        uint8 *top;
         [CCode (cname = "len")]
-        uchar *length;
+        uint8 *length;
 
         [CCode (cname = "g_malloc")]
         VScrollBar(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static VScrollBar create(ref uchar count, ref uchar top, string? format = null) {
+        public static VScrollBar create(ref uint8 count, ref uint8 top, string? format = null) {
             var element = new VScrollBar();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1098,16 +1199,16 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_strlist_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "slbase.ff.fn")]
         ElementFunc func;
         [CCode (cname = "slbase.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "slbase.top")]
-        uchar *top;
+        uint8 *top;
         [CCode (cname = "slbase.len")]
-        uchar *length;
+        uint8 *length;
         [CCode (cname = "strlist_cb_fnptr")]
         StringListFunc callback;
 
@@ -1115,7 +1216,7 @@ namespace M2tk {
         StringList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static StringList create(StringListFunc func, ref uchar count, ref uchar top, string? format = null) {
+        public static StringList create(StringListFunc func, ref uint8 count, ref uint8 top, string? format = null) {
             var element = new StringList();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1132,30 +1233,30 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_2lmenu_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "slbase.ff.fn")]
         ElementFunc func;
         [CCode (cname = "slbase.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "slbase.top")]
-        uchar *top;
+        uint8 *top;
         [CCode (cname = "slbase.len")]
-        uchar *length;
+        uint8 *length;
         [CCode (cname = "menu_entries")]
         MenuEntry *menu_items;
         [CCode (cname = "menu_char")]
-        uchar menu_char;
+        uint8 menu_char;
         [CCode (cname = "expanded_char")]
-        uchar expanded_char;
+        uint8 expanded_char;
         [CCode (cname = "submenu_char")]
-        uchar submenu_char;
+        uint8 submenu_char;
 
         [CCode (cname = "g_malloc")]
         Menu(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static Menu create(MenuEntry[] menu_items, ref uchar first, ref uchar count, uchar menu_char, uchar expanded_char, uchar submenu_char, string? format = null) {
+        public static Menu create(MenuEntry[] menu_items, ref uint8 first, ref uint8 count, uint8 menu_char, uint8 expanded_char, uint8 submenu_char, string? format = null) {
             var element = new Menu();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1175,30 +1276,30 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_x2lmenu_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "slbase.ff.fn")]
         ElementFunc func;
         [CCode (cname = "slbase.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "slbase.top")]
-        uchar *top;
+        uint8 *top;
         [CCode (cname = "slbase.len")]
-        uchar *length;
+        uint8 *length;
         [CCode (cname = "menu_entries")]
         ExtendedMenuEntry *menu_items;
         [CCode (cname = "menu_char")]
-        uchar menu_char;
+        uint8 menu_char;
         [CCode (cname = "expanded_char")]
-        uchar expanded_char;
+        uint8 expanded_char;
         [CCode (cname = "submenu_char")]
-        uchar submenu_char;
+        uint8 submenu_char;
 
         [CCode (cname = "g_malloc")]
         ExtendedMenu(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static ExtendedMenu create(ExtendedMenuEntry[] menu_items, ref uchar first, ref uchar count, uchar menu_char, uchar expanded_char, uchar submenu_char, string? format = null) {
+        public static ExtendedMenu create(ExtendedMenuEntry[] menu_items, ref uint8 first, ref uint8 count, uint8 menu_char, uint8 expanded_char, uint8 submenu_char, string? format = null) {
             var element = new ExtendedMenu();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1218,26 +1319,26 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_x2lmenu_fn")]
-        static uchar Func(ElementFuncArgs arg);
+        static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "infobase.slbase.ff.fn")]
         ElementFunc func;
         [CCode (cname = "infobase.slbase.ff.fmt")]
-        unowned string? format;
+        internal unowned string? format;
         [CCode (cname = "infobase.slbase.top")]
-        uchar *top;
+        uint8 *top;
         [CCode (cname = "infobase.slbase.len")]
-        uchar *length;
+        uint8 *length;
         [CCode (cname = "infobase.select_callback")]
         ButtonFunc callback;
         [CCode (cname = "info_str")]
-        string text;
+        internal unowned string text;
 
         [CCode (cname = "g_malloc")]
         Info(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
-        public static Info create(ButtonFunc func, string? text, ref uchar first, ref uchar count, string? format = null) {
+        public static Info create(ButtonFunc func, string? text, ref uint8 first, ref uint8 count, string? format = null) {
             var element = new Info();
             element.func = (ElementFunc)Func;
             element.format = format;
@@ -1247,103 +1348,5 @@ namespace M2tk {
             element.text = text;
             return element;
         }
-    }
-
-    [CCode (cname = "m2_el_fnarg_t", has_type_id = false)]
-    [Compact]
-    public class ElementFuncArgs {
-        public Element? element;
-        public ElementCallbackMessage msg;
-        public uchar arg;
-        public void* data;
-        public Nav? nav;
-    }
-
-    [CCode (cname = "m2_menu_entry", destroy_function = "",  has_type_id = false)]
-    public struct MenuEntry {
-        string label;
-        Element element;
-    }
-
-    [CCode (cname = "m2_xmenu_entry", destroy_function = "",  has_type_id = false)]
-    public struct ExtendedMenuEntry {
-        string label;
-        Element element;
-        StringListFunc func;
-    }
-
-    [CCode (cname = "m2_el_fnptr", has_target = false, has_type_id = false)]
-    delegate uchar ElementFunc(ElementFuncArgs arg);
-
-    [CCode (cname = "m2_button_fnptr", has_target = false, has_type_id = false)]
-    public delegate void ButtonFunc(ElementFuncArgs arg);
-
-    [CCode (cname = "m2_labelfn_fnptr", has_target = false, has_type_id = false)]
-    public delegate string LabelFunc(Element element);
-
-    [CCode (cname = "m2_u8fn_fnptr", has_target = false, has_type_id = false)]
-    public delegate uchar U8Func(Element element, U8FuncMessage msg, uchar value);
-
-    [CCode (cname = "m2_s8fn_fnptr", has_target = false, has_type_id = false)]
-    public delegate char S8Func(Element element, S8FuncMessage msg, char value);
-
-    [CCode (cname = "m2_u32fn_fnptr", has_target = false, has_type_id = false)]
-    public delegate uint U32Func(Element element, U32FuncMessage msg, uint value);
-
-    [CCode (cname = "m2_u32fn_fnptr", has_target = false, has_type_id = false)]
-    public delegate string ComboFunc(Element element, ComboFuncMessage msg, ref uchar value);
-
-    [CCode (cname = "m2_strlist_cb_fnptr", has_target = false, has_type_id = false)]
-    public delegate string StringListFunc(uchar index, StringListFuncMessage msg);
-
-    [CCode (cname = "uint8_t")]
-    public enum HideState {
-        [CCode (cname = "0")]
-        VISIBLE,
-        [CCode (cname = "1")]
-        HIDDEN_KEEP_SIZE,
-        [CCode (cname = "2")]
-        HIDDEN_NO_SIZE,
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_U8_MSG_")]
-    public enum U8FuncMessage {
-        GET_VALUE,
-        SET_VALUE
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_S8_MSG_")]
-    public enum S8FuncMessage {
-        GET_VALUE,
-        SET_VALUE
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_U32_MSG_")]
-    public enum U32FuncMessage {
-        GET_VALUE,
-        SET_VALUE
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_")]
-    public enum StringListMessage {
-        GET_STR,
-        SELECT,
-        GET_EXTENDED_STR,
-        NEW_DIALOG,
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_COMBOFN_MSG_")]
-    public enum ComboFuncMessage {
-        GET_VALUE,
-        SET_VALUE,
-        GET_STRING,
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_")]
-    public enum StringListFuncMessage {
-        GET_STR,
-        SELECT,
-        SET_EXTENDED_STR,
-        NEW_DIALIG,
     }
 }

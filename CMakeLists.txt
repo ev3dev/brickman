@@ -13,7 +13,14 @@ set (VERSION "0.1")
 set (VERSION_INFO "alpha")
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(DEPS REQUIRED glib-2.0 gobject-2.0 gee-1.0 ncurses)
+pkg_check_modules(DEPS REQUIRED
+    glib-2.0
+    gobject-2.0
+    gio-2.0
+    gee-1.0
+    ncurses
+    upower-glib
+)
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES} u8g m2tk)
 link_directories(${DEPS_LIBRARY_DIRS})
@@ -24,13 +31,19 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C ${EXEC_NAME}
+    lib/m2tk-glib/GM2tk.vala
+    lib/m2tk-glib/GElement.vala
+    lib/m2tk-glib/GAlign.vala
+    lib/m2tk-glib/GButton.vala
+    lib/m2tk-glib/GVList.vala
     src/brickdm.vala
-    src/event.vala
+    src/gui.vala
     src/home.vala
     src/power.vala
 PACKAGES
     glib-2.0
     gobject-2.0
+    gio-2.0
     gee-1.0
     curses
     posix

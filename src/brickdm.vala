@@ -28,7 +28,6 @@
  * - Processing the main event loop
  */
 
-using Gee;
 using Posix;
 using Linux.Console;
 using Linux.VirtualTerminal;
@@ -39,26 +38,16 @@ errordomain ConsoleError {
 
 namespace BrickDisplayManager
 {
-    static MainLoop mainLoop;
     static int vtfd;
     static int vtnum;
-    static bool dirty = true;
-    static bool statusbar_visible = true;
-    static U8g.Graphics u8g;
-    static Deque<RootInfo> root_stack;
+    static GUI gui;
 
     const string DEFAULT_ROOT_ELEMENT_FORMAT = "-1|1W64H56";
 
-    [Compact]
-    public class RootInfo {
-        public unowned M2tk.Element element;
-        public uchar value;
-        public const uchar MAX_VALUE = (uchar)(-1);
-    }
-
     static bool HandleSIGTERM()
     {
-        mainLoop.quit();
+        if (gui != null)
+            gui.quit();
         return true;
     }
 
@@ -71,7 +60,6 @@ namespace BrickDisplayManager
      */
     static bool HandleSIGHUP()
     {
-        GLib.assert(mainLoop.get_context().is_owner());
         Linux.VirtualTerminal.Stat vtstat;
         if (Curses.isendwin()) {
             if (ioctl(vtfd, VT_GETSTATE, out vtstat) == 0) {
@@ -79,7 +67,7 @@ namespace BrickDisplayManager
                     // acquire console
                     ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
                     Curses.refresh();
-                    dirty = true;
+                    gui.dirty = true;
                 }
             }
         } else {
@@ -88,28 +76,6 @@ namespace BrickDisplayManager
               Curses.endwin();
         }
         return true;
-    }
-
-    static bool HandleDrawTimer()
-    {
-        if (!Curses.isendwin()) {
-            M2tk.check_key();
-            dirty |= M2tk.handle_key();
-            if (dirty) {
-               u8g.begin_draw();
-               M2tk.draw();
-               if (statusbar_visible) {
-                  /* M2tk.draw() can change colors on us */
-                  u8g.set_default_background_color();
-                  u8g.set_default_forground_color();
-                  //brickdm_power_draw_battery_status();
-                  u8g.draw_line(0, 15, u8g.get_width(), 15);
-             }
-             u8g.end_draw();
-             dirty = false;
-         }
-      }
-      return true;
     }
 
     static int main (string[] args)
@@ -152,30 +118,14 @@ namespace BrickDisplayManager
         try {
             if (ioctl(vtfd, KDSETMODE, TerminalMode.GRAPHICS) < 0)
                   throw new ConsoleError.MODE("Could not set virtual console to KD_GRAPHICS mode.");
-            debug("set to graphics mode");
             if (ioctl(vtfd, VT_SETMODE, ref mode) < 0)
                   throw new ConsoleError.MODE("Could not set virtual console to VT_PROCESS mode.");
             Unix.signal_add(SIGHUP, HandleSIGHUP);
             Unix.signal_add(SIGTERM, HandleSIGTERM);
             Unix.signal_add(SIGINT, HandleSIGTERM);
 
-            u8g = new U8g.Graphics();
-            u8g.init(U8g.Device.linux_framebuffer);
-            var home = new Home();
-            debug("root_element: %p", home.root_element);
-            M2tk.init(home.root_element, M2tkEventSource, M2tkEventHandler,
-                M2tk.U8gBoxShadowFrameGraphicsHandler);
-            M2tk.set_u8g(u8g, M2tk.IconType.BOX);
-            M2tk.set_font(M2tk.FontIndex.F0, U8g.Font.x11_7x13);
-            M2tk.set_font(M2tk.FontIndex.F1, U8g.Font.m2tk_icon_9);
-            M2tk.set_u8g_additional_text_x_border(3);
-
-            mainLoop = new MainLoop();
-            var drawTimer = new TimeoutSource(50);
-            drawTimer.set_callback(HandleDrawTimer);
-            drawTimer.attach(mainLoop.get_context());
-            mainLoop.run();
-            u8g.stop();
+            gui = new GUI();
+            gui.run();
         } catch (ConsoleError e) {
             critical(e.message);
             success = 1;

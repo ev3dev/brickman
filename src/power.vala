@@ -28,44 +28,38 @@
  */
 
 using M2tk;
+using Up;
 
 namespace BrickDisplayManager {
 
     class Power {
+
+        static Power instance;
+
         const string EV3_BATTERY_PATH =
             "/org/freedesktop/UPower/devices/battery_legoev3_battery";
-        //const int BATTERY_HIST_GRAPH_WIDTH = 100;
 
-        //string battery_voltage;
-        //string battery_voltage2;
-        //string battery_current;
-       // string battery_power;
-        //string technology_name;
-       //double battery_hist_data[100];
+        string battery_technology = "<unk>";
+        string battery_voltage = "<unk>";
+        string battery_voltage2 = "<unk>";
+        string battery_current = "<unk>";
+        string battery_power = "<unk>";
+        double battery_hist_data[100];
 
 
         /* battery info screen */
-        Label _battery_info_title_label;
-        Box _battery_info_title_underline;
-        Space _battery_info_vlist_space;
-        Label _battery_info_type_label;
-        Label _battery_info_type_value;
-        Label _battery_info_voltage_label;
-        Label _battery_info_voltage_value;
-        Label _battery_info_current_label;
-        Label _battery_info_current_value;
-        Label _battery_info_power_label;
-        Label _battery_info_power_value;
-        Space _battery_info_grid_space;
+
         Element _battery_info_grid_list_data[12];
-        GridList _battery_info_grid;
-        Root _battery_info_hist_button;
-        Root _battery_info_stats_button;
         Element _battery_info_battery_button_list_data[2];
-        HList _battery_info_button_hlist;
         Element _battery_info_battery_list_data[6];
         VList _battery_info_vlist;
         Align _battery_info_root_element;
+
+        /* shutdown screen */
+
+        Element _shutdown_list_data[3];
+        VList _shutdown_vlist;
+        Align _shutdown_root_element;
 
         public unowned Element battery_info_root_element {
             get { return _battery_info_root_element; }
@@ -78,201 +72,172 @@ namespace BrickDisplayManager {
         public unowned Element battery_stats_root_element {
             get { return _battery_stats_root_element; }
         }
-        Element _shutdown_root_element;
         public unowned Element shutdown_root_element {
             get { return _shutdown_root_element; }
         }
 
         public Power() {
+            instance = this;
 
-            _battery_info_title_label =  Label.create("Battery Info:");
-            _battery_info_title_underline = Box.create("h1W48");
-            _battery_info_vlist_space = Space.create("h5");
-            _battery_info_type_label = Label.create("Type:");
-            _battery_info_type_value = Label.create();
-            _battery_info_voltage_label = Label.create("Voltage:");
-            _battery_info_voltage_value = Label.create();
-            _battery_info_current_label = Label.create("Current:");
-            _battery_info_current_value = Label.create();
-            _battery_info_power_label = Label.create("Power:");
-            _battery_info_power_value = Label.create();
-            _battery_info_grid_space = Space.create("w2");
-            _battery_info_grid_list_data[0] = (owned) _battery_info_type_label;
-            _battery_info_grid_list_data[1] = (owned) _battery_info_grid_space;
-            _battery_info_grid_list_data[2] = (owned) _battery_info_type_value;
-            _battery_info_grid_list_data[3] = (owned) _battery_info_voltage_label;
-            _battery_info_grid_list_data[4] = (owned) _battery_info_grid_space;
-            _battery_info_grid_list_data[5] = (owned) _battery_info_voltage_value;
-            _battery_info_grid_list_data[6] = (owned) _battery_info_current_value;
-            _battery_info_grid_list_data[7] = (owned) _battery_info_grid_space;
-            _battery_info_grid_list_data[8] = (owned) _battery_info_current_value;
-            _battery_info_grid_list_data[9] = (owned) _battery_info_power_label;
-            _battery_info_grid_list_data[10] = (owned) _battery_info_grid_space;
-            _battery_info_grid_list_data[11] = (owned) _battery_info_power_value;
-            _battery_info_grid = GridList.create(_battery_info_grid_list_data, "c3");
-            _battery_info_hist_button = Root.create(battery_hist_root_element, "History", "f4");
-            _battery_info_stats_button = Root.create(battery_stats_root_element, "Stats", "f4");
-            _battery_info_battery_button_list_data[0] = (owned) _battery_info_hist_button;
-            _battery_info_battery_button_list_data[1] = (owned) _battery_info_stats_button;
-            _battery_info_button_hlist = HList.create(_battery_info_battery_button_list_data);
-            _battery_info_battery_list_data [0] = (owned) _battery_info_title_label;
-            _battery_info_battery_list_data [1] = (owned) _battery_info_title_underline;
-            _battery_info_battery_list_data [2] = (owned) _battery_info_vlist_space;
-            _battery_info_battery_list_data [3] = (owned) _battery_info_grid;
-            _battery_info_battery_list_data [4] = (owned) _battery_info_vlist_space;
-            _battery_info_battery_list_data [5] = (owned) _battery_info_button_hlist;
+            /* battery history screen */
+            _battery_hist_root_element = Label.create("History:");
+
+            /* battery statistics screen */
+            _battery_stats_root_element = Label.create("Statistics:");
+
+            /* battery info screen */
+
+            _battery_info_grid_list_data = {
+                Label.create("Type:"),
+                Space.create("w2"),
+                LabelWithFunc.create((LabelFunc)on_battery_info_type_label),
+                Label.create("Voltage:"),
+                Space.create("w2"),
+                LabelWithFunc.create((LabelFunc)on_battery_info_voltage_label),
+                Label.create("Current:"),
+                Space.create("w2"),
+                LabelWithFunc.create((LabelFunc)on_battery_info_current_label),
+                Label.create("Power:"),
+                Space.create("w2"),
+                LabelWithFunc.create((LabelFunc)on_battery_info_power_label)
+            };
+            _battery_info_battery_button_list_data = {
+                Root.create(_battery_hist_root_element, "History", "f4"),
+                Root.create(_battery_stats_root_element, "Stats", "f4")
+            };
+            _battery_info_battery_list_data = {
+                Label.create("Battery Info:"),
+                Box.create("h1W48"),
+                Space.create("h5"),
+                GridList.create(_battery_info_grid_list_data, "c3"),
+                Space.create("h5"),
+                HList.create(_battery_info_battery_button_list_data)
+            };
             _battery_info_vlist = VList.create(_battery_info_battery_list_data);
             _battery_info_root_element = Align.create(_battery_info_vlist, DEFAULT_ROOT_ELEMENT_FORMAT);
 
-/*
-            _battery_hist_root_element = Align.create(
-                (owned) VList.create({
-                        (owned) Label.create("History:"),
-                        (owned) Space.create()
-                }), DEFAULT_ROOT_ELEMENT_FORMAT);
+            /* shutdown screen */
 
-            _battery_stats_root_element = Align.create(
-                VList.create({
-                        Label.create("Statistics:"),
-                        Space.create()
-                }), DEFAULT_ROOT_ELEMENT_FORMAT);
+            _shutdown_list_data = {
+                Button.create((ButtonFunc)on_shutdown_button, "Shutdown", "f12W32"),
+                Space.create("h5"),
+                Button.create((ButtonFunc)on_restart_button, "Restart", "f12W32")
+            };
+            _shutdown_vlist = VList.create(_shutdown_list_data);
+            _shutdown_root_element = Align.create(_shutdown_vlist, DEFAULT_ROOT_ELEMENT_FORMAT);
 
-
-
-            _shutdown_root_element = Align.create(
-                VList.create({
-                        Button.create((ButtonFunc)on_shutdown_button, "Shutdown", "f12W32"),
-                        Button.create((ButtonFunc)on_restart_button, "Restart", "f12W32")
-                }), DEFAULT_ROOT_ELEMENT_FORMAT);
-*/
+            try {
+                var client = new Client();
+                client.enumerate_devices_sync ();
+                var devices = client.get_devices();
+                devices.foreach((device) => {
+                    device.changed.connect(on_device_changed);
+                    var kind = device.kind;
+                    var object_path = device.get_object_path();
+                    debug("Found %s at %s.", Device.kind_to_string(kind), object_path);
+                    if (EV3_BATTERY_PATH == object_path)
+                        update_status(device);
+                });
+            } catch (Error err) {
+                warning("%s", err.message);
+            }
         }
 
-/*
-        void update_battery_hist_data(UpDevice *device)
+        void update_battery_hist_data(Device device)
         {
-          GPtrArray *array;
-          UpHistoryItem *item;
-          int i;
-
-          g_debug("Getting history.");
-          array = up_device_get_history_sync(device, "rate", 3600,
-                                             BATTERY_HIST_GRAPH_WIDTH, NULL, NULL);
-          if(!array) {
-            g_debug("Failed to get history.");
-            // TODO: show error on screen
-            return;
-          }
-          for (i=0; i<array->len; i++) {
-            item = g_ptr_array_index(array, i);
-            battery_hist_data[i] = up_history_item_get_value (item);
-            g_debug("time: %d, state: %d, value: %.2f", up_history_item_get_time(item),
-              up_history_item_get_state (item), battery_hist_data[i]);
-          }
-          g_ptr_array_unref (array);
-          brickdm_needs_redraw = TRUE;
+            debug("Getting history.");
+            try {
+                var items = device.get_history_sync("rate", 3600, battery_hist_data.length);
+                items.foreach((item) => {
+                    //battery_hist_data[i] = item.get_value();
+                    debug("time: %ud, state: %d, value: %.2f", item.get_time(),
+                        item.get_state (), item.get_value());
+                });
+                gui.dirty = true;
+            } catch (Error err) {
+                warning("%s", err.message);
+                // TODO: show error message
+            }
         }
 
-        void battery_hist_button_callback(m2_el_fnarg_p fnarg)
-        {
-          UpDevice *device = up_device_new();
-          up_device_set_object_path_sync(device, BRICKDM_POWER_EV3_BATTERY_PATH, NULL, NULL);
-          update_battery_hist_data(device);
-          g_object_unref(device);
-          m2_SetRoot(&brickdm_battery_hist_root);
+        static string on_battery_info_type_label(Element element) {
+            return instance.battery_technology;
         }
 
-        void battery_hist_graph_callback(m2_el_fnarg_p fnarg)
-        {
-          int i;
-          g_debug("Drawing graph.");
-          for (i=0; i<BATTERY_HIST_GRAPH_WIDTH; i++)
-            u8g_DrawPixel(&u8g, i, (battery_hist_data[i]*20));
+        static string on_battery_info_voltage_label(Element element) {
+            return instance.battery_voltage;
         }
 
-        void brickdm_power_draw_battery_status(void)
-        {
-          const int batt_width = 20;
-          const int batt_height = 9;
-          const int end_y_ofs = 2;
-          const int end_width = 2;
-          const int x = u8g_GetWidth(&u8g) - batt_width - 5;
-          const int y = 5;
+        static string on_battery_info_current_label(Element element) {
+            return instance.battery_current;
+        }
 
-          u8g_DrawFrame(&u8g, x, y, batt_width, batt_height);
-          u8g_DrawBox(&u8g, x + batt_width, y + end_y_ofs, end_width,
+        static string on_battery_info_power_label(Element element) {
+            return instance.battery_power;
+        }
+
+        void on_battery_hist_button(ElementFuncArgs arg)
+        {
+            try {
+                Device device = new Device();
+                device.set_object_path_sync(EV3_BATTERY_PATH);
+                update_battery_hist_data(device);
+                //gui.set_root(_battery_hist_root);
+            } catch (Error err) {
+                warning("%s", err.message);
+                //TODO: show error message
+            }
+        }
+
+        void battery_hist_graph_callback(ElementFuncArgs arg)
+        {
+            debug("Drawing graph.");
+            for (ushort i = 0; i < battery_hist_data.length; i++)
+                gui.graphics.draw_pixel(i, (ushort)(battery_hist_data[i]*20));
+        }
+
+        void draw_battery_status_icon()
+        {
+          const ushort batt_width = 20;
+          const ushort batt_height = 9;
+          const ushort end_y_ofs = 2;
+          const ushort end_width = 2;
+          ushort x = gui.graphics.get_width() - batt_width - 5;
+          const ushort y = 5;
+
+          gui.graphics.draw_frame(x, y, batt_width, batt_height);
+          gui.graphics.draw_box(x + batt_width, y + end_y_ofs, end_width,
              batt_height - 2 * end_y_ofs);
 
-           u8g_SetFont(&u8g, u8g_font_04b_03b);
-           u8g_DrawStr(&u8g, x + 2, y + batt_height - 2, battery_voltage2);
+           gui.graphics.set_font(U8g.Font.dsg4_04b_03);
+           gui.graphics.draw_str(x + 2, y + batt_height - 2, battery_voltage2);
         }
 
-        void brickdm_power_update_status(UpDevice *device)
+        void update_status(Device device)
         {
-          gdouble voltage, rate;
-          UpDeviceTechnology technology;
-
-          g_object_get(device, "voltage", &voltage,
-                               "energy-rate", &rate,
-                               "technology", &technology, NULL);
-          g_snprintf(battery_voltage, BATTERY_STRING_SIZE, "%0.2f V", voltage);
-          g_snprintf(battery_voltage2, BATTERY_STRING_SIZE, "%0.2f", voltage);
-          g_snprintf(battery_current, BATTERY_STRING_SIZE, "%0.0f mA", rate / voltage * 1000.0);
-          g_snprintf(battery_power, BATTERY_STRING_SIZE, "%0.2f W", rate);
-          g_strlcpy(technology_name, up_device_technology_to_string(technology),
-            TECHNOLOGY_NAME_SIZE);
-          brickdm_needs_redraw = TRUE;
+            battery_technology = Device.technology_to_string(device.technology);
+            battery_voltage = "%0.2f V".printf(device.voltage);
+            battery_voltage2 = "%0.2f".printf(device.voltage);
+            battery_current = "%0.0f mA".printf(device.energy_rate / device.voltage * 1000.0);
+            battery_power = "%0.2f W".printf(device.energy_rate);
+            if (gui != null)
+                gui.dirty = true;
         }
 
-        static void
-        brickdm_power_device_changed_cb(UpClient *client, UpDevice *device,
-                                        gpointer user_data)
-        {
-          const gchar *object_path;
-          m2_rom_void_p root = m2_GetRoot();
-
-          ASSERT_MAIN_LOOP;
-          object_path = up_device_get_object_path (device);
-          //g_debug("changed:   %s", object_path);
-          if (object_path == NULL)
+        void on_device_changed(Device device) {
+          var object_path = device.get_object_path();
+          debug("changed: %s", object_path);
+          unowned Element root = get_root();
+          if (object_path == null)
             return;
-          if (g_strcmp0(BRICKDM_POWER_EV3_BATTERY_PATH, object_path) == 0) {
-            if (brickdm_show_statusbar || root == &brickdm_battery_root)
-              brickdm_power_update_status(device);
-            if (root == &brickdm_battery_hist_root)
+          if (EV3_BATTERY_PATH == object_path) {
+            if (gui.statusbar_visible || root == battery_info_root_element)
+              update_status(device);
+            if (root == battery_hist_root_element)
               update_battery_hist_data(device);
           }
         }
 
-        void brickdm_power_init(void)
-        {
-          UpClient *client;
-          GPtrArray *devices;
-          int ret, i;
-
-          client = up_client_new();
-          if (!client) {
-            g_warning("Could not get upower client.");
-            return;
-          }
-          ret = up_client_enumerate_devices_sync (client, NULL, NULL);
-          if (!ret)
-            return;
-          devices = up_client_get_devices (client);
-          for (i=0; i < devices->len; i++) {
-            UpDevice *device = g_ptr_array_index (devices, i);
-            UpDeviceKind kind;
-            const char* object_path;
-
-            g_signal_connect(client, "device-changed",
-              G_CALLBACK(brickdm_power_device_changed_cb), NULL);
-            g_object_get(device, "kind", &kind, NULL);
-            object_path = up_device_get_object_path(device);
-            g_debug("Found %s at %s.\n", up_device_kind_to_string(kind), object_path);
-            if (g_strcmp0(BRICKDM_POWER_EV3_BATTERY_PATH, object_path) == 0)
-              brickdm_power_update_status(device);
-          }
-        }
-*/
         static void run_command(string command)
         {
             try {

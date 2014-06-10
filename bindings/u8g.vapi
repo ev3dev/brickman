@@ -14,21 +14,21 @@ namespace U8g {
         public Graphics(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
         [CCode (cname = "u8g_Init")]
-        public uchar init(Device dev);
+        public uint8 init(Device dev);
         [CCode (cname = "u8g_DrawPixel")]
         public void draw_pixel(uint16 x, uint16 y);
         [CCode (cname = "u8g_Stop")]
-        public uchar stop();
+        public uint8 stop();
         [CCode (cname = "u8g_GetDefaultForegroundColor")]
-        public uchar get_default_forground_color();
+        public uint8 get_default_forground_color();
         [CCode (cname = "u8g_SetDefaultForegroundColor")]
         public void set_default_forground_color();
         [CCode (cname = "u8g_GetDefaultBackgroundColor")]
-        public uchar get_default_background_color();
+        public uint8 get_default_background_color();
         [CCode (cname = "u8g_SetDefaultBackgroundColor")]
         public void set_default_background_color();
         [CCode (cname = "u8g_GetDefaultMidColor")]
-        public uchar get_default_mid_color();
+        public uint8 get_default_mid_color();
         [CCode (cname = "u8g_SetDefaultMidColor")]
         public void set_default_mid_color();
         [CCode (cname = "u8g_GetWidth")]
@@ -36,13 +36,21 @@ namespace U8g {
         [CCode (cname = "u8g_GetHeight")]
         public ushort get_height();
         [CCode (cname = "u8g_GetMode")]
-        public uchar get_mode();
+        public uint8 get_mode();
         [CCode (cname = "u8g_BeginDraw")]
         public void begin_draw();
-        [CCode (cname = "u8g_EndDraw")]
-        public void end_draw();
+        [CCode (cname = "u8g_DrawBox")]
+        public void draw_box(ushort x, ushort y, ushort width, ushort height);
+        [CCode (cname = "u8g_DrawFrame")]
+        public void draw_frame(ushort x, ushort y, ushort width, ushort height);
         [CCode (cname = "u8g_DrawLine")]
         public void draw_line(ushort x1, ushort y1, ushort x2, ushort y2);
+        [CCode (cname = "u8g_DrawStr")]
+        public void draw_str(ushort x, ushort y, string str);
+        [CCode (cname = "u8g_EndDraw")]
+        public void end_draw();
+        [CCode (cname = "u8g_SetFont")]
+        public void set_font(Font font);
     }
 
     [CCode (cname = "u8g_dev_t", has_type_id = false)]
@@ -92,5 +100,12 @@ namespace U8g {
         public static Font x11_9x18;
         [CCode (cname = "u8g_font_10x20")]
         public static Font x11_10x20;
+        /* 04 */
+        [CCode (cname = "u8g_font_04b_03")]
+        public static Font dsg4_04b_03;
+        [CCode (cname = "u8g_font_04b_03b")]
+        public static Font dsg4_04b_03b;
+        [CCode (cname = "u8g_font_04b_24")]
+        public static Font dsg4_04b_24;
     }
 }
