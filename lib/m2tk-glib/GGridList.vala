@@ -18,36 +18,20 @@
  */
 
 /*
- * GAlign.vala:
+ * GGridList.vala:
  *
- * wrapper for m2tk ALIGN
+ * wrapper for m2tk GRIDLIST
  */
 
 namespace M2tk {
-    public class GAlign : M2tk.GElement {
-        Align align { get { return (Align)element; } }
+    public class GGridList : M2tk.GElement {
+        PtrArray child_list = new PtrArray.sized(uint8.MAX);
+        GridList grid_list { get { return (GridList)element; } }
 
-        public GElement child {
-            get {
-                return element_map[align.child];
-            }
+        public uint8 column_count {
+            get { return _column_count; }
             set {
-                align.child = value.element;
-            }
-        }
-
-        public VerticalAlignment vertical_alignment {
-            get { return _vertical_alignment; }
-            set {
-                _vertical_alignment = value;
-                update_format();
-            }
-        }
-
-        public HorizontalAlignment horizontal_alignment {
-            get { return _horizontal_alignment; }
-            set {
-                _horizontal_alignment = value;
+                _column_count = value;
                 update_format();
             }
         }
@@ -68,25 +52,17 @@ namespace M2tk {
             }
         }
 
-        public uint8? width {
-            get { return _width; }
-            set {
-                _width = value;
-                update_format();
-            }
+        public GGridList(uint8 column_count) {
+            base(GridList.create({}));
+            this.column_count = column_count;
+            grid_list.list = (Element*)child_list.pdata;
+            grid_list.length = 0;
         }
 
-        public uint8? height {
-            get { return _height; }
-            set {
-                _height = value;
-                update_format();
-            }
-        }
-
-        public GAlign(GElement child = GElement.null_element) {
-            base(Align.create(child.element));
+        public void add(GElement element) {
+            child_list.add(element.element);
+            grid_list.length = (uint8)child_list.len;
+            // TODO: set dirty
         }
     }
 }
-

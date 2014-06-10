@@ -89,8 +89,7 @@ namespace M2tk {
         public signal void pressed();
 
         public GButton(string text) {
-            element = Button.create((ButtonFunc)on_button, text);
-            base(element);
+            base(Button.create((ButtonFunc)on_button, text));
             this._text = text;
         }
 

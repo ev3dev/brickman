@@ -228,7 +228,7 @@ macro(vala_precompile output target_name)
         "-d" ${DIRECTORY} 
         ${vala_pkg_opts} 
         ${ARGS_OPTIONS} 
-        "-g"
+        "--debug"
         "--save-temps"
         ${in_files} 
         ${custom_vapi_arguments}

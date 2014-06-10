@@ -34,12 +34,20 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/m2tk-glib/GM2tk.vala
     lib/m2tk-glib/GElement.vala
     lib/m2tk-glib/GAlign.vala
+    lib/m2tk-glib/GBox.vala
     lib/m2tk-glib/GButton.vala
+    lib/m2tk-glib/GGridList.vala
+    lib/m2tk-glib/GHList.vala
+    lib/m2tk-glib/GLabel.vala
+    lib/m2tk-glib/GNullElement.vala
+    lib/m2tk-glib/GRoot.vala
+    lib/m2tk-glib/GSpace.vala
     lib/m2tk-glib/GVList.vala
     src/brickdm.vala
     src/gui.vala
     src/home.vala
     src/power.vala
+    src/Screen.vala
 PACKAGES
     glib-2.0
     gobject-2.0

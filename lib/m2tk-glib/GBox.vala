@@ -18,39 +18,15 @@
  */
 
 /*
- * GAlign.vala:
+ * GBox.vala:
  *
- * wrapper for m2tk ALIGN
+ * wrapper for m2tk BOX
  */
 
+
 namespace M2tk {
-    public class GAlign : M2tk.GElement {
-        Align align { get { return (Align)element; } }
-
-        public GElement child {
-            get {
-                return element_map[align.child];
-            }
-            set {
-                align.child = value.element;
-            }
-        }
-
-        public VerticalAlignment vertical_alignment {
-            get { return _vertical_alignment; }
-            set {
-                _vertical_alignment = value;
-                update_format();
-            }
-        }
-
-        public HorizontalAlignment horizontal_alignment {
-            get { return _horizontal_alignment; }
-            set {
-                _horizontal_alignment = value;
-                update_format();
-            }
-        }
+    public class GBox : M2tk.GElement {
+        Box box { get { return (Box)element; } }
 
         public uint8? x {
             get { return _x; }
@@ -84,9 +60,10 @@ namespace M2tk {
             }
         }
 
-        public GAlign(GElement child = GElement.null_element) {
-            base(Align.create(child.element));
+        public GBox(uint8 width, uint8 height) {
+            base(Box.create());
+            this.width = width;
+            this.height = height;
         }
     }
 }
-

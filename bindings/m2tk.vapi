@@ -222,6 +222,11 @@ namespace M2tk {
         [CCode (cname = "2")] HIDDEN_NO_SIZE,
     }
 
+    /* static instances */
+
+    [CCode (cname = "&m2_null_element")]
+    public static unowned Element null_element;
+
     /* main functions */
 
     [CCode (cname = "m2_Init")]
@@ -385,6 +390,14 @@ namespace M2tk {
     public class Element {
         [CCode (cname = "fmt")]
         internal unowned string? format;
+
+        public uint8 width {
+            [CCode (cname = "m2_fn_get_width")]get;
+        }
+
+        public uint8 height {
+            [CCode (cname = "m2_fn_get_height")]get;
+        }
     }
 
     [CCode (cname = "m2_el_fnarg_t", has_type_id = false)]
@@ -577,7 +590,7 @@ namespace M2tk {
         [CCode (cname = "el_str.str")]
         internal unowned string text;
         [CCode (cname = "element")]
-        unowned Element? element;
+        internal unowned Element? element;
 
         [CCode (cname = "g_malloc")]
         Root(size_t size = sizeof(MallocStruct))
@@ -806,9 +819,9 @@ namespace M2tk {
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "len")]
-        uint8 length;
+        internal uint8 length;
         [CCode (cname = "el_list")]
-        Element *list;
+        internal Element *list;
 
         [CCode (cname = "g_malloc")]
         HList(size_t size = sizeof(MallocStruct))
@@ -839,9 +852,9 @@ namespace M2tk {
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "len")]
-        uint8 length;
+        internal uint8 length;
         [CCode (cname = "el_list")]
-        Element *list;
+        internal Element *list;
 
         [CCode (cname = "g_malloc")]
         GridList(size_t size = sizeof(MallocStruct))

@@ -34,24 +34,39 @@ namespace BrickDisplayManager {
 
         Power power;
 
-        Element _list_data[2];
-        VList _menu_list;
-        Align _root_element;
+        GButton _battery_menu_item;
+        GButton _shutdown_menu_item;
+        GVList _menu_list;
+        GAlign _root_element;
         public unowned Element root_element {
-            get { return _root_element; }
+            get { return _root_element.element; }
         }
 
         public Home(Power power) {
             debug("initializing Home");
             this.power = power;
 
-            _list_data = {
-                //Root.create(network.root_element, "Network"),
-                Root.create(power.battery_info_root_element, "Battery"),
-                Root.create(power.shutdown_root_element, "Shutdown")
-            };
-            _menu_list = VList.create(_list_data);
-            _root_element = Align.create(_menu_list, DEFAULT_ROOT_ELEMENT_FORMAT);
+            //Root.create(network.root_element, "Network"),
+            _battery_menu_item = new GButton("Battery");
+            _battery_menu_item.pressed.connect(on_battery_menu_item_pressed);
+            _shutdown_menu_item = new GButton("Shutdown");
+            _shutdown_menu_item.pressed.connect(on_shutdown_menu_item_pressed);
+            _menu_list = new GVList();
+            _menu_list.add(_battery_menu_item);
+            _menu_list.add(_shutdown_menu_item);
+            _root_element = new GAlign(_menu_list);
+            _root_element.vertical_alignment = VerticalAlignment.MIDDLE;
+            _root_element.horizontal_alignment = HorizontalAlignment.CENTER;
+            _root_element.height = 115;
+            _root_element.width = 178;
+        }
+
+        void on_battery_menu_item_pressed() {
+            set_root(power.battery_info_root_element);
+        }
+
+        void on_shutdown_menu_item_pressed() {
+            set_root(power.shutdown_root_element);
         }
     }
 }

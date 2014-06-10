@@ -18,42 +18,36 @@
  */
 
 /*
- * GVList.vala:
+ * GSpace.vala:
  *
- * wrapper for m2tk VLIST
+ * wrapper for m2tk SPACE
  */
 
+
 namespace M2tk {
-    public class GVList : M2tk.GElement {
-        PtrArray child_list = new PtrArray.sized(uint8.MAX);
-        VList vlist { get { return (VList)element; } }
+    public class GSpace : M2tk.GElement {
+        Space space { get { return (Space)element; } }
 
-        public uint8? x {
-            get { return _x; }
+        public uint8? width {
+            get { return _width; }
             set {
-                _x = value;
+                _width = value;
                 update_format();
             }
         }
 
-        public uint8? y {
-            get { return _y; }
+        public uint8? height {
+            get { return _height; }
             set {
-                _y = value;
+                _height = value;
                 update_format();
             }
         }
 
-        public GVList() {
-            base(VList.create({}));
-            vlist.list = (Element*)child_list.pdata;
-            vlist.length = 0;
-        }
-
-        public void add(GElement element) {
-            child_list.add(element.element);
-            vlist.length = (uint8)child_list.len;
-            // TODO: set dirty
+        public GSpace(uint8 width, uint8 height) {
+            base(Space.create());
+            this.width = width;
+            this.height = height;
         }
     }
 }

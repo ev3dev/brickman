@@ -18,36 +18,38 @@
  */
 
 /*
- * GAlign.vala:
+ * GLabel.vala:
  *
- * wrapper for m2tk ALIGN
+ * wrapper for m2tk LABEL
  */
 
-namespace M2tk {
-    public class GAlign : M2tk.GElement {
-        Align align { get { return (Align)element; } }
 
-        public GElement child {
-            get {
-                return element_map[align.child];
-            }
+namespace M2tk {
+    public class GLabel : M2tk.GElement {
+        Label label { get { return (Label)element; } }
+
+        string _text;
+        public string text {
+            get { return _text; }
             set {
-                align.child = value.element;
+                _text = value;
+                label.text = _text;
+                // TODO: set dirty
             }
         }
 
-        public VerticalAlignment vertical_alignment {
-            get { return _vertical_alignment; }
+        public bool? vertical_padding {
+            get { return _vertical_padding; }
             set {
-                _vertical_alignment = value;
+                _vertical_padding = value;
                 update_format();
             }
         }
 
-        public HorizontalAlignment horizontal_alignment {
-            get { return _horizontal_alignment; }
+        public FontSpec font {
+            get { return _font; }
             set {
-                _horizontal_alignment = value;
+                _font = value;
                 update_format();
             }
         }
@@ -84,9 +86,9 @@ namespace M2tk {
             }
         }
 
-        public GAlign(GElement child = GElement.null_element) {
-            base(Align.create(child.element));
+        public GLabel(string text) {
+            base(Label.create(text));
+            this._text = text;
         }
     }
 }
-

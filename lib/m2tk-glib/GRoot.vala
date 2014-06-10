@@ -18,36 +18,69 @@
  */
 
 /*
- * GAlign.vala:
+ * GRoot.vala:
  *
- * wrapper for m2tk ALIGN
+ * wrapper for m2tk ROOT
  */
 
-namespace M2tk {
-    public class GAlign : M2tk.GElement {
-        Align align { get { return (Align)element; } }
 
-        public GElement child {
+namespace M2tk {
+    public class GRoot : M2tk.GElement {
+        Root root { get { return (Root)element; } }
+
+        public GElement? new_root {
             get {
-                return element_map[align.child];
-            }
+                    if (root.element == null)
+                        return null;
+                    return element_map[root.element];
+                }
             set {
-                align.child = value.element;
+                if (value == null)
+                    root.element = null;
+                else
+                    root.element = ((GElement)value).element;
+                // TODO: set dirty
             }
         }
 
-        public VerticalAlignment vertical_alignment {
-            get { return _vertical_alignment; }
+        string _text;
+        public string text {
+            get { return _text; }
             set {
-                _vertical_alignment = value;
+                _text = value;
+                root.text = _text;
+                // TODO: set dirty
+            }
+        }
+
+        public FontSpec font {
+            get { return _font; }
+            set {
+                _font = value;
                 update_format();
             }
         }
 
-        public HorizontalAlignment horizontal_alignment {
-            get { return _horizontal_alignment; }
+        public uint8? initial_focus_field {
+            get { return _inital_focus_field; }
             set {
-                _horizontal_alignment = value;
+                _inital_focus_field = value;
+                update_format();
+            }
+        }
+
+        public uint8? change_value {
+            get { return _value; }
+            set {
+                _value = value;
+                update_format();
+            }
+        }
+
+        public bool? read_only {
+            get { return _read_only; }
+            set {
+                _read_only = value;
                 update_format();
             }
         }
@@ -84,9 +117,9 @@ namespace M2tk {
             }
         }
 
-        public GAlign(GElement child = GElement.null_element) {
-            base(Align.create(child.element));
+        public GRoot(GElement? new_root, string text) {
+            base(Root.create(new_root == null ? null : new_root.element, text));
+            root.text = text;
         }
     }
 }
-

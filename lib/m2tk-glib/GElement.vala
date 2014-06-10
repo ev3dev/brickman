@@ -42,6 +42,15 @@ namespace M2tk {
     public abstract class GElement : Object {
         protected static HashMap<unowned Element, weak GElement> element_map;
 
+        static GNullElement _null_element;
+        public static GNullElement null_element {
+            get {
+                if (_null_element == null)
+                    _null_element = new GNullElement();
+                return _null_element;
+            }
+        }
+
         static construct {
             element_map = new HashMap<unowned Element, weak GElement>();
         }
@@ -50,7 +59,7 @@ namespace M2tk {
         protected bool? _plus_visible;
         protected bool? _auto_down_select;
         protected bool? _vertical_padding; // border
-        protected uint8? _column_count;
+        protected uint8 _column_count;
         protected uint8? _extra_column_size;
         protected FontSpec _extra_column_font;
         protected FontSpec _font;
@@ -66,11 +75,31 @@ namespace M2tk {
         protected VerticalAlignment _vertical_alignment;
         protected uint8? _decimal_position;
 
-        protected Element element;
         string format;
 
-        protected GElement(Element element) {
-            element_map[element] = this;
+        public uint8 actual_width { get { return element.width; } }
+        public uint8 actual_height { get { return element.height; } }
+
+        Element _element;
+        public unowned Element element {
+            get {
+                if (_element == null)
+                    return M2tk.null_element;
+                return _element;
+                }
+            }
+
+        protected GElement(owned Element element) {
+            _element = (owned)element;
+            element_map[_element] = this;
+        }
+
+        protected GElement.null() {
+            element_map[M2tk.null_element] = this;
+        }
+
+        ~GElement() {
+            element_map.unset(_element);
         }
 
         protected void update_format() {
@@ -81,7 +110,7 @@ namespace M2tk {
                 builder.append("a%d".printf((bool)_auto_down_select ? 1 : 0));
             if (_vertical_padding != null)
                 builder.append("b%d".printf((bool)_vertical_padding ? 1 : 0));
-            if (_column_count != null)
+            if (_column_count != 0)
                 builder.append("c%d".printf((int)_column_count));
             if (_extra_column_size != null)
                 builder.append("e%d".printf((int)_extra_column_size));

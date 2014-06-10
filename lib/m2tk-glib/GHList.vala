@@ -18,15 +18,15 @@
  */
 
 /*
- * GVList.vala:
+ * GHList.vala:
  *
- * wrapper for m2tk VLIST
+ * wrapper for m2tk HLIST
  */
 
 namespace M2tk {
-    public class GVList : M2tk.GElement {
+    public class GHList : M2tk.GElement {
         PtrArray child_list = new PtrArray.sized(uint8.MAX);
-        VList vlist { get { return (VList)element; } }
+        HList hlist { get { return (HList)element; } }
 
         public uint8? x {
             get { return _x; }
@@ -44,15 +44,15 @@ namespace M2tk {
             }
         }
 
-        public GVList() {
-            base(VList.create({}));
-            vlist.list = (Element*)child_list.pdata;
-            vlist.length = 0;
+        public GHList() {
+            base(HList.create({}));
+            hlist.list = (Element*)child_list.pdata;
+            hlist.length = 0;
         }
 
         public void add(GElement element) {
             child_list.add(element.element);
-            vlist.length = (uint8)child_list.len;
+            hlist.length = (uint8)child_list.len;
             // TODO: set dirty
         }
     }

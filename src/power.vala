@@ -33,98 +33,187 @@ using Up;
 namespace BrickDisplayManager {
 
     class Power {
-
-        static Power instance;
-
         const string EV3_BATTERY_PATH =
             "/org/freedesktop/UPower/devices/battery_legoev3_battery";
+        const string UNKNOWN_VALUE = "<unk>";
 
-        string battery_technology = "<unk>";
-        string battery_voltage = "<unk>";
-        string battery_voltage2 = "<unk>";
-        string battery_current = "<unk>";
-        string battery_power = "<unk>";
+        BatteryInfoScreen _battery_info_screen;
+        ShutdownScreen _shutdown_screen;
+        string battery_voltage2 = UNKNOWN_VALUE;
         double battery_hist_data[100];
 
+        class BatteryInfoScreen : Screen {
+            BatteryHistScreen _battery_hist_screen;
+            BatteryStatsScreen _battery_stats_screen;
 
-        /* battery info screen */
+            GLabel _title_label;
+            GBox _title_underline;
+            GSpace _space;
+            GLabel _tech_label;
+            GLabel _tech_value_label;
+            GLabel _voltage_label;
+            GLabel _voltage_value_label;
+            GLabel _current_label;
+            GLabel _current_value_label;
+            GLabel _power_label;
+            GLabel _power_value_label;
+            GGridList _info_grid_list;
+            GRoot _hist_button;
+            GRoot _stats_button;
+            GHList _button_list;
+            GVList _content_list;
 
-        Element _battery_info_grid_list_data[12];
-        Element _battery_info_battery_button_list_data[2];
-        Element _battery_info_battery_list_data[6];
-        VList _battery_info_vlist;
-        Align _battery_info_root_element;
+            public string technology {
+                get { return _tech_value_label.text; }
+                set { _tech_value_label.text = value; }
+            }
 
-        /* shutdown screen */
+            double _voltage;
+            public double voltage {
+                get { return _voltage; }
+                set {
+                    _voltage = value;
+                    _voltage_value_label.text = "%.2fV".printf(value);
+                    update_current();
+                }
+            }
 
-        Element _shutdown_list_data[3];
-        VList _shutdown_vlist;
-        Align _shutdown_root_element;
+            double _power;
+            public double power {
+                get { return _power; }
+                set {
+                    _power = value;
+                    _power_value_label.text = "%.2fW".printf(value);
+                    update_current();
+                }
+            }
+
+            void update_current() {
+                _current_value_label.text = "%.0fmA".printf(power / voltage * 1000);
+            }
+
+            public BatteryInfoScreen () {
+                _battery_hist_screen = new BatteryHistScreen();
+                _battery_stats_screen = new BatteryStatsScreen();
+
+                _title_label = new GLabel("Battery Info");
+                _title_underline = new GBox(100, 1);
+                _space = new GSpace(2, 5);
+                _tech_label = new GLabel("Type:");
+                _tech_value_label = new GLabel(UNKNOWN_VALUE);
+                _voltage_label = new GLabel("Voltage:");
+                _voltage_value_label = new GLabel(UNKNOWN_VALUE);
+                _current_label = new GLabel("Current:");
+                _current_value_label = new GLabel(UNKNOWN_VALUE);
+                _power_label = new GLabel("Power:");
+                _power_value_label = new GLabel(UNKNOWN_VALUE);
+                _info_grid_list = new GGridList(3);
+                _info_grid_list.add(_tech_label);
+                _info_grid_list.add(_space);
+                _info_grid_list.add(_tech_value_label);
+                _info_grid_list.add(_voltage_label);
+                _info_grid_list.add(_space);
+                _info_grid_list.add(_voltage_value_label);
+                _info_grid_list.add(_current_label);
+                _info_grid_list.add(_space);
+                _info_grid_list.add(_current_value_label);
+                _info_grid_list.add(_power_label);
+                _info_grid_list.add(_space);
+                _info_grid_list.add(_power_value_label);
+                _hist_button = new GRoot(_battery_hist_screen, "History");
+                _hist_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT;
+                _stats_button = new GRoot(_battery_stats_screen, "Stats");
+                _stats_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT;
+                _stats_button.change_value = 1;
+                _button_list = new GHList();
+                _button_list.add(_hist_button);
+                _button_list.add(_stats_button);
+                _content_list = new GVList();
+                _content_list.add(_title_label);
+                _content_list.add(_title_underline);
+                _content_list.add(_space);
+                _content_list.add(_info_grid_list);
+                _content_list.add(_space);
+                _content_list.add(_button_list);
+
+                child = _content_list;
+            }
+        }
+
+        class BatteryHistScreen : Screen {
+            GLabel _title_label;
+
+            public BatteryHistScreen() {
+                _title_label = new GLabel("History");
+
+                child = _title_label;
+            }
+        }
+
+        class BatteryStatsScreen : Screen {
+            GLabel _title_label;
+
+            public BatteryStatsScreen() {
+                _title_label = new GLabel("Statistics");
+
+                child = _title_label;
+            }
+        }
+
+        class ShutdownScreen : Screen {
+            GButton _shutdown_button;
+            GButton _restart_button;
+            GSpace _space;
+            GVList _content_list;
+
+            public ShutdownScreen() {
+                _shutdown_button = new GButton("Shutdown");
+                _shutdown_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
+                _shutdown_button.width = 80;
+                _shutdown_button.pressed.connect(on_shutdown_button_pressed);
+                _restart_button = new GButton("Restart");
+                _restart_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
+                _restart_button.width = 80;
+                _restart_button.pressed.connect(on_restart_button_pressed);
+                _space = new GSpace(0, 5);
+                _content_list = new GVList();
+                _content_list.add(_shutdown_button);
+                _content_list.add(_space);
+                _content_list.add(_restart_button);
+
+                child = _content_list;
+            }
+
+            void run_command(string command) {
+                try {
+                    Process.spawn_command_line_sync(command);
+                    // TODO: shutdown application - or at least release VT
+                } catch (SpawnError err) {
+                    warning("%s", err.message);
+                    // TODO: handle error
+                }
+            }
+
+            void on_shutdown_button_pressed() {
+              run_command("poweroff");
+            }
+
+            void on_restart_button_pressed() {
+              run_command("reboot");
+            }
+        }
 
         public unowned Element battery_info_root_element {
-            get { return _battery_info_root_element; }
+            get { return _battery_info_screen.element; }
         }
-        Element _battery_hist_root_element;
-        public unowned Element battery_hist_root_element {
-            get { return _battery_hist_root_element; }
-        }
-        Element _battery_stats_root_element;
-        public unowned Element battery_stats_root_element {
-            get { return _battery_stats_root_element; }
-        }
+
         public unowned Element shutdown_root_element {
-            get { return _shutdown_root_element; }
+            get { return _shutdown_screen.element; }
         }
 
         public Power() {
-            instance = this;
-
-            /* battery history screen */
-            _battery_hist_root_element = Label.create("History:");
-
-            /* battery statistics screen */
-            _battery_stats_root_element = Label.create("Statistics:");
-
-            /* battery info screen */
-
-            _battery_info_grid_list_data = {
-                Label.create("Type:"),
-                Space.create("w2"),
-                LabelWithFunc.create((LabelFunc)on_battery_info_type_label),
-                Label.create("Voltage:"),
-                Space.create("w2"),
-                LabelWithFunc.create((LabelFunc)on_battery_info_voltage_label),
-                Label.create("Current:"),
-                Space.create("w2"),
-                LabelWithFunc.create((LabelFunc)on_battery_info_current_label),
-                Label.create("Power:"),
-                Space.create("w2"),
-                LabelWithFunc.create((LabelFunc)on_battery_info_power_label)
-            };
-            _battery_info_battery_button_list_data = {
-                Root.create(_battery_hist_root_element, "History", "f4"),
-                Root.create(_battery_stats_root_element, "Stats", "f4")
-            };
-            _battery_info_battery_list_data = {
-                Label.create("Battery Info:"),
-                Box.create("h1W48"),
-                Space.create("h5"),
-                GridList.create(_battery_info_grid_list_data, "c3"),
-                Space.create("h5"),
-                HList.create(_battery_info_battery_button_list_data)
-            };
-            _battery_info_vlist = VList.create(_battery_info_battery_list_data);
-            _battery_info_root_element = Align.create(_battery_info_vlist, DEFAULT_ROOT_ELEMENT_FORMAT);
-
-            /* shutdown screen */
-
-            _shutdown_list_data = {
-                Button.create((ButtonFunc)on_shutdown_button, "Shutdown", "f12W32"),
-                Space.create("h5"),
-                Button.create((ButtonFunc)on_restart_button, "Restart", "f12W32")
-            };
-            _shutdown_vlist = VList.create(_shutdown_list_data);
-            _shutdown_root_element = Align.create(_shutdown_vlist, DEFAULT_ROOT_ELEMENT_FORMAT);
+            _battery_info_screen = new BatteryInfoScreen();
+            _shutdown_screen = new ShutdownScreen();
 
             try {
                 var client = new Client();
@@ -158,22 +247,6 @@ namespace BrickDisplayManager {
                 warning("%s", err.message);
                 // TODO: show error message
             }
-        }
-
-        static string on_battery_info_type_label(Element element) {
-            return instance.battery_technology;
-        }
-
-        static string on_battery_info_voltage_label(Element element) {
-            return instance.battery_voltage;
-        }
-
-        static string on_battery_info_current_label(Element element) {
-            return instance.battery_current;
-        }
-
-        static string on_battery_info_power_label(Element element) {
-            return instance.battery_power;
         }
 
         void on_battery_hist_button(ElementFuncArgs arg)
@@ -215,11 +288,11 @@ namespace BrickDisplayManager {
 
         void update_status(Device device)
         {
-            battery_technology = Device.technology_to_string(device.technology);
-            battery_voltage = "%0.2f V".printf(device.voltage);
+            _battery_info_screen.technology = Device.technology_to_string(device.technology);
+            _battery_info_screen.voltage = device.voltage;
+            _battery_info_screen.power = device.energy_rate;
+
             battery_voltage2 = "%0.2f".printf(device.voltage);
-            battery_current = "%0.0f mA".printf(device.energy_rate / device.voltage * 1000.0);
-            battery_power = "%0.2f W".printf(device.energy_rate);
             if (gui != null)
                 gui.dirty = true;
         }
@@ -233,28 +306,9 @@ namespace BrickDisplayManager {
           if (EV3_BATTERY_PATH == object_path) {
             if (gui.statusbar_visible || root == battery_info_root_element)
               update_status(device);
-            if (root == battery_hist_root_element)
-              update_battery_hist_data(device);
+            //if (root == battery_hist_root_element)
+            //  update_battery_hist_data(device);
           }
-        }
-
-        static void run_command(string command)
-        {
-            try {
-                Process.spawn_command_line_sync(command);
-            } catch (SpawnError err) {
-                // TODO: handle error
-            }
-        }
-
-        static void on_shutdown_button(ElementFuncArgs arg)
-        {
-          run_command("poweroff");
-        }
-
-        static void on_restart_button(ElementFuncArgs arg)
-        {
-          run_command("reboot");
         }
     }
 }
