@@ -41,12 +41,17 @@ namespace BrickDisplayManager {
         HomeScreen home_screen;
 
         public bool is_dirty { get; set; default = true; }
-        public bool statusbar_visible { get; set; default = true; }
         public GM2tk m2tk { get; private set; }
+        public StatusBar status_bar { get; private set; }
 
         public GUI() {
             debug("initializing GUI");
             home_screen = new HomeScreen(power);
+            status_bar = new StatusBar();
+            status_bar.add_left(power.battery_status_bar_item);
+            status_bar.add_left(power.battery_status_bar_item);
+            status_bar.add_right(power.battery_status_bar_item);
+            status_bar.add_right(power.battery_status_bar_item);
 
             m2tk = new GM2tk(home_screen, event_source, event_handler,
                 box_shadow_frame_graphics_handler, box_icon_handler);
@@ -88,13 +93,8 @@ namespace BrickDisplayManager {
                     unowned U8g.Graphics u8g = GM2tk.graphics;
                     u8g.begin_draw();
                     m2tk.draw();
-                    if (statusbar_visible) {
-                        // m2tk.draw() can change colors on us
-                        u8g.set_default_background_color();
-                        u8g.set_default_forground_color();
-                        //brickdm_power_draw_battery_status();
-                        u8g.draw_line(0, 15, u8g.width, 15);
-                    }
+                    if (status_bar.is_visible)
+                        status_bar.draw(u8g);
                     u8g.end_draw();
                     is_dirty = false;
                     if (m2tk.root.is_dirty)

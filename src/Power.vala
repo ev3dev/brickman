@@ -36,15 +36,16 @@ namespace BrickDisplayManager {
         const string EV3_BATTERY_PATH =
             "/org/freedesktop/UPower/devices/battery_legoev3_battery";
 
-        string battery_voltage2 = "???";
         double battery_hist_data[100];
 
         public BatteryInfoScreen battery_info_screen { get; private set; }
         public ShutdownScreen shutdown_screen { get; private set; }
+        public BatteryStatusBarItem battery_status_bar_item { get; private set; }
 
         public Power() {
             battery_info_screen = new BatteryInfoScreen();
             shutdown_screen = new ShutdownScreen();
+            battery_status_bar_item = new BatteryStatusBarItem();
 
             try {
                 var client = new Client();
@@ -101,32 +102,13 @@ namespace BrickDisplayManager {
                 u8g.draw_pixel(i, (ushort)(battery_hist_data[i]*20));
         }
 
-        void draw_battery_status_icon()
-        {
-          unowned U8g.Graphics u8g = gui.m2tk.graphics;
-
-          const ushort batt_width = 20;
-          const ushort batt_height = 9;
-          const ushort end_y_ofs = 2;
-          const ushort end_width = 2;
-          ushort x = u8g.width - batt_width - 5;
-          const ushort y = 5;
-
-          u8g.draw_frame(x, y, batt_width, batt_height);
-          u8g.draw_box(x + batt_width, y + end_y_ofs, end_width,
-             batt_height - 2 * end_y_ofs);
-
-           u8g.set_font(U8g.Font.dsg4_04b_03);
-           u8g.draw_str(x + 2, y + batt_height - 2, battery_voltage2);
-        }
-
         void update_status(Device device)
         {
             battery_info_screen.technology = Device.technology_to_string(device.technology);
             battery_info_screen.voltage = device.voltage;
             battery_info_screen.power = device.energy_rate;
 
-            battery_voltage2 = "%0.2f".printf(device.voltage);
+            battery_status_bar_item.voltage = device.voltage;
         }
 
         void on_device_changed(Device device) {

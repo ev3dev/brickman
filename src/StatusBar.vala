@@ -24,8 +24,46 @@
  * status, bluetooth status, etc.
  */
 
+using Gee;
+using U8g;
+
 namespace BrickDisplayManager {
-    public class StatusBar {
-        public const uint8 HEIGHT = 15;
+    public class StatusBar : Object {
+        public const ushort HEIGHT = 13;
+        const ushort PADDING = 2;
+
+        ArrayList<StatusBarItem> left_items;
+        ArrayList<StatusBarItem> right_items;
+
+        public bool is_visible { get; set; default = true; }
+
+        public void draw(Graphics u8g) {
+            u8g.set_default_background_color();
+            u8g.set_default_forground_color();
+            var x = 0;
+            foreach (var item in left_items)
+                x += item.draw(u8g, x, Align.LEFT) + PADDING;
+            x = u8g.width - 1;
+            foreach (var item in right_items)
+                x -= item.draw(u8g, x, Align.RIGHT) + PADDING;
+            u8g.draw_line(0, 15, u8g.width, 15);
+        }
+
+        public void add_left(StatusBarItem item) {
+            left_items.add(item);
+        }
+
+        public void add_right(StatusBarItem item) {
+            right_items.add(item);
+        }
+
+        public StatusBar() {
+            left_items = new ArrayList<StatusBarItem>();
+            right_items = new ArrayList<StatusBarItem>();
+        }
+
+        public enum Align {
+            LEFT, RIGHT
+        }
     }
 }

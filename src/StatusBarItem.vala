@@ -18,20 +18,18 @@
  */
 
 /*
- * Screen.vala:
+ * StatusBarItem.vala:
  *
- * Base class for all screens
+ * Base class for items shown in StatusBar
  */
 
-using M2tk;
+using U8g;
 
 namespace BrickDisplayManager {
-    public abstract class Screen : GAlign {
-        protected Screen() {
-                vertical_alignment = VerticalAlignment.MIDDLE;
-                horizontal_alignment = HorizontalAlignment.CENTER;
-                height = (uint8)(GM2tk.graphics.height - StatusBar.HEIGHT);
-                width = (uint8)GM2tk.graphics.width;
-        }
+    public abstract class StatusBarItem : Object {
+        public const ushort HEIGHT = 9;
+
+        public virtual bool is_dirty { get; set; default = true; }
+        public abstract ushort draw(Graphics u8g, ushort x, StatusBar.Align align);
     }
 }

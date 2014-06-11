@@ -49,6 +49,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
     src/BatteryInfoScreen.vala
     src/BatteryHistScreen.vala
     src/BatteryStatsScreen.vala
+    src/BatteryStatusBarItem.vala
     src/brickdm.vala
     src/gui.vala
     src/home.vala
@@ -56,6 +57,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
     src/Screen.vala
     src/ShutdownScreen.vala
     src/StatusBar.vala
+    src/StatusBarItem.vala
 PACKAGES
     glib-2.0
     gobject-2.0

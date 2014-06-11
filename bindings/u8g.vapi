@@ -50,6 +50,8 @@ namespace U8g {
         public void draw_line(ushort x1, ushort y1, ushort x2, ushort y2);
         [CCode (cname = "u8g_DrawStr")]
         public void draw_str(ushort x, ushort y, string str);
+        [CCode (cname = "u8g_GetStrWidth")]
+        public ushort get_string_width(string str);
         [CCode (cname = "u8g_EndDraw")]
         public void end_draw();
         [CCode (cname = "u8g_SetFont")]
