@@ -37,38 +37,27 @@ namespace BrickDisplayManager {
     }
 
     class GUI : Object {
-
-        static GUI instance;
-
         MainLoop main_loop = new MainLoop();
-        U8g.Graphics u8g = new U8g.Graphics();
         Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
 
         Power power = new Power();
-        Home home;
+        HomeScreen home_screen;
 
         public bool dirty { get; set; default = true; }
         public bool statusbar_visible { get; set; default = true; }
-        public U8g.Graphics graphics { get { return u8g; } }
+        public GM2tk m2tk { get; private set; }
 
         public GUI() {
-            instance = this;
             debug("initializing GUI");
-            home = new Home(power);
+            home_screen = new HomeScreen(power);
 
-            u8g.init(U8g.Device.linux_framebuffer);
-            init(home.root_element, event_source, event_handler,
-                U8gBoxShadowFrameGraphicsHandler);
-            set_u8g(u8g, IconType.BOX);
-            set_font(FontIndex.F0, U8g.Font.x11_7x13);
-            set_font(FontIndex.F1, U8g.Font.m2tk_icon_9);
-            set_u8g_additional_text_x_border(3);
-
-            set_root_change_callback((RootChangeFunc)on_root_element_change);
-        }
-
-        ~GUI() {
-            u8g.stop();
+            m2tk = new GM2tk(home_screen, event_source, event_handler,
+                box_shadow_frame_graphics_handler, box_icon_handler);
+            m2tk.home2 = power.shutdown_screen;
+            m2tk.set_font(FontIndex.F0, U8g.Font.x11_7x13);
+            m2tk.set_font(FontIndex.F1, U8g.Font.m2tk_icon_9);
+            GM2tk.set_additional_text_x_padding(3);
+            m2tk.root_element_changed.connect(on_root_element_changed);
         }
 
         public void run() {
@@ -82,37 +71,37 @@ namespace BrickDisplayManager {
             main_loop.quit();
         }
 
-        static void on_root_element_change(Element new_root,
+        void on_root_element_changed(Element new_root,
             Element old_root, uint8 value)
         {
             if (value != uint8.MAX) {
                 var info = new RootInfo();
                 info.element = old_root;
                 info.value = value;
-                instance.root_stack.offer_head(info);
+                root_stack.offer_head(info);
             }
         }
 
-        bool on_draw_timer()
-        {
+        bool on_draw_timer() {
             if (!Curses.isendwin()) {
-                check_key();
-                instance.dirty |= handle_key();
-                if (instance.dirty) {
-                   u8g.begin_draw();
-                   draw();
-                   if (instance.statusbar_visible) {
-                      /* M2tk.draw() can change colors on us */
-                      instance.u8g.set_default_background_color();
-                      instance.u8g.set_default_forground_color();
-                      //brickdm_power_draw_battery_status();
-                      instance.u8g.draw_line(0, 15, u8g.get_width(), 15);
-                 }
-                 instance.u8g.end_draw();
-                 instance.dirty = false;
-             }
-          }
-          return true;
+                m2tk.check_key();
+                dirty |= m2tk.handle_key();
+                if (dirty) {
+                    unowned U8g.Graphics u8g = GM2tk.graphics;
+                    u8g.begin_draw();
+                    m2tk.draw();
+                    if (statusbar_visible) {
+                        // m2tk.draw() can change colors on us
+                        u8g.set_default_background_color();
+                        u8g.set_default_forground_color();
+                        //brickdm_power_draw_battery_status();
+                        u8g.draw_line(0, 15, u8g.get_width(), 15);
+                    }
+                    u8g.end_draw();
+                    dirty = false;
+                }
+            }
+            return true;
         }
 
         static uint8 event_source(M2 m2, EventSourceMessage msg) {
@@ -209,11 +198,11 @@ namespace BrickDisplayManager {
             case EventHandlerMessage.EXIT:
                 // if there is no valid parent, then go to the previous root
                 if (nav.user_up() == 0) {
-                    var info = instance.root_stack.poll_head();
+                    var info = gui.root_stack.poll_head();
                     if (info != null) {
-                        set_root(info.element, info.value, uint8.MAX);
+                        m2.set_root(info.element, info.value, uint8.MAX);
                     } else {
-                        set_root(instance.power.shutdown_root_element);
+                        m2.set_root(m2.home2);
                     }
                 }
                 return 1;

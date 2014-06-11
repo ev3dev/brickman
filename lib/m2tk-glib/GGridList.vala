@@ -24,10 +24,7 @@
  */
 
 namespace M2tk {
-    public class GGridList : M2tk.GElement {
-        PtrArray child_list = new PtrArray.sized(uint8.MAX);
-        GridList grid_list { get { return (GridList)element; } }
-
+    public class GGridList : M2tk.GListElement {
         public uint8 column_count {
             get { return _column_count; }
             set {
@@ -36,33 +33,9 @@ namespace M2tk {
             }
         }
 
-        public uint8? x {
-            get { return _x; }
-            set {
-                _x = value;
-                update_format();
-            }
-        }
-
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
-
         public GGridList(uint8 column_count) {
             base(GridList.create({}));
             this.column_count = column_count;
-            grid_list.list = (Element*)child_list.pdata;
-            grid_list.length = 0;
-        }
-
-        public void add(GElement element) {
-            child_list.add(element.element);
-            grid_list.length = (uint8)child_list.len;
-            // TODO: set dirty
         }
     }
 }

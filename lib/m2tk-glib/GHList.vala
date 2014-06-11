@@ -24,36 +24,9 @@
  */
 
 namespace M2tk {
-    public class GHList : M2tk.GElement {
-        PtrArray child_list = new PtrArray.sized(uint8.MAX);
-        HList hlist { get { return (HList)element; } }
-
-        public uint8? x {
-            get { return _x; }
-            set {
-                _x = value;
-                update_format();
-            }
-        }
-
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
-
+    public class GHList : M2tk.GListElement {
         public GHList() {
             base(HList.create({}));
-            hlist.list = (Element*)child_list.pdata;
-            hlist.length = 0;
-        }
-
-        public void add(GElement element) {
-            child_list.add(element.element);
-            hlist.length = (uint8)child_list.len;
-            // TODO: set dirty
         }
     }
 }

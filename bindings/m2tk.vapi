@@ -208,13 +208,6 @@ namespace M2tk {
         [CCode (cname = "8")] CENTER
     }
 
-    [CCode (cname = "int", has_type_id = false)]
-    public enum IconType
-    {
-        [CCode (cname = "0")] FONT,
-        [CCode (cname = "1")] BOX
-    }
-
     [CCode (cname = "uint8_t", has_type_id = false)]
     public enum HideState {
         [CCode (cname = "0")] VISIBLE,
@@ -227,72 +220,32 @@ namespace M2tk {
     [CCode (cname = "&m2_null_element")]
     public static unowned Element null_element;
 
-    /* main functions */
-
-    [CCode (cname = "m2_Init")]
-    static void init(Element root_element,
-        EventSourceFunc? event_source,
-        EventHandlerFunc? event_handler,
-        GraphicsFunc graphics_handler);
-    [CCode (cname = "m2_CheckKey")]
-    public static void check_key();
-    [CCode (cname = "m2_HandleKey")]
-    public static uint8 handle_key();
-    [CCode (cname = "m2_Draw")]
-    public static void draw();
-    [CCode (cname = "m2_SetKey")]
-    public static void put_key(uint8 key);
-    [CCode (cname = "m2_GetKey")]
-    public static uint8 get_key();
-    [CCode (cname = "m2_SetFont")]
-    public static void set_font(FontIndex index, U8g.Font? font);
-    [CCode (cname = "m2_GetRoot")]
-    static unowned Element get_root();
-    [CCode (cname = "m2_SetRootExtended")]
-    static void set_root(Element element, uint8 next_count = 0,
-        uint8 callback_value = 0);
-    [CCode (cname = "m2_SetHome")]
-    static void set_home(Element element);
-    [CCode (cname = "m2_SetHome2")]
-    static void set_home2(Element element);
-    [CCode (cname = "m2_SetRootChangeCallback")]
-    public static void set_root_change_callback(RootChangeFunc cb);
-
-    /* private functions */
+    /* global functions */
 
     [CCode (cname = "m2_fn_arg_call")]
     static uint8 call_element_function(uint8 msg);
 
-    /* u8g functions */
-
     [CCode (cname = "m2_gh_u8g_fb", has_type_id = false)]
-    public static uint8 U8gFrameBoxGraphicsHandler(GraphicsArgs arg);
+    public static uint8 frame_box_graphics_handler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_bf", has_type_id = false)]
-    public static uint8 U8gBoxFrameGraphicsHandler(GraphicsArgs arg);
+    public static uint8 box_frame_graphics_handler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_bfs", has_type_id = false)]
-    public static uint8 U8gBoxShadowFrameGraphicsHandler(GraphicsArgs arg);
+    public static uint8 box_shadow_frame_graphics_handler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_ffs", has_type_id = false)]
-    public static uint8 U8gFrameShadowFrameGraphicsHandler(GraphicsArgs arg);
+    public static uint8 frame_shadow_frame_graphics_handler(GraphicsArgs arg);
 
     [CCode (cname = "m2_u8g_font_icon")]
-    static uint8 U8fFontIconHandler(GraphicsArgs arg);
+    static uint8 font_icon_handler(GraphicsArgs arg);
     [CCode (cname = "m2_u8g_box_icon")]
-    static uint8 U8gBoxIconHandler(GraphicsArgs arg);
+    static uint8 box_icon_handler(GraphicsArgs arg);
     [CCode (cname = "m2_SetU8g")]
-    static void set_u8g_internal(U8g.Graphics u8g, GraphicsFunc draw_icon);
-    public static void set_u8g(U8g.Graphics u8g, IconType icon_type)
-    {
-        if (icon_type == IconType.FONT)
-            set_u8g_internal(u8g, U8fFontIconHandler);
-        else
-            set_u8g_internal(u8g, U8gBoxIconHandler);
-    }
+    static void set_graphics(U8g.Graphics u8g, GraphicsFunc draw_icon);
     [CCode (cname = "m2_SetU8gInvisibleFrameXBorder")]
-    public static void set_u8g_invisible_frame_x_border(uint8 width);
+    public static void set_invisible_frame_x_padding(uint8 width);
     [CCode (cname = "m2_SetU8gAdditionalTextXBorder")]
-    public static void set_u8g_additional_text_x_border(uint8 width);
+    public static void set_additional_text_x_padding(uint8 width);
     [CCode (cname = "m2_SetU8gAdditionalReadOnlyXBorder")]
-    public static void set_u8g_additional_read_only_x_border(uint8 width);
+    public static void set_additional_read_only_x_padding(uint8 width);
 
     /* delegates */
 
@@ -352,15 +305,71 @@ namespace M2tk {
 
     /* classes */
 
-    [CCode (cname = "m2_t", cprefix = "m2_", has_type_id = false)]
+    [CCode (cname = "m2_t", cprefix = "m2_", free_function = "g_free", has_type_id = false)]
     [Compact]
     public class M2 {
+        [CCode (cname = "m2_t", destroy_function = "", has_type_id = false)]
+        struct M2Struct {}
+
+        [CCode (cname = "home")]
+        Element _home;
+        public unowned Element home {
+            get { return _home; }
+            set { set_home(value); }
+        }
+
+        [CCode (cname = "home2")]
+        Element _home2;
+        public unowned Element home2 {
+            get { return _home2; }
+            set { set_home2(value); }
+        }
+
+        public unowned Element root {
+            [CCode (cname = "m2_GetRootM2")]get;
+        }
+
         public Nav nav { get; }
+
+        [CCode (cname = "m2_InitM2")]
+        public void init(Element root_element,
+            EventSourceFunc? event_source,
+            EventHandlerFunc? event_handler,
+            GraphicsFunc graphics_handler);
+        [CCode (cname = "m2_CheckKeyM2")]
+        public void check_key();
+        [CCode (cname = "m2_HandleKeyM2")]
+        public uint8 handle_key();
+        [CCode (cname = "m2_DrawM2")]
+        public void draw();
+        [CCode (cname = "m2_SetKeyM2")]
+        public void put_key(uint8 key);
+        [CCode (cname = "m2_GetKeyM2")]
+        public uint8 get_key();
+        [CCode (cname = "m2_SetFontM2")]
+        public void set_font(FontIndex index, U8g.Font? font);
+        [CCode (cname = "m2_SetRootM2")]
+        public void set_root(Element new_root, uint8 next_count = 0,
+            uint8 callback_value = 0);
+        [CCode (cname = "m2_SetHomeM2")]
+        void set_home(Element element);
+        [CCode (cname = "m2_SetHome2M2")]
+        void set_home2(Element element);
+        [CCode (cname = "m2_SetRootChangeCallbackM2")]
+        public void set_root_change_callback(RootChangeFunc cb);
+
+        [CCode (cname = "g_malloc0")]
+        public M2(size_t size = sizeof(M2Struct))
+            requires (size == sizeof(M2Struct));
     }
 
     [CCode (cname = "m2_nav_t", cprefix = "m2_nav_", has_type_id = false)]
     [Compact]
     public class Nav {
+        public bool is_data_entry {
+            [CCode (cname = "m2_nav_is_data_entry")] get;
+        }
+
         public uint8 user_up();
         public uint8 user_down(bool is_msg);
         public uint8 user_prev();
@@ -374,9 +383,6 @@ namespace M2tk {
         public uint8 data_char(uint8 c) {
             prepare_fn_arg_current_element();
             return call_element_function(c); // assign the char
-        }
-        public bool is_data_entry {
-            [CCode (cname = "m2_nav_is_data_entry")] get;
         }
     }
 
@@ -423,7 +429,7 @@ namespace M2tk {
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Space(size_t size = sizeof(SpaceStruct))
             requires (size == sizeof(SpaceStruct));
 
@@ -449,7 +455,7 @@ namespace M2tk {
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Box(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -476,7 +482,7 @@ namespace M2tk {
         [CCode (cname = "new_dialog_callback")]
         ButtonFunc callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         SpaceWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -505,7 +511,7 @@ namespace M2tk {
         [CCode (cname = "str")]
         internal unowned string text;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         StringUp(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -533,7 +539,7 @@ namespace M2tk {
         [CCode (cname = "str")]
         internal unowned string text;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Label(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -561,7 +567,7 @@ namespace M2tk {
         [CCode (cname = "label_callback")]
         LabelFunc callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         LabelWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -592,7 +598,7 @@ namespace M2tk {
         [CCode (cname = "element")]
         internal unowned Element? element;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Root(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -623,7 +629,7 @@ namespace M2tk {
         [CCode (cname = "button_callback")]
         public ButtonFunc callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Button(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -656,7 +662,7 @@ namespace M2tk {
         [CCode (cname = "val")]
         public char *value;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         S8Num(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -690,7 +696,7 @@ namespace M2tk {
         [CCode (cname = "s8_callback")]
         public S8Func callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         S8NumWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -724,7 +730,7 @@ namespace M2tk {
         [CCode (cname = "val")]
         public uint8 *value;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         U8Num(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -758,7 +764,7 @@ namespace M2tk {
         [CCode (cname = "u8_callback")]
         public U8Func callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         U8NumWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -771,6 +777,16 @@ namespace M2tk {
             element.callback = func;
             return element;
         }
+    }
+
+    [CCode (cname = "m2_el_list_t", has_type_id = false)]
+    internal class ListElement : Element {
+        [CCode (cname = "ff.fmt")]
+        internal unowned string? format;
+        [CCode (cname = "len")]
+        internal uint8 length;
+        [CCode (cname = "el_list")]
+        internal Element *list;
     }
 
     [CCode (cname = "m2_el_list_t", free_function = "g_free", has_type_id = false)]
@@ -790,7 +806,7 @@ namespace M2tk {
         [CCode (cname = "el_list")]
         internal Element *list;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         VList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -823,7 +839,7 @@ namespace M2tk {
         [CCode (cname = "el_list")]
         internal Element *list;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         HList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -856,7 +872,7 @@ namespace M2tk {
         [CCode (cname = "el_list")]
         internal Element *list;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         GridList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -889,7 +905,7 @@ namespace M2tk {
         [CCode (cname = "el_list")]
         Element *list;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         XYList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -922,7 +938,7 @@ namespace M2tk {
         [CCode (cname = "len")]
         uint8 length;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Text(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -951,7 +967,7 @@ namespace M2tk {
         [CCode (cname = "val")]
         uint *value;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         U32Num(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -979,7 +995,7 @@ namespace M2tk {
         [CCode (cname = "u32_callback")]
         U32Func callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         U32NumWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1007,7 +1023,7 @@ namespace M2tk {
         [CCode (cname = "element")]
         internal unowned Element child;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Align(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1037,7 +1053,7 @@ namespace M2tk {
         [CCode (cname = "val")]
         HideState *state;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Hide(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1066,7 +1082,7 @@ namespace M2tk {
         [CCode (cname = "val")]
         bool *value;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Toggle(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1094,7 +1110,7 @@ namespace M2tk {
         [CCode (cname = "val")]
         bool *value;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Radio(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1126,7 +1142,7 @@ namespace M2tk {
         [CCode (cname = "get_str_fnptr")]
         GetStringFunc callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Combo(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1160,7 +1176,7 @@ namespace M2tk {
         [CCode (cname = "fnptr")]
         ComboFunc callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         ComboWithFunc(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1192,7 +1208,7 @@ namespace M2tk {
         [CCode (cname = "len")]
         uint8 *length;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         VScrollBar(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1225,7 +1241,7 @@ namespace M2tk {
         [CCode (cname = "strlist_cb_fnptr")]
         StringListFunc callback;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         StringList(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1265,7 +1281,7 @@ namespace M2tk {
         [CCode (cname = "submenu_char")]
         uint8 submenu_char;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Menu(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1308,7 +1324,7 @@ namespace M2tk {
         [CCode (cname = "submenu_char")]
         uint8 submenu_char;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         ExtendedMenu(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 
@@ -1347,7 +1363,7 @@ namespace M2tk {
         [CCode (cname = "info_str")]
         internal unowned string text;
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         Info(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
 

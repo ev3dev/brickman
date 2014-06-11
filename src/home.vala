@@ -21,7 +21,7 @@
  */
 
 /*
- * Home.vala:
+ * HomeScreen.vala:
  *
  * The home screen for brickdm.
  */
@@ -30,19 +30,15 @@ using M2tk;
 
 namespace BrickDisplayManager {
 
-    class Home : Object {
+    class HomeScreen : Screen {
 
         Power power;
 
         GButton _battery_menu_item;
         GButton _shutdown_menu_item;
         GVList _menu_list;
-        GAlign _root_element;
-        public unowned Element root_element {
-            get { return _root_element.element; }
-        }
 
-        public Home(Power power) {
+        public HomeScreen(Power power) {
             debug("initializing Home");
             this.power = power;
 
@@ -54,19 +50,16 @@ namespace BrickDisplayManager {
             _menu_list = new GVList();
             _menu_list.add(_battery_menu_item);
             _menu_list.add(_shutdown_menu_item);
-            _root_element = new GAlign(_menu_list);
-            _root_element.vertical_alignment = VerticalAlignment.MIDDLE;
-            _root_element.horizontal_alignment = HorizontalAlignment.CENTER;
-            _root_element.height = 115;
-            _root_element.width = 178;
+
+            child = _menu_list;
         }
 
         void on_battery_menu_item_pressed() {
-            set_root(power.battery_info_root_element);
+            gui.m2tk.set_root(power.battery_info_screen);
         }
 
         void on_shutdown_menu_item_pressed() {
-            set_root(power.shutdown_root_element);
+            gui.m2tk.set_root(power.shutdown_screen, 0, 1);
         }
     }
 }

@@ -1,7 +1,10 @@
 /*
- * m2tk-glib -- GLib bindings for m2tklib graphical toolkit
+ * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ *
+ * based in part on GNOME Power Manager:
+ * Copyright (C) 2008-2011 Richard Hughes <richard@hughsie.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +21,14 @@
  */
 
 /*
- * GVList.vala:
+ * StatusBar.vala:
  *
- * wrapper for m2tk VLIST
+ * The brickdm status bar. Contains info like battery status, wi-fi
+ * status, bluetooth status, etc.
  */
 
-namespace M2tk {
-    public class GVList : M2tk.GListElement {
-        public GVList() {
-            base(VList.create({}));
-        }
+namespace BrickDisplayManager {
+    public class StatusBar {
+        public const uint8 HEIGHT = 15;
     }
 }

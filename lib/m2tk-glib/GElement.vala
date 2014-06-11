@@ -40,7 +40,7 @@ namespace M2tk {
     }
 
     public abstract class GElement : Object {
-        protected static HashMap<unowned Element, weak GElement> element_map;
+        internal static HashMap<unowned Element, weak GElement> element_map;
 
         static GNullElement _null_element;
         public static GNullElement null_element {

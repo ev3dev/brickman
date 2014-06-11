@@ -37,12 +37,13 @@ namespace BrickDisplayManager {
             "/org/freedesktop/UPower/devices/battery_legoev3_battery";
         const string UNKNOWN_VALUE = "<unk>";
 
-        BatteryInfoScreen _battery_info_screen;
-        ShutdownScreen _shutdown_screen;
         string battery_voltage2 = UNKNOWN_VALUE;
         double battery_hist_data[100];
 
-        class BatteryInfoScreen : Screen {
+        public BatteryInfoScreen battery_info_screen { get; private set; }
+        public ShutdownScreen shutdown_screen { get; private set; }
+
+        public class BatteryInfoScreen : Screen {
             BatteryHistScreen _battery_hist_screen;
             BatteryStatsScreen _battery_stats_screen;
 
@@ -140,7 +141,7 @@ namespace BrickDisplayManager {
             }
         }
 
-        class BatteryHistScreen : Screen {
+        public class BatteryHistScreen : Screen {
             GLabel _title_label;
 
             public BatteryHistScreen() {
@@ -150,7 +151,7 @@ namespace BrickDisplayManager {
             }
         }
 
-        class BatteryStatsScreen : Screen {
+        public class BatteryStatsScreen : Screen {
             GLabel _title_label;
 
             public BatteryStatsScreen() {
@@ -160,7 +161,7 @@ namespace BrickDisplayManager {
             }
         }
 
-        class ShutdownScreen : Screen {
+        public class ShutdownScreen : Screen {
             GButton _shutdown_button;
             GButton _restart_button;
             GSpace _space;
@@ -203,17 +204,9 @@ namespace BrickDisplayManager {
             }
         }
 
-        public unowned Element battery_info_root_element {
-            get { return _battery_info_screen.element; }
-        }
-
-        public unowned Element shutdown_root_element {
-            get { return _shutdown_screen.element; }
-        }
-
         public Power() {
-            _battery_info_screen = new BatteryInfoScreen();
-            _shutdown_screen = new ShutdownScreen();
+            battery_info_screen = new BatteryInfoScreen();
+            shutdown_screen = new ShutdownScreen();
 
             try {
                 var client = new Client();
@@ -264,33 +257,37 @@ namespace BrickDisplayManager {
 
         void battery_hist_graph_callback(ElementFuncArgs arg)
         {
+            unowned U8g.Graphics u8g = gui.m2tk.graphics;
+
             debug("Drawing graph.");
             for (ushort i = 0; i < battery_hist_data.length; i++)
-                gui.graphics.draw_pixel(i, (ushort)(battery_hist_data[i]*20));
+                u8g.draw_pixel(i, (ushort)(battery_hist_data[i]*20));
         }
 
         void draw_battery_status_icon()
         {
+          unowned U8g.Graphics u8g = gui.m2tk.graphics;
+
           const ushort batt_width = 20;
           const ushort batt_height = 9;
           const ushort end_y_ofs = 2;
           const ushort end_width = 2;
-          ushort x = gui.graphics.get_width() - batt_width - 5;
+          ushort x = u8g.get_width() - batt_width - 5;
           const ushort y = 5;
 
-          gui.graphics.draw_frame(x, y, batt_width, batt_height);
-          gui.graphics.draw_box(x + batt_width, y + end_y_ofs, end_width,
+          u8g.draw_frame(x, y, batt_width, batt_height);
+          u8g.draw_box(x + batt_width, y + end_y_ofs, end_width,
              batt_height - 2 * end_y_ofs);
 
-           gui.graphics.set_font(U8g.Font.dsg4_04b_03);
-           gui.graphics.draw_str(x + 2, y + batt_height - 2, battery_voltage2);
+           u8g.set_font(U8g.Font.dsg4_04b_03);
+           u8g.draw_str(x + 2, y + batt_height - 2, battery_voltage2);
         }
 
         void update_status(Device device)
         {
-            _battery_info_screen.technology = Device.technology_to_string(device.technology);
-            _battery_info_screen.voltage = device.voltage;
-            _battery_info_screen.power = device.energy_rate;
+            battery_info_screen.technology = Device.technology_to_string(device.technology);
+            battery_info_screen.voltage = device.voltage;
+            battery_info_screen.power = device.energy_rate;
 
             battery_voltage2 = "%0.2f".printf(device.voltage);
             if (gui != null)
@@ -300,14 +297,14 @@ namespace BrickDisplayManager {
         void on_device_changed(Device device) {
           var object_path = device.get_object_path();
           debug("changed: %s", object_path);
-          unowned Element root = get_root();
+          //unowned Element root = get_root();
           if (object_path == null)
             return;
           if (EV3_BATTERY_PATH == object_path) {
-            if (gui.statusbar_visible || root == battery_info_root_element)
+            //if (gui.statusbar_visible || root == battery_info_root_element)
               update_status(device);
             //if (root == battery_hist_root_element)
-            //  update_battery_hist_data(device);
+              update_battery_hist_data(device);
           }
         }
     }

@@ -39,6 +39,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/m2tk-glib/GGridList.vala
     lib/m2tk-glib/GHList.vala
     lib/m2tk-glib/GLabel.vala
+    lib/m2tk-glib/GListElement.vala
     lib/m2tk-glib/GNullElement.vala
     lib/m2tk-glib/GRoot.vala
     lib/m2tk-glib/GSpace.vala

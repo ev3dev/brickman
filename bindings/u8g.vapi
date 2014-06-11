@@ -10,7 +10,7 @@ namespace U8g {
         [CCode (cname = "u8g_t", destroy_function = "", has_type_id = false)]
         struct MallocStruct {}
 
-        [CCode (cname = "g_malloc")]
+        [CCode (cname = "g_malloc0")]
         public Graphics(size_t size = sizeof(MallocStruct))
             requires (size == sizeof(MallocStruct));
         [CCode (cname = "u8g_Init")]
