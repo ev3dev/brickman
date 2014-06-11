@@ -6,7 +6,7 @@
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * (at your option) any later versionfa.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,20 +18,22 @@
  */
 
 /*
- * Screen.vala:
+ * BatteryStatsScreen.vala:
  *
- * Base class for all screens
+ * Screen for displaying battery statistics
  */
 
 using M2tk;
+using Up;
 
 namespace BrickDisplayManager {
-    public abstract class Screen : GAlign {
-        protected Screen() {
-                vertical_alignment = VerticalAlignment.MIDDLE;
-                horizontal_alignment = HorizontalAlignment.CENTER;
-                height = (uint8)GM2tk.graphics.height - StatusBar.HEIGHT;
-                width = (uint8)GM2tk.graphics.width;
+    public class BatteryStatsScreen : Screen {
+        GLabel _title_label;
+
+        public BatteryStatsScreen() {
+            _title_label = new GLabel("Statistics");
+
+            child = _title_label;
         }
     }
 }

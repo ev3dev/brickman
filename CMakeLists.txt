@@ -46,11 +46,16 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/m2tk-glib/GRoot.vala
     lib/m2tk-glib/GSpace.vala
     lib/m2tk-glib/GVList.vala
+    src/BatteryInfoScreen.vala
+    src/BatteryHistScreen.vala
+    src/BatteryStatsScreen.vala
     src/brickdm.vala
     src/gui.vala
     src/home.vala
-    src/power.vala
+    src/Power.vala
     src/Screen.vala
+    src/ShutdownScreen.vala
+    src/StatusBar.vala
 PACKAGES
     glib-2.0
     gobject-2.0

@@ -18,20 +18,21 @@
  */
 
 /*
- * Screen.vala:
+ * BatteryHistScreen.vala:
  *
- * Base class for all screens
+ * Screen for displaying battery history
  */
 
 using M2tk;
 
 namespace BrickDisplayManager {
-    public abstract class Screen : GAlign {
-        protected Screen() {
-                vertical_alignment = VerticalAlignment.MIDDLE;
-                horizontal_alignment = HorizontalAlignment.CENTER;
-                height = (uint8)GM2tk.graphics.height - StatusBar.HEIGHT;
-                width = (uint8)GM2tk.graphics.width;
+    public class BatteryHistScreen : Screen {
+        GLabel _title_label;
+
+        public BatteryHistScreen() {
+            _title_label = new GLabel("History");
+
+            child = _title_label;
         }
     }
 }

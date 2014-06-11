@@ -3,9 +3,6 @@
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
- * based in part on GNOME Power Manager:
- * Copyright (C) 2008-2011 Richard Hughes <richard@hughsie.com>
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -96,7 +93,7 @@ namespace BrickDisplayManager {
                         u8g.set_default_background_color();
                         u8g.set_default_forground_color();
                         //brickdm_power_draw_battery_status();
-                        u8g.draw_line(0, 15, u8g.get_width(), 15);
+                        u8g.draw_line(0, 15, u8g.width, 15);
                     }
                     u8g.end_draw();
                     is_dirty = false;

@@ -31,12 +31,15 @@ namespace U8g {
         public uint8 get_default_mid_color();
         [CCode (cname = "u8g_SetDefaultMidColor")]
         public void set_default_mid_color();
-        [CCode (cname = "u8g_GetWidth")]
-        public ushort get_width();
-        [CCode (cname = "u8g_GetHeight")]
-        public ushort get_height();
-        [CCode (cname = "u8g_GetMode")]
-        public uint8 get_mode();
+        public ushort width {
+            [CCode (cname = "u8g_GetWidth")]get;
+        }
+        public ushort height {
+            [CCode (cname = "u8g_GetHeight")]get;
+        }
+        public ushort mode {
+            [CCode (cname = "u8g_GetMode")]get;
+        }
         [CCode (cname = "u8g_BeginDraw")]
         public void begin_draw();
         [CCode (cname = "u8g_DrawBox")]

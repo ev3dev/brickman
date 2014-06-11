@@ -3,9 +3,6 @@
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
- * based in part on GNOME Power Manager:
- * Copyright (C) 2008-2011 Richard Hughes <richard@hughsie.com>
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
