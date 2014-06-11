@@ -25,27 +25,33 @@
 
 namespace M2tk {
     public abstract class GListElement : M2tk.GElement {
-        PtrArray child_list = new PtrArray.sized(uint8.MAX);
+        internal PtrArray child_list = new PtrArray();
         ListElement list_element { get { return (ListElement)element; } }
 
-        public uint8? x {
-            get { return _x; }
+        public override bool is_dirty {
+            get {
+                if (base.is_dirty)
+                    return true;
+                foreach (var child in children) {
+                    if (child.is_dirty)
+                        return true;
+                }
+                return false;
+            }
             set {
-                _x = value;
-                update_format();
+                if (!value) {
+                    foreach (var child in children)
+                        child.is_dirty = false;
+                }
+                base.is_dirty = value;
             }
         }
 
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
+        public GElementList children { get; private set; }
 
         public GListElement(owned Element element) {
             base((owned)element);
+            children = new GElementList(this);
             update_list();
         }
 
@@ -57,7 +63,7 @@ namespace M2tk {
         void update_list() {
             list_element.list = (Element*)child_list.pdata;
             list_element.length = (uint8)child_list.len;
-            // TODO: set dirty
+            is_dirty = true;
         }
     }
 }

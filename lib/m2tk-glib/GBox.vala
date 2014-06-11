@@ -28,38 +28,6 @@ namespace M2tk {
     public class GBox : M2tk.GElement {
         Box box { get { return (Box)element; } }
 
-        public uint8? x {
-            get { return _x; }
-            set {
-                _x = value;
-                update_format();
-            }
-        }
-
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
-
-        public uint8? width {
-            get { return _width; }
-            set {
-                _width = value;
-                update_format();
-            }
-        }
-
-        public uint8? height {
-            get { return _height; }
-            set {
-                _height = value;
-                update_format();
-            }
-        }
-
         public GBox(uint8 width, uint8 height) {
             base(Box.create());
             this.width = width;

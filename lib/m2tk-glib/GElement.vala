@@ -55,30 +55,83 @@ namespace M2tk {
             element_map = new HashMap<unowned Element, weak GElement>();
         }
 
-        /* format */
-        protected bool? _plus_visible;
-        protected bool? _auto_down_select;
-        protected bool? _vertical_padding; // border
-        protected uint8 _column_count;
-        protected uint8? _extra_column_size;
-        protected FontSpec _extra_column_font;
-        protected FontSpec _font;
-        protected uint8? _height;
-        protected uint8? _visible_line_count;
-        protected uint8? _inital_focus_field;
-        protected bool? _read_only;
-        protected uint8? _value;
-        protected uint8? _width;
-        protected uint8? _x;
-        protected uint8? _y;
-        protected HorizontalAlignment _horizontal_alignment;
-        protected VerticalAlignment _vertical_alignment;
-        protected uint8? _decimal_position;
+        /* format properties */
 
         string format;
 
+        uint8 _x = uint8.MAX;
+        public uint8 x {
+            get { return _x; }
+            set {
+                _x = value;
+                update_format();
+            }
+        }
+
+        uint8 _y = uint8.MAX;
+        public uint8 y {
+            get { return _y; }
+            set {
+                _y = value;
+                update_format();
+            }
+        }
+
+        uint8 _width = uint8.MAX;
+        public uint8 width {
+            get { return _width; }
+            set {
+                _width = value;
+                update_format();
+            }
+        }
+
+        uint8 _height = uint8.MAX;
+        public uint8 height {
+            get { return _height; }
+            set {
+                _height = value;
+                update_format();
+            }
+        }
+
+        bool _read_only;
+        public bool read_only {
+            get { return _read_only; }
+            set {
+                _read_only = value;
+                update_format();
+            }
+        }
+
+        FontSpec _font = FontSpec.DEFAULT;
+        public FontSpec font {
+            get { return _font; }
+            set {
+                _font = value;
+                update_format();
+            }
+        }
+
+        // these format specifiers are not available on all elements
+        protected bool _plus_visible;
+        protected bool _auto_down_select;
+        protected bool _vertical_padding; // border
+        protected uint8 _column_count;
+        protected uint8 _extra_column_size;
+        protected FontSpec _extra_column_font = FontSpec.DEFAULT;
+        protected uint8 _visible_line_count;
+        protected uint8 _inital_focus_field;
+        protected uint8 _value;
+        protected HorizontalAlignment _horizontal_alignment;
+        protected VerticalAlignment _vertical_alignment;
+        protected uint8 _decimal_position;
+
+        /* other properties */
+
         public uint8 actual_width { get { return element.width; } }
         public uint8 actual_height { get { return element.height; } }
+        public virtual bool is_dirty { get; set; default = true; }
 
         Element _element;
         public unowned Element element {
@@ -104,44 +157,45 @@ namespace M2tk {
 
         protected void update_format() {
             var builder = new StringBuilder();
-            if (_plus_visible != null)
-                builder.append("+%d".printf((bool)_plus_visible ? 1 : 0));
-            if (_auto_down_select != null)
-                builder.append("a%d".printf((bool)_auto_down_select ? 1 : 0));
-            if (_vertical_padding != null)
-                builder.append("b%d".printf((bool)_vertical_padding ? 1 : 0));
+            if (_plus_visible)
+                builder.append("+1");
+            if (_auto_down_select)
+                builder.append("a1");
+            if (_vertical_padding)
+                builder.append("b1");
             if (_column_count != 0)
                 builder.append("c%d".printf((int)_column_count));
-            if (_extra_column_size != null)
+            if (_extra_column_size != 0)
                 builder.append("e%d".printf((int)_extra_column_size));
-            if (_extra_column_font != FontSpec.F0)
+            if (_extra_column_font != FontSpec.DEFAULT)
                 builder.append("F%d".printf(_extra_column_font));
-            if (_font != FontSpec.F0)
+            if (_font != FontSpec.DEFAULT)
                 builder.append("f%d".printf(_font));
-            if (_height != null)
+            if (_height != uint8.MAX)
                 builder.append("h%d".printf((int)_height));
-            if (_visible_line_count != null)
+            if (_visible_line_count != 0)
                 builder.append("l%d".printf((int)_visible_line_count));
-            if (_inital_focus_field != null)
+            if (_inital_focus_field != 0)
                 builder.append("n%d".printf((int)_inital_focus_field));
-            if (_read_only != null)
-                builder.append("r%d".printf((bool)_read_only ? 1 : 0));
-            if (_value != null)
+            if (_read_only)
+                builder.append("r1");
+            if (_value != 0)
                 builder.append("v%d".printf((int)_value));
-            if (_width != null)
+            if (_width != uint8.MAX)
                 builder.append("w%d".printf((int)_width));
-            if (_x != null)
+            if (_x != uint8.MAX)
                 builder.append("x%d".printf((int)_x));
-            if (_y != null)
+            if (_y != uint8.MAX)
                 builder.append("y%d".printf((int)_y));
             if (_horizontal_alignment != HorizontalAlignment.LEFT)
                 builder.append("-%d".printf(_horizontal_alignment));
             if (_vertical_alignment != VerticalAlignment.BOTTOM)
                 builder.append("|%d".printf(_vertical_alignment));
-            if (_decimal_position != null)
+            if (_decimal_position != 0)
                 builder.append(".%d".printf((int)_decimal_position));
             format = builder.str;
             element.format = format;
+            is_dirty = true;
         }
     }
 }

@@ -39,7 +39,6 @@ namespace M2tk {
                     root.element = null;
                 else
                     root.element = ((GElement)value).element;
-                // TODO: set dirty
             }
         }
 
@@ -49,19 +48,11 @@ namespace M2tk {
             set {
                 _text = value;
                 root.text = _text;
-                // TODO: set dirty
+                is_dirty = true;
             }
         }
 
-        public FontSpec font {
-            get { return _font; }
-            set {
-                _font = value;
-                update_format();
-            }
-        }
-
-        public uint8? initial_focus_field {
+        public uint8 initial_focus_field {
             get { return _inital_focus_field; }
             set {
                 _inital_focus_field = value;
@@ -69,50 +60,10 @@ namespace M2tk {
             }
         }
 
-        public uint8? change_value {
+        public uint8 change_value {
             get { return _value; }
             set {
                 _value = value;
-                update_format();
-            }
-        }
-
-        public bool? read_only {
-            get { return _read_only; }
-            set {
-                _read_only = value;
-                update_format();
-            }
-        }
-
-        public uint8? x {
-            get { return _x; }
-            set {
-                _x = value;
-                update_format();
-            }
-        }
-
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
-
-        public uint8? width {
-            get { return _width; }
-            set {
-                _width = value;
-                update_format();
-            }
-        }
-
-        public uint8? height {
-            get { return _height; }
-            set {
-                _height = value;
                 update_format();
             }
         }

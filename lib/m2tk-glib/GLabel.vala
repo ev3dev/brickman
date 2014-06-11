@@ -34,54 +34,14 @@ namespace M2tk {
             set {
                 _text = value;
                 label.text = _text;
-                // TODO: set dirty
+                is_dirty = true;
             }
         }
 
-        public bool? vertical_padding {
+        public bool vertical_padding {
             get { return _vertical_padding; }
             set {
                 _vertical_padding = value;
-                update_format();
-            }
-        }
-
-        public FontSpec font {
-            get { return _font; }
-            set {
-                _font = value;
-                update_format();
-            }
-        }
-
-        public uint8? x {
-            get { return _x; }
-            set {
-                _x = value;
-                update_format();
-            }
-        }
-
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
-
-        public uint8? width {
-            get { return _width; }
-            set {
-                _width = value;
-                update_format();
-            }
-        }
-
-        public uint8? height {
-            get { return _height; }
-            set {
-                _height = value;
                 update_format();
             }
         }

@@ -62,6 +62,8 @@ namespace M2tk {
             set { _m2.home2 = value.element; }
         }
 
+        public GFontList font { get; private set; }
+
         public signal void root_element_changed(Element new_root,
             Element old_root, uint8 value);
 
@@ -81,6 +83,7 @@ namespace M2tk {
             GraphicsFunc icon_handler)
         {
             _m2 = new M2();
+            font = new GFontList(_m2);
             m2_map[_m2] = this;
             _m2.init(root_element.element, event_source, event_handler, graphics_handler);
             _m2.set_root_change_callback((RootChangeFunc)on_root_element_change);
@@ -107,10 +110,6 @@ namespace M2tk {
             uint8 change_value = 0)
         {
             _m2.set_root(element.element, next_count, change_value);
-        }
-
-        public void set_font(FontIndex index, U8g.Font font) {
-            _m2.set_font(index, font);
         }
 
         public static void set_additional_read_only_x_padding(uint8 width) {

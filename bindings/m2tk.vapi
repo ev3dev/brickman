@@ -189,14 +189,6 @@ namespace M2tk {
     }
 
     [CCode (cname = "uint8_t", has_type_id = false)]
-    public enum FontIndex {
-        [CCode (cname = "0")] F0,
-        [CCode (cname = "1")] F1,
-        [CCode (cname = "2")] F2,
-        [CCode (cname = "3")] F3
-    }
-
-    [CCode (cname = "uint8_t", has_type_id = false)]
     [Flags]
     public enum FontSpec
     {
@@ -205,7 +197,8 @@ namespace M2tk {
         [CCode (cname = "2")] F2,
         [CCode (cname = "3")] F3,
         [CCode (cname = "4")] HIGHLIGHT,
-        [CCode (cname = "8")] CENTER
+        [CCode (cname = "8")] CENTER,
+        [CCode (cname = "((uint8_t)(-1))")] DEFAULT
     }
 
     [CCode (cname = "uint8_t", has_type_id = false)]
@@ -347,7 +340,11 @@ namespace M2tk {
         [CCode (cname = "m2_GetKeyM2")]
         public uint8 get_key();
         [CCode (cname = "m2_SetFontM2")]
-        public void set_font(FontIndex index, U8g.Font? font);
+        public void set_font(uint index, U8g.Font? font)
+            requires (index <= 3);
+        [CCode (cname = "m2_u8g_get_font")]
+        public static U8g.Font? get_font(uint index)
+            requires (index <= 3);
         [CCode (cname = "m2_SetRootM2")]
         public void set_root(Element new_root, uint8 next_count = 0,
             uint8 callback_value = 0);

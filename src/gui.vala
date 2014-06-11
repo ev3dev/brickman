@@ -43,7 +43,7 @@ namespace BrickDisplayManager {
         Power power = new Power();
         HomeScreen home_screen;
 
-        public bool dirty { get; set; default = true; }
+        public bool is_dirty { get; set; default = true; }
         public bool statusbar_visible { get; set; default = true; }
         public GM2tk m2tk { get; private set; }
 
@@ -54,8 +54,8 @@ namespace BrickDisplayManager {
             m2tk = new GM2tk(home_screen, event_source, event_handler,
                 box_shadow_frame_graphics_handler, box_icon_handler);
             m2tk.home2 = power.shutdown_screen;
-            m2tk.set_font(FontIndex.F0, U8g.Font.x11_7x13);
-            m2tk.set_font(FontIndex.F1, U8g.Font.m2tk_icon_9);
+            m2tk.font[0] = U8g.Font.x11_7x13;
+            m2tk.font[1] = U8g.Font.m2tk_icon_9;
             GM2tk.set_additional_text_x_padding(3);
             m2tk.root_element_changed.connect(on_root_element_changed);
         }
@@ -85,8 +85,9 @@ namespace BrickDisplayManager {
         bool on_draw_timer() {
             if (!Curses.isendwin()) {
                 m2tk.check_key();
-                dirty |= m2tk.handle_key();
-                if (dirty) {
+                is_dirty |= m2tk.handle_key();
+                is_dirty |= m2tk.root.is_dirty;
+                if (is_dirty) {
                     unowned U8g.Graphics u8g = GM2tk.graphics;
                     u8g.begin_draw();
                     m2tk.draw();
@@ -98,7 +99,9 @@ namespace BrickDisplayManager {
                         u8g.draw_line(0, 15, u8g.get_width(), 15);
                     }
                     u8g.end_draw();
-                    dirty = false;
+                    is_dirty = false;
+                    if (m2tk.root.is_dirty)
+                        m2tk.root.is_dirty = false;
                 }
             }
             return true;

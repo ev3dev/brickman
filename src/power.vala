@@ -136,7 +136,7 @@ namespace BrickDisplayManager {
                 _content_list.add(_info_grid_list);
                 _content_list.add(_space);
                 _content_list.add(_button_list);
-
+_tech_label.notify.connect((s, p) => { debug("property %s changed", p.name); });
                 child = _content_list;
             }
         }
@@ -235,7 +235,6 @@ namespace BrickDisplayManager {
                     debug("time: %ud, state: %d, value: %.2f", item.get_time(),
                         item.get_state (), item.get_value());
                 });
-                gui.dirty = true;
             } catch (Error err) {
                 warning("%s", err.message);
                 // TODO: show error message
@@ -290,8 +289,6 @@ namespace BrickDisplayManager {
             battery_info_screen.power = device.energy_rate;
 
             battery_voltage2 = "%0.2f".printf(device.voltage);
-            if (gui != null)
-                gui.dirty = true;
         }
 
         void on_device_changed(Device device) {

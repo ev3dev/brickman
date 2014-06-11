@@ -36,6 +36,15 @@ namespace M2tk {
             }
         }
 
+        public override bool is_dirty {
+            get { return base.is_dirty | child.is_dirty; }
+            set {
+                if (!value)
+                    child.is_dirty = false;
+                base.is_dirty = value;
+            }
+        }
+
         public VerticalAlignment vertical_alignment {
             get { return _vertical_alignment; }
             set {
@@ -48,38 +57,6 @@ namespace M2tk {
             get { return _horizontal_alignment; }
             set {
                 _horizontal_alignment = value;
-                update_format();
-            }
-        }
-
-        public uint8? x {
-            get { return _x; }
-            set {
-                _x = value;
-                update_format();
-            }
-        }
-
-        public uint8? y {
-            get { return _y; }
-            set {
-                _y = value;
-                update_format();
-            }
-        }
-
-        public uint8? width {
-            get { return _width; }
-            set {
-                _width = value;
-                update_format();
-            }
-        }
-
-        public uint8? height {
-            get { return _height; }
-            set {
-                _height = value;
                 update_format();
             }
         }

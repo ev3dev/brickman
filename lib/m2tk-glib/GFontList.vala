@@ -18,20 +18,27 @@
  */
 
 /*
- * GSpace.vala:
+ * GFontList.vala:
  *
- * wrapper for m2tk SPACE
+ * List of fonts used for indexed property
  */
 
-
 namespace M2tk {
-    public class GSpace : M2tk.GElement {
-        Space space { get { return (Space)element; } }
+    public class GFontList {
+        unowned M2 m2;
 
-        public GSpace(uint8 width, uint8 height) {
-            base(Space.create());
-            this.width = width;
-            this.height = height;
+        public U8g.Font get(uint index) {
+            return m2.get_font(index);
+        }
+
+        public void set(uint index, U8g.Font font) {
+            m2.set_font(index, font);
+        }
+
+        public uint size { get { return 4; } }
+
+        public GFontList(M2 m2) {
+            this.m2 = m2;
         }
     }
 }

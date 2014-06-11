@@ -18,20 +18,25 @@
  */
 
 /*
- * GSpace.vala:
+ * GElementList.vala:
  *
- * wrapper for m2tk SPACE
+ * List of elements used for indexed property
  */
 
-
 namespace M2tk {
-    public class GSpace : M2tk.GElement {
-        Space space { get { return (Space)element; } }
+    public class GElementList {
+        GListElement parent;
 
-        public GSpace(uint8 width, uint8 height) {
-            base(Space.create());
-            this.width = width;
-            this.height = height;
+        public GElement get(uint index) requires (index < size)
+        {
+            unowned Element element = (Element)parent.child_list.index(index);
+            return GElement.element_map[element];
+        }
+
+        public uint size { get { return parent.child_list.len; } }
+
+        public GElementList(GListElement parent) {
+            this.parent = parent;
         }
     }
 }
