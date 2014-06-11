@@ -38,19 +38,15 @@ namespace BrickDisplayManager {
         Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
 
         Power power = new Power();
-        HomeScreen home_screen;
+        HomeScreen home_screen = new HomeScreen();
+        StatusBar status_bar = new StatusBar();
 
         public bool is_dirty { get; set; default = true; }
         public GM2tk m2tk { get; private set; }
-        public StatusBar status_bar { get; private set; }
 
         public GUI() {
-            debug("initializing GUI");
-            home_screen = new HomeScreen(power);
-            status_bar = new StatusBar();
-            status_bar.add_left(power.battery_status_bar_item);
-            status_bar.add_left(power.battery_status_bar_item);
-            status_bar.add_right(power.battery_status_bar_item);
+            home_screen.add_menu_item("Battery", power.battery_info_screen);
+            home_screen.add_menu_item("Shutdown", power.shutdown_screen);
             status_bar.add_right(power.battery_status_bar_item);
 
             m2tk = new GM2tk(home_screen, event_source, event_handler,

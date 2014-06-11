@@ -52,7 +52,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
     src/BatteryStatusBarItem.vala
     src/brickdm.vala
     src/gui.vala
-    src/home.vala
+    src/HomeScreen.vala
     src/Power.vala
     src/Screen.vala
     src/ShutdownScreen.vala

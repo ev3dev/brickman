@@ -56,6 +56,7 @@ namespace M2tk {
         }
 
         public void add(GElement element) {
+            element.ref();
             child_list.add(element.element);
             update_list();
         }

@@ -23,40 +23,44 @@
  * The home screen for brickdm.
  */
 
+using Gee;
 using M2tk;
 
 namespace BrickDisplayManager {
 
     class HomeScreen : Screen {
+        HashMap<GButton, ScreenInfo?> screen_info_map;
 
-        Power power;
-
-        GButton _battery_menu_item;
-        GButton _shutdown_menu_item;
         GVList _menu_list;
 
-        public HomeScreen(Power power) {
-            debug("initializing Home");
-            this.power = power;
-
-            //Root.create(network.root_element, "Network"),
-            _battery_menu_item = new GButton("Battery");
-            _battery_menu_item.pressed.connect(on_battery_menu_item_pressed);
-            _shutdown_menu_item = new GButton("Shutdown");
-            _shutdown_menu_item.pressed.connect(on_shutdown_menu_item_pressed);
+        public HomeScreen() {
+            screen_info_map = new HashMap<GButton, ScreenInfo?>();
             _menu_list = new GVList();
-            _menu_list.add(_battery_menu_item);
-            _menu_list.add(_shutdown_menu_item);
 
             child = _menu_list;
         }
 
-        void on_battery_menu_item_pressed() {
-            gui.m2tk.set_root(power.battery_info_screen);
+        public void add_menu_item(string text, Screen screen) {
+            var button = new GButton(text);
+            var screen_info = ScreenInfo(screen, _menu_list.children.size);
+            screen_info_map[button] = screen_info;
+            button.pressed.connect(on_menu_item_selected);
+            _menu_list.add(button);
         }
 
-        void on_shutdown_menu_item_pressed() {
-            gui.m2tk.set_root(power.shutdown_screen, 0, 1);
+        void on_menu_item_selected(GButton button) {
+            gui.m2tk.set_root(screen_info_map[button].screen,
+                0, (uint8)screen_info_map[button].index);
+        }
+
+        struct ScreenInfo {
+            Screen screen;
+            uint index;
+
+            public ScreenInfo(Screen screen, uint index) {
+                this.screen = screen;
+                this.index = index;
+            }
         }
     }
 }
