@@ -21,10 +21,9 @@
  */
 
 /*
- * power.vala:
+ * Power.vala:
  *
- * Reads info from the battery and provides functions for displaying
- * that info.
+ * Monitors battery status and performs other power related functions
  */
 
 using M2tk;
@@ -37,6 +36,7 @@ namespace BrickDisplayManager {
             "/org/freedesktop/UPower/devices/battery_legoev3_battery";
 
         double battery_hist_data[100];
+        Device ev3_battery;
 
         public BatteryInfoScreen battery_info_screen { get; private set; }
         public ShutdownScreen shutdown_screen { get; private set; }
@@ -48,22 +48,23 @@ namespace BrickDisplayManager {
             battery_status_bar_item = new BatteryStatusBarItem();
 
             try {
-                var client = new Client();
-                client.enumerate_devices_sync ();
-                var devices = client.get_devices();
-                devices.foreach((device) => {
-                    device.changed.connect(on_device_changed);
-                    var kind = device.kind;
-                    var object_path = device.get_object_path();
-                    debug("Found %s at %s.", Device.kind_to_string(kind), object_path);
-                    if (EV3_BATTERY_PATH == object_path)
-                        update_status(device);
-                });
+                ev3_battery = new Device();
+                ev3_battery.set_object_path_sync(EV3_BATTERY_PATH);
+                ev3_battery.changed.connect(on_ev3_battery_changed);
+                ev3_battery.changed();
             } catch (Error err) {
                 warning("%s", err.message);
             }
         }
 
+        void on_ev3_battery_changed() {
+            battery_info_screen.technology = Device.technology_to_string(ev3_battery.technology);
+            battery_info_screen.voltage = ev3_battery.voltage;
+            battery_info_screen.power = ev3_battery.energy_rate;
+
+            battery_status_bar_item.voltage = ev3_battery.voltage;
+        }
+/*
         void update_battery_hist_data(Device device)
         {
             debug("Getting history.");
@@ -101,28 +102,6 @@ namespace BrickDisplayManager {
             for (ushort i = 0; i < battery_hist_data.length; i++)
                 u8g.draw_pixel(i, (ushort)(battery_hist_data[i]*20));
         }
-
-        void update_status(Device device)
-        {
-            battery_info_screen.technology = Device.technology_to_string(device.technology);
-            battery_info_screen.voltage = device.voltage;
-            battery_info_screen.power = device.energy_rate;
-
-            battery_status_bar_item.voltage = device.voltage;
-        }
-
-        void on_device_changed(Device device) {
-          var object_path = device.get_object_path();
-          debug("changed: %s", object_path);
-          //unowned Element root = get_root();
-          if (object_path == null)
-            return;
-          if (EV3_BATTERY_PATH == object_path) {
-            //if (gui.statusbar_visible || root == battery_info_root_element)
-              update_status(device);
-            //if (root == battery_hist_root_element)
-              update_battery_hist_data(device);
-          }
-        }
     }
+*/
 }

@@ -34,7 +34,7 @@ namespace BrickDisplayManager {
         const ushort TOP = 5;
         static unowned Font font = Font.dsg4_04b_03b;
 
-        string _text;
+        string _text = "ERR";
 
         double _voltage;
         public double voltage {
