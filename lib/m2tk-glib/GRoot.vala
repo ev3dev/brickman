@@ -48,7 +48,7 @@ namespace M2tk {
             set {
                 _text = value;
                 root.text = _text;
-                is_dirty = true;
+                dirty = true;
             }
         }
 

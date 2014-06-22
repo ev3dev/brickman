@@ -25,6 +25,7 @@
 
 using Gee;
 using M2tk;
+using U8g;
 
 namespace BrickDisplayManager {
 
@@ -37,24 +38,29 @@ namespace BrickDisplayManager {
         MainLoop main_loop = new MainLoop();
         Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
 
-        Power power = new Power();
         HomeScreen home_screen = new HomeScreen();
+        Power power = new Power();
+        Networking networking = new Networking();
         StatusBar status_bar = new StatusBar();
 
-        public bool is_dirty { get; set; default = true; }
+
+        public bool dirty { get; set; default = true; }
         public GM2tk m2tk { get; private set; }
 
         public GUI() {
+            home_screen.add_menu_item("Network", networking.network_status_screen);
             home_screen.add_menu_item("Battery", power.battery_info_screen);
             home_screen.add_menu_item("Shutdown", power.shutdown_screen);
             status_bar.add_right(power.battery_status_bar_item);
 
             m2tk = new GM2tk(home_screen, event_source, event_handler,
-                box_shadow_frame_graphics_handler, box_icon_handler);
+                box_shadow_frame_graphics_handler, font_icon_handler);
             m2tk.home2 = power.shutdown_screen;
-            m2tk.font[0] = U8g.Font.x11_7x13;
-            m2tk.font[1] = U8g.Font.m2tk_icon_9;
-            GM2tk.set_additional_text_x_padding(3);
+            m2tk.font[0] = Font.x11_7x13;
+            m2tk.font[1] = Font.m2tk_icon_9;
+            set_toggle_font_icon(Font.m2tk_icon_9, 73, 72);
+            set_radio_font_icon(Font.m2tk_icon_9, 82, 80);
+            set_additional_text_x_padding(3);
             m2tk.root_element_changed.connect(on_root_element_changed);
         }
 
@@ -83,18 +89,18 @@ namespace BrickDisplayManager {
         bool on_draw_timer() {
             if (!Curses.isendwin()) {
                 m2tk.check_key();
-                is_dirty |= m2tk.handle_key();
-                is_dirty |= m2tk.root.is_dirty;
-                if (is_dirty) {
-                    unowned U8g.Graphics u8g = GM2tk.graphics;
+                dirty |= m2tk.handle_key();
+                dirty |= m2tk.root.dirty;
+                if (dirty) {
+                    unowned Graphics u8g = GM2tk.graphics;
                     u8g.begin_draw();
                     m2tk.draw();
                     if (status_bar.is_visible)
                         status_bar.draw(u8g);
                     u8g.end_draw();
-                    is_dirty = false;
-                    if (m2tk.root.is_dirty)
-                        m2tk.root.is_dirty = false;
+                    dirty = false;
+                    if (m2tk.root.dirty)
+                        m2tk.root.dirty = false;
                 }
             }
             return true;

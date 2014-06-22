@@ -131,7 +131,7 @@ namespace M2tk {
 
         public uint8 actual_width { get { return element.width; } }
         public uint8 actual_height { get { return element.height; } }
-        public virtual bool is_dirty { get; set; default = true; }
+        public virtual bool dirty { get; set; default = true; }
 
         Element _element;
         public unowned Element element {
@@ -195,7 +195,7 @@ namespace M2tk {
                 builder.append(".%d".printf((int)_decimal_position));
             format = builder.str;
             element.format = format;
-            is_dirty = true;
+            dirty = true;
         }
     }
 }

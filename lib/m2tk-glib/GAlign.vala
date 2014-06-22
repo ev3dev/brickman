@@ -36,12 +36,12 @@ namespace M2tk {
             }
         }
 
-        public override bool is_dirty {
-            get { return base.is_dirty | child.is_dirty; }
+        public override bool dirty {
+            get { return base.dirty | child.dirty; }
             set {
                 if (!value)
-                    child.is_dirty = false;
-                base.is_dirty = value;
+                    child.dirty = false;
+                base.dirty = value;
             }
         }
 

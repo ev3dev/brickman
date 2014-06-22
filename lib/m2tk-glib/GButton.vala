@@ -34,7 +34,7 @@ namespace M2tk {
             set {
                 _text = value;
                 button.text = _text;
-                is_dirty = true;
+                dirty = true;
             }
         }
 

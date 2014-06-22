@@ -35,7 +35,7 @@ namespace BrickDisplayManager {
         const string EV3_BATTERY_PATH =
             "/org/freedesktop/UPower/devices/battery_legoev3_battery";
 
-        double battery_hist_data[100];
+        //double battery_hist_data[100];
         Device ev3_battery;
 
         public BatteryInfoScreen battery_info_screen { get; private set; }
@@ -102,6 +102,6 @@ namespace BrickDisplayManager {
             for (ushort i = 0; i < battery_hist_data.length; i++)
                 u8g.draw_pixel(i, (ushort)(battery_hist_data[i]*20));
         }
-    }
 */
+    }
 }

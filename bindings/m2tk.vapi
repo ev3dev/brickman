@@ -239,6 +239,10 @@ namespace M2tk {
     public static void set_additional_text_x_padding(uint8 width);
     [CCode (cname = "m2_SetU8gAdditionalReadOnlyXBorder")]
     public static void set_additional_read_only_x_padding(uint8 width);
+    [CCode (cname = "m2_SetU8gRadioFontIcon")]
+    public static void set_radio_font_icon(U8g.Font font, uint8 active, uint8 inactive);
+    [CCode (cname = "m2_SetU8gToggleFontIcon")]
+    public static void set_toggle_font_icon(U8g.Font font, uint8 active, uint8 inactive);
 
     /* delegates */
 
@@ -419,10 +423,10 @@ namespace M2tk {
         struct SpaceStruct {}
 
         [CCode (cname = "m2_el_space_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
 
@@ -445,10 +449,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_box_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
 
@@ -470,10 +474,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_spacecb_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "el_space.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "el_space.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "new_dialog_callback")]
@@ -499,10 +503,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_str_up_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "str")]
@@ -527,10 +531,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_label_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "str")]
@@ -555,10 +559,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_labelfn_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "label_callback")]
@@ -584,10 +588,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_root_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "el_str.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "el_str.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "el_str.str")]
@@ -615,10 +619,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_button_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "el_str.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "el_str.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "el_str.str")]
@@ -646,10 +650,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_s8num_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "s8.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "s8.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "s8.min")]
@@ -680,10 +684,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_s8numfn_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "s8.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "s8.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "s8.min")]
@@ -714,10 +718,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u8num_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "u8.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "u8.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "u8.min")]
@@ -748,10 +752,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u8numfn_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "u8.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "u8.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "u8.min")]
@@ -792,10 +796,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_vlist_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "len")]
@@ -825,10 +829,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_hlist_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "len")]
@@ -858,10 +862,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_gridlist_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "len")]
@@ -891,10 +895,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_xylist_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "len")]
@@ -924,10 +928,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_text_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "text")]
@@ -955,10 +959,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u32_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "val")]
@@ -983,10 +987,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_u32fn_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "u32_callback")]
@@ -1011,10 +1015,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_align_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "element")]
@@ -1039,10 +1043,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_hide_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "align.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "align.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "align.element")]
@@ -1070,14 +1074,14 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_toggle_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "val")]
-        bool *value;
+        internal bool *value;
 
         [CCode (cname = "g_malloc0")]
         Toggle(size_t size = sizeof(MallocStruct))
@@ -1098,10 +1102,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_toggle_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "val")]
@@ -1126,10 +1130,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_combo_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "setval.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "setval.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "setval.val")]
@@ -1160,10 +1164,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_combofn_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "setval.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "setval.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "setval.val")]
@@ -1194,10 +1198,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_vsb_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "top")]
@@ -1225,10 +1229,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_strlist_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "slbase.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "slbase.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "slbase.top")]
@@ -1259,10 +1263,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_2lmenu_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "slbase.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "slbase.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "slbase.top")]
@@ -1302,10 +1306,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_x2lmenu_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "slbase.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "slbase.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "slbase.top")]
@@ -1345,10 +1349,10 @@ namespace M2tk {
         struct MallocStruct {}
 
         [CCode (cname = "m2_el_x2lmenu_fn")]
-        static uint8 Func(ElementFuncArgs arg);
+        internal static uint8 Func(ElementFuncArgs arg);
 
         [CCode (cname = "infobase.slbase.ff.fn")]
-        ElementFunc func;
+        internal ElementFunc func;
         [CCode (cname = "infobase.slbase.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "infobase.slbase.top")]

@@ -112,18 +112,6 @@ namespace M2tk {
             _m2.set_root(element.element, next_count, change_value);
         }
 
-        public static void set_additional_read_only_x_padding(uint8 width) {
-            M2tk.set_additional_read_only_x_padding(width);
-        }
-
-        public static void set_additional_text_x_padding(uint8 width) {
-            M2tk.set_additional_text_x_padding(width);
-        }
-
-        public static void set_invisible_frame_x_padding(uint8 width) {
-            M2tk.set_invisible_frame_x_padding(width);
-        }
-
         static void on_root_element_change(Element new_root,
             Element old_root, uint8 value)
         {

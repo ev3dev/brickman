@@ -29,7 +29,7 @@ namespace BrickDisplayManager {
     public abstract class StatusBarItem : Object {
         public const ushort HEIGHT = 9;
 
-        public virtual bool is_dirty { get; set; default = true; }
+        public virtual bool dirty { get; set; default = true; }
         public abstract ushort draw(Graphics u8g, ushort x, StatusBar.Align align);
     }
 }

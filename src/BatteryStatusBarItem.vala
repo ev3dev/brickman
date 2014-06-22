@@ -45,7 +45,7 @@ namespace BrickDisplayManager {
                     _text = "%.1f".printf(value);
                 else
                     _text = "%.2f".printf(value);
-                is_dirty = true;
+                dirty = true;
             }
         }
 

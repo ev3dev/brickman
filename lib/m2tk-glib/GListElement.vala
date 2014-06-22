@@ -28,12 +28,12 @@ namespace M2tk {
         internal PtrArray child_list = new PtrArray();
         ListElement list_element { get { return (ListElement)element; } }
 
-        public override bool is_dirty {
+        public override bool dirty {
             get {
-                if (base.is_dirty)
+                if (base.dirty)
                     return true;
                 foreach (var child in children) {
-                    if (child.is_dirty)
+                    if (child.dirty)
                         return true;
                 }
                 return false;
@@ -41,9 +41,9 @@ namespace M2tk {
             set {
                 if (!value) {
                     foreach (var child in children)
-                        child.is_dirty = false;
+                        child.dirty = false;
                 }
-                base.is_dirty = value;
+                base.dirty = value;
             }
         }
 
@@ -64,7 +64,7 @@ namespace M2tk {
         void update_list() {
             list_element.list = (Element*)child_list.pdata;
             list_element.length = (uint8)child_list.len;
-            is_dirty = true;
+            dirty = true;
         }
     }
 }

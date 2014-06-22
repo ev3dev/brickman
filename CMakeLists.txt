@@ -19,6 +19,9 @@ pkg_check_modules(DEPS REQUIRED
     gio-2.0
     gee-1.0
     ncurses
+    dbus-glib-1
+    libnm-util
+    libnm-glib
     upower-glib
 )
 add_definitions(${DEPS_CFLAGS})
@@ -45,6 +48,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/m2tk-glib/GNullElement.vala
     lib/m2tk-glib/GRoot.vala
     lib/m2tk-glib/GSpace.vala
+    lib/m2tk-glib/GToggle.vala
     lib/m2tk-glib/GVList.vala
     src/BatteryInfoScreen.vala
     src/BatteryHistScreen.vala
@@ -53,6 +57,8 @@ vala_precompile(VALA_C ${EXEC_NAME}
     src/brickdm.vala
     src/gui.vala
     src/HomeScreen.vala
+    src/Network.vala
+    src/NetworkStatusScreen.vala
     src/Power.vala
     src/Screen.vala
     src/ShutdownScreen.vala
@@ -66,6 +72,7 @@ PACKAGES
     curses
     posix
     linux
+    dbus-glib-1
 CUSTOM_VAPIS
     bindings/*.vapi
 )

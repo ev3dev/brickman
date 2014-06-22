@@ -67,7 +67,7 @@ namespace BrickDisplayManager
                     // acquire console
                     ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
                     Curses.refresh();
-                    gui.is_dirty = true;
+                    gui.dirty = true;
                 }
             }
         } else {
