@@ -58,8 +58,8 @@ namespace Up {
 		public virtual signal void device_added (Up.Device device);
 		public virtual signal void device_changed (Up.Device device);
 		public virtual signal void device_removed (Up.Device device);
-		public virtual signal void notify_resume (Up.SleepKind sleep_kind);
-		public virtual signal void notify_sleep (Up.SleepKind sleep_kind);
+		public virtual signal void notify_resume ([CCode (type = "guint")] Up.SleepKind sleep_kind);
+		public virtual signal void notify_sleep ([CCode (type = "guint")] Up.SleepKind sleep_kind);
 	}
 	[CCode (cheader_filename = "upower.h", type_id = "up_device_get_type ()")]
 	public class Device : GLib.Object {
@@ -112,6 +112,8 @@ namespace Up {
 		[NoAccessorMethod]
 		public Up.DeviceKind kind { get; set; }
 		[NoAccessorMethod]
+		public double luminosity { get; set; }
+		[NoAccessorMethod]
 		public string model { owned get; set; }
 		[NoAccessorMethod]
 		public string native_path { owned get; set; }
@@ -133,6 +135,8 @@ namespace Up {
 		public Up.DeviceState state { get; set; }
 		[NoAccessorMethod]
 		public Up.DeviceTechnology technology { get; set; }
+		[NoAccessorMethod]
+		public double temperature { get; set; }
 		[NoAccessorMethod]
 		public int64 time_to_empty { get; set; }
 		[NoAccessorMethod]
@@ -306,7 +310,7 @@ namespace Up {
 		public virtual signal void data_changed ();
 		public virtual signal void total_changed (uint value);
 	}
-	[CCode (cheader_filename = "upower.h", cprefix = "UP_DEVICE_KIND_")]
+	[CCode (cheader_filename = "upower.h", cprefix = "UP_DEVICE_KIND_", has_type_id = false)]
 	public enum DeviceKind {
 		UNKNOWN,
 		LINE_POWER,
@@ -322,7 +326,7 @@ namespace Up {
 		COMPUTER,
 		LAST
 	}
-	[CCode (cheader_filename = "upower.h", cprefix = "UP_DEVICE_STATE_")]
+	[CCode (cheader_filename = "upower.h", cprefix = "UP_DEVICE_STATE_", has_type_id = false)]
 	public enum DeviceState {
 		UNKNOWN,
 		CHARGING,
@@ -333,7 +337,7 @@ namespace Up {
 		PENDING_DISCHARGE,
 		LAST
 	}
-	[CCode (cheader_filename = "upower.h", cprefix = "UP_DEVICE_TECHNOLOGY_")]
+	[CCode (cheader_filename = "upower.h", cprefix = "UP_DEVICE_TECHNOLOGY_", has_type_id = false)]
 	public enum DeviceTechnology {
 		UNKNOWN,
 		LITHIUM_ION,
@@ -344,14 +348,14 @@ namespace Up {
 		NICKEL_METAL_HYDRIDE,
 		LAST
 	}
-	[CCode (cheader_filename = "upower.h", cprefix = "UP_QOS_KIND_")]
+	[CCode (cheader_filename = "upower.h", cprefix = "UP_QOS_KIND_", has_type_id = false)]
 	public enum QosKind {
 		UNKNOWN,
 		NETWORK,
 		CPU_DMA,
 		LAST
 	}
-	[CCode (cheader_filename = "upower.h", cprefix = "UP_SLEEP_KIND_")]
+	[CCode (cheader_filename = "upower.h", cprefix = "UP_SLEEP_KIND_", has_type_id = false)]
 	public enum SleepKind {
 		UNKNOWN,
 		SUSPEND,

@@ -3,5 +3,5 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 vapigen --directory ${DIR} --pkg gio-2.0 --metadatadir ${DIR} --library upower /usr/share/gir-1.0/UPowerGlib-1.0.gir
-vapigen --directory ${DIR} --pkg dbus-glib-1 --metadatadir ${DIR} --library libnm-util ${DIR}/NetworkManager-1.0.gir
-vapigen --directory ${DIR} --pkg dbus-glib-1 --pkg gio-2.0 --pkg libnm-util --vapidir ${DIR} --metadatadir ${DIR} --library libnm-glib ${DIR}/NMClient-1.0.gir
+vapigen --directory ${DIR} --pkg dbus-glib-1 --metadatadir ${DIR} --library libnm-util /usr/share/gir-1.0/NetworkManager-1.0.gir
+vapigen --directory ${DIR} --pkg dbus-glib-1 --pkg gio-2.0 --pkg libnm-util --vapidir ${DIR} --metadatadir ${DIR} --library libnm-glib /usr/share/gir-1.0/NMClient-1.0.gir
