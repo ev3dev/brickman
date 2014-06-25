@@ -52,13 +52,9 @@ namespace BrickDisplayManager
     }
 
     /**
-     * SIGHUP is used for console switching.
-     *
-     * Checking the result of the ioctl is important to make sure that
-     * someone really has requested to switch consoles and that the
-     * SIGHUP did not come from something else.
+     * SIGUSR1 is used for console switching.
      */
-    static bool HandleSIGHUP()
+    static bool HandleSIGUSR1()
     {
         Linux.VirtualTerminal.Stat vtstat;
         if (Curses.isendwin()) {
@@ -112,17 +108,18 @@ namespace BrickDisplayManager
         int success = 0;
         var mode = Mode() {
             mode = (char)VT_PROCESS,
-            relsig = (int16)SIGHUP,
-            acqsig = (int16)SIGHUP
+            relsig = (int16)SIGUSR1,
+            acqsig = (int16)SIGUSR1
         };
         try {
             if (ioctl(vtfd, KDSETMODE, TerminalMode.GRAPHICS) < 0)
                   throw new ConsoleError.MODE("Could not set virtual console to KD_GRAPHICS mode.");
             if (ioctl(vtfd, VT_SETMODE, ref mode) < 0)
                   throw new ConsoleError.MODE("Could not set virtual console to VT_PROCESS mode.");
-            Unix.signal_add(SIGHUP, HandleSIGHUP);
+            Unix.signal_add(SIGHUP, HandleSIGTERM);
             Unix.signal_add(SIGTERM, HandleSIGTERM);
             Unix.signal_add(SIGINT, HandleSIGTERM);
+            Unix.signal_add(SIGUSR1, HandleSIGUSR1);
 
             gui = new GUI();
             gui.run();
