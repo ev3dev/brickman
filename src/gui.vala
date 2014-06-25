@@ -21,6 +21,9 @@
  * gui.vala:
  *
  * The main graphical user interface class.
+ *
+ * We are using ncurses for keyboard input, m2tklib/u8glib for
+ * graphics and glib for the main loop.
  */
 
 using Gee;
@@ -35,6 +38,9 @@ namespace BrickDisplayManager {
     }
 
     class GUI : Object {
+        FileStream? vtIn;
+        FileStream? vtOut;
+        Curses.Screen term;
         MainLoop main_loop = new MainLoop();
         Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
 
@@ -43,11 +49,26 @@ namespace BrickDisplayManager {
         Networking networking = new Networking();
         StatusBar status_bar = new StatusBar();
 
-
+        public bool active {
+            get { return !Curses.isendwin(); }
+            set {
+                if (value == active)
+                    return;
+                if (value) {
+                    Curses.refresh();
+                    dirty = true;
+                } else
+                    Curses.endwin();
+            }
+        }
         public bool dirty { get; set; default = true; }
         public GM2tk m2tk { get; private set; }
 
-        public GUI() {
+        public GUI(int vtfd) {
+            vtIn = FileStream.fdopen(vtfd, "r");
+            vtOut = FileStream.fdopen(vtfd, "w");
+            term = new Curses.Screen("linux", vtIn, vtOut);
+
             home_screen.add_menu_item("Network", networking.network_status_screen);
             home_screen.add_menu_item("Battery", power.battery_info_screen);
             home_screen.add_menu_item("Shutdown", power.shutdown_screen);
@@ -87,7 +108,7 @@ namespace BrickDisplayManager {
         }
 
         bool on_draw_timer() {
-            if (!Curses.isendwin()) {
+            if (active) {
                 m2tk.check_key();
                 dirty |= m2tk.handle_key();
                 dirty |= m2tk.root.dirty;

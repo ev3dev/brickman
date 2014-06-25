@@ -20,12 +20,12 @@
 /*
  * brickdm.vala:
  *
- * This is the main program. Functions in this file include:
+ * This is the main program. It works like this:
  *
- * - Grabbing a free console for displaying graphics
- * - Handling console switching
- * - Initializing library data structures
- * - Processing the main event loop
+ * - Find the next free virtual terminal.
+ * - Claim it (by opening the device node) and activate it.
+ * - Setup signal handling for clean shutdown and VT switching.
+ * - Run the GUI on the VT that we claimed.
  */
 
 using Posix;
@@ -56,20 +56,22 @@ namespace BrickDisplayManager
      */
     static bool HandleSIGUSR1()
     {
-        Linux.VirtualTerminal.Stat vtstat;
-        if (Curses.isendwin()) {
+        if (gui == null)
+            return true;
+
+        if (gui.active) {
+            // release console
+            if (ioctl(vtfd, VT_RELDISP, 1) == 0)
+              gui.active = false;
+        } else {
+            Linux.VirtualTerminal.Stat vtstat;
             if (ioctl(vtfd, VT_GETSTATE, out vtstat) == 0) {
                 if (vtstat.v_active == vtnum) {
                     // acquire console
                     ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
-                    Curses.refresh();
-                    gui.dirty = true;
+                    gui.active = true;
                 }
             }
-        } else {
-            // release console
-            if (ioctl(vtfd, VT_RELDISP, 1) == 0)
-              Curses.endwin();
         }
         return true;
     }
@@ -98,10 +100,7 @@ namespace BrickDisplayManager
         close(vtfd);
 
         vtfd = open(device, O_RDWR, 0);
-        var vtIn = FileStream.fdopen(vtfd, "r");
-        var vtOut = FileStream.fdopen(vtfd, "w");
-        var term = new Curses.Screen("linux", vtIn, vtOut);
-
+        gui = new GUI(vtfd);
         ioctl(vtfd, VT_ACTIVATE, vtnum);
         ioctl(vtfd, VT_WAITACTIVE, vtnum);
 
@@ -112,16 +111,15 @@ namespace BrickDisplayManager
             acqsig = (int16)SIGUSR1
         };
         try {
-            if (ioctl(vtfd, KDSETMODE, TerminalMode.GRAPHICS) < 0)
-                  throw new ConsoleError.MODE("Could not set virtual console to KD_GRAPHICS mode.");
             if (ioctl(vtfd, VT_SETMODE, ref mode) < 0)
                   throw new ConsoleError.MODE("Could not set virtual console to VT_PROCESS mode.");
+            if (ioctl(vtfd, KDSETMODE, TerminalMode.GRAPHICS) < 0)
+                  throw new ConsoleError.MODE("Could not set virtual console to KD_GRAPHICS mode.");
             Unix.signal_add(SIGHUP, HandleSIGTERM);
             Unix.signal_add(SIGTERM, HandleSIGTERM);
             Unix.signal_add(SIGINT, HandleSIGTERM);
             Unix.signal_add(SIGUSR1, HandleSIGUSR1);
 
-            gui = new GUI();
             gui.run();
         } catch (ConsoleError e) {
             critical(e.message);
@@ -132,8 +130,8 @@ namespace BrickDisplayManager
         mode.mode = (char)VT_AUTO;
         ioctl(vtfd, VT_SETMODE, ref mode);
 
-        if (!Curses.isendwin()) {
-            Curses.endwin();
+        if (gui.active) {
+            gui.active = false;
             ioctl(vtfd, VT_ACTIVATE, vtstat.v_active);
             ioctl(vtfd, VT_WAITACTIVE, vtstat.v_active);
         }
