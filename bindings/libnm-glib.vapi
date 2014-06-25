@@ -87,8 +87,8 @@ namespace NM {
 		public uint state { get; }
 		public string uuid { get; }
 	}
-	[CCode (cheader_filename = "nm-client.h", type_id = "nm_client_get_type ()")]
-	public class Client : NM.Object, GLib.AsyncInitable, GLib.Initable {
+	[CCode (cheader_filename = "nm-client.h")]
+	public class Client : NM.Object, GLib.AsyncInitable, GLib.Initable, GLib.AsyncInitable, GLib.Initable {
 		[CCode (cheader_filename = "nm-client.h", cname = "NM_CLIENT_ACTIVATING_CONNECTION")]
 		public const string ACTIVATING_CONNECTION;
 		[CCode (cheader_filename = "nm-client.h", cname = "NM_CLIENT_ACTIVE_CONNECTIONS")]
@@ -124,8 +124,6 @@ namespace NM {
 		public NM.ConnectivityState check_connectivity (GLib.Cancellable? cancellable = null) throws GLib.Error;
 		public async NM.ConnectivityState check_connectivity_async (GLib.Cancellable? cancellable) throws GLib.Error;
 		public void deactivate_connection (NM.ActiveConnection active);
-		[CCode (has_construct_function = false)]
-		public Client.finish (GLib.AsyncResult result) throws GLib.Error;
 		public unowned NM.ActiveConnection get_activating_connection ();
 		public unowned GLib.GenericArray<NM.ActiveConnection> get_active_connections ();
 		public NM.ConnectivityState get_connectivity ();
@@ -140,6 +138,7 @@ namespace NM {
 		public unowned string get_version ();
 		public bool networking_get_enabled ();
 		public void networking_set_enabled (bool enabled);
+		public static async NM.Client new_async (GLib.Cancellable? cancellable = null) throws GLib.Error;
 		public bool set_logging (string? level, string? domains) throws GLib.Error;
 		public void sleep (bool sleep_);
 		public bool wimax_get_enabled ();
@@ -600,8 +599,8 @@ namespace NM {
 		public virtual signal void updated ();
 		public signal void visible (bool object);
 	}
-	[CCode (cheader_filename = "nm-remote-settings.h", type_id = "nm_remote_settings_get_type ()")]
-	public class RemoteSettings : GLib.Object, GLib.AsyncInitable, GLib.Initable {
+	[CCode (cheader_filename = "nm-remote-settings.h")]
+	public class RemoteSettings : NM.Object, GLib.AsyncInitable, GLib.Initable, GLib.AsyncInitable, GLib.Initable {
 		[CCode (cheader_filename = "nm-remote-settings.h", cname = "NM_REMOTE_SETTINGS_BUS")]
 		public const string BUS;
 		[CCode (cheader_filename = "nm-remote-settings.h", cname = "NM_REMOTE_SETTINGS_CAN_MODIFY")]
@@ -617,11 +616,10 @@ namespace NM {
 		[CCode (has_construct_function = false)]
 		public RemoteSettings (DBus.Connection? bus);
 		public bool add_connection (NM.Connection connection, [CCode (scope = "async")] owned NM.RemoteSettingsAddConnectionFunc callback);
-		[CCode (has_construct_function = false)]
-		public RemoteSettings.finish (GLib.AsyncResult result) throws GLib.Error;
 		public unowned NM.RemoteConnection get_connection_by_path (string path);
 		public unowned NM.RemoteConnection get_connection_by_uuid (string uuid);
 		public GLib.SList<weak NM.RemoteConnection> list_connections ();
+		public static async NM.RemoteSettings new_async (DBus.Connection? bus, GLib.Cancellable? cancellable = null) throws GLib.Error;
 		public bool save_hostname (string hostname, [CCode (scope = "async")] owned NM.RemoteSettingsSaveHostnameFunc? callback);
 		[NoAccessorMethod]
 		public bool can_modify { get; }
