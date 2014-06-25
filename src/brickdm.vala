@@ -95,15 +95,15 @@ namespace BrickDisplayManager
             critical("insufficient permission on tty");
             return 1;
         }
-        ioctl(vtfd, KDSETMODE, TerminalMode.TEXT);
-        ioctl(vtfd, VT_ACTIVATE, vtnum);
-        ioctl(vtfd, VT_WAITACTIVE, vtnum);
         close(vtfd);
 
         vtfd = open(device, O_RDWR, 0);
         var vtIn = FileStream.fdopen(vtfd, "r");
         var vtOut = FileStream.fdopen(vtfd, "w");
         var term = new Curses.Screen("linux", vtIn, vtOut);
+
+        ioctl(vtfd, VT_ACTIVATE, vtnum);
+        ioctl(vtfd, VT_WAITACTIVE, vtnum);
 
         int success = 0;
         var mode = Mode() {
