@@ -49,7 +49,7 @@ namespace M2tk {
 
         static uint8 hook_func (ElementFuncArgs arg) {
             unowned Toggle toggle = (Toggle)arg.element;
-            toggle.func = (ElementFunc)toggle.Func;
+            toggle.func = (ElementFunc)Toggle.Func;
             var result = toggle.func(arg);
             toggle.func = (ElementFunc)hook_func;
             if (arg.msg == ElementCallbackMessage.SELECT)

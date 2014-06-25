@@ -28,7 +28,7 @@ namespace M2tk {
         unowned M2 m2;
 
         public U8g.Font get(uint index) {
-            return m2.get_font(index);
+            return M2.get_font(index);
         }
 
         public void set(uint index, U8g.Font font) {

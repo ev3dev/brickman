@@ -80,9 +80,5 @@ namespace BrickDisplayManager {
 
             child = _content_list;
         }
-
-        void on_notify(Object source, ParamSpec pspec) {
-            debug("property changed %s", pspec.name);
-        }
     }
 }
