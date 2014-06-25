@@ -46,19 +46,27 @@ namespace BrickDisplayManager {
             battery_info_screen = new BatteryInfoScreen();
             shutdown_screen = new ShutdownScreen();
             battery_status_bar_item = new BatteryStatusBarItem();
-
-            try {
-                ev3_battery = new Device();
-                ev3_battery.set_object_path_sync(EV3_BATTERY_PATH);
-                ev3_battery.changed.connect(on_ev3_battery_changed);
+            init_ev3_battery.begin((obj, res) => {
+                ev3_battery = init_ev3_battery.end(res);
                 ev3_battery.changed();
+            });
+        }
+
+        async Device? init_ev3_battery() {
+            try {
+                var dev = new Device();
+                dev.set_object_path_sync(EV3_BATTERY_PATH);
+                dev.changed.connect(on_ev3_battery_changed);
+                return dev;
             } catch (Error err) {
                 warning("%s", err.message);
             }
+            return null;
         }
 
         void on_ev3_battery_changed() {
-            battery_info_screen.technology = Device.technology_to_string(ev3_battery.technology);
+            battery_info_screen.technology =
+                Device.technology_to_string((DeviceTechnology)ev3_battery.technology);
             battery_info_screen.voltage = ev3_battery.voltage;
             battery_info_screen.power = ev3_battery.energy_rate;
 

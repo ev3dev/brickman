@@ -58,8 +58,8 @@ namespace Up {
 		public virtual signal void device_added (Up.Device device);
 		public virtual signal void device_changed (Up.Device device);
 		public virtual signal void device_removed (Up.Device device);
-		public virtual signal void notify_resume ([CCode (type = "guint")] Up.SleepKind sleep_kind);
-		public virtual signal void notify_sleep ([CCode (type = "guint")] Up.SleepKind sleep_kind);
+		public virtual signal void notify_resume (uint sleep_kind);
+		public virtual signal void notify_sleep (uint sleep_kind);
 	}
 	[CCode (cheader_filename = "upower.h", type_id = "up_device_get_type ()")]
 	public class Device : GLib.Object {
@@ -110,7 +110,7 @@ namespace Up {
 		[NoAccessorMethod]
 		public bool is_rechargeable { get; set; }
 		[NoAccessorMethod]
-		public Up.DeviceKind kind { get; set; }
+		public uint kind { get; set; }
 		[NoAccessorMethod]
 		public double luminosity { get; set; }
 		[NoAccessorMethod]
@@ -132,9 +132,9 @@ namespace Up {
 		[NoAccessorMethod]
 		public string serial { owned get; set; }
 		[NoAccessorMethod]
-		public Up.DeviceState state { get; set; }
+		public uint state { get; set; }
 		[NoAccessorMethod]
-		public Up.DeviceTechnology technology { get; set; }
+		public uint technology { get; set; }
 		[NoAccessorMethod]
 		public double temperature { get; set; }
 		[NoAccessorMethod]
@@ -172,7 +172,7 @@ namespace Up {
 		[CCode (cname = "up_history_item_to_string")]
 		public string to_string ();
 		[NoAccessorMethod]
-		public Up.DeviceState state { get; set; }
+		public uint state { get; set; }
 		[NoAccessorMethod]
 		public uint time { get; set; }
 		[NoAccessorMethod]
@@ -231,7 +231,7 @@ namespace Up {
 		[NoAccessorMethod]
 		public uint64 timespec { get; set; }
 		[NoAccessorMethod]
-		public Up.QosKind type { get; set; }
+		public uint type { get; set; }
 		[NoAccessorMethod]
 		public uint uid { get; set; }
 		[NoAccessorMethod]

@@ -1,21 +1,11 @@
-
 * cheader_filename="upower.h"
 
 *.*.cancellable default=null
 
 Client
     .get_devices type="GLib.GenericArray<Up.Device>"
-    .notify_resume.sleep_kind type="Up.SleepKind"
-    .notify_sleep.sleep_kind type="Up.SleepKind"
 Device
     .get_history_sync type="GLib.GenericArray<Up.HistoryItem>"
     .get_statistics_sync type="GLib.GenericArray<Up.StatsItem>"
-    .kind type="Up.DeviceKind"
-    .state type="Up.DeviceState"
-    .technology type="Up.DeviceTechnology"
-HistoryItem
-    .state type="Up.DeviceState"
-QosItem
-    .type type="Up.QosKind"
 Wakeups
     .get_data_sync type="GLib.GenericArray<Up.WakeupItem>"
