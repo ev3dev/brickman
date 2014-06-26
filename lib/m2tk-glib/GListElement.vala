@@ -25,7 +25,8 @@
 
 namespace M2tk {
     public abstract class GListElement : M2tk.GElement {
-        internal PtrArray child_list = new PtrArray();
+        internal GenericArray<unowned Element> child_list =
+            new GenericArray<unowned Element>();
         ListElement list_element { get { return (ListElement)element; } }
 
         public override bool dirty {
@@ -56,8 +57,8 @@ namespace M2tk {
         }
 
         internal void update_list() {
-            list_element.list = (Element*)child_list.pdata;
-            list_element.length = (uint8)child_list.len;
+            list_element.list = (Element*)child_list.data;
+            list_element.length = (uint8)child_list.length;
             dirty = true;
         }
     }

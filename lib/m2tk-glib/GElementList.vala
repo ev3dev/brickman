@@ -29,7 +29,7 @@ namespace M2tk {
     public class GElementList : AbstractList<GElement> {
         GListElement parent;
 
-        public override int size { get { return (int)parent.child_list.len; } }
+        public override int size { get { return parent.child_list.length; } }
 
         public GElementList(GListElement parent) {
             base();
@@ -43,20 +43,20 @@ namespace M2tk {
         public override GElement get(int index)
             requires (index >= 0 && index < size)
         {
-            unowned Element element = (Element)parent.child_list.index(index);
+            unowned Element element = parent.child_list[index];
             return GElement.element_map[element];
         }
 
         public override void set(int index, GElement item)
             requires (index >= 0)
         {
-            if (index >= parent.child_list.len)
-                parent.child_list.set_size(index);
-            unowned Element? old_element = (Element?)parent.child_list.index(index);
+            if (index >= parent.child_list.length)
+                parent.child_list.length = index;
+            unowned Element? old_element = parent.child_list[index];
             if (old_element != null)
                 GElement.element_map[(Element)old_element].unref();
             item.ref();
-            parent.child_list.pdata[index] = item.element;
+            parent.child_list[index] = item.element;
             parent.update_list();
         }
 
@@ -74,17 +74,15 @@ namespace M2tk {
             requires (index >= 0)
         {
             item.ref();
-            //parent.child_list.insert(index, item.element);
-            // insert function is new in GLib 2.40 and has not made it into vala bindings yet
-            // https://bugzilla.gnome.org/show_bug.cgi?id=732251
-            PtrArray_insert(parent.child_list, index, item.element);
+            parent.child_list.insert(index, item.element);
             parent.update_list();
         }
 
         public override GElement remove_at(int index)
             requires (index >= 0 && index < size)
         {
-            unowned Element element = (Element)parent.child_list.remove_index((uint)index);
+            unowned Element element = parent.child_list[index];
+            parent.child_list.remove_index((uint)index);
             var result = GElement.element_map[element];
             result.unref();
             return result;
@@ -128,7 +126,7 @@ namespace M2tk {
         public override void clear() {
             foreach(var element in this)
                 element.unref();
-            parent.child_list.set_size(0);
+            parent.child_list.length = 0;
             parent.update_list();
         }
 
@@ -152,25 +150,23 @@ namespace M2tk {
 
             public void insert(GElement item) {
                 item.ref();
-                //parent.child_list.insert(position, item.element);
                 position--;
-                PtrArray_insert(parent.child_list, position, item.element);
+                parent.child_list.insert(position, item.element);
                 parent.update_list();
             }
 
             public new void @set(GElement item) {
-                unowned Element old_element = (Element)parent.child_list.index(position);
+                unowned Element old_element = parent.child_list[position];
                 GElement.element_map[old_element].unref();
                 item.ref();
-                parent.child_list.pdata[position] = item.element;
+                parent.child_list[position] = item.element;
                 parent.update_list();
             }
 
             public void add(GElement item) {
                 item.ref();
-                //parent.child_list.insert(position, item.element);
                 position++;
-                PtrArray_insert(parent.child_list, position, item.element);
+                parent.child_list.insert(position, item.element);
                 parent.update_list();
             }
 
@@ -189,12 +185,12 @@ namespace M2tk {
 
             public bool first() {
                 position = 0;
-                return parent.child_list.len > 0;
+                return parent.child_list.length > 0;
             }
 
             public bool last() {
-                position = (int)parent.child_list.len - 1;
-                return parent.child_list.len > 0;
+                position = parent.child_list.length - 1;
+                return parent.child_list.length > 0;
             }
 
             public bool next() {
@@ -203,24 +199,22 @@ namespace M2tk {
             }
 
             public bool has_next() {
-                return position < parent.child_list.len - 1;
+                return position < parent.child_list.length - 1;
             }
 
             public new GElement @get() {
-                unowned Element element = (Element)parent.child_list.index(position);
+                unowned Element element = parent.child_list[position];
                 return GElement.element_map[element];
             }
 
             public void remove() {
-                unowned Element? element = (Element?)parent.child_list.remove_index(position);
+                unowned Element? element = parent.child_list[position];
+                parent.child_list.remove_index(position);
                 if (element != null) {
                     GElement.element_map[element].unref();
                     parent.update_list();
                 }
             }
         }
-
-        [CCode (cname = "g_ptr_array_insert")]
-        static extern void PtrArray_insert(PtrArray array, int index, void *data);
     }
 }
