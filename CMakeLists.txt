@@ -50,6 +50,8 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/m2tk-glib/GSpace.vala
     lib/m2tk-glib/GToggle.vala
     lib/m2tk-glib/GVList.vala
+    lib/upower/Device.vala
+    lib/upower/UPower.vala
     src/BatteryInfoScreen.vala
     src/BatteryHistScreen.vala
     src/BatteryStatsScreen.vala
@@ -75,6 +77,8 @@ PACKAGES
     dbus-glib-1
 CUSTOM_VAPIS
     bindings/*.vapi
+OPTIONS
+    --target-glib=2.40
 )
 
 add_executable(${EXEC_NAME} ${VALA_C})

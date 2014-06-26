@@ -37,6 +37,7 @@ namespace BrickDisplayManager {
         GLabel _title_label;
         GBox _title_underline;
         GSpace _space;
+        GLabel _loading_label;
         GLabel _tech_label;
         GLabel _tech_value_label;
         GLabel _voltage_label;
@@ -49,7 +50,24 @@ namespace BrickDisplayManager {
         GRoot _hist_button;
         GRoot _stats_button;
         GHList _button_list;
+        GVList _info_vlist;
         GVList _content_list;
+
+        public bool loading {
+            get { return _content_list.children.contains(_loading_label); }
+            set {
+                if (value == loading)
+                    return;
+                if (value) {
+                    var index = _content_list.children.index_of(_info_vlist);
+                    _content_list.children[index] = _loading_label;
+
+                } else {
+                    var index = _content_list.children.index_of(_loading_label);
+                    _content_list.children[index] = _info_vlist;
+                }
+            }
+        }
 
         public string technology {
             get { return _tech_value_label.text; }
@@ -87,6 +105,7 @@ namespace BrickDisplayManager {
             _title_label = new GLabel("Battery Info");
             _title_underline = new GBox(100, 1);
             _space = new GSpace(2, 5);
+            _loading_label = new GLabel("Loading...");
             _tech_label = new GLabel("Type:");
             _tech_value_label = new GLabel(UNKNOWN_VALUE);
             _voltage_label = new GLabel("Voltage:");
@@ -96,33 +115,35 @@ namespace BrickDisplayManager {
             _power_label = new GLabel("Power:");
             _power_value_label = new GLabel(UNKNOWN_VALUE);
             _info_grid_list = new GGridList(3);
-            _info_grid_list.add(_tech_label);
-            _info_grid_list.add(_space);
-            _info_grid_list.add(_tech_value_label);
-            _info_grid_list.add(_voltage_label);
-            _info_grid_list.add(_space);
-            _info_grid_list.add(_voltage_value_label);
-            _info_grid_list.add(_current_label);
-            _info_grid_list.add(_space);
-            _info_grid_list.add(_current_value_label);
-            _info_grid_list.add(_power_label);
-            _info_grid_list.add(_space);
-            _info_grid_list.add(_power_value_label);
+            _info_grid_list.children.add(_tech_label);
+            _info_grid_list.children.add(_space);
+            _info_grid_list.children.add(_tech_value_label);
+            _info_grid_list.children.add(_voltage_label);
+            _info_grid_list.children.add(_space);
+            _info_grid_list.children.add(_voltage_value_label);
+            _info_grid_list.children.add(_current_label);
+            _info_grid_list.children.add(_space);
+            _info_grid_list.children.add(_current_value_label);
+            _info_grid_list.children.add(_power_label);
+            _info_grid_list.children.add(_space);
+            _info_grid_list.children.add(_power_value_label);
             _hist_button = new GRoot(_battery_hist_screen, "History");
             _hist_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT;
             _stats_button = new GRoot(_battery_stats_screen, "Stats");
             _stats_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT;
             _stats_button.change_value = 1;
             _button_list = new GHList();
-            _button_list.add(_hist_button);
-            _button_list.add(_stats_button);
+            _button_list.children.add(_hist_button);
+            _button_list.children.add(_stats_button);
+            _info_vlist = new GVList();
+            _info_vlist.children.add(_info_grid_list);
+            _info_vlist.children.add(_space);
+            _info_vlist.children.add(_button_list);
             _content_list = new GVList();
-            _content_list.add(_title_label);
-            _content_list.add(_title_underline);
-            _content_list.add(_space);
-            _content_list.add(_info_grid_list);
-            _content_list.add(_space);
-            _content_list.add(_button_list);
+            _content_list.children.add(_title_label);
+            _content_list.children.add(_title_underline);
+            _content_list.children.add(_space);
+            _content_list.children.add(_loading_label);
 
             child = _content_list;
         }

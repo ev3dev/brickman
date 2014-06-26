@@ -27,7 +27,11 @@
  */
 
 using M2tk;
-using Up;
+using UPower;
+
+errordomain InitError {
+    EV3_BATTERY
+}
 
 namespace BrickDisplayManager {
 
@@ -46,27 +50,28 @@ namespace BrickDisplayManager {
             battery_info_screen = new BatteryInfoScreen();
             shutdown_screen = new ShutdownScreen();
             battery_status_bar_item = new BatteryStatusBarItem();
-            init_ev3_battery.begin((obj, res) => {
-                ev3_battery = init_ev3_battery.end(res);
-                ev3_battery.changed();
+            Bus.get_proxy.begin<Device>(BusType.SYSTEM,
+                UPower.WELL_KNOWN_NAME, EV3_BATTERY_PATH,
+                DBusProxyFlags.NONE, null,
+                (obj, res) =>
+            {
+                try {
+                    ev3_battery = Bus.get_proxy.end(res);
+                    ev3_battery.changed.connect(on_ev3_battery_changed);
+                    ev3_battery.changed();
+                    battery_info_screen.loading = false;
+                } catch (Error err) {
+                    warning("%s", err.message);
+                }
             });
         }
 
-        async Device? init_ev3_battery() {
-            try {
-                var dev = new Device();
-                dev.set_object_path_sync(EV3_BATTERY_PATH);
-                dev.changed.connect(on_ev3_battery_changed);
-                return dev;
-            } catch (Error err) {
-                warning("%s", err.message);
-            }
-            return null;
-        }
-
         void on_ev3_battery_changed() {
-            battery_info_screen.technology =
-                Device.technology_to_string((DeviceTechnology)ev3_battery.technology);
+            var technology = ev3_battery.technology.to_string();
+            var first_char = technology.get_char();
+            technology = technology.replace(first_char.to_string(),
+                first_char.totitle().to_string());
+            battery_info_screen.technology = technology;
             battery_info_screen.voltage = ev3_battery.voltage;
             battery_info_screen.power = ev3_battery.energy_rate;
 

@@ -24,7 +24,6 @@
  */
 
 using M2tk;
-using Up;
 
 namespace BrickDisplayManager {
     public class BatteryStatsScreen : Screen {
