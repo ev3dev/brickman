@@ -23,20 +23,204 @@
  * List of elements used for indexed property
  */
 
+using Gee;
+
 namespace M2tk {
-    public class GElementList {
+    public class GElementList : AbstractList<GElement> {
         GListElement parent;
 
-        public GElement get(uint index) requires (index < size)
+        public override int size { get { return (int)parent.child_list.len; } }
+
+        public GElementList(GListElement parent) {
+            base();
+            this.parent = parent;
+        }
+
+        public override ListIterator<GElement> list_iterator() {
+            return new GElementListIterator(parent);
+        }
+
+        public override GElement get(int index)
+            requires (index >= 0 && index < size)
         {
             unowned Element element = (Element)parent.child_list.index(index);
             return GElement.element_map[element];
         }
 
-        public uint size { get { return parent.child_list.len; } }
-
-        public GElementList(GListElement parent) {
-            this.parent = parent;
+        public override void set(int index, GElement item)
+            requires (index >= 0)
+        {
+            if (index >= parent.child_list.len)
+                parent.child_list.set_size(index);
+            unowned Element? old_element = (Element?)parent.child_list.index(index);
+            if (old_element != null)
+                GElement.element_map[(Element)old_element].unref();
+            item.ref();
+            parent.child_list.pdata[index] = item.element;
+            parent.update_list();
         }
+
+        public override int index_of(GElement item) {
+            int index = 0;
+            foreach (var element in this) {
+                if (element == item)
+                    return index;
+                index++;
+            }
+            return -1;
+        }
+
+        public override void insert(int index, GElement item)
+            requires (index >= 0)
+        {
+            item.ref();
+            //parent.child_list.insert(index, item.element);
+            // insert function is new in GLib 2.40 and has not made it into vala bindings yet
+            // https://bugzilla.gnome.org/show_bug.cgi?id=732251
+            PtrArray_insert(parent.child_list, index, item.element);
+            parent.update_list();
+        }
+
+        public override GElement remove_at(int index)
+            requires (index >= 0 && index < size)
+        {
+            unowned Element element = (Element)parent.child_list.remove_index((uint)index);
+            var result = GElement.element_map[element];
+            result.unref();
+            return result;
+        }
+
+        public override Gee.List<GElement>? slice(int start, int stop)
+            requires (start > -size && stop <= size
+                && (start < stop || ((start >= 0 && start < (size - stop))
+                    || (start < 0 && -start < stop))))
+        {
+            var result = new ArrayList<GElement>();
+            if (start < 0)
+                start = size - start;
+            if (stop < 0)
+                stop = size - stop;
+            for (int i = start; i < stop; i++)
+                result.add(this[i]);
+            return result;
+        }
+
+        public override bool contains (GElement item) {
+            return index_of(item) >= 0;
+        }
+
+        public override bool add(GElement item) {
+            item.ref();
+            parent.child_list.add(item.element);
+            parent.update_list();
+            return true;
+        }
+
+        public override bool remove(GElement item) {
+            var result = parent.child_list.remove(item.element);
+            if (result) {
+                item.unref();
+                parent.update_list();
+            }
+            return result;
+        }
+
+        public override void clear() {
+            foreach(var element in this)
+                element.unref();
+            parent.child_list.set_size(0);
+            parent.update_list();
+        }
+
+        public override Iterator<GElement> iterator() {
+            return new GElementListIterator(parent);
+        }
+
+        class GElementListIterator : Object, Iterator<GElement>,
+            BidirIterator<GElement>, ListIterator<GElement>
+        {
+            GListElement parent;
+            int position = 0;
+
+            public bool valid { get { return parent != null; } }
+
+            public bool read_only { get { return false; } }
+
+            public GElementListIterator(GListElement parent) {
+                this.parent = parent;
+            }
+
+            public void insert(GElement item) {
+                item.ref();
+                //parent.child_list.insert(position, item.element);
+                position--;
+                PtrArray_insert(parent.child_list, position, item.element);
+                parent.update_list();
+            }
+
+            public new void @set(GElement item) {
+                unowned Element old_element = (Element)parent.child_list.index(position);
+                GElement.element_map[old_element].unref();
+                item.ref();
+                parent.child_list.pdata[position] = item.element;
+                parent.update_list();
+            }
+
+            public void add(GElement item) {
+                item.ref();
+                //parent.child_list.insert(position, item.element);
+                position++;
+                PtrArray_insert(parent.child_list, position, item.element);
+                parent.update_list();
+            }
+
+            public int index() {
+                return position;
+            }
+
+            public bool previous() {
+                position--;
+                return has_previous();
+            }
+
+            public bool has_previous() {
+                return position > 0;
+            }
+
+            public bool first() {
+                position = 0;
+                return parent.child_list.len > 0;
+            }
+
+            public bool last() {
+                position = (int)parent.child_list.len - 1;
+                return parent.child_list.len > 0;
+            }
+
+            public bool next() {
+                position++;
+                return has_next();
+            }
+
+            public bool has_next() {
+                return position < parent.child_list.len - 1;
+            }
+
+            public new GElement @get() {
+                unowned Element element = (Element)parent.child_list.index(position);
+                return GElement.element_map[element];
+            }
+
+            public void remove() {
+                unowned Element? element = (Element?)parent.child_list.remove_index(position);
+                if (element != null) {
+                    GElement.element_map[element].unref();
+                    parent.update_list();
+                }
+            }
+        }
+
+        [CCode (cname = "g_ptr_array_insert")]
+        static extern void PtrArray_insert(PtrArray array, int index, void *data);
     }
 }

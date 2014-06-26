@@ -43,9 +43,9 @@ namespace BrickDisplayManager {
             _restart_button.pressed.connect(on_restart_button_pressed);
             _space = new GSpace(0, 5);
             _content_list = new GVList();
-            _content_list.add(_shutdown_button);
-            _content_list.add(_space);
-            _content_list.add(_restart_button);
+            _content_list.children.add(_shutdown_button);
+            _content_list.children.add(_space);
+            _content_list.children.add(_restart_button);
 
             child = _content_list;
         }

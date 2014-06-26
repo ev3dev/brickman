@@ -30,6 +30,7 @@ namespace BrickDisplayManager {
         GLabel _title_label;
         GBox _title_underline;
         GSpace _space;
+        GLabel _loading_label;
         GLabel _running_label;
         GLabel _running_value_label;
         GLabel _networking_enabled_label;
@@ -38,6 +39,22 @@ namespace BrickDisplayManager {
         GToggle _wifi_enabled_check_box;
         GGridList _status_grid;
         GVList _content_list;
+
+        public bool loading {
+            get { return _content_list.children.contains(_loading_label); }
+            set {
+                if (value == loading)
+                    return;
+                if (value) {
+                    var index = _content_list.children.index_of(_status_grid);
+                    _content_list.children[index] = _loading_label;
+
+                } else {
+                    var index = _content_list.children.index_of(_loading_label);
+                    _content_list.children[index] = _status_grid;
+                }
+            }
+        }
 
         public bool networking_enabled {
             get { return _networking_enabled_check_box.checked; }
@@ -53,6 +70,7 @@ namespace BrickDisplayManager {
             _title_label = new GLabel("Networking");
             _title_underline = new GBox(100, 1);
             _space = new GSpace(4, 5);
+            _loading_label = new GLabel("Loading...");
             _running_label = new GLabel("Running:");
             _running_value_label = new GLabel("ERR");
             _networking_enabled_label = new GLabel("Enabled:");
@@ -63,20 +81,20 @@ namespace BrickDisplayManager {
                 notify_property("wifi-enabled");
             });
             _status_grid = new GGridList(3);
-            _status_grid.add(_running_label);
-            _status_grid.add(_space);
-            _status_grid.add(_running_value_label);
-            _status_grid.add(_networking_enabled_label);
-            _status_grid.add(_space);
-            _status_grid.add(_networking_enabled_check_box);
-            _status_grid.add(_wifi_enabled_label);
-            _status_grid.add(_space);
-            _status_grid.add(_wifi_enabled_check_box);
+            _status_grid.children.add(_running_label);
+            _status_grid.children.add(_space);
+            _status_grid.children.add(_running_value_label);
+            _status_grid.children.add(_networking_enabled_label);
+            _status_grid.children.add(_space);
+            _status_grid.children.add(_networking_enabled_check_box);
+            _status_grid.children.add(_wifi_enabled_label);
+            _status_grid.children.add(_space);
+            _status_grid.children.add(_wifi_enabled_check_box);
             _content_list = new GVList();
-            _content_list.add(_title_label);
-            _content_list.add(_title_underline);
-            _content_list.add(_space);
-            _content_list.add(_status_grid);
+            _content_list.children.add(_title_label);
+            _content_list.children.add(_title_underline);
+            _content_list.children.add(_space);
+            _content_list.children.add(_loading_label);
 
             child = _content_list;
         }

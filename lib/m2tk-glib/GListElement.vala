@@ -55,13 +55,7 @@ namespace M2tk {
             update_list();
         }
 
-        public void add(GElement element) {
-            element.ref();
-            child_list.add(element.element);
-            update_list();
-        }
-
-        void update_list() {
+        internal void update_list() {
             list_element.list = (Element*)child_list.pdata;
             list_element.length = (uint8)child_list.len;
             dirty = true;

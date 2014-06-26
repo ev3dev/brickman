@@ -45,7 +45,7 @@ namespace BrickDisplayManager {
             var screen_info = ScreenInfo(screen, _menu_list.children.size);
             screen_info_map[button] = screen_info;
             button.pressed.connect(on_menu_item_selected);
-            _menu_list.add(button);
+            _menu_list.children.add(button);
         }
 
         void on_menu_item_selected(GButton button) {

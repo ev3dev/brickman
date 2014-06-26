@@ -27,18 +27,25 @@ using M2tk;
 using NM;
 
 namespace BrickDisplayManager {
-    class Networking {
+    class Networking : GLib.Object {
         Client client;
+
         public NetworkStatusScreen network_status_screen { get; private set; }
 
         public Networking() {
             network_status_screen = new NetworkStatusScreen();
-            AsyncInitable.new_async.begin(typeof(Client), Priority.DEFAULT, null, (obj, res) => {
-                client = (Client)obj;
-                client.bind_property("networking-enabled", network_status_screen,
-                    "networking-enabled", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
-                client.bind_property("wireless-enabled", network_status_screen,
-                    "wifi-enabled", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            Client.new_async.begin(null, (obj, res) => {
+                try {
+                    client = Client.new_async.end(res);
+                    client.bind_property("networking-enabled", network_status_screen,
+                        "networking-enabled", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                    client.bind_property("wireless-enabled", network_status_screen,
+                        "wifi-enabled", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                    network_status_screen.loading = false;
+                } catch (Error err) {
+                    warning("%s", err.message);
+                    // TODO set network_status_screen to show error
+                }
             });
         }
     }
