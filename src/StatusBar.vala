@@ -35,7 +35,33 @@ namespace BrickDisplayManager {
         ArrayList<StatusBarItem> left_items;
         ArrayList<StatusBarItem> right_items;
 
-        public bool is_visible { get; set; default = true; }
+        public bool visible { get; set; default = true; }
+
+        bool _dirty = true;
+        public bool dirty {
+            get {
+                if (_dirty)
+                    return true;
+                foreach (var item in left_items) {
+                    if (item.dirty)
+                        return true;
+                }
+                foreach (var item in right_items) {
+                    if (item.dirty)
+                        return true;
+                }
+                return false;
+            }
+            set {
+                _dirty = value;
+                if (value)
+                    return;
+                foreach (var item in left_items)
+                    item.dirty = false;
+                foreach (var item in right_items)
+                    item.dirty = false;
+            }
+        }
 
         public void draw(Graphics u8g) {
             u8g.set_default_background_color();

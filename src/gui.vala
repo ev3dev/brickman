@@ -112,16 +112,19 @@ namespace BrickDisplayManager {
                 m2tk.check_key();
                 dirty |= m2tk.handle_key();
                 dirty |= m2tk.root.dirty;
+                dirty |= status_bar.dirty;
                 if (dirty) {
                     unowned Graphics u8g = GM2tk.graphics;
                     u8g.begin_draw();
                     m2tk.draw();
-                    if (status_bar.is_visible)
+                    if (status_bar.visible)
                         status_bar.draw(u8g);
                     u8g.end_draw();
                     dirty = false;
                     if (m2tk.root.dirty)
                         m2tk.root.dirty = false;
+                    if (status_bar.dirty)
+                        status_bar.dirty = false;
                 }
             }
             return true;
