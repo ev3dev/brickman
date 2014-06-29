@@ -53,21 +53,22 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/connman/Peer.vala
     lib/connman/Service.vala
     lib/connman/Technology.vala
-    src/BatteryInfoScreen.vala
-    src/BatteryHistScreen.vala
-    src/BatteryStatsScreen.vala
-    src/BatteryStatusBarItem.vala
     src/brickdm.vala
     src/gui.vala
-    src/HomeScreen.vala
     src/Network.vala
-    src/NetworkStatusScreen.vala
-    src/NetworkTechnologyItem.vala
     #src/Power.vala
-    src/Screen.vala
-    src/ShutdownScreen.vala
-    src/StatusBar.vala
-    src/StatusBarItem.vala
+    src/view/BatteryInfoScreen.vala
+    src/view/BatteryHistScreen.vala
+    src/view/BatteryStatsScreen.vala
+    src/view/BatteryStatusBarItem.vala
+    src/view/BrickDisplayManager.vala
+    src/view/HomeScreen.vala
+    src/view/NetworkStatusScreen.vala
+    src/view/NetworkTechnologyItem.vala
+    src/view/Screen.vala
+    src/view/ShutdownScreen.vala
+    src/view/StatusBar.vala
+    src/view/StatusBarItem.vala
 PACKAGES
     glib-2.0
     gobject-2.0
