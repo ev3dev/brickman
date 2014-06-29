@@ -23,20 +23,24 @@
  * Monitors network status and performs other network related functions
  */
 
+using Gee;
 using M2tk;
 
 namespace BrickDisplayManager {
     class NetworkStatusScreen : Screen {
+        const uchar GRID_COL1_WIDTH = 110;
+        const uchar GRID_COL2_WIDTH = 50;
+
+        HashMap<Object, NetworkTechnologyItem> technology_map;
+
         GLabel _title_label;
         GBox _title_underline;
         GSpace _space;
         GLabel _loading_label;
-        GLabel _running_label;
-        GLabel _running_value_label;
-        GLabel _networking_enabled_label;
-        GToggle _networking_enabled_check_box;
-        GLabel _wifi_enabled_label;
-        GToggle _wifi_enabled_check_box;
+        GLabel _state_label;
+        GLabel _state_value_label;
+        GLabel _airplane_mode_label;
+        GToggle _airplane_mode_check_box;
         GGridList _status_grid;
         GVList _content_list;
 
@@ -56,40 +60,38 @@ namespace BrickDisplayManager {
             }
         }
 
-        public bool networking_enabled {
-            get { return _networking_enabled_check_box.checked; }
-            set { _networking_enabled_check_box.checked = value; }
+        public string state {
+            get { return _state_value_label.text; }
+            set { _state_value_label.text = value; }
         }
 
-        public bool wifi_enabled {
-            get { return _wifi_enabled_check_box.checked; }
-            set { _wifi_enabled_check_box.checked = value; }
+        public bool airplane_mode {
+            get { return _airplane_mode_check_box.checked; }
+            set { _airplane_mode_check_box.checked = value; }
         }
 
         public NetworkStatusScreen() {
+            technology_map = new HashMap<Object, NetworkTechnologyItem>();
             _title_label = new GLabel("Networking");
-            _title_underline = new GBox(100, 1);
+            _title_underline = new GBox(GRID_COL1_WIDTH + GRID_COL2_WIDTH, 1);
             _space = new GSpace(4, 5);
             _loading_label = new GLabel("Loading...");
-            _running_label = new GLabel("Running:");
-            _running_value_label = new GLabel("ERR");
-            _networking_enabled_label = new GLabel("Enabled:");
-            _networking_enabled_check_box = new GToggle();
-            _wifi_enabled_label = new GLabel("Wi-fi On:");
-            _wifi_enabled_check_box = new GToggle();
-            _wifi_enabled_check_box.notify["checked"].connect((s, p) => {
-                notify_property("wifi-enabled");
+            _state_label = new GLabel("Status:");
+            _state_label.width = GRID_COL1_WIDTH;
+            _state_value_label = new GLabel("???");
+            _state_value_label.width = GRID_COL2_WIDTH;
+            _airplane_mode_label = new GLabel("Airplane Mode:");
+            _airplane_mode_label.width = GRID_COL1_WIDTH;
+            _airplane_mode_check_box = new GToggle();
+            _airplane_mode_check_box.width = GRID_COL2_WIDTH;
+            _airplane_mode_check_box.notify["checked"].connect((s, p) => {
+                notify_property("airplane-mode");
             });
-            _status_grid = new GGridList(3);
-            _status_grid.children.add(_running_label);
-            _status_grid.children.add(_space);
-            _status_grid.children.add(_running_value_label);
-            _status_grid.children.add(_networking_enabled_label);
-            _status_grid.children.add(_space);
-            _status_grid.children.add(_networking_enabled_check_box);
-            _status_grid.children.add(_wifi_enabled_label);
-            _status_grid.children.add(_space);
-            _status_grid.children.add(_wifi_enabled_check_box);
+            _status_grid = new GGridList(2);
+            _status_grid.children.add(_state_label);
+            _status_grid.children.add(_state_value_label);
+            _status_grid.children.add(_airplane_mode_label);
+            _status_grid.children.add(_airplane_mode_check_box);
             _content_list = new GVList();
             _content_list.children.add(_title_label);
             _content_list.children.add(_title_underline);
@@ -97,6 +99,14 @@ namespace BrickDisplayManager {
             _content_list.children.add(_loading_label);
 
             child = _content_list;
+        }
+
+        public void add_technology(Object obj, NetworkTechnologyItem item) {
+            technology_map[obj] = item;
+            item._tech_name_label.width = GRID_COL1_WIDTH;
+            _status_grid.children.add(item._tech_name_label);
+            item._powered_check_box.width = GRID_COL2_WIDTH;
+            _status_grid.children.add(item._powered_check_box);
         }
     }
 }

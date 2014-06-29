@@ -23,30 +23,86 @@
  * Monitors network status and performs other network related functions
  */
 
+using ConnMan;
 using M2tk;
-using NM;
 
 namespace BrickDisplayManager {
     class Networking : GLib.Object {
-        Client client;
+        Manager manager;
 
         public NetworkStatusScreen network_status_screen { get; private set; }
 
         public Networking() {
             network_status_screen = new NetworkStatusScreen();
-            Client.new_async.begin(null, (obj, res) => {
+            init.begin((obj, res) => {
                 try {
-                    client = Client.new_async.end(res);
-                    client.bind_property("networking-enabled", network_status_screen,
-                        "networking-enabled", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
-                    client.bind_property("wireless-enabled", network_status_screen,
-                        "wifi-enabled", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                    init.end(res);
+                    manager.bind_property("state",
+                        network_status_screen,
+                        "state", BindingFlags.SYNC_CREATE,
+                        convert_manager_state_to_string);
+                    manager.bind_property("offline-mode",
+                        network_status_screen,
+                        "airplane-mode",
+                        BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
                     network_status_screen.loading = false;
                 } catch (Error err) {
                     warning("%s", err.message);
                     // TODO set network_status_screen to show error
                 }
             });
+        }
+
+        async void init () throws Error {
+            manager = yield Manager.new_async();
+            foreach(var prop in manager.get_class().list_properties()) {
+                Value val = Value(prop.value_type);
+                manager.get_property(prop.name, ref val);
+                //debug ("%s - %s", prop.name, val.strdup_contents());
+            }
+            var technologies = yield manager.get_technologies();
+            foreach(var item in technologies) {
+                var view = new NetworkTechnologyItem(item.name);
+                item.bind_property("powered", view, "powered",
+                    BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                network_status_screen.add_technology(item, view);
+                foreach(var prop in item.get_class().list_properties()) {
+                    Value val = Value(prop.value_type);
+                    item.get_property(prop.name, ref val);
+                    //debug ("%s - %s", prop.name, val.strdup_contents());
+                }
+            }
+            var services = yield manager.get_services();
+            foreach(var item in services) {
+                foreach(var prop in item.get_class().list_properties()) {
+                    Value val = Value(prop.value_type);
+                    item.get_property(prop.name, ref val);
+                    //debug ("%s - %s", prop.name, val.strdup_contents());
+                }
+            }
+        }
+
+        static bool convert_manager_state_to_string(Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            switch((ManagerState)source_value) {
+            case ManagerState.OFFLINE:
+                target_value = "Offline";
+                break;
+            case ManagerState.IDLE:
+                target_value = "Idle";
+                break;
+            case ManagerState.READY:
+                target_value = "Ready";
+                break;
+            case ManagerState.ONLINE:
+                target_value = "Online";
+                break;
+            default:
+                target_value = "Unknown";
+                break;
+            }
+            return true;
         }
     }
 }

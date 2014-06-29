@@ -45,7 +45,7 @@ namespace BrickDisplayManager {
         Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
 
         HomeScreen home_screen = new HomeScreen();
-        Power power = new Power();
+        //Power power = new Power();
         Networking networking = new Networking();
         StatusBar status_bar = new StatusBar();
 
@@ -70,13 +70,13 @@ namespace BrickDisplayManager {
             term = new Curses.Screen("linux", vtIn, vtOut);
 
             home_screen.add_menu_item("Network", networking.network_status_screen);
-            home_screen.add_menu_item("Battery", power.battery_info_screen);
-            home_screen.add_menu_item("Shutdown", power.shutdown_screen);
-            status_bar.add_right(power.battery_status_bar_item);
+            //home_screen.add_menu_item("Battery", power.battery_info_screen);
+            //home_screen.add_menu_item("Shutdown", power.shutdown_screen);
+            //status_bar.add_right(power.battery_status_bar_item);
 
             m2tk = new GM2tk(home_screen, event_source, event_handler,
                 box_shadow_frame_graphics_handler, font_icon_handler);
-            m2tk.home2 = power.shutdown_screen;
+            //m2tk.home2 = power.shutdown_screen;
             m2tk.font[0] = Font.x11_7x13;
             m2tk.font[1] = Font.m2tk_icon_9;
             set_toggle_font_icon(Font.m2tk_icon_9, 73, 72);

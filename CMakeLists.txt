@@ -22,7 +22,6 @@ pkg_check_modules(DEPS REQUIRED
     dbus-glib-1
     libnm-util
     libnm-glib
-    upower-glib
 )
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES} u8g m2tk)
@@ -50,8 +49,10 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/m2tk-glib/GSpace.vala
     lib/m2tk-glib/GToggle.vala
     lib/m2tk-glib/GVList.vala
-    lib/upower/Device.vala
-    lib/upower/UPower.vala
+    lib/connman/Manager.vala
+    lib/connman/Peer.vala
+    lib/connman/Service.vala
+    lib/connman/Technology.vala
     src/BatteryInfoScreen.vala
     src/BatteryHistScreen.vala
     src/BatteryStatsScreen.vala
@@ -61,7 +62,8 @@ vala_precompile(VALA_C ${EXEC_NAME}
     src/HomeScreen.vala
     src/Network.vala
     src/NetworkStatusScreen.vala
-    src/Power.vala
+    src/NetworkTechnologyItem.vala
+    #src/Power.vala
     src/Screen.vala
     src/ShutdownScreen.vala
     src/StatusBar.vala

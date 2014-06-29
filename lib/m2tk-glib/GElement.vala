@@ -132,6 +132,7 @@ namespace M2tk {
         public uint8 actual_width { get { return element.width; } }
         public uint8 actual_height { get { return element.height; } }
         public virtual bool dirty { get; set; default = true; }
+        public Object obj { get; set; }
 
         Element _element;
         public unowned Element element {
