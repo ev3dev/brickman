@@ -53,8 +53,8 @@ vala_precompile(VALA_C ${EXEC_NAME}
     lib/connman/Peer.vala
     lib/connman/Service.vala
     lib/connman/Technology.vala
-    src/brickdm.vala
-    src/gui.vala
+    src/BrickDisplayManager.vala
+    src/GUI.vala
     src/Network.vala
     #src/Power.vala
     src/view/BatteryInfoScreen.vala
