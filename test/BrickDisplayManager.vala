@@ -38,6 +38,7 @@ namespace BrickDisplayManager {
 
         var gui = new GUI ();
         main_window.add (gui.lcd);
+        gui.lcd.realize.connect (() => Gtk.grab_add(gui.lcd));
 
         main_window.show_all ();
         Gtk.main ();

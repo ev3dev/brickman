@@ -31,7 +31,7 @@ namespace BrickDisplayManager {
         const ushort END_WIDTH = 2;
         const ushort END_OFFEST = 2;
         const ushort PADDING = 1;
-        const ushort TOP = 5;
+        const ushort TOP = 2;
         static unowned Font font = Font.dsg4_04b_03b;
 
         string _text = "???";

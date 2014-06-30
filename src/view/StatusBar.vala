@@ -72,7 +72,7 @@ namespace BrickDisplayManager {
             x = u8g.width - 1;
             foreach (var item in right_items)
                 x -= item.draw(u8g, x, Align.RIGHT) + PADDING;
-            u8g.draw_line(0, 15, u8g.width, 15);
+            u8g.draw_line(0, HEIGHT, u8g.width, HEIGHT);
         }
 
         public void add_left(StatusBarItem item) {

@@ -25,10 +25,11 @@
 
 using Gee;
 using Gtk;
+using M2tk;
 using U8g;
 
 namespace BrickDisplayManager {
-    public class FakeEV3LCDDevice : Gtk.Image {
+    public class FakeEV3LCDDevice : Gtk.EventBox {
         static HashMap<unowned Device, weak FakeEV3LCDDevice> device_map;
 
         static construct {
@@ -38,23 +39,27 @@ namespace BrickDisplayManager {
         const uint16 WIDTH = 178;
         const uint16 HEIGHT = 128;
         Device _u8g_device;
+        Gdk.Pixbuf u8g_pixbuf;
         PageBuffer buffer;
+        Image image;
 
         public unowned Device u8g_device { get { return _u8g_device; } }
         public bool u8g_active { get; private set; default = false; }
 
         public FakeEV3LCDDevice () {
-            set_from_pixbuf(new Gdk.Pixbuf (Gdk.Colorspace.RGB, false, 8, WIDTH, HEIGHT));
-            debug ("width %d", pixbuf.width);
-            debug ("height %d", pixbuf.height);
-            debug ("rowstride %d", pixbuf.rowstride);
+            image = new Image.from_pixbuf(new Gdk.Pixbuf (
+                    Gdk.Colorspace.RGB, false, 8,
+                    WIDTH * 2, HEIGHT * 2));
+            u8g_pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.RGB, false, 8,
+                WIDTH, HEIGHT);
             buffer = new PageBuffer () {
-                width = (uint16)pixbuf.width,
-                data = pixbuf.pixels
+                width = (uint16)u8g_pixbuf.width,
+                data = u8g_pixbuf.pixels
             };
-            buffer.page.init(1, (uint16)pixbuf.height);
+            buffer.page.init(1, (uint16)u8g_pixbuf.height);
             _u8g_device = Device.create ((DeviceFunc)u8g_device_func, buffer);
             device_map[_u8g_device] = this;
+            add (image);
         }
 
         ~FakeEV3LCDDevice () {
@@ -78,10 +83,10 @@ namespace BrickDisplayManager {
                 lcd.u8g_active = false;
                 return 1;
             case DeviceMessage.PAGE_FIRST:
-                lcd.buffer.data = (char *)lcd.pixbuf.pixels;
+                lcd.buffer.data = (char *)lcd.u8g_pixbuf.pixels;
                 break;
             case DeviceMessage.PAGE_NEXT:
-                lcd.buffer.data = (char *)lcd.buffer.data + lcd.pixbuf.rowstride;
+                lcd.buffer.data = (char *)lcd.buffer.data + lcd.u8g_pixbuf.rowstride;
                 break;
             case DeviceMessage.SET_TPIXEL:
             case DeviceMessage.SET_4TPIXEL:
@@ -94,7 +99,22 @@ namespace BrickDisplayManager {
                 pixel.blue = pixel.color;
                 break;
             }
-            return Device.pbxh24_base (u8g, device, msg, arg);
+            var result = Device.pbxh24_base (u8g, device, msg, arg);
+
+            if (msg == DeviceMessage.PAGE_FIRST
+                || (msg == DeviceMessage.PAGE_NEXT && result == 1))
+            {
+                var i = 0;
+                while (i < lcd.u8g_pixbuf.width * 3) {
+                    ((uint8*)lcd.buffer.data)[i] = U8gGraphics.background_color;
+                    i++;
+                }
+            } else if (msg == DeviceMessage.PAGE_NEXT && result == 0) {
+                lcd.image.set_from_pixbuf(lcd.u8g_pixbuf.scale_simple(
+                    lcd.u8g_pixbuf.width * 2, lcd.u8g_pixbuf.height * 2,
+                    Gdk.InterpType.TILES));
+            }
+            return result;
         }
     }
 }

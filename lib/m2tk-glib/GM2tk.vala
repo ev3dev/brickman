@@ -110,6 +110,10 @@ namespace M2tk {
             _m2.draw();
         }
 
+        public void put_key(uint8 key) {
+            _m2.put_key(key);
+        }
+
         public void check_key() {
             _m2.check_key();
         }

@@ -324,7 +324,7 @@ namespace M2tk {
         public uint8 handle_key();
         [CCode (cname = "m2_DrawM2")]
         public void draw();
-        [CCode (cname = "m2_SetKeyM2")]
+        [CCode (cname = "m2_PutKeyIntoQueue")]
         public void put_key(uint8 key);
         [CCode (cname = "m2_GetKeyM2")]
         public uint8 get_key();

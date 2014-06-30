@@ -32,6 +32,9 @@ namespace BrickDisplayManager {
         GSpace _space;
         GVList _content_list;
 
+        public signal void shutdown_button_pressed ();
+        public signal void restart_button_pressed ();
+
         public ShutdownScreen() {
             _shutdown_button = new GButton("Shutdown");
             _shutdown_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
@@ -50,22 +53,12 @@ namespace BrickDisplayManager {
             child = _content_list;
         }
 
-        void run_command(string command) {
-            try {
-                Process.spawn_command_line_sync(command);
-                // TODO: shutdown application - or at least release VT
-            } catch (SpawnError err) {
-                warning("%s", err.message);
-                // TODO: handle error
-            }
+        void on_shutdown_button_pressed () {
+            shutdown_button_pressed ();
         }
 
-        void on_shutdown_button_pressed() {
-          run_command("poweroff");
-        }
-
-        void on_restart_button_pressed() {
-          run_command("reboot");
+        void on_restart_button_pressed () {
+            restart_button_pressed ();
         }
     }
 }

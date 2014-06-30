@@ -42,6 +42,7 @@ namespace BrickDisplayManager {
         }
 
         Deque<RootInfo> root_stack = new LinkedList<RootInfo> ();
+        Deque<uint?> key_queue = new LinkedList<uint?> ();
 
         GM2tk m2tk;
         HomeScreen home_screen;
@@ -57,17 +58,24 @@ namespace BrickDisplayManager {
 
         public GUI () {
             lcd = new FakeEV3LCDDevice ();
+            lcd.key_press_event.connect((e) => {
+                key_queue.offer_head(e.keyval);
+                return true;
+            });
 
             GM2tk.init_graphics(lcd.u8g_device, U8gGraphics.font_icon_handler);
             U8gGraphics.set_toggle_font_icon (Font.m2tk_icon_9, 73, 72);
             U8gGraphics.set_radio_font_icon (Font.m2tk_icon_9, 82, 80);
             U8gGraphics.set_additional_text_x_padding (3);
-            U8gGraphics.background_color = 255;
+            U8gGraphics.forground_text_color = 0;
+            U8gGraphics.background_text_color = 255;
 
             home_screen = new HomeScreen ();
             network_status_screen = new NetworkStatusScreen ();
             battery_info_screen = new BatteryInfoScreen ();
             shutdown_screen = new ShutdownScreen ();
+            shutdown_screen.shutdown_button_pressed.connect (on_shutdown_button_pressed);
+            shutdown_screen.restart_button_pressed.connect (on_restart_button_pressed);
             battery_status_bar_item = new BatteryStatusBarItem ();
             status_bar = new StatusBar ();
 
@@ -77,7 +85,7 @@ namespace BrickDisplayManager {
             status_bar.add_right (battery_status_bar_item);
 
             m2tk = new GM2tk (home_screen, event_source, event_handler,
-                color_frame_shadow_frame_graphics_handler);
+                box_shadow_frame_graphics_handler);
             gui_map[m2tk] = this;
             m2tk.home2 = shutdown_screen;
             m2tk.font[0] = Font.x11_7x13;
@@ -136,85 +144,87 @@ namespace BrickDisplayManager {
         static uint8 event_source(M2 m2, EventSourceMessage msg) {
             switch(msg) {
             case EventSourceMessage.GET_KEY:
-                switch (Curses.getch ()) {
+                GM2tk gm2tk = GM2tk.from_m2 (m2);
+                GUI gui = from_gm2tk (gm2tk);
+                if (gui.key_queue.peek_head () == null)
+                    return Key.NONE;
+                switch (gui.key_queue.poll_head ()) {
                 /* Actual keys on the EV3 */
-                case Curses.Key.DOWN:
+                case Gdk.Key.Down:
                     return Key.EVENT | Key.DATA_DOWN;
-                case Curses.Key.UP:
+                case Gdk.Key.Up:
                     return Key.EVENT | Key.DATA_UP;
-                case Curses.Key.LEFT:
+                case Gdk.Key.Left:
                     return Key.EVENT | Key.PREV;
-                case Curses.Key.RIGHT:
+                case Gdk.Key.Right:
                     return Key.EVENT | Key.NEXT;
-                case '\n':
+                case Gdk.Key.Return:
                     return Key.EVENT | Key.SELECT;
-                case Curses.Key.BACKSPACE:
+                case Gdk.Key.BackSpace:
                     return Key.EVENT | Key.EXIT;
 
                 /* Other keys in case a keyboard or keypad is plugged in */
-                case Curses.Key.BTAB:
-                case Curses.Key.PREVIOUS:
+                case Gdk.Key.Back:
                     return Key.EVENT | Key.PREV;
-                case Curses.Key.NEXT:
+                case Gdk.Key.Next:
                   return Key.EVENT | Key.NEXT;
-                case Curses.Key.ENTER:
-                case Curses.Key.OPEN:
+                case Gdk.Key.KP_Enter:
+                case Gdk.Key.Open:
                    return Key.EVENT | Key.SELECT;
-                case Curses.Key.CANCEL:
-                case Curses.Key.EXIT:
+                case Gdk.Key.Cancel:
                     return Key.EVENT | Key.EXIT;
-                case Curses.Key.HOME:
+                case Gdk.Key.Home:
                     return Key.EVENT | Key.HOME;
-                case Curses.Key.SHOME:
-                    return Key.EVENT | Key.HOME2;
-                case Curses.Key.F0+1:
+                //case Gdk.Key.SHOME:
+                //    return Key.EVENT | Key.HOME2;
+                case Gdk.Key.F1:
                     return Key.EVENT | Key.Q1;
-                case Curses.Key.F0+2:
+                case Gdk.Key.F2:
                     return Key.EVENT | Key.Q2;
-                case Curses.Key.F0+3:
+                case Gdk.Key.F3:
                     return Key.EVENT | Key.Q3;
-                case Curses.Key.F0+4:
+                case Gdk.Key.F4:
                     return Key.EVENT | Key.Q4;
-                case Curses.Key.F0+5:
+                case Gdk.Key.F5:
                     return Key.EVENT | Key.Q5;
-                case Curses.Key.F0+6:
+                case Gdk.Key.F6:
                     return Key.EVENT | Key.Q6;
-                case '0':
+                case Gdk.Key.KP_0:
                     return Key.EVENT | Key.KEYPAD_0;
-                case '1':
+                case Gdk.Key.KP_1:
                     return Key.EVENT | Key.KEYPAD_1;
-                case '2':
-                  return Key.EVENT | Key.KEYPAD_2;
-                case '3':
+                case Gdk.Key.KP_2:
+                    return Key.EVENT | Key.KEYPAD_2;
+                case Gdk.Key.KP_3:
                     return Key.EVENT | Key.KEYPAD_3;
-                case '4':
+                case Gdk.Key.KP_4:
                     return Key.EVENT | Key.KEYPAD_4;
-                case '5':
+                case Gdk.Key.KP_5:
                     return Key.EVENT | Key.KEYPAD_5;
-                case '6':
+                case Gdk.Key.KP_6:
                     return Key.EVENT | Key.KEYPAD_6;
-                case '7':
+                case Gdk.Key.KP_7:
                     return Key.EVENT | Key.KEYPAD_7;
-                case '8':
+                case Gdk.Key.KP_8:
                     return Key.EVENT | Key.KEYPAD_8;
-                case '9':
+                case Gdk.Key.KP_9:
                     return Key.EVENT | Key.KEYPAD_9;
-                case '*':
+                case Gdk.Key.KP_Multiply:
                     return Key.EVENT | Key.KEYPAD_STAR;
-                case '#':
+                case Gdk.Key.KP_Divide:
                     return Key.EVENT | Key.KEYPAD_HASH;
               }
               return Key.NONE;
             case EventSourceMessage.INIT:
-                Curses.cbreak();
-                Curses.noecho();
-                Curses.stdscr.keypad(true);
-                Curses.stdscr.nodelay(true);
                 break;
             }
             return 0;
         }
 
+        /**
+         * This function should be exactly the same as in the real
+         * GUI.vala
+         */
         static uint8 event_handler(M2 m2, EventHandlerMessage msg,
             uint8 arg1, uint8 arg2)
         {
@@ -270,5 +280,13 @@ namespace BrickDisplayManager {
             }
             return 0;
         }
+    }
+
+   void on_shutdown_button_pressed () {
+      Gtk.main_quit ();
+    }
+
+    void on_restart_button_pressed () {
+      // TODO: show fake error message
     }
 }
