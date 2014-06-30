@@ -38,16 +38,17 @@ namespace M2tk {
             }
         }
 
-        public signal void pressed(GButton button);
+        public signal void pressed(GButton button, GM2tk m2);
 
         public GButton(string text) {
             base(Button.create((ButtonFunc)on_button, text));
             this._text = text;
         }
 
-        static void on_button(ElementFuncArgs arg) {
+        static void on_button (ElementFuncArgs arg) {
             var button = (GButton)element_map[arg.element];
-            button.pressed(button);
+            var m2 = GM2tk.from_m2 (arg.nav.m2);
+            button.pressed (button, m2);
         }
     }
 }

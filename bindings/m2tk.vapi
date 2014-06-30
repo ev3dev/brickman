@@ -362,6 +362,9 @@ namespace M2tk {
         [CCode (cname = "g_malloc0")]
         public M2(size_t size = sizeof(M2Struct))
             requires (size == sizeof(M2Struct));
+
+        [CCode (cname = "G_STRUCT_OFFSET(m2_t, nav)")]
+        internal const int nav_struct_offset;
     }
 
     [CCode (cname = "m2_nav_t", cprefix = "m2_nav_", has_type_id = false)]
@@ -369,6 +372,11 @@ namespace M2tk {
     public class Nav {
         public bool is_data_entry {
             [CCode (cname = "m2_nav_is_data_entry")] get;
+        }
+
+        public M2 m2 {
+            // hack based on Linux kernel container_of macro
+            get { return (M2)((char*)this - M2.nav_struct_offset); }
         }
 
         public uint8 user_up();
@@ -385,6 +393,7 @@ namespace M2tk {
             prepare_fn_arg_current_element();
             return call_element_function(c); // assign the char
         }
+        public void set_root(Element? element, uint8 next_cnd, uint8 change_value);
     }
 
     [CCode (cname = "m2_gfx_arg_t", has_type_id = false)]

@@ -1,12 +1,67 @@
 [CCode (cheader_filename = "u8g.h")]
 namespace U8g {
 
+    [CCode (cname = "u8g_dev_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint8 DeviceFunc (Graphics u8g, Device device, DeviceMessage msg, void* arg);
+    [CCode (cname = "u8g_com_fnptr", has_target = false, has_type_id = false)]
+    public delegate uint8 CommFunc (Graphics u8g, uint8 msg, uint8 arg_val, void* arg_data);
+
+    [CCode (cname = "uint8_t", cprefix = "U8G_DEV_MSG_", has_type_id = false)]
+    public enum DeviceMessage {
+        INIT,
+        STOP,
+        CONTRAST,
+        SLEEP_ON,
+        SLEEP_OFF,
+        PAGE_FIRST,
+        PAGE_NEXT,
+        GET_PAGE_BOX,
+        SET_TPIXEL,
+        SET_4TPIXEL,
+        SET_PIXEL,
+        SET_8PIXEL,
+        SET_COLOR_ENTRY,
+        SET_XY_CB,
+        GET_WIDTH,
+        GET_HEIGHT,
+        GET_MODE;
+    }
+
+    [CCode (cname = "uint8_t", cprefix = "U8G_MODE_", has_type_id = false)]
+    public enum Mode {
+        UNKNOWN,
+        BW,
+        GRAY2BIT,
+        R2G3B2,
+        INDEX,
+        HICOLOR,
+        TRUECOLOR;
+
+        [CCode (cname = "U8G_MODE_GET_BITS_PER_PIXEL")]
+        public int get_bits_per_pixel ();
+
+        [CCode (cname = "U8G_MODE_IS_COLOR")]
+        public bool is_color ();
+
+        [CCode (cname = "U8G_MODE_IS_INDEX_MODE")]
+        public bool is_index_mode ();
+    }
+
+    [CCode (cname = "uint8_t", has_type_id = false)]
+    public enum PixelDirection {
+        [CCode (cname = "0")]
+        RIGHT,
+        [CCode (cname = "1")]
+        DOWN,
+        [CCode (cname = "2")]
+        LEFT,
+        [CCode (cname = "3")]
+        UP;
+    }
+
     [CCode (cname = "u8g_t", free_function = "g_free", has_type_id = false)]
     [Compact]
     public class Graphics {
-        // MallocStruct is used by the constructor to allocate memory
-        // since the upstream library does not contain a function to do
-        // this.
         [CCode (cname = "u8g_t", destroy_function = "", has_type_id = false)]
         struct MallocStruct {}
 
@@ -58,14 +113,76 @@ namespace U8g {
         public void set_font(Font font);
     }
 
-    [CCode (cname = "u8g_dev_t", has_type_id = false)]
+    [CCode (cname = "u8g_dev_t", free_function = "g_free", has_type_id = false)]
     [Compact]
     public class Device {
+        [CCode (cname = "u8g_dev_t", destroy_function = "", has_type_id = false)]
+        struct MallocStruct {}
+
         [CCode (cname = "&u8g_dev_linux_fb")]
         public static Device linux_framebuffer;
+
+        DeviceFunc dev_fn;
+        void* dev_mem;
+        CommFunc com_fn;
+
+        [CCode (cname = "g_malloc0")]
+        Device (size_t size = sizeof(MallocStruct))
+            requires (size == sizeof(MallocStruct));
+
+        public static Device create (DeviceFunc func, void* data) {
+            var device = new Device ();
+            device.dev_fn = func;
+            device.dev_mem = data;
+            device.com_fn = null;
+            return device;
+        }
     }
 
-    [CCode (cname = "const u8g_fntpgm_uint8_t")]
+    [CCode (cname = "u8g_box_t", free_function = "g_free", has_type_id = false)]
+    [Compact]
+    public class Box {
+        [CCode (cname = "u8g_box_t", destroy_function = "", has_type_id = false)]
+        struct MallocStruct {}
+
+        public uint16 x0;
+        public uint16 y0;
+        public uint16 x1;
+        public uint16 y1;
+
+        [CCode (cname = "g_malloc0")]
+        public Box (size_t size = sizeof(MallocStruct))
+            requires (size == sizeof(MallocStruct));
+    }
+
+    [CCode (cname = "u8g_dev_arg_pixel_t", free_function = "g_free", has_type_id = false)]
+    [Compact]
+    public class Pixel {
+        [CCode (cname = "u8g_dev_arg_pixel_t", destroy_function = "", has_type_id = false)]
+        struct MallocStruct {}
+
+        public uint16 x;
+        public uint16 y;
+        public uint8 pixel;
+        [CCode (cname = "dir")]
+        public PixelDirection direction;
+        public uint8 color;
+        [CCode (cname = "hi_color")]
+        uint8 _hi_color;
+        [CCode (name = "color")]
+        public uint8 red;
+        [CCode (cname = "hi_color")]
+        public uint8 green;
+        public uint8 blue;
+
+        public uint16 hi_color { get { return (uint16)_hi_color << 8 + color; } }
+
+        [CCode (cname = "g_malloc0")]
+        public Pixel (size_t size = sizeof(MallocStruct))
+            requires (size == sizeof(MallocStruct));
+    }
+
+    [CCode (cname = "u8g_fntpgm_uint8_t")]
     public class Font {
         /* u8g */
         [CCode (cname = "u8g_font_m2icon_5")]

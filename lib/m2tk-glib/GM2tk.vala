@@ -38,10 +38,8 @@ namespace M2tk {
         static Graphics _u8g;
         public static unowned Graphics graphics {
             get {
-                if (_u8g == null) {
-                    _u8g = new Graphics();
-                    _u8g.init(U8g.Device.linux_framebuffer);
-                }
+                if (_u8g == null)
+                    critical ("GM2tk: graphics not initialized.");
                 return _u8g;
             }
         }
@@ -74,24 +72,38 @@ namespace M2tk {
          * @param event_source The event source function that provides event messages
          * @param event_handler The event handler function that processes events
          * @param graphics_handler The graphics handler function that draws the elements
-         * @param icon_handler The graphics handler function that draws icons for
-         *      check boxes and radio buttons.
-         *      Note: This function is shared by all instances of GM2tk.
          */
         public GM2tk(GElement root_element, EventSourceFunc event_source,
-            EventHandlerFunc event_handler, GraphicsFunc graphics_handler,
-            GraphicsFunc icon_handler)
+            EventHandlerFunc event_handler, GraphicsFunc graphics_handler)
         {
             _m2 = new M2();
             font = new GFontList(_m2);
             m2_map[_m2] = this;
             _m2.init(root_element.element, event_source, event_handler, graphics_handler);
             _m2.set_root_change_callback((RootChangeFunc)on_root_element_change);
-            set_graphics(graphics, icon_handler);
+            if (_u8g == null)
+                critical("GM2tk: Graphics not initialized.");
         }
 
         ~GM2tk() {
             m2_map.unset(_m2);
+        }
+
+        /**
+         * Initialize u8g graphics shared by all instances of GM2tk.
+         *
+         * @param device The U8g.Device to use for drawing.
+         * @param icon_handler The graphics handler function that draws icons for
+         *      check boxes and radio buttons.
+         */
+        public static void init_graphics(Device device, GraphicsFunc icon_handler) {
+            if (_u8g != null) {
+                critical("GM2tk: graphics already initialized!");
+                return;
+            }
+            _u8g = new Graphics();
+            graphics.init(device);
+            set_graphics(graphics, icon_handler);
         }
 
         public void draw() {
@@ -110,6 +122,10 @@ namespace M2tk {
             uint8 change_value = 0)
         {
             _m2.set_root(element.element, next_count, change_value);
+        }
+
+        public static GM2tk from_m2 (M2 m2) {
+            return m2_map[m2];
         }
 
         static void on_root_element_change(Element new_root,

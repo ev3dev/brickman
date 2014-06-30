@@ -48,8 +48,8 @@ namespace BrickDisplayManager {
             _menu_list.children.add(button);
         }
 
-        void on_menu_item_selected(GButton button) {
-            gui.m2tk.set_root(screen_info_map[button].screen,
+        void on_menu_item_selected(GButton button, GM2tk m2) {
+            m2.set_root(screen_info_map[button].screen,
                 0, (uint8)screen_info_map[button].index);
         }
 

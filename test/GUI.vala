@@ -18,109 +18,116 @@
  */
 
 /*
- * gui.vala:
+ * GUI.vala:
  *
- * The main graphical user interface class.
- *
- * We are using ncurses for keyboard input, m2tklib/u8glib for
- * graphics and glib for the main loop.
+ * Version of Brick Display Manager that runs if GTK for testing.
  */
 
 using Gee;
+using Gtk;
 using M2tk;
 using U8g;
 
 namespace BrickDisplayManager {
-
     public class RootInfo {
         public unowned M2tk.Element element;
         public uint8 value;
     }
 
     class GUI : Object {
-        FileStream? vtIn;
-        FileStream? vtOut;
-        Curses.Screen term;
-        MainLoop main_loop = new MainLoop();
-        Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
+        static HashMap<weak GM2tk, weak GUI> gui_map;
 
-        HomeScreen home_screen = new HomeScreen();
-        //Power power = new Power();
-        Networking networking = new Networking();
-        StatusBar status_bar = new StatusBar();
-
-        public bool active {
-            get { return !Curses.isendwin(); }
-            set {
-                if (value == active)
-                    return;
-                if (value) {
-                    Curses.refresh();
-                    dirty = true;
-                } else
-                    Curses.endwin();
-            }
+        static construct {
+            gui_map = new HashMap<weak GM2tk, weak GUI> ();
         }
-        public bool dirty { get; set; default = true; }
-        public GM2tk m2tk { get; private set; }
 
-        public GUI(int vtfd) {
-            vtIn = FileStream.fdopen(vtfd, "r");
-            vtOut = FileStream.fdopen(vtfd, "w");
-            term = new Curses.Screen("linux", vtIn, vtOut);
+        Deque<RootInfo> root_stack = new LinkedList<RootInfo> ();
 
-            home_screen.add_menu_item("Network", networking.network_status_screen);
-            //home_screen.add_menu_item("Battery", power.battery_info_screen);
-            //home_screen.add_menu_item("Shutdown", power.shutdown_screen);
-            //status_bar.add_right(power.battery_status_bar_item);
+        GM2tk m2tk;
+        HomeScreen home_screen;
+        NetworkStatusScreen network_status_screen;
+        BatteryInfoScreen battery_info_screen;
+        ShutdownScreen shutdown_screen;
+        BatteryStatusBarItem battery_status_bar_item;
+        StatusBar status_bar;
+        bool dirty = true;
+        bool active { get { return lcd.u8g_active; } }
 
-            init_graphics (Device.linux_framebuffer, font_icon_handler);
-            m2tk = new GM2tk(home_screen, event_source, event_handler,
+        public FakeEV3LCDDevice lcd { get; private set; }
+
+        public GUI () {
+            lcd = new FakeEV3LCDDevice ();
+            lcd.draw.connect (on_draw);
+
+            GM2tk.init_graphics(lcd.u8g_device, font_icon_handler);
+
+            home_screen = new HomeScreen ();
+            network_status_screen = new NetworkStatusScreen ();
+            battery_info_screen = new BatteryInfoScreen ();
+            shutdown_screen = new ShutdownScreen ();
+            battery_status_bar_item = new BatteryStatusBarItem ();
+            status_bar = new StatusBar ();
+
+            home_screen.add_menu_item ("Network", network_status_screen);
+            home_screen.add_menu_item ("Battery", battery_info_screen);
+            home_screen.add_menu_item ("Shutdown", shutdown_screen);
+            status_bar.add_right (battery_status_bar_item);
+
+            m2tk = new GM2tk (home_screen, event_source, event_handler,
                 box_shadow_frame_graphics_handler);
-            //m2tk.home2 = power.shutdown_screen;
+            gui_map[m2tk] = this;
+            m2tk.home2 = shutdown_screen;
             m2tk.font[0] = Font.x11_7x13;
             m2tk.font[1] = Font.m2tk_icon_9;
-            set_toggle_font_icon(Font.m2tk_icon_9, 73, 72);
-            set_radio_font_icon(Font.m2tk_icon_9, 82, 80);
-            set_additional_text_x_padding(3);
-            m2tk.root_element_changed.connect(on_root_element_changed);
+            set_toggle_font_icon (Font.m2tk_icon_9, 73, 72);
+            set_radio_font_icon (Font.m2tk_icon_9, 82, 80);
+            set_additional_text_x_padding (3);
+            m2tk.root_element_changed.connect (on_root_element_changed);
         }
 
-        public void run() {
-            var draw_timer = new TimeoutSource(50);
-            draw_timer.set_callback(on_draw_timer);
-            draw_timer.attach(main_loop.get_context());
-            main_loop.run();
+        ~GUI () {
+            gui_map.unset(m2tk);
         }
 
-        public void quit() {
-            main_loop.quit();
+        public static GUI from_gm2tk (GM2tk m2) {
+            return gui_map[m2];
         }
 
-        void on_root_element_changed(Element new_root,
-            Element old_root, uint8 value)
+        void on_root_element_changed (Element new_root, Element old_root,
+            uint8 value)
         {
             if (value != uint8.MAX) {
-                var info = new RootInfo();
+                var info = new RootInfo ();
                 info.element = old_root;
                 info.value = value;
-                root_stack.offer_head(info);
+                root_stack.offer_head (info);
             }
         }
 
-        bool on_draw_timer() {
+        bool on_draw (Cairo.Context context) {
+            lcd.drawing_context = context;
+            on_draw_real ();
+            lcd.drawing_context = null;
+            return true;
+        }
+
+        /**
+         * This function should be exactly the same as the
+         * on_draw_timer() function in the real GUI.vala
+         */
+        bool on_draw_real () {
             if (active) {
-                m2tk.check_key();
-                dirty |= m2tk.handle_key();
+                m2tk.check_key ();
+                dirty |= m2tk.handle_key ();
                 dirty |= m2tk.root.dirty;
                 dirty |= status_bar.dirty;
                 if (dirty) {
                     unowned Graphics u8g = GM2tk.graphics;
-                    u8g.begin_draw();
-                    m2tk.draw();
+                    u8g.begin_draw ();
+                    m2tk.draw ();
                     if (status_bar.visible)
-                        status_bar.draw(u8g);
-                    u8g.end_draw();
+                        status_bar.draw (u8g);
+                    u8g.end_draw ();
                     dirty = false;
                     if (m2tk.root.dirty)
                         m2tk.root.dirty = false;
@@ -134,7 +141,7 @@ namespace BrickDisplayManager {
         static uint8 event_source(M2 m2, EventSourceMessage msg) {
             switch(msg) {
             case EventSourceMessage.GET_KEY:
-                switch (Curses.getch()) {
+                switch (Curses.getch ()) {
                 /* Actual keys on the EV3 */
                 case Curses.Key.DOWN:
                     return Key.EVENT | Key.DATA_DOWN;
@@ -225,11 +232,13 @@ namespace BrickDisplayManager {
             case EventHandlerMessage.EXIT:
                 // if there is no valid parent, then go to the previous root
                 if (nav.user_up() == 0) {
+                    var gm2tk = GM2tk.from_m2 (m2);
+                    var gui = GUI.from_gm2tk (gm2tk);
                     var info = gui.root_stack.poll_head();
                     if (info != null) {
                         m2.set_root(info.element, info.value, uint8.MAX);
                     } else {
-                        m2.set_root(m2.home2);
+                        m2.set_root (m2.home2);
                     }
                 }
                 return 1;
@@ -247,7 +256,7 @@ namespace BrickDisplayManager {
 
             case EventHandlerMessage.DATA_UP:
                 if (nav.data_up() == 0)
-                    return nav.user_prev();
+                    return nav.user_prev ();
                 return 1;
             }
 
@@ -255,14 +264,14 @@ namespace BrickDisplayManager {
                 if (nav.quick_key((Key)msg - Key.Q1 + 1) != 0)
                 {
                     if (nav.is_data_entry)
-                        return nav.data_up();
-                    return nav.user_down(true);
+                        return nav.data_up ();
+                    return nav.user_down (true);
                 }
             }
 
             if (msg >= ElementCallbackMessage.SPACE) {
-                nav.data_char(msg);      // assign the char
-                return nav.user_next();  // go to next position
+                nav.data_char (msg);      // assign the char
+                return nav.user_next ();  // go to next position
             }
             return 0;
         }
