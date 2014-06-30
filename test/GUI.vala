@@ -57,9 +57,12 @@ namespace BrickDisplayManager {
 
         public GUI () {
             lcd = new FakeEV3LCDDevice ();
-            lcd.draw.connect (on_draw);
 
-            GM2tk.init_graphics(lcd.u8g_device, font_icon_handler);
+            GM2tk.init_graphics(lcd.u8g_device, U8gGraphics.font_icon_handler);
+            U8gGraphics.set_toggle_font_icon (Font.m2tk_icon_9, 73, 72);
+            U8gGraphics.set_radio_font_icon (Font.m2tk_icon_9, 82, 80);
+            U8gGraphics.set_additional_text_x_padding (3);
+            U8gGraphics.background_color = 255;
 
             home_screen = new HomeScreen ();
             network_status_screen = new NetworkStatusScreen ();
@@ -74,15 +77,14 @@ namespace BrickDisplayManager {
             status_bar.add_right (battery_status_bar_item);
 
             m2tk = new GM2tk (home_screen, event_source, event_handler,
-                box_shadow_frame_graphics_handler);
+                color_frame_shadow_frame_graphics_handler);
             gui_map[m2tk] = this;
             m2tk.home2 = shutdown_screen;
             m2tk.font[0] = Font.x11_7x13;
             m2tk.font[1] = Font.m2tk_icon_9;
-            set_toggle_font_icon (Font.m2tk_icon_9, 73, 72);
-            set_radio_font_icon (Font.m2tk_icon_9, 82, 80);
-            set_additional_text_x_padding (3);
             m2tk.root_element_changed.connect (on_root_element_changed);
+
+            Timeout.add(50, on_draw_timer);
         }
 
         ~GUI () {
@@ -104,18 +106,11 @@ namespace BrickDisplayManager {
             }
         }
 
-        bool on_draw (Cairo.Context context) {
-            lcd.drawing_context = context;
-            on_draw_real ();
-            lcd.drawing_context = null;
-            return true;
-        }
-
         /**
          * This function should be exactly the same as the
          * on_draw_timer() function in the real GUI.vala
          */
-        bool on_draw_real () {
+        bool on_draw_timer () {
             if (active) {
                 m2tk.check_key ();
                 dirty |= m2tk.handle_key ();

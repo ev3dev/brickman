@@ -28,7 +28,7 @@ using Gtk;
 using U8g;
 
 namespace BrickDisplayManager {
-    public class FakeEV3LCDDevice : DrawingArea {
+    public class FakeEV3LCDDevice : Gtk.Image {
         static HashMap<unowned Device, weak FakeEV3LCDDevice> device_map;
 
         static construct {
@@ -38,13 +38,22 @@ namespace BrickDisplayManager {
         const uint16 WIDTH = 178;
         const uint16 HEIGHT = 128;
         Device _u8g_device;
+        PageBuffer buffer;
 
         public unowned Device u8g_device { get { return _u8g_device; } }
         public bool u8g_active { get; private set; default = false; }
-        internal Cairo.Context drawing_context { get; set; }
 
         public FakeEV3LCDDevice () {
-            _u8g_device = Device.create ((DeviceFunc)u8g_device_func, null);
+            set_from_pixbuf(new Gdk.Pixbuf (Gdk.Colorspace.RGB, false, 8, WIDTH, HEIGHT));
+            debug ("width %d", pixbuf.width);
+            debug ("height %d", pixbuf.height);
+            debug ("rowstride %d", pixbuf.rowstride);
+            buffer = new PageBuffer () {
+                width = (uint16)pixbuf.width,
+                data = pixbuf.pixels
+            };
+            buffer.page.init(1, (uint16)pixbuf.height);
+            _u8g_device = Device.create ((DeviceFunc)u8g_device_func, buffer);
             device_map[_u8g_device] = this;
         }
 
@@ -60,106 +69,32 @@ namespace BrickDisplayManager {
             DeviceMessage msg, void* arg)
         {
             var lcd = from_device (device);
-            debug ("%s", msg.to_string ());
             switch (msg) {
 
             case DeviceMessage.INIT:
                 lcd.u8g_active = true;
-                break;
+                return 1;
             case DeviceMessage.STOP:
                 lcd.u8g_active = false;
-                break;
-            case DeviceMessage.CONTRAST:
-                break;
-            case DeviceMessage.SLEEP_ON:
-                break;
-            case DeviceMessage.SLEEP_OFF:
-                break;
+                return 1;
             case DeviceMessage.PAGE_FIRST:
-                // TODO: clear graphics?
+                lcd.buffer.data = (char *)lcd.pixbuf.pixels;
                 break;
             case DeviceMessage.PAGE_NEXT:
-                return 0;
-            case DeviceMessage.GET_PAGE_BOX:
-                unowned U8g.Box box = (U8g.Box)arg;
-                box.x0 = 0;
-                box.y0 = 0;
-                box.x1 = WIDTH;
-                box.y1 = HEIGHT;
+                lcd.buffer.data = (char *)lcd.buffer.data + lcd.pixbuf.rowstride;
                 break;
             case DeviceMessage.SET_TPIXEL:
-                break;
             case DeviceMessage.SET_4TPIXEL:
-                break;
             case DeviceMessage.SET_PIXEL:
-                unowned Pixel pixel = (Pixel)arg;
-                lcd.draw_pixel (pixel);
-                break;
             case DeviceMessage.SET_8PIXEL:
                 unowned Pixel pixel = (Pixel)arg;
-                lcd.draw_8_pixel (pixel);
-                break;
-            case DeviceMessage.SET_COLOR_ENTRY:
-                break;
-            case DeviceMessage.SET_XY_CB:
-                break;
-            case DeviceMessage.GET_WIDTH:
-                *(uint16*)arg = WIDTH;
-                break;
-            case DeviceMessage.GET_HEIGHT:
-                *(uint16*)arg = HEIGHT;
-                break;
-            case DeviceMessage.GET_MODE:
-                return (uint8)U8g.Mode.BW;
-            }
-            return 1;
-        }
-
-        void set_color (Pixel pixel) {
-            var color = (double)pixel.color;
-            color = 0.1;
-            debug ("color %f", color);
-            drawing_context.set_source_rgb (color, color, color);
-        }
-
-        void draw_pixel (Pixel pixel) {
-            if (pixel.x >= get_allocated_width ())
-                return;
-            if (pixel.y >= get_allocated_height ())
-                return;
-
-            set_color (pixel);
-            drawing_context.rectangle (pixel.x, pixel.y, 10, 10);
-            drawing_context.fill ();
-        }
-
-        void draw_8_pixel (Pixel pixel) {
-            int width = 1;
-            int height = 1;
-            switch (pixel.direction) {
-            case PixelDirection.RIGHT:
-                width = 8;
-                break;
-            case PixelDirection.DOWN:
-                height = 8;
-                break;
-            case PixelDirection.LEFT:
-                width = 8;
-                pixel.x -= 8;
-                break;
-            case PixelDirection.UP:
-                height = 8;
-                pixel.y -= 8;
+                // m2tk only support 8-bit color, so we have to make it 24
+                // red is already set
+                pixel.green = pixel.color;
+                pixel.blue = pixel.color;
                 break;
             }
-            if (pixel.x >= get_allocated_width ())
-                return;
-            if (pixel.y >= get_allocated_height ())
-                return;
-
-            set_color (pixel);
-            drawing_context.rectangle (pixel.x, pixel.y, width, height);
-            drawing_context.fill ();
+            return Device.pbxh24_base (u8g, device, msg, arg);
         }
     }
 }

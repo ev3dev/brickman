@@ -74,6 +74,13 @@ namespace U8g {
         public void draw_pixel(uint16 x, uint16 y);
         [CCode (cname = "u8g_Stop")]
         public uint8 stop();
+        [CCode (cname = "u8g_SetColorEntry")]
+        public uint8 color_index {
+            [CCode (cname = "u8g_GetColorIndex")] get;
+            [CCode (cname = "u8g_SetColorIndex")] set;
+        }
+        [CCode (cname = "u8g_SetRGB")]
+        public void set_rgb (uint8 red, uint8 green, uint8 blue);
         [CCode (cname = "u8g_GetDefaultForegroundColor")]
         public uint8 get_default_forground_color();
         [CCode (cname = "u8g_SetDefaultForegroundColor")]
@@ -137,6 +144,57 @@ namespace U8g {
             device.com_fn = null;
             return device;
         }
+
+        [CCode (cname = "u8g_dev_pb8h1f_base_fn")]
+        public static uint8 pb8h1f_base (Graphics u8g, Device dev, DeviceMessage msg, void* arg);
+        [CCode (cname = "u8g_dev_pb8h8_base_fn")]
+        public static uint8 pb8h8_base (Graphics u8g, Device dev, DeviceMessage msg, void* arg);
+        [CCode (cname = "u8g_dev_pbxh16_base_fn")]
+        public static uint8 pbxh16_base (Graphics u8g, Device dev, DeviceMessage msg, void* arg);
+        [CCode (cname = "u8g_dev_pbxh24_base_fn")]
+        public static uint8 pbxh24_base (Graphics u8g, Device dev, DeviceMessage msg, void* arg);
+    }
+
+    [CCode (cname = "u8g_page_t", free_function = "g_free", has_type_id = false)]
+    [Compact]
+    public class Page {
+        [CCode (cname = "u8g_page_t", destroy_function = "", has_type_id = false)]
+        struct MallocStruct {}
+
+        [CCode (cname = "page_height")]
+        public uint16 height;
+        public uint16 total_height;
+        [CCode (cname = "page_y0")]
+        public uint16 y0;
+        [CCode (cname = "page_y1")]
+        public uint16 y1;
+        [CCode (cname = "page")]
+        public uint8 index;
+
+        [CCode (cname = "g_malloc0")]
+        public Page (size_t size = sizeof(MallocStruct))
+            requires (size == sizeof(MallocStruct));
+
+        [CCode (cname = "u8g_page_Init")]
+        public void init (uint16 height, uint16 total_height);
+    }
+
+    [CCode (cname = "u8g_pb_t", free_function = "g_free", has_type_id = false)]
+    [Compact]
+    public class PageBuffer {
+        [CCode (cname = "u8g_pb_t", destroy_function = "", has_type_id = false)]
+        struct MallocStruct {}
+
+        [CCode (cname = "&self->p")]
+        static Page p;
+        public Page page { get { return p; } }
+        public uint16 width;
+        [CCode (cname = "buf")]
+        public void* data;
+
+        [CCode (cname = "g_malloc0")]
+        public PageBuffer (size_t size = sizeof(MallocStruct))
+            requires (size == sizeof(MallocStruct));
     }
 
     [CCode (cname = "u8g_box_t", free_function = "g_free", has_type_id = false)]
@@ -169,7 +227,7 @@ namespace U8g {
         public uint8 color;
         [CCode (cname = "hi_color")]
         uint8 _hi_color;
-        [CCode (name = "color")]
+        [CCode (cname = "color")]
         public uint8 red;
         [CCode (cname = "hi_color")]
         public uint8 green;

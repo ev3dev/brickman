@@ -103,7 +103,7 @@ namespace M2tk {
             }
             _u8g = new Graphics();
             graphics.init(device);
-            set_graphics(graphics, icon_handler);
+            U8gGraphics.set_graphics(graphics, icon_handler);
         }
 
         public void draw() {

@@ -226,23 +226,8 @@ namespace M2tk {
     public static uint8 box_shadow_frame_graphics_handler(GraphicsArgs arg);
     [CCode (cname = "m2_gh_u8g_ffs", has_type_id = false)]
     public static uint8 frame_shadow_frame_graphics_handler(GraphicsArgs arg);
-
-    [CCode (cname = "m2_u8g_font_icon")]
-    static uint8 font_icon_handler(GraphicsArgs arg);
-    [CCode (cname = "m2_u8g_box_icon")]
-    static uint8 box_icon_handler(GraphicsArgs arg);
-    [CCode (cname = "m2_SetU8g")]
-    static void set_graphics(U8g.Graphics u8g, GraphicsFunc draw_icon);
-    [CCode (cname = "m2_SetU8gInvisibleFrameXBorder")]
-    public static void set_invisible_frame_x_padding(uint8 width);
-    [CCode (cname = "m2_SetU8gAdditionalTextXBorder")]
-    public static void set_additional_text_x_padding(uint8 width);
-    [CCode (cname = "m2_SetU8gAdditionalReadOnlyXBorder")]
-    public static void set_additional_read_only_x_padding(uint8 width);
-    [CCode (cname = "m2_SetU8gRadioFontIcon")]
-    public static void set_radio_font_icon(U8g.Font font, uint8 active, uint8 inactive);
-    [CCode (cname = "m2_SetU8gToggleFontIcon")]
-    public static void set_toggle_font_icon(U8g.Font font, uint8 active, uint8 inactive);
+    [CCode (cname = "m2_gh_u8g_cffs", has_type_id = false)]
+    public static uint8 color_frame_shadow_frame_graphics_handler(GraphicsArgs arg);
 
     /* delegates */
 
@@ -399,6 +384,48 @@ namespace M2tk {
     [CCode (cname = "m2_gfx_arg_t", has_type_id = false)]
     [Compact]
     public class GraphicsArgs {
+    }
+
+    [CCode (cprefix = "m2_u8g_", has_type_id = false)]
+    [Compact]
+    public class U8gGraphics {
+        [CCode (cname = "m2_u8g_fg_text_color")]
+        public static uint8 forground_text_color;
+        [CCode (cname = "m2_u8g_bg_text_color")]
+        public static uint8 background_text_color;
+        public static uint8 highlight_shadow_color;
+        public static uint8 highlight_frame_color;
+        [CCode (cname = "m2_u8g_highlight_bg_color")]
+        public static uint8 highlight_background_color;
+        public static uint8 highlight_focus_shadow_color;
+        public static uint8 highlight_focus_frame_color;
+        [CCode (cname = "m2_u8g_highlight_focus_bg_color")]
+        public static uint8 highlight_focus_background_color;
+        public static uint8 normal_focus_shadow_color;
+        public static uint8 normal_focus_frame_color;
+        [CCode (cname = "m2_u8g_normal_focus_bg_color")]
+        public static uint8 normal_focus_background_color;
+        [CCode (cname = "m2_u8g_small_focus_bg_color")]
+        public static uint8 small_focus_background_color;
+        public static uint8 exit_data_entry_color;
+        public static uint8 background_color;
+
+        [CCode (cname = "m2_u8g_font_icon")]
+        public static uint8 font_icon_handler(GraphicsArgs arg);
+        [CCode (cname = "m2_u8g_box_icon")]
+        public static uint8 box_icon_handler(GraphicsArgs arg);
+        [CCode (cname = "m2_SetU8g")]
+        public static void set_graphics(U8g.Graphics u8g, GraphicsFunc draw_icon);
+        [CCode (cname = "m2_SetU8gInvisibleFrameXBorder")]
+        public static void set_invisible_frame_x_padding(uint8 width);
+        [CCode (cname = "m2_SetU8gAdditionalTextXBorder")]
+        public static void set_additional_text_x_padding(uint8 width);
+        [CCode (cname = "m2_SetU8gAdditionalReadOnlyXBorder")]
+        public static void set_additional_read_only_x_padding(uint8 width);
+        [CCode (cname = "m2_SetU8gRadioFontIcon")]
+        public static void set_radio_font_icon(U8g.Font font, uint8 active, uint8 inactive);
+        [CCode (cname = "m2_SetU8gToggleFontIcon")]
+        public static void set_toggle_font_icon(U8g.Font font, uint8 active, uint8 inactive);
     }
 
     [CCode (cname = "m2_el_fnfmt_t", free_function = "g_free", has_type_id = false)]
