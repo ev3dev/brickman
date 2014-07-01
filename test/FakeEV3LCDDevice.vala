@@ -30,14 +30,20 @@ using U8g;
 
 namespace BrickDisplayManager {
     public class FakeEV3LCDDevice : Gtk.EventBox {
+        const uint16 WIDTH = 178;
+        const uint16 HEIGHT = 128;
+
+        const uint8 BACKGROUND_RED = 195;
+        const uint8 BACKGROUND_GREEN = 212;
+        const uint8 BACKGROUND_BLUE = 202;
+        internal const uint8 BACKGROUND_COLOR = BACKGROUND_RED;
+
         static HashMap<unowned Device, weak FakeEV3LCDDevice> device_map;
 
         static construct {
             device_map = new HashMap<unowned Device, weak FakeEV3LCDDevice> ();
         }
 
-        const uint16 WIDTH = 178;
-        const uint16 HEIGHT = 128;
         Device _u8g_device;
         Gdk.Pixbuf u8g_pixbuf;
         PageBuffer buffer;
@@ -93,10 +99,15 @@ namespace BrickDisplayManager {
             case DeviceMessage.SET_PIXEL:
             case DeviceMessage.SET_8PIXEL:
                 unowned Pixel pixel = (Pixel)arg;
-                // m2tk only support 8-bit color, so we have to make it 24
-                // red is already set
-                pixel.green = pixel.color;
-                pixel.blue = pixel.color;
+                // m2tk only supports 8-bit color, so we have to make it 24
+                // red is already set (same memory address as pixel.color)
+                if (pixel.color == BACKGROUND_COLOR) {
+                    pixel.green = BACKGROUND_GREEN;
+                    pixel.blue = BACKGROUND_BLUE;
+                } else {
+                    pixel.green = pixel.color;
+                    pixel.blue = pixel.color;
+                }
                 break;
             }
             var result = Device.pbxh24_base (u8g, device, msg, arg);
@@ -106,8 +117,9 @@ namespace BrickDisplayManager {
             {
                 var i = 0;
                 while (i < lcd.u8g_pixbuf.width * 3) {
-                    ((uint8*)lcd.buffer.data)[i] = U8gGraphics.background_color;
-                    i++;
+                    ((uint8*)lcd.buffer.data)[i++] = BACKGROUND_RED;
+                    ((uint8*)lcd.buffer.data)[i++] = BACKGROUND_GREEN;
+                    ((uint8*)lcd.buffer.data)[i++] = BACKGROUND_BLUE;
                 }
             } else if (msg == DeviceMessage.PAGE_NEXT && result == 0) {
                 lcd.image.set_from_pixbuf(lcd.u8g_pixbuf.scale_simple(

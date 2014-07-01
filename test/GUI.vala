@@ -82,7 +82,7 @@ namespace BrickDisplayManager {
             U8gGraphics.set_radio_font_icon (Font.m2tk_icon_9, 82, 80);
             U8gGraphics.set_additional_text_x_padding (3);
             U8gGraphics.forground_text_color = 0;
-            U8gGraphics.background_text_color = 255;
+            U8gGraphics.background_text_color = FakeEV3LCDDevice.BACKGROUND_COLOR;
 
             home_screen = new HomeScreen ();
             home_screen.menu_item_selected.connect ((index, user_data) => {
