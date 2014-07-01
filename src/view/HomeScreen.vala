@@ -29,28 +29,29 @@ using M2tk;
 namespace BrickDisplayManager {
 
     class HomeScreen : Screen {
-        HashMap<GButton, ScreenInfo?> screen_info_map;
+        HashMap<GStrItem, ScreenInfo?> screen_info_map;
 
-        GVList _menu_list;
+        GStrList _menu_list;
+
+        public signal void menu_item_selected (uint8 index, Object? user_data);
 
         public HomeScreen() {
-            screen_info_map = new HashMap<GButton, ScreenInfo?>();
-            _menu_list = new GVList();
-
+            screen_info_map = new HashMap<GStrItem, ScreenInfo?>();
+            _menu_list = new GStrList(100) {
+                visible_line_count = 5,
+                extra_column_size = 12
+            };
             child = _menu_list;
         }
 
-        public void add_menu_item(string text, Screen screen) {
-            var button = new GButton(text);
-            var screen_info = ScreenInfo(screen, _menu_list.children.size);
-            screen_info_map[button] = screen_info;
-            button.pressed.connect(on_menu_item_selected);
-            _menu_list.children.add(button);
+        public void add_menu_item(string text, Object? user_data) {
+            var item = new GStrItem(text, "*", user_data);
+            item.selected.connect(on_menu_item_selected);
+            _menu_list.item_list.add(item);
         }
 
-        void on_menu_item_selected(GButton button, GM2tk m2) {
-            m2.set_root(screen_info_map[button].screen,
-                0, (uint8)screen_info_map[button].index);
+        void on_menu_item_selected(uint8 index, GStrItem item) {
+            menu_item_selected (index, item.user_data);
         }
 
         struct ScreenInfo {

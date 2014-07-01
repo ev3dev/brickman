@@ -62,7 +62,7 @@ namespace M2tk {
         }
 
         public GAlign(GElement child = GElement.null_element) {
-            base(Align.create(child.element));
+            set_element(Align.create(child.element));
         }
     }
 }

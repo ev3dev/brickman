@@ -46,7 +46,7 @@ namespace M2tk {
         public string text {
             get { return _text; }
             set {
-                _text = value;
+                _text = value ?? "";
                 root.text = _text;
                 dirty = true;
             }
@@ -69,7 +69,7 @@ namespace M2tk {
         }
 
         public GRoot(GElement? new_root, string text) {
-            base(Root.create(new_root == null ? null : new_root.element, text));
+            set_element(Root.create(new_root == null ? null : new_root.element, text));
             root.text = text;
         }
     }

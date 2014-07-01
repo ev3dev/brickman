@@ -143,17 +143,22 @@ namespace M2tk {
                 }
             }
 
-        protected GElement(owned Element element) {
-            _element = (owned)element;
+        protected GElement.null () {
+            _element = null;
             element_map[_element] = this;
-        }
-
-        protected GElement.null() {
-            element_map[M2tk.null_element] = this;
         }
 
         ~GElement() {
             element_map.unset(_element);
+        }
+
+        /**
+         * This is intended to be called only from the constructor
+         * of a subclass
+         */
+        protected void set_element (owned Element element) {
+            _element = (owned)element;
+            element_map[_element] = this;
         }
 
         protected void update_format() {

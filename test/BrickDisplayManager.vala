@@ -20,7 +20,7 @@
 /*
  * BrickDisplayManager.vala:
  *
- * Version of Brick Display Manager that runs if GTK for testing.
+ * Version of Brick Display Manager that runs in GTK for testing.
  */
 
 using Gtk;
@@ -38,9 +38,24 @@ namespace BrickDisplayManager {
 
         var gui = new GUI ();
         main_window.add (gui.lcd);
-        gui.lcd.realize.connect (() => Gtk.grab_add(gui.lcd));
-
+        main_window.window_state_event.connect ((e) => {
+            if (e.new_window_state == Gdk.WindowState.FOCUSED)
+                Gtk.grab_add (gui.lcd);
+            else
+                Gtk.grab_remove (gui.lcd);
+            return false;
+        });
+        main_window.realize.connect((e) => {
+                int x;
+                int y;
+                int width;
+                int height;
+                main_window.get_position (out x, out y);
+                main_window.get_size (out width, out height);
+                gui.control_panel.move (x + width + 20, y);
+            });
         main_window.show_all ();
+
         Gtk.main ();
         return 0;
     }

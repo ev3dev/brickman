@@ -48,6 +48,9 @@ set (BRICKDM_COMMON_SOURCE_FILES
     lib/m2tk-glib/GNullElement.vala
     lib/m2tk-glib/GRoot.vala
     lib/m2tk-glib/GSpace.vala
+    lib/m2tk-glib/GStrItem.vala
+    lib/m2tk-glib/GStrItemList.vala
+    lib/m2tk-glib/GStrList.vala
     lib/m2tk-glib/GToggle.vala
     lib/m2tk-glib/GVList.vala
     src/view/BatteryInfoScreen.vala
@@ -67,6 +70,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(DEPS REQUIRED
     glib-2.0
     gobject-2.0
+    gmodule-2.0
     gio-2.0
     gee-1.0
     ncurses
@@ -87,6 +91,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
 PACKAGES
     glib-2.0
     gobject-2.0
+    gmodule-2.0
     gio-2.0
     gee-1.0
     curses
@@ -104,6 +109,11 @@ OPTIONS
 
 add_executable(${EXEC_NAME} ${VALA_C})
 
+if (BRICKDM_TEST)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
+    ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )
+endif (BIRCKDM_TEST)
+
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION bin)
 
-install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/test1.desktop DESTINATION ${DATADIR}/applications/)

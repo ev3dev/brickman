@@ -56,13 +56,13 @@ namespace M2tk {
         [CCode (cname = "M2_KEY_9")]
         KEYPAD_9,
         [CCode (cname = "M2_KEY_EVENT_MASK")]
-        EVENT
+        EVENT;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_ES_MSG_", has_type_id = false)]
     public enum EventSourceMessage {
         GET_KEY,
-        INIT
+        INIT;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_EP_MSG_", has_type_id = false)]
@@ -98,7 +98,7 @@ namespace M2tk {
         [CCode (cname = "M2_EP_MSG_8")]
         EP_MSGPAD_8,
         [CCode (cname = "M2_EP_MSG_9")]
-        KEYPAD_9,
+        KEYPAD_9;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_EL_MSG_", has_type_id = false)]
@@ -144,48 +144,40 @@ namespace M2tk {
         [CCode (cname = "M2_EL_MSG_8")]
         EP_MSGPAD_8,
         [CCode (cname = "M2_EL_MSG_9")]
-        KEYPAD_9,
+        KEYPAD_9;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_U8_MSG_", has_type_id = false)]
     public enum U8FuncMessage {
         GET_VALUE,
-        SET_VALUE
+        SET_VALUE;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_S8_MSG_", has_type_id = false)]
     public enum S8FuncMessage {
         GET_VALUE,
-        SET_VALUE
+        SET_VALUE;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_U32_MSG_", has_type_id = false)]
     public enum U32FuncMessage {
         GET_VALUE,
-        SET_VALUE
-    }
-
-    [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_", has_type_id = false)]
-    public enum StringListMessage {
-        GET_STR,
-        SELECT,
-        GET_EXTENDED_STR,
-        NEW_DIALOG,
+        SET_VALUE;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_COMBOFN_MSG_", has_type_id = false)]
     public enum ComboFuncMessage {
         GET_VALUE,
         SET_VALUE,
-        GET_STRING,
+        GET_STRING;
     }
 
     [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_", has_type_id = false)]
     public enum StringListFuncMessage {
         GET_STR,
         SELECT,
-        SET_EXTENDED_STR,
-        NEW_DIALIG,
+        GET_EXTENDED_STR,
+        NEW_DIALOG;
     }
 
     [CCode (cname = "uint8_t", has_type_id = false)]
@@ -198,14 +190,14 @@ namespace M2tk {
         [CCode (cname = "3")] F3,
         [CCode (cname = "4")] HIGHLIGHT,
         [CCode (cname = "8")] CENTER,
-        [CCode (cname = "((uint8_t)(-1))")] DEFAULT
+        [CCode (cname = "((uint8_t)(-1))")] DEFAULT;
     }
 
     [CCode (cname = "uint8_t", has_type_id = false)]
     public enum HideState {
         [CCode (cname = "0")] VISIBLE,
         [CCode (cname = "1")] HIDDEN_KEEP_SIZE,
-        [CCode (cname = "2")] HIDDEN_NO_SIZE,
+        [CCode (cname = "2")] HIDDEN_NO_SIZE;
     }
 
     /* static instances */
@@ -215,8 +207,10 @@ namespace M2tk {
 
     /* global functions */
 
+    [CCode (cname = "m2_fn_arg_get_element")]
+    internal unowned Element get_element_function_element ();
     [CCode (cname = "m2_fn_arg_call")]
-    static uint8 call_element_function(uint8 msg);
+    static uint8 call_element_function (uint8 msg);
 
     [CCode (cname = "m2_gh_u8g_fb", has_type_id = false)]
     public static uint8 frame_box_graphics_handler(GraphicsArgs arg);
@@ -1117,7 +1111,7 @@ namespace M2tk {
         [CCode (cname = "ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "val")]
-        internal bool *value;
+        bool *value;
 
         [CCode (cname = "g_malloc0")]
         Toggle(size_t size = sizeof(MallocStruct))

@@ -51,7 +51,7 @@ namespace M2tk {
         public GElementList children { get; private set; }
 
         public GListElement(owned Element element) {
-            base((owned)element);
+            set_element((owned)element);
             children = new GElementList(this);
             update_list();
         }

@@ -28,7 +28,7 @@ using M2tk;
 
 namespace BrickDisplayManager {
     class NetworkStatusScreen : Screen {
-        const uchar GRID_COL1_WIDTH = 110;
+        const uchar GRID_COL1_WIDTH = 100;
         const uchar GRID_COL2_WIDTH = 50;
 
         HashMap<Object, NetworkTechnologyItem> technology_map;
@@ -76,11 +76,11 @@ namespace BrickDisplayManager {
             _title_underline = new GBox(GRID_COL1_WIDTH + GRID_COL2_WIDTH, 1);
             _space = new GSpace(4, 5);
             _loading_label = new GLabel("Loading...");
-            _state_label = new GLabel("Status:");
+            _state_label = new GLabel("Status");
             _state_label.width = GRID_COL1_WIDTH;
             _state_value_label = new GLabel("???");
             _state_value_label.width = GRID_COL2_WIDTH;
-            _airplane_mode_label = new GLabel("Airplane Mode:");
+            _airplane_mode_label = new GLabel("Airplane Mode");
             _airplane_mode_label.width = GRID_COL1_WIDTH;
             _airplane_mode_check_box = new GToggle();
             _airplane_mode_check_box.width = GRID_COL2_WIDTH;
@@ -101,8 +101,8 @@ namespace BrickDisplayManager {
             child = _content_list;
         }
 
-        public void add_technology(Object obj, NetworkTechnologyItem item) {
-            technology_map[obj] = item;
+        public void add_technology(NetworkTechnologyItem item, Object user_data) {
+            technology_map[user_data] = item;
             item._tech_name_label.width = GRID_COL1_WIDTH;
             _status_grid.children.add(item._tech_name_label);
             item._powered_check_box.width = GRID_COL2_WIDTH;

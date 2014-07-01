@@ -20,7 +20,7 @@
 /*
  * GUI.vala:
  *
- * Version of Brick Display Manager that runs if GTK for testing.
+ * Version of Brick Display Manager that runs in GTK for testing.
  */
 
 using Gee;
@@ -35,6 +35,16 @@ namespace BrickDisplayManager {
     }
 
     class GUI : Object {
+        const string control_panel_glade_file = "ControlPanel.glade";
+
+        enum NetworkTechnologyColumn {
+            POWERED,
+            CONNECTED,
+            NAME,
+            TYPE,
+            USER_DATA;
+        }
+
         static HashMap<weak GM2tk, weak GUI> gui_map;
 
         static construct {
@@ -53,8 +63,10 @@ namespace BrickDisplayManager {
         StatusBar status_bar;
         bool dirty = true;
         bool active { get { return lcd.u8g_active; } }
+        ListStore connman_technology_liststore;
 
         public FakeEV3LCDDevice lcd { get; private set; }
+        public Window control_panel { get; private set; }
 
         public GUI () {
             lcd = new FakeEV3LCDDevice ();
@@ -71,6 +83,10 @@ namespace BrickDisplayManager {
             U8gGraphics.background_text_color = 255;
 
             home_screen = new HomeScreen ();
+            home_screen.menu_item_selected.connect ((index, user_data) => {
+                var screen = user_data as Screen;
+                m2tk.set_root (screen, 0, index);
+            });
             network_status_screen = new NetworkStatusScreen ();
             battery_info_screen = new BatteryInfoScreen ();
             shutdown_screen = new ShutdownScreen ();
@@ -91,6 +107,54 @@ namespace BrickDisplayManager {
             m2tk.font[0] = Font.x11_7x13;
             m2tk.font[1] = Font.m2tk_icon_9;
             m2tk.root_element_changed.connect (on_root_element_changed);
+
+            var builder = new Builder ();
+            try {
+                builder.add_from_file (control_panel_glade_file);
+                control_panel = builder.get_object ("control_panel_window") as Window;
+                builder.get_object ("networking_loading_checkbutton")
+                    .bind_property("active", network_status_screen, "loading",
+                    BindingFlags.SYNC_CREATE);
+                builder.get_object ("connman_offline_mode_checkbutton")
+                    .bind_property("active", network_status_screen, "airplane-mode",
+                    BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                builder.get_object ("connman_state_comboboxtext")
+                    .bind_property("active-id", network_status_screen, "state",
+                    BindingFlags.SYNC_CREATE);
+                connman_technology_liststore = builder.get_object ("connman_technology_liststore") as ListStore;
+                connman_technology_liststore.foreach ((model, path, iter) => {
+                    Value name;
+                    connman_technology_liststore.get_value (iter, NetworkTechnologyColumn.NAME, out name);
+                    var item = new NetworkTechnologyItem (name.dup_string ());
+                    item.notify.connect ((sender, pspec) => {
+                        switch (pspec.name) {
+                        case "powered":
+                            connman_technology_liststore.set (iter, NetworkTechnologyColumn.POWERED, item.powered);
+                            break;
+                        }
+                    });
+                    network_status_screen.add_technology(item, item);
+                    connman_technology_liststore.set (iter, NetworkTechnologyColumn.USER_DATA, item);
+                    return false;
+                });
+                connman_technology_liststore.row_changed.connect ((path, iter) => {
+                    Value powered;
+                    connman_technology_liststore.get_value (iter, NetworkTechnologyColumn.POWERED, out powered);
+                    Value user_data;
+                    connman_technology_liststore.get_value (iter, NetworkTechnologyColumn.USER_DATA, out user_data);
+                    var tech = (NetworkTechnologyItem)user_data.get_pointer ();
+                    if (tech.powered != powered.get_boolean ())
+                        tech.powered = powered.get_boolean ();
+                });
+                (builder.get_object ("connman_technology_powered_cellrenderertoggle") as CellRendererToggle)
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.POWERED));
+                (builder.get_object ("connman_technology_connected_cellrenderertoggle") as CellRendererToggle)
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.CONNECTED));
+                builder.connect_signals (this);
+                control_panel.show_all ();
+            } catch (Error err) {
+                critical ("ControlPanel init failed: %s", err.message);
+            }
 
             Timeout.add(50, on_draw_timer);
         }
@@ -139,6 +203,23 @@ namespace BrickDisplayManager {
                 }
             }
             return true;
+        }
+
+        [CCode (instance_pos = -1)]
+        public void on_show_network_status_screen_button (Gtk.Button button) {
+            m2tk.set_root (network_status_screen);
+        }
+
+        [CCode (instance_pos = -1)]
+        public void on_quit_button_pressed (Gtk.Button button) {
+            on_shutdown_button_pressed ();
+        }
+
+        void update_listview_toggle_item (CellRendererToggle toggle, string path, int column) {
+            TreePath tree_path = new TreePath.from_string (path);
+            TreeIter iter;
+            connman_technology_liststore.get_iter (out iter, tree_path);
+            connman_technology_liststore.set (iter, column, !toggle.active);
         }
 
         static uint8 event_source(M2 m2, EventSourceMessage msg) {

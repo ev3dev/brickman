@@ -18,37 +18,23 @@
  */
 
 /*
- * GButton.vala:
+ * GStrItem.vala:
  *
- * wrapper for m2tk BUTTON
+ * List items used by GStrList
  */
 
-
 namespace M2tk {
-    public class GButton : M2tk.GElement {
-        Button button { get { return (Button)element; } }
+    public class GStrItem : Object {
+        public string text;
+        public string? extended_text;
+        public Object? user_data;
 
-        string _text;
-        public string text {
-            get { return _text; }
-            set {
-                _text = value ?? "";
-                button.text = _text;
-                dirty = true;
-            }
-        }
+        public signal void selected (uint8 index, GStrItem item);
 
-        public signal void pressed(GButton button, GM2tk m2);
-
-        public GButton(string text) {
-            set_element(Button.create((ButtonFunc)on_button, text));
-            this._text = text;
-        }
-
-        static void on_button (ElementFuncArgs arg) {
-            var button = (GButton)element_map[arg.element];
-            var m2 = GM2tk.from_m2 (arg.nav.m2);
-            button.pressed (button, m2);
+        public GStrItem (string text, string? extended_text = null, Object? user_data = null) {
+            this.text = text;
+            this.extended_text = extended_text;
+            this.user_data = user_data;
         }
     }
 }

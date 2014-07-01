@@ -32,7 +32,7 @@ namespace M2tk {
         public string text {
             get { return _text; }
             set {
-                _text = value;
+                _text = value ?? "";
                 label.text = _text;
                 dirty = true;
             }
@@ -47,7 +47,7 @@ namespace M2tk {
         }
 
         public GLabel(string text) {
-            base(Label.create(text));
+            set_element(Label.create(text));
             this._text = text;
         }
     }

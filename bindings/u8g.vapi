@@ -240,7 +240,7 @@ namespace U8g {
             requires (size == sizeof(MallocStruct));
     }
 
-    [CCode (cname = "u8g_fntpgm_uint8_t")]
+    [CCode (cname = "const u8g_fntpgm_uint8_t")]
     public class Font {
         /* u8g */
         [CCode (cname = "u8g_font_m2icon_5")]

@@ -38,12 +38,8 @@ namespace M2tk {
         }
 
         public GToggle(bool checked = false) {
-            // Have to send a fake reference since _checked is not
-            // allocated until after base() is called.
-            var fake = false;
-            base(Toggle.create(ref fake));
+            set_element(Toggle.create(ref _checked));
             toggle.func = (ElementFunc)hook_func;
-            toggle.value = &_checked;
             _checked = checked;
         }
 
