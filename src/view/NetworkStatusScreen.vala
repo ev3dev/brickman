@@ -28,8 +28,8 @@ using M2tk;
 
 namespace BrickDisplayManager {
     class NetworkStatusScreen : Screen {
-        const uchar GRID_COL1_WIDTH = 100;
-        const uchar GRID_COL2_WIDTH = 50;
+        const uchar MENU_TEXT_WIDTH = 130;
+        const uchar MENU_INDICATOR_WIDTH = 20;
 
         HashMap<Object, NetworkTechnologyItem> technology_map;
 
@@ -39,9 +39,12 @@ namespace BrickDisplayManager {
         GLabel _loading_label;
         GLabel _state_label;
         GLabel _state_value_label;
-        GLabel _airplane_mode_label;
-        GToggle _airplane_mode_check_box;
-        GGridList _status_grid;
+        GHList _state_hlist;
+        GAlign _state_align;
+        GStrItem _manage_connections_item;
+        NetworkTechnologyItem _airplane_mode_item;
+        GStrList _menu;
+        GVList _status_list;
         GVList _content_list;
 
         public bool loading {
@@ -50,12 +53,12 @@ namespace BrickDisplayManager {
                 if (value == loading)
                     return;
                 if (value) {
-                    var index = _content_list.children.index_of(_status_grid);
+                    var index = _content_list.children.index_of(_status_list);
                     _content_list.children[index] = _loading_label;
 
                 } else {
                     var index = _content_list.children.index_of(_loading_label);
-                    _content_list.children[index] = _status_grid;
+                    _content_list.children[index] = _status_list;
                 }
             }
         }
@@ -66,47 +69,58 @@ namespace BrickDisplayManager {
         }
 
         public bool airplane_mode {
-            get { return _airplane_mode_check_box.checked; }
-            set { _airplane_mode_check_box.checked = value; }
+            get { return _airplane_mode_item.powered; }
+            set { _airplane_mode_item.powered = value; }
         }
 
-        public NetworkStatusScreen() {
-            technology_map = new HashMap<Object, NetworkTechnologyItem>();
-            _title_label = new GLabel("Network");
-            _title_underline = new GBox(GRID_COL1_WIDTH + GRID_COL2_WIDTH, 1);
-            _space = new GSpace(4, 5);
-            _loading_label = new GLabel("Loading...");
-            _state_label = new GLabel("Status");
-            _state_label.width = GRID_COL1_WIDTH;
-            _state_value_label = new GLabel("???");
-            _state_value_label.width = GRID_COL2_WIDTH;
-            _airplane_mode_label = new GLabel("Airplane Mode");
-            _airplane_mode_label.width = GRID_COL1_WIDTH;
-            _airplane_mode_check_box = new GToggle();
-            _airplane_mode_check_box.width = GRID_COL2_WIDTH;
-            _airplane_mode_check_box.notify["checked"].connect((s, p) => {
-                notify_property("airplane-mode");
+        public signal void manage_connections_selected ();
+
+        public NetworkStatusScreen () {
+            technology_map = new HashMap<Object, NetworkTechnologyItem> ();
+            _title_label = new GLabel ("Network");
+            _title_underline = new GBox (MENU_TEXT_WIDTH + MENU_INDICATOR_WIDTH, 1);
+            _space = new GSpace (4, 5);
+            _loading_label = new GLabel ("Loading...");
+            _state_label = new GLabel ("Status:");
+            _state_value_label = new GLabel ("???");
+            _state_hlist = new GHList ();
+            _state_hlist.children.add (_state_label);
+            _state_hlist.children.add (_space);
+            _state_hlist.children.add (_state_value_label);
+            _state_align = new GAlign (_state_hlist) {
+                width = MENU_TEXT_WIDTH + MENU_INDICATOR_WIDTH,
+                height = 20
+            };
+            _manage_connections_item = new GStrItem ("", "Manage connections...");
+            _manage_connections_item.selected.connect ((i) =>
+                manage_connections_selected ());
+            _airplane_mode_item = new NetworkTechnologyItem ("Airplane Mode");
+            _airplane_mode_item.notify["powered"].connect ((s, p) => {
+                notify_property ("airplane-mode");
             });
-            _status_grid = new GGridList(2);
-            _status_grid.children.add(_state_label);
-            _status_grid.children.add(_state_value_label);
-            _status_grid.children.add(_airplane_mode_label);
-            _status_grid.children.add(_airplane_mode_check_box);
-            _content_list = new GVList();
-            _content_list.children.add(_title_label);
-            _content_list.children.add(_title_underline);
-            _content_list.children.add(_space);
-            _content_list.children.add(_loading_label);
+            _menu = new GStrList (MENU_INDICATOR_WIDTH) {
+                font = FontSpec.F0,
+                extra_column_size = MENU_TEXT_WIDTH,
+                extra_column_font = FontSpec.F0,
+                visible_line_count = 5
+            };
+            _menu.item_list.add (_manage_connections_item);
+            add_technology (_airplane_mode_item, _airplane_mode_item);
+            _status_list = new GVList ();
+            _status_list.children.add (_state_align);
+            _status_list.children.add (_menu);
+            _content_list = new GVList ();
+            _content_list.children.add (_title_label);
+            _content_list.children.add (_title_underline);
+            _content_list.children.add (_space);
+            _content_list.children.add (_loading_label);
 
             child = _content_list;
         }
 
         public void add_technology(NetworkTechnologyItem item, Object user_data) {
             technology_map[user_data] = item;
-            item._tech_name_label.width = GRID_COL1_WIDTH;
-            _status_grid.children.add(item._tech_name_label);
-            item._powered_check_box.width = GRID_COL2_WIDTH;
-            _status_grid.children.add(item._powered_check_box);
+            _menu.item_list.add(item._tech_str_item);
         }
 
         public bool has_technology (Object user_data) {
@@ -116,8 +130,7 @@ namespace BrickDisplayManager {
         public bool remove_technology (Object user_data) {
             NetworkTechnologyItem item;
             if (technology_map.unset (user_data, out item)) {
-                _status_grid.children.remove (item._tech_name_label);
-                _status_grid.children.remove (item._powered_check_box);
+                _menu.item_list.remove (item._tech_str_item);
                 return true;
             }
             return false;

@@ -27,22 +27,28 @@ using M2tk;
 
 namespace BrickDisplayManager {
     class NetworkTechnologyItem : Object {
-        internal GLabel _tech_name_label;
-        internal GToggle _powered_check_box;
+        const string checked = "[X]";
+        const string unchecked = "[ ]";
+
+        internal GStrItem _tech_str_item;
 
         public string name { get; private set; }
 
         public bool powered {
-            get { return _powered_check_box.checked; }
-            set { _powered_check_box.checked = value; }
+            get { return _tech_str_item.text == checked; }
+            set {
+                if (value)
+                    _tech_str_item.text = checked;
+                else
+                    _tech_str_item.text = unchecked;
+            }
         }
 
         public NetworkTechnologyItem(string name) {
             this.name = name;
-            _tech_name_label = new GLabel(this.name);
-            _powered_check_box = new GToggle();
-            _powered_check_box.notify["checked"].connect((s, p) => {
-                notify_property("powered");
+            _tech_str_item = new GStrItem(unchecked, this.name, this);
+            _tech_str_item.selected.connect((s, p) => {
+                powered = !powered;
             });
         }
     }

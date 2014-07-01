@@ -100,6 +100,10 @@ namespace BrickDisplayManager {
             home_screen.add_menu_item ("Network", network_status_screen);
             home_screen.add_menu_item ("Battery", battery_info_screen);
             home_screen.add_menu_item ("Shutdown", shutdown_screen);
+
+            network_status_screen.manage_connections_selected.connect (
+                () => m2tk.set_root (home_screen));
+
             status_bar.add_right (battery_status_bar_item);
 
             m2tk = new GM2tk (home_screen, event_source, event_handler,

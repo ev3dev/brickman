@@ -99,7 +99,8 @@ namespace BrickDisplayManager {
             case DeviceMessage.SET_PIXEL:
             case DeviceMessage.SET_8PIXEL:
                 unowned Pixel pixel = (Pixel)arg;
-                // m2tk only supports 8-bit color, so we have to make it 24
+                // m2tk only supports 8-bit color, and Gdk.Pixbuf only
+                // supports 24-bit color, so we have to convert.
                 // red is already set (same memory address as pixel.color)
                 if (pixel.color == BACKGROUND_COLOR) {
                     pixel.green = BACKGROUND_GREEN;

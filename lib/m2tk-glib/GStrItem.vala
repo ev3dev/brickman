@@ -25,9 +25,9 @@
 
 namespace M2tk {
     public class GStrItem : Object {
-        public string text;
-        public string? extended_text;
-        public Object? user_data;
+        public string text { get; set; }
+        public string? extended_text { get; set; }
+        public Object? user_data { get; set; }
 
         public signal void selected (uint8 index, GStrItem item);
 

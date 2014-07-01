@@ -48,6 +48,7 @@ namespace M2tk {
 
         public override void set (int index, GStrItem item) {
             real_list.set (index, item);
+            item.notify.connect (on_item_notify);
             parent.update_list ();
         }
 
@@ -63,13 +64,15 @@ namespace M2tk {
 
         public override void insert (int index, GStrItem item) {
             real_list.insert(index, item);
+            item.notify.connect (on_item_notify);
             parent.update_list ();
         }
 
         public override GStrItem remove_at (int index) {
-            var result = real_list.remove_at (index);
+            var item = real_list.remove_at (index);
+            item.notify.disconnect (on_item_notify);
             parent.update_list ();
-            return result;
+            return item;
         }
 
         public override Gee.List<GStrItem>? slice (int start, int stop) {
@@ -82,6 +85,7 @@ namespace M2tk {
 
         public override bool add (GStrItem item) {
             var result = real_list.add (item);
+            item.notify.connect (on_item_notify);
             parent.update_list ();
             return result;
         }
@@ -89,6 +93,7 @@ namespace M2tk {
         public override bool remove (GStrItem item) {
             var result = real_list.remove (item);
             if (result)
+                item.notify.disconnect (on_item_notify);
                 parent.update_list ();
             return result;
         }
@@ -100,6 +105,10 @@ namespace M2tk {
 
         public override Iterator<GStrItem> iterator () {
             return real_list.iterator ();
+        }
+
+        void on_item_notify (ParamSpec pspec) {
+            parent.dirty = true;
         }
     }
 }
