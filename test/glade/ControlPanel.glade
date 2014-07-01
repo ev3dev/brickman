@@ -4,6 +4,8 @@
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkListStore" id="connman_technology_liststore">
     <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
       <!-- column-name POWERED -->
       <column type="gboolean"/>
       <!-- column-name CONNECTED -->
@@ -19,26 +21,30 @@
       <row>
         <col id="0">False</col>
         <col id="1">False</col>
-        <col id="2" translatable="yes">Gadget</col>
-        <col id="3" translatable="yes">ethernet</col>
+        <col id="2">False</col>
+        <col id="3" translatable="yes">Gadget</col>
+        <col id="4" translatable="yes">ethernet</col>
       </row>
       <row>
         <col id="0">False</col>
         <col id="1">False</col>
-        <col id="2" translatable="yes">Bluetooth</col>
-        <col id="3" translatable="yes">bluetooth</col>
+        <col id="2">False</col>
+        <col id="3" translatable="yes">Bluetooth</col>
+        <col id="4" translatable="yes">bluetooth</col>
       </row>
       <row>
         <col id="0">False</col>
         <col id="1">False</col>
-        <col id="2" translatable="yes">WiFi</col>
-        <col id="3" translatable="yes">wifi</col>
+        <col id="2">False</col>
+        <col id="3" translatable="yes">WiFi</col>
+        <col id="4" translatable="yes">wifi</col>
       </row>
       <row>
         <col id="0">False</col>
         <col id="1">False</col>
-        <col id="2" translatable="yes">Wired</col>
-        <col id="3" translatable="yes">ethernet</col>
+        <col id="2">False</col>
+        <col id="3" translatable="yes">Wired</col>
+        <col id="4" translatable="yes">ethernet</col>
       </row>
     </data>
   </object>
@@ -181,13 +187,23 @@
                                       <object class="GtkTreeSelection" id="treeview-selection1"/>
                                     </child>
                                     <child>
+                                      <object class="GtkTreeViewColumn" id="connman_technology_present_treeviewcolumn">
+                                        <property name="title" translatable="yes">Present</property>
+                                        <child>
+                                          <object class="GtkCellRendererToggle" id="connman_technology_present_cellrenderertoggle"/>
+                                          <attributes>
+                                            <attribute name="active">0</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
                                       <object class="GtkTreeViewColumn" id="connman_technology_powered_column">
                                         <property name="title" translatable="yes">Powered</property>
-                                        <property name="clickable">True</property>
                                         <child>
                                           <object class="GtkCellRendererToggle" id="connman_technology_powered_cellrenderertoggle"/>
                                           <attributes>
-                                            <attribute name="active">0</attribute>
+                                            <attribute name="active">1</attribute>
                                           </attributes>
                                         </child>
                                       </object>
@@ -198,7 +214,7 @@
                                         <child>
                                           <object class="GtkCellRendererToggle" id="connman_technology_connected_cellrenderertoggle"/>
                                           <attributes>
-                                            <attribute name="active">1</attribute>
+                                            <attribute name="active">2</attribute>
                                           </attributes>
                                         </child>
                                       </object>
@@ -207,9 +223,9 @@
                                       <object class="GtkTreeViewColumn" id="connman_technoloy_name_column">
                                         <property name="title" translatable="yes">Name</property>
                                         <child>
-                                          <object class="GtkCellRendererText" id="connmane_technology_name_cellrenderertext"/>
+                                          <object class="GtkCellRendererText" id="connman_technology_name_cellrenderertext"/>
                                           <attributes>
-                                            <attribute name="text">2</attribute>
+                                            <attribute name="text">3</attribute>
                                           </attributes>
                                         </child>
                                       </object>
@@ -220,9 +236,7 @@
                                         <child>
                                           <object class="GtkCellRendererText" id="connman_technology_type_cellrenderertext"/>
                                           <attributes>
-                                            <attribute name="single-paragraph-mode">1</attribute>
-                                            <attribute name="text">3</attribute>
-                                            <attribute name="max-width-chars">0</attribute>
+                                            <attribute name="text">4</attribute>
                                           </attributes>
                                         </child>
                                       </object>

@@ -38,11 +38,13 @@ namespace BrickDisplayManager {
         const string control_panel_glade_file = "ControlPanel.glade";
 
         enum NetworkTechnologyColumn {
+            PRESENT,
             POWERED,
             CONNECTED,
             NAME,
             TYPE,
-            USER_DATA;
+            USER_DATA,
+            COLUMN_COUNT;
         }
 
         static HashMap<weak GM2tk, weak GUI> gui_map;
@@ -134,18 +136,27 @@ namespace BrickDisplayManager {
                         }
                     });
                     network_status_screen.add_technology(item, item);
+                    connman_technology_liststore.set (iter, NetworkTechnologyColumn.PRESENT, true);
                     connman_technology_liststore.set (iter, NetworkTechnologyColumn.USER_DATA, item);
                     return false;
                 });
                 connman_technology_liststore.row_changed.connect ((path, iter) => {
+                    Value present;
+                    connman_technology_liststore.get_value (iter, NetworkTechnologyColumn.PRESENT, out present);
                     Value powered;
                     connman_technology_liststore.get_value (iter, NetworkTechnologyColumn.POWERED, out powered);
                     Value user_data;
                     connman_technology_liststore.get_value (iter, NetworkTechnologyColumn.USER_DATA, out user_data);
                     var tech = (NetworkTechnologyItem)user_data.get_pointer ();
+                    if (network_status_screen.has_technology (tech) && !present.get_boolean ())
+                        network_status_screen.remove_technology (tech);
+                    else if (!network_status_screen.has_technology (tech) && present.get_boolean ())
+                        network_status_screen.add_technology (tech, tech);
                     if (tech.powered != powered.get_boolean ())
                         tech.powered = powered.get_boolean ();
                 });
+                (builder.get_object ("connman_technology_present_cellrenderertoggle") as CellRendererToggle)
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.PRESENT));
                 (builder.get_object ("connman_technology_powered_cellrenderertoggle") as CellRendererToggle)
                     .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.POWERED));
                 (builder.get_object ("connman_technology_connected_cellrenderertoggle") as CellRendererToggle)

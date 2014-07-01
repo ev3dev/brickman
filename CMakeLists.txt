@@ -113,7 +113,7 @@ if (BRICKDM_TEST)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )
-endif (BIRCKDM_TEST)
+endif (BRICKDM_TEST)
 
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION bin)
 

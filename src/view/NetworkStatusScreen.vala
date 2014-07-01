@@ -72,7 +72,7 @@ namespace BrickDisplayManager {
 
         public NetworkStatusScreen() {
             technology_map = new HashMap<Object, NetworkTechnologyItem>();
-            _title_label = new GLabel("Networking");
+            _title_label = new GLabel("Network");
             _title_underline = new GBox(GRID_COL1_WIDTH + GRID_COL2_WIDTH, 1);
             _space = new GSpace(4, 5);
             _loading_label = new GLabel("Loading...");
@@ -107,6 +107,20 @@ namespace BrickDisplayManager {
             _status_grid.children.add(item._tech_name_label);
             item._powered_check_box.width = GRID_COL2_WIDTH;
             _status_grid.children.add(item._powered_check_box);
+        }
+
+        public bool has_technology (Object user_data) {
+            return technology_map.has_key (user_data);
+        }
+
+        public bool remove_technology (Object user_data) {
+            NetworkTechnologyItem item;
+            if (technology_map.unset (user_data, out item)) {
+                _status_grid.children.remove (item._tech_name_label);
+                _status_grid.children.remove (item._powered_check_box);
+                return true;
+            }
+            return false;
         }
     }
 }
