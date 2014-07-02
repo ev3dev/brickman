@@ -18,21 +18,30 @@
  */
 
 /*
- * GAlign.vala:
+ * GHide.vala:
  *
- * wrapper for m2tk ALIGN
+ * wrapper for m2tk HIDE element
  */
 
 namespace M2tk {
-    public class GAlign : M2tk.GElement {
-        Align align { get { return (Align)element; } }
+    public class GHide : M2tk.GElement {
+        Hide hide { get { return (Hide)element; } }
 
         public GElement child {
             get {
-                return element_map[align.child];
+                return element_map[hide.child];
             }
             set {
-                align.child = value.element;
+                hide.child = value.element;
+                dirty = true;
+            }
+        }
+
+        HideState _state;
+        public HideState state {
+            get { return _state; }
+            set {
+                _state = value;
                 dirty = true;
             }
         }
@@ -46,24 +55,8 @@ namespace M2tk {
             }
         }
 
-        public VerticalAlignment vertical_alignment {
-            get { return _vertical_alignment; }
-            set {
-                _vertical_alignment = value;
-                update_format();
-            }
-        }
-
-        public HorizontalAlignment horizontal_alignment {
-            get { return _horizontal_alignment; }
-            set {
-                _horizontal_alignment = value;
-                update_format();
-            }
-        }
-
-        public GAlign(GElement child = GElement.null_element) {
-            set_element(Align.create(child.element));
+        public GHide(GElement child = GElement.null_element) {
+            set_element(Hide.create(child.element, ref _state));
         }
     }
 }

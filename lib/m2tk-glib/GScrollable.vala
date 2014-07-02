@@ -18,23 +18,17 @@
  */
 
 /*
- * GStrItem.vala:
+ * GScrollable.vala:
  *
- * List items used by GStrList
+ * interface that indicates an element is scrollable
  */
 
+using Gee;
+
 namespace M2tk {
-    public class GStrItem : Object {
-        public string text { get; set; }
-        public string? extended_text { get; set; }
-        public Object? user_data { get; set; }
-
-        public signal void selected (uchar index, GStrItem item);
-
-        public GStrItem (string text, string? extended_text = null, Object? user_data = null) {
-            this.text = text;
-            this.extended_text = extended_text;
-            this.user_data = user_data;
-        }
+    public interface GScrollable : M2tk.GElement {
+        public abstract uchar item_count { get; set; }
+        public abstract uchar top_item { get; set; }
+        public abstract uchar visible_line_count { get; set; }
     }
 }

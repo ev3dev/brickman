@@ -26,18 +26,33 @@
 using Gee;
 
 namespace M2tk {
-    public class GStrList : M2tk.GElement {
+    public class GStrList : M2tk.GScrollable, M2tk.GElement {
         static GStrList element_func_string_list;
 
         StringList string_list { get { return (StringList)element; } }
 
-        internal uint8 item_count = 0;
-        internal uint8 top_item = 0;
+        uint8 _item_count = 0;
+        public uchar item_count {
+            get { return _item_count; }
+            set {
+                _item_count = value;
+                dirty = true;
+            }
+        }
+        uint8 old_top_item = 0;
+        uint8 _top_item = 0;
+        public uchar top_item {
+            get { return _top_item; }
+            set {
+                _top_item = value;
+                dirty = true;
+            }
+        }
 
         GStrItemList _item_list;
         public GStrItemList item_list { get { return _item_list; } }
 
-        public uint8 extra_column_size {
+        public uchar extra_column_size {
             get { return _extra_column_size; }
             set {
                 _extra_column_size = value;
@@ -53,7 +68,7 @@ namespace M2tk {
             }
         }
 
-        public uint8 visible_line_count {
+        public uchar visible_line_count {
             get { return _visible_line_count; }
             set {
                 _visible_line_count = value;
@@ -64,7 +79,8 @@ namespace M2tk {
         public signal void about_to_show (GStrList str_list);
 
         public GStrList(uint8 width) {
-            set_element(StringList.create ((StringListFunc)on_get_str, ref item_count, ref top_item));
+            set_element(StringList.create ((StringListFunc)on_get_str,
+                ref _item_count, ref _top_item));
             _item_list = new GStrItemList (this);
             this.width = width;
             string_list.func = (ElementFunc)hook_func;
@@ -75,12 +91,13 @@ namespace M2tk {
             dirty = true;
         }
 
-        static string on_get_str (uint8 index, StringListFuncMessage msg) {
+        static string on_get_str (uchar index, StringListFuncMessage msg) {
             switch (msg) {
             case StringListFuncMessage.GET_STR:
                 return element_func_string_list.item_list[index].text ?? "";
             case StringListFuncMessage.SELECT:
-                element_func_string_list.item_list[index].selected (index, element_func_string_list.item_list[index]);
+                element_func_string_list.item_list[index].selected (
+                    index, element_func_string_list.item_list[index]);
                 break;
             case StringListFuncMessage.GET_EXTENDED_STR:
                 return element_func_string_list.item_list[index].extended_text ?? "";
@@ -97,6 +114,10 @@ namespace M2tk {
             string_list.func = (ElementFunc)StringList.Func;
             var result = string_list.func (arg);
             string_list.func = (ElementFunc)hook_func;
+            if (element_func_string_list.top_item != element_func_string_list.old_top_item) {
+                element_func_string_list.notify_property ("top-item");
+                element_func_string_list.old_top_item = element_func_string_list.top_item;
+            }
             return result;
         }
     }

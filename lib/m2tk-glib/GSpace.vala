@@ -28,7 +28,7 @@ namespace M2tk {
     public class GSpace : M2tk.GElement {
         Space space { get { return (Space)element; } }
 
-        public GSpace (uint8 width, uint8 height) {
+        public GSpace (uchar width, uchar height) {
             set_element (Space.create());
             this.width = width;
             this.height = height;

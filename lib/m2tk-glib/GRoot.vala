@@ -52,7 +52,7 @@ namespace M2tk {
             }
         }
 
-        public uint8 initial_focus_field {
+        public uchar initial_focus_field {
             get { return _inital_focus_field; }
             set {
                 _inital_focus_field = value;
@@ -60,7 +60,7 @@ namespace M2tk {
             }
         }
 
-        public uint8 change_value {
+        public uchar change_value {
             get { return _value; }
             set {
                 _value = value;

@@ -4,7 +4,7 @@ namespace M2tk {
 
     /* enums */
 
-    [CCode (cname = "uint8_t", cprefix = "M2_KEY_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_KEY_", has_type_id = false)]
     [Flags]
     public enum Key {
         NONE,
@@ -59,13 +59,13 @@ namespace M2tk {
         EVENT;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_ES_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_ES_MSG_", has_type_id = false)]
     public enum EventSourceMessage {
         GET_KEY,
         INIT;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_EP_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_EP_MSG_", has_type_id = false)]
     public enum EventHandlerMessage {
         SELECT,
         NEXT,
@@ -101,7 +101,7 @@ namespace M2tk {
         KEYPAD_9;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_EL_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_EL_MSG_", has_type_id = false)]
     public enum ElementCallbackMessage {
         GET_LIST_LEN,
         GET_LIST_ELEMENT,
@@ -147,25 +147,25 @@ namespace M2tk {
         KEYPAD_9;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_U8_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_U8_MSG_", has_type_id = false)]
     public enum U8FuncMessage {
         GET_VALUE,
         SET_VALUE;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_S8_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_S8_MSG_", has_type_id = false)]
     public enum S8FuncMessage {
         GET_VALUE,
         SET_VALUE;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_U32_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_U32_MSG_", has_type_id = false)]
     public enum U32FuncMessage {
         GET_VALUE,
         SET_VALUE;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_COMBOFN_MSG_", has_type_id = false)]
+    [CCode (cname = "guchar", cprefix = "M2_COMBOFN_MSG_", has_type_id = false)]
     public enum ComboFuncMessage {
         GET_VALUE,
         SET_VALUE,
@@ -180,7 +180,7 @@ namespace M2tk {
         NEW_DIALOG;
     }
 
-    [CCode (cname = "uint8_t", has_type_id = false)]
+    [CCode (cname = "guchar", has_type_id = false)]
     [Flags]
     public enum FontSpec
     {
@@ -193,7 +193,7 @@ namespace M2tk {
         [CCode (cname = "((uint8_t)(-1))")] DEFAULT;
     }
 
-    [CCode (cname = "uint8_t", has_type_id = false)]
+    [CCode (cname = "guchar", has_type_id = false)]
     public enum HideState {
         [CCode (cname = "0")] VISIBLE,
         [CCode (cname = "1")] HIDDEN_KEEP_SIZE,
@@ -1080,7 +1080,7 @@ namespace M2tk {
         [CCode (cname = "align.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "align.element")]
-        unowned Element child;
+        internal unowned Element child;
         [CCode (cname = "val")]
         HideState *state;
 

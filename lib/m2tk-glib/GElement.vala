@@ -60,7 +60,7 @@ namespace M2tk {
         string format;
 
         uint8 _x = uint8.MAX;
-        public uint8 x {
+        public uchar x {
             get { return _x; }
             set {
                 _x = value;
@@ -69,7 +69,7 @@ namespace M2tk {
         }
 
         uint8 _y = uint8.MAX;
-        public uint8 y {
+        public uchar y {
             get { return _y; }
             set {
                 _y = value;
@@ -78,7 +78,7 @@ namespace M2tk {
         }
 
         uint8 _width = uint8.MAX;
-        public uint8 width {
+        public uchar width {
             get { return _width; }
             set {
                 _width = value;
@@ -87,7 +87,7 @@ namespace M2tk {
         }
 
         uint8 _height = uint8.MAX;
-        public uint8 height {
+        public uchar height {
             get { return _height; }
             set {
                 _height = value;

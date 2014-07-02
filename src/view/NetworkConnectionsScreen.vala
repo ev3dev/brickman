@@ -18,7 +18,7 @@
  */
 
 /*
- * NetworkStatusScreen.vala:
+ * NetworkConnectionsScreen.vala:
  *
  * Monitors network status and performs other network related functions
  */
@@ -27,7 +27,7 @@ using Gee;
 using M2tk;
 
 namespace BrickDisplayManager {
-    class NetworkStatusScreen : Screen {
+    class NetworkConnectionsScreen : Screen {
         const uchar MENU_TEXT_WIDTH = 130;
         const uchar MENU_INDICATOR_WIDTH = 20;
 
@@ -44,10 +44,7 @@ namespace BrickDisplayManager {
         GStrItem _manage_connections_item;
         NetworkTechnologyItem _airplane_mode_item;
         GStrList _menu;
-        GSpace _menu_scroll_bar_space;
-        GHide _menu_scroll_bar_space_hide;
         GVScrollBar _menu_scroll_bar;
-        GHide _menu_scroll_bar_hide;
         GHList _menu_hlist;
         GVList _status_list;
         GVList _content_list;
@@ -80,7 +77,7 @@ namespace BrickDisplayManager {
 
         public signal void manage_connections_selected ();
 
-        public NetworkStatusScreen () {
+        public NetworkConnectionsScreen () {
             technology_map = new HashMap<Object, NetworkTechnologyItem> ();
             _title_label = new GLabel ("Network");
             _title_underline = new GBox (MENU_TEXT_WIDTH + MENU_INDICATOR_WIDTH, 1);
@@ -111,24 +108,10 @@ namespace BrickDisplayManager {
             };
             _menu.item_list.add (_manage_connections_item);
             add_technology (_airplane_mode_item, _airplane_mode_item);
-            _menu_scroll_bar_space = new GSpace (2, 0);
-            _menu_scroll_bar_space_hide = new GHide (_menu_scroll_bar_space);
             _menu_scroll_bar = new GVScrollBar ();
-            _menu_scroll_bar.bind_scrollable_element (_menu);
-            _menu_scroll_bar_hide = new GHide (_menu_scroll_bar);
-            _menu.notify["item-count"].connect (() => {
-                if (_menu.item_count > _menu.visible_line_count) {
-                    _menu_scroll_bar_space_hide.state = HideState.VISIBLE;
-                    _menu_scroll_bar_hide.state = HideState.VISIBLE;
-                } else {
-                    _menu_scroll_bar_space_hide.state = HideState.HIDDEN_NO_SIZE;
-                    _menu_scroll_bar_hide.state = HideState.HIDDEN_NO_SIZE;
-                }
-            });
             _menu_hlist = new GHList ();
             _menu_hlist.children.add (_menu);
-            _menu_hlist.children.add (_menu_scroll_bar_space_hide);
-            _menu_hlist.children.add (_menu_scroll_bar_hide);
+            _menu_hlist.children.add (_menu_scroll_bar);
             _status_list = new GVList ();
             _status_list.children.add (_state_align);
             _status_list.children.add (_menu_hlist);

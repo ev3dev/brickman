@@ -42,22 +42,26 @@ set (BRICKDM_COMMON_SOURCE_FILES
     lib/m2tk-glib/GElementList.vala
     lib/m2tk-glib/GFontList.vala
     lib/m2tk-glib/GGridList.vala
+    lib/m2tk-glib/GHide.vala
     lib/m2tk-glib/GHList.vala
     lib/m2tk-glib/GLabel.vala
     lib/m2tk-glib/GListElement.vala
     lib/m2tk-glib/GNullElement.vala
     lib/m2tk-glib/GRoot.vala
+    lib/m2tk-glib/GScrollable.vala
     lib/m2tk-glib/GSpace.vala
     lib/m2tk-glib/GStrItem.vala
     lib/m2tk-glib/GStrItemList.vala
     lib/m2tk-glib/GStrList.vala
     lib/m2tk-glib/GToggle.vala
     lib/m2tk-glib/GVList.vala
+    lib/m2tk-glib/GVScrollBar.vala
     src/view/BatteryInfoScreen.vala
     src/view/BatteryHistScreen.vala
     src/view/BatteryStatsScreen.vala
     src/view/BatteryStatusBarItem.vala
     src/view/HomeScreen.vala
+    src/view/NetworkConnectionsScreen.vala
     src/view/NetworkStatusScreen.vala
     src/view/NetworkTechnologyItem.vala
     src/view/Screen.vala

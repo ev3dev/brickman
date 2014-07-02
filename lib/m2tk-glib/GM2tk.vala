@@ -110,7 +110,7 @@ namespace M2tk {
             _m2.draw();
         }
 
-        public void put_key(uint8 key) {
+        public void put_key(uchar key) {
             _m2.put_key(key);
         }
 
@@ -122,7 +122,7 @@ namespace M2tk {
             return _m2.handle_key();
         }
 
-        public void set_root(GElement element, uint8 next_count = 0,
+        public void set_root(GElement element, uchar next_count = 0,
             uint8 change_value = 0)
         {
             _m2.set_root(element.element, next_count, change_value);
@@ -133,7 +133,7 @@ namespace M2tk {
         }
 
         static void on_root_element_change(Element new_root,
-            Element old_root, uint8 value)
+            Element old_root, uchar value)
         {
             // callback does not let us know who was calling, so we have
             // to try to guess the right one.

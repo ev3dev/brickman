@@ -33,7 +33,7 @@ namespace M2tk {
             }
         }
 
-        public GGridList(uint8 column_count) {
+        public GGridList(uchar column_count) {
             base(GridList.create({}));
             this.column_count = column_count;
         }

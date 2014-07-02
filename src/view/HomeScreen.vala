@@ -50,7 +50,7 @@ namespace BrickDisplayManager {
             _menu_list.item_list.add(item);
         }
 
-        void on_menu_item_selected(uint8 index, GStrItem item) {
+        void on_menu_item_selected(uchar index, GStrItem item) {
             menu_item_selected (index, item.user_data);
         }
 
