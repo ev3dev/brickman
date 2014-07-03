@@ -1,5 +1,5 @@
 
-[CCode (cheader_filename = "m2.h,m2ghu8g.h")]
+[CCode (cprefix = "m2_", cheader_filename = "m2.h,m2ghu8g.h")]
 namespace M2tk {
 
     /* enums */
@@ -102,7 +102,7 @@ namespace M2tk {
     }
 
     [CCode (cname = "guchar", cprefix = "M2_EL_MSG_", has_type_id = false)]
-    public enum ElementCallbackMessage {
+    public enum ElementMessage {
         GET_LIST_LEN,
         GET_LIST_ELEMENT,
         GET_LIST_BOX,
@@ -172,7 +172,7 @@ namespace M2tk {
         GET_STRING;
     }
 
-    [CCode (cname = "uint8_t", cprefix = "M2_STRLIST_MSG_", has_type_id = false)]
+    [CCode (cname = "gchar", cprefix = "M2_STRLIST_MSG_", has_type_id = false)]
     public enum StringListFuncMessage {
         GET_STR,
         SELECT,
@@ -198,6 +198,14 @@ namespace M2tk {
         [CCode (cname = "0")] VISIBLE,
         [CCode (cname = "1")] HIDDEN_KEEP_SIZE,
         [CCode (cname = "2")] HIDDEN_NO_SIZE;
+    }
+
+    [CCode (cname = "guchar", cprefix = "M2_ICON_", has_type_id = false)]
+    public enum Icon {
+        TOGGLE_ACTIVE,
+        TOGGLE_INACTIVE,
+        RADIO_ACTIVE,
+        RADIO_INACTIVE,
     }
 
     /* static instances */
@@ -344,35 +352,69 @@ namespace M2tk {
 
         [CCode (cname = "G_STRUCT_OFFSET(m2_t, nav)")]
         internal const int nav_struct_offset;
+
+        internal static uint8 is_frame_draw_at_end;
     }
 
     [CCode (cname = "m2_nav_t", cprefix = "m2_nav_", has_type_id = false)]
     [Compact]
     public class Nav {
+        public Element current_element { get; }
+        public Element parent_element { get; }
+        void prepare_fn_arg_current_element ();
+        void prepare_fn_arg_parent_element ();
+
+        void send_new_focus ();
+        bool is_read_only {
+            [CCode (cname = "m2_nav_is_read_only")] get;
+        }
+        bool is_auto_skip {
+            [CCode (cname = "m2_nav_is_auto_skip")] get;
+        }
+        bool is_parent_auto_skip {
+            [CCode (cname = "m2_nav_is_parent_auto_skip")] get;
+        }
+        public uint8 list_len { get; }
+        public uint8 parent_list_len { get; }
+        void load_child (uint8 pos);
         public bool is_data_entry {
             [CCode (cname = "m2_nav_is_data_entry")] get;
         }
+        public uint8 child_pos { get; }
 
-        public M2 m2 {
-            // hack based on Linux kernel container_of macro
-            get { return (M2)((char*)this - M2.nav_struct_offset); }
-        }
+        void init (Element element);
+
+        public void set_root (Element? element, uint8 next_cnd, uint8 change_value);
+        uint8 check_and_assign_new_root ();
+
+        uint8 up ();
+        uint8 down (bool is_msg);
+        uint8 do_auto_up ();
+        uint8 do_auto_down ();
+
+        uint8 prev ();
+        uint8 next ();
+        uint8 first ();
+        uint8 last ();
+        public uint8 data_up();
+        public uint8 data_down();
+
+        [CCode (cname = "m2_el_parent_get_font")]
+        internal uint8 parent_get_font ();
 
         public uint8 user_up();
         public uint8 user_down(bool is_msg);
         public uint8 user_prev();
         public uint8 user_first();
         public uint8 user_next();
-        public uint8 data_up();
-        public uint8 data_down();
+
         public uint8 quick_key(Key quick_key)
             requires(quick_key >= Key.Q1 && quick_key <= Key.LOOP_END);
-        uint8 prepare_fn_arg_current_element();
+
         public uint8 data_char(uint8 c) {
             prepare_fn_arg_current_element();
-            return call_element_function(c); // assign the char
+            return call_element_function(c);
         }
-        public void set_root(Element? element, uint8 next_cnd, uint8 change_value);
     }
 
     [CCode (cname = "m2_gfx_arg_t", has_type_id = false)]
@@ -380,53 +422,174 @@ namespace M2tk {
     public class GraphicsArgs {
     }
 
-    [CCode (cprefix = "m2_u8g_", has_type_id = false)]
-    [Compact]
-    public class U8gGraphics {
+    [CCode (lower_case_cprefix = "m2_u8g_", has_type_id = false)]
+    namespace U8gGraphics {
         [CCode (cname = "m2_u8g_fg_text_color")]
-        public static uint8 forground_text_color;
+        uint8 forground_text_color;
         [CCode (cname = "m2_u8g_bg_text_color")]
-        public static uint8 background_text_color;
-        public static uint8 highlight_shadow_color;
-        public static uint8 highlight_frame_color;
+        uint8 background_text_color;
+        uint8 highlight_shadow_color;
+        uint8 highlight_frame_color;
         [CCode (cname = "m2_u8g_highlight_bg_color")]
-        public static uint8 highlight_background_color;
-        public static uint8 highlight_focus_shadow_color;
-        public static uint8 highlight_focus_frame_color;
+        uint8 highlight_background_color;
+        uint8 highlight_focus_shadow_color;
+        uint8 highlight_focus_frame_color;
         [CCode (cname = "m2_u8g_highlight_focus_bg_color")]
-        public static uint8 highlight_focus_background_color;
-        public static uint8 normal_focus_shadow_color;
-        public static uint8 normal_focus_frame_color;
+        uint8 highlight_focus_background_color;
+        uint8 normal_focus_shadow_color;
+        uint8 normal_focus_frame_color;
         [CCode (cname = "m2_u8g_normal_focus_bg_color")]
-        public static uint8 normal_focus_background_color;
+        uint8 normal_focus_background_color;
         [CCode (cname = "m2_u8g_small_focus_bg_color")]
-        public static uint8 small_focus_background_color;
-        public static uint8 exit_data_entry_color;
-        public static uint8 background_color;
+        uint8 small_focus_background_color;
+        uint8 exit_data_entry_color;
+        uint8 background_color;
 
         [CCode (cname = "m2_u8g_font_icon")]
-        public static uint8 font_icon_handler(GraphicsArgs arg);
+        uint8 font_icon_handler(GraphicsArgs arg);
         [CCode (cname = "m2_u8g_box_icon")]
-        public static uint8 box_icon_handler(GraphicsArgs arg);
+        uint8 box_icon_handler(GraphicsArgs arg);
         [CCode (cname = "m2_SetU8g")]
-        public static void set_graphics(U8g.Graphics u8g, GraphicsFunc draw_icon);
+        void set_graphics(U8g.Graphics u8g, GraphicsFunc draw_icon);
         [CCode (cname = "m2_SetU8gInvisibleFrameXBorder")]
-        public static void set_invisible_frame_x_padding(uint8 width);
+        void set_invisible_frame_x_padding(uint8 width);
         [CCode (cname = "m2_SetU8gAdditionalTextXBorder")]
-        public static void set_additional_text_x_padding(uint8 width);
+        void set_additional_text_x_padding(uint8 width);
         [CCode (cname = "m2_SetU8gAdditionalReadOnlyXBorder")]
-        public static void set_additional_read_only_x_padding(uint8 width);
+        void set_additional_read_only_x_padding(uint8 width);
         [CCode (cname = "m2_SetU8gRadioFontIcon")]
-        public static void set_radio_font_icon(U8g.Font font, uint8 active, uint8 inactive);
+        void set_radio_font_icon(U8g.Font font, uint8 active, uint8 inactive);
         [CCode (cname = "m2_SetU8gToggleFontIcon")]
-        public static void set_toggle_font_icon(U8g.Font font, uint8 active, uint8 inactive);
+        void set_toggle_font_icon(U8g.Font font, uint8 active, uint8 inactive);
+    }
+
+    [CCode (lower_case_cprefix = "m2_gfx_")]
+    namespace GraphicsUtil {
+        void init (GraphicsFunc fnptr);
+        void start (GraphicsFunc fnptr);
+        void hline (uint8 x0, uint8 y0, uint8 w);
+        void vline (uint8 x0, uint8 y0, uint8 h);
+        void box (uint8 x0, uint8 y0, uint8 w, uint8 h);
+
+        void text (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font, string s);
+        void text_p (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font, string s);
+
+        void xbm (uint8 x0, uint8 y0, uint8 w, uint8 h, string s);
+        void xbm_p (uint8 x0, uint8 y0, uint8 w, uint8 h, string s);
+
+        void normal_no_focus (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+        void normal_focus (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+        /* used only of there is also a small focus */
+        void normal_parent_focus (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+        void small_focus (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+        void normal_data_entry (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+        void small_data_entry (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+        void go_up (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font);
+
+        /* used for labels and buttons */
+        uint8 get_text_width (uint8 font, string s);
+        uint8 get_text_width_p (uint8 font, string s);
+        uint8 get_num_char_width (uint8 font);
+        uint8 get_char_width (uint8 font);
+        uint8 get_char_height (uint8 font);
+
+        uint8 add_normal_border_height (uint8 font, uint8 height);
+        uint8 add_normal_border_width (uint8 font, uint8 width);
+        uint8 add_normal_border_x (uint8 font, uint8 x);
+        uint8 add_normal_border_y (uint8 font, uint8 y);
+
+        uint8 add_small_border_height (uint8 font, uint8 height);
+        uint8 add_small_border_width (uint8 font, uint8 width);
+        uint8 add_small_border_x (uint8 font, uint8 x);
+        uint8 add_small_border_y (uint8 font, uint8 y);
+
+        uint8 add_readonly_border_height (uint8 is_normal, uint8 font, uint8 height);
+        uint8 add_readonly_border_width (uint8 is_normal, uint8 font, uint8 width);
+        uint8 add_readonly_border_x (uint8 is_normal, uint8 font, uint8 x);
+        uint8 add_readonly_border_y (uint8 is_normal, uint8 font, uint8 y);
+
+        uint8 get_list_overlap_height ();
+        uint8 get_list_overlap_width ();
+
+        void draw_icon (uint8 x0, uint8 y0, uint8 font, uint8 icon_number);
+        uint8 get_icon_height (uint8 font, uint8 icon_number);
+        uint8 get_icon_width (uint8 font, uint8 icon_number);
+
+        uint8 is_frame_draw_at_end ();
+
+        void end ();
+        void set_font (GraphicsFunc fnptr, uint8 font_idx, void *font_ptr);
+
+        uint8 get_display_width ();
+        uint8 get_display_height ();
+
+        void level_down (uint8 depth);
+        void level_up (uint8 depth);
+        void level_next (uint8 depth);
+
+        void draw_text_add_normal_border_offset (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font, string s);
+        void draw_text_add_small_border_offset (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font, string s);
+        void draw_text_add_readonly_border_offset (uint8 is_normal, uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font, string s);
+        void draw_text_p_add_readonly_border_offset (uint8 is_normal, uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 font, string s);
+
+        void draw_xbm_p_add_readonly_border_offset (uint8 is_normal, uint8 ww, uint8 hh, uint8 x0, uint8 y0, uint8 w, uint8 h, string s);
+        void draw_xbm_p_add_normal_border_offset (uint8 x0, uint8 y0, uint8 ww, uint8 hh, uint8 w, uint8 h, string s);
+
+        void draw_vertical_scroll_bar (uint8 x0, uint8 y0, uint8 w, uint8 h, uint8 total, uint8 top, uint8 visible);
+
+        void draw_icon_add_normal_border_offset (uint8 x0, uint8 y0, uint8 font, uint8 icon_number);
+        uint8 get_char_height_with_small_border (uint8 font);
+        uint8 get_char_width_with_small_border (uint8 font);
+        uint8 get_num_char_width_with_small_border (uint8 font);
+
+        uint8 get_char_height_with_normal_border (uint8 font);
+        uint8 get_char_width_with_normal_border (uint8 font);
+    }
+
+    [CCode (cprefix = "M2_OPT_", lower_case_cprefix = "m2_opt_")]
+    namespace Option {
+        const uint8 NOT_FOUND;
+
+        [CCode (cname = "m2_get_nth_cmd")]
+        char get_command (string str, uint8 index);
+        [CCode (cname = " m2_opt_get_val")]
+        uint8 get_value (string str, uint8 index);
+        [CCode (cname = " m2_opt_get_val_any_default")]
+        uint8 get_value_with_default (string str, uint8 index, uint8 default_value = 0);
+        uint8 get_hH (string str);
+        uint8 get_wW (string str);
+    }
+
+    [CCode (cname = "m2_pos_t", has_type_id = false)]
+    [Compact]
+    public class Position {
+        public uint8 x;
+        public uint8 y;
+    }
+
+    [CCode (cname = "m2_pcbox_t", has_type_id = false)]
+    [Compact]
+    public class ParentChildBox {
+        [CCode (cname = "&self->p")]
+        Position _p;
+        public Position parent { get { return _p; } }
+        [CCode (cname = "&self->c")]
+        Position child;
     }
 
     [CCode (cname = "m2_el_fnfmt_t", free_function = "g_free", has_type_id = false)]
     [Compact]
     public class Element {
+        [CCode (cname = "m2_el_fnfmt_t", destroy_function = "", has_type_id = false)]
+        internal struct MallocStruct {}
+
+        [CCode (cname = "fn")]
+        internal ElementFunc func;
         [CCode (cname = "fmt")]
         internal unowned string? format;
+
+        [CCode (cname = "m2_el_fnfmt_fn")]
+        internal static uint8 function_format (ElementFuncArgs args);
 
         public uint8 width {
             [CCode (cname = "m2_fn_get_width")]get;
@@ -435,13 +598,21 @@ namespace M2tk {
         public uint8 height {
             [CCode (cname = "m2_fn_get_height")]get;
         }
+
+
+        [CCode (cname = " m2_el_fmfmt_opt_get_val_any_by_element")]
+        public uint8 get_option_value_with_default (uint8 index, uint8 default_value = 0);
+
+        public FontSpec font {
+            [CCode (cname = "m2_el_fmfmt_get_font_by_element")] get;
+        }
     }
 
     [CCode (cname = "m2_el_fnarg_t", has_type_id = false)]
     [Compact]
     public class ElementFuncArgs {
         public Element element;
-        public ElementCallbackMessage msg;
+        public ElementMessage msg;
         public uint8 arg;
         public void* data;
         public Nav? nav;
@@ -511,7 +682,7 @@ namespace M2tk {
         [CCode (cname = "el_space.ff.fmt")]
         internal unowned string? format;
         [CCode (cname = "new_dialog_callback")]
-        ButtonFunc callback;
+        internal ButtonFunc callback;
 
         [CCode (cname = "g_malloc0")]
         SpaceWithFunc(size_t size = sizeof(MallocStruct))
@@ -851,6 +1022,9 @@ namespace M2tk {
             element.list = list;
             return element;
         }
+
+        [CCode (cname = "m2_calc_vlist_height_overlap_correction")]
+        public static uint8 calc_height_overlap_correction (uint8 height, uint8 count);
     }
 
     [CCode (cname = "m2_el_list_t", free_function = "g_free", has_type_id = false)]
@@ -1253,8 +1427,37 @@ namespace M2tk {
         }
     }
 
+    [CCode (cname = "m2_el_slbase_t", cprefix = "m2_el_slbase_", free_function = "g_free", has_type_id = false)]
+    public class StringListBase : Element {
+        [CCode (cname = "M2_EL_SLBASE_ILLEGAL")]
+        public const uint8 ILLEGAL;
+
+        [CCode (cname = "ff.fn")]
+        internal ElementFunc func;
+        [CCode (cname = "ff.fmt")]
+        internal unowned string? format;
+        [CCode (cname = "top")]
+        uint8 *_top;
+        [CCode (cname = "len")]
+        uint8 *_length;
+
+        public uint8 length { [CCode (cname = "m2_el_slbase_get_len")] get; }
+        public uint8 top { get; }
+        uint8 visible_lines { get; }
+        public uint8 get_visible_pos (uint8 idx);
+        uint8 calc_height ();
+        [CCode (cname = "m2_el_slbase_calc_width")]
+        public uint8 calc_width ();
+        [CCode (cname = "m2_el_slbase_adjust_top_to_focus")]
+        public void adjust_top_to_focus (uint8 position);
+        public void adjust_top_to_cnt ();
+        public uint8 calc_box (uint8 idx, ParentChildBox data);
+        [CCode (cname = "m2_el_slbase_show")]
+        public static void show (ElementFuncArgs arg, string extra_text, string text);
+    }
+
     [CCode (cname = "m2_el_strlist_t", free_function = "g_free", has_type_id = false)]
-    public class StringList : Element {
+    public class StringList : StringListBase {
         [CCode (cname = "m2_el_strlist_t", destroy_function = "", has_type_id = false)]
         struct MallocStruct {}
 
@@ -1270,7 +1473,7 @@ namespace M2tk {
         [CCode (cname = "slbase.len")]
         uint8 *length;
         [CCode (cname = "strlist_cb_fnptr")]
-        StringListFunc callback;
+        internal StringListFunc callback;
 
         [CCode (cname = "g_malloc0")]
         StringList(size_t size = sizeof(MallocStruct))

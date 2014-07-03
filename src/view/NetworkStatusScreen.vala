@@ -104,9 +104,10 @@ namespace BrickDisplayManager {
                 notify_property ("airplane-mode");
             });
             _menu = new GStrList (MENU_INDICATOR_WIDTH) {
-                font = FontSpec.F0,
-                extra_column_size = MENU_TEXT_WIDTH,
+                font = FontSpec.F2,
+                extra_column_width = MENU_TEXT_WIDTH,
                 extra_column_font = FontSpec.F0,
+                use_extra_column_font_for_height = true,
                 visible_line_count = 5
             };
             _menu.item_list.add (_manage_connections_item);

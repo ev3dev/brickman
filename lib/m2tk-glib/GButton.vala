@@ -38,7 +38,7 @@ namespace M2tk {
             }
         }
 
-        public signal void pressed(GButton button, GM2tk m2);
+        public signal void pressed(GButton button);
 
         public GButton(string text) {
             set_element(Button.create((ButtonFunc)on_button, text));
@@ -47,8 +47,7 @@ namespace M2tk {
 
         static void on_button (ElementFuncArgs arg) {
             var button = (GButton)element_map[arg.element];
-            var m2 = GM2tk.from_m2 (arg.nav.m2);
-            button.pressed (button, m2);
+            button.pressed (button);
         }
     }
 }

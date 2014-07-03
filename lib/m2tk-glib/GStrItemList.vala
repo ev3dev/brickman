@@ -92,9 +92,10 @@ namespace M2tk {
 
         public override bool remove (GStrItem item) {
             var result = real_list.remove (item);
-            if (result)
+            if (result) {
                 item.notify.disconnect (on_item_notify);
                 parent.update_list ();
+            }
             return result;
         }
 

@@ -112,6 +112,7 @@ namespace BrickDisplayManager {
             m2tk.home2 = shutdown_screen;
             m2tk.font[0] = Font.x11_7x13;
             m2tk.font[1] = Font.m2tk_icon_9;
+            m2tk.font[2] = Font.cu12_67_75;
             m2tk.root_element_changed.connect (on_root_element_changed);
 
             var builder = new Builder ();
@@ -370,7 +371,7 @@ namespace BrickDisplayManager {
                 }
             }
 
-            if (msg >= ElementCallbackMessage.SPACE) {
+            if (msg >= ElementMessage.SPACE) {
                 nav.data_char (msg);      // assign the char
                 return nav.user_next ();  // go to next position
             }

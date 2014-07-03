@@ -27,8 +27,8 @@ using M2tk;
 
 namespace BrickDisplayManager {
     class NetworkTechnologyItem : Object {
-        const string checked = "[X]";
-        const string unchecked = "[ ]";
+        const string checked = "\xa3";
+        const string unchecked = "\xa1";
 
         internal GStrItem _tech_str_item;
 

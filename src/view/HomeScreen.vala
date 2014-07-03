@@ -39,7 +39,7 @@ namespace BrickDisplayManager {
             screen_info_map = new HashMap<GStrItem, ScreenInfo?>();
             _menu_list = new GStrList(100) {
                 visible_line_count = 5,
-                extra_column_size = 12
+                extra_column_width = 12
             };
             child = _menu_list;
         }

@@ -266,20 +266,48 @@ namespace U8g {
         public static Font x11_6x10;
         [CCode (cname = "u8g_font_6x12")]
         public static Font x11_6x12;
+        [CCode (cname = "u8g_font_6x12_67_75")]
+        public static Font x11_6x12_67_75;
+        [CCode (cname = "u8g_font_6x12_78_79")]
+        public static Font x11_6x12_78_79;
         [CCode (cname = "u8g_font_6x13")]
         public static Font x11_6x13;
+        [CCode (cname = "u8g_font_6x13_67_75")]
+        public static Font x11_6x13_67_75;
+        [CCode (cname = "u8g_font_6x13_78_79")]
+        public static Font x11_6x13_78_79;
         [CCode (cname = "u8g_font_7x13")]
         public static Font x11_7x13;
+        [CCode (cname = "u8g_font_7x13_67_75")]
+        public static Font x11_7x13_67_75;
+        [CCode (cname = "u8g_font_7x13_78_79")]
+        public static Font x11_7x13_78_79;
         [CCode (cname = "u8g_font_7x14")]
         public static Font x11_7x14;
         [CCode (cname = "u8g_font_8x13")]
         public static Font x11_8x13;
+        [CCode (cname = "u8g_font_8x13_67_75")]
+        public static Font x11_8x13_67_75;
+        [CCode (cname = "u8g_font_8x13_78_79")]
+        public static Font x11_8x13_78_79;
         [CCode (cname = "u8g_font_9x15")]
         public static Font x11_9x15;
+        [CCode (cname = "u8g_font_9x15_67_75")]
+        public static Font x11_9x15_67_75;
+        [CCode (cname = "u8g_font_9x15_78_79")]
+        public static Font x11_9x15_78_79;
         [CCode (cname = "u8g_font_9x18")]
         public static Font x11_9x18;
+        [CCode (cname = "u8g_font_9x18_67_75")]
+        public static Font x11_9x18_67_75;
+        [CCode (cname = "u8g_font_9x18_78_79")]
+        public static Font x11_9x18_78_79;
         [CCode (cname = "u8g_font_10x20")]
         public static Font x11_10x20;
+        [CCode (cname = "u8g_font_10x20_67_75")]
+        public static Font x11_10x20_67_75;
+        [CCode (cname = "u8g_font_10x20_78_79")]
+        public static Font x11_10x20_78_79;
         /* 04 */
         [CCode (cname = "u8g_font_04b_03")]
         public static Font dsg4_04b_03;
@@ -287,5 +315,10 @@ namespace U8g {
         public static Font dsg4_04b_03b;
         [CCode (cname = "u8g_font_04b_24")]
         public static Font dsg4_04b_24;
+        /* cu12 */
+        [CCode (cname = "u8g_font_cu12")]
+        public static Font cu12;
+        [CCode (cname = "u8g_font_cu12_67_75")]
+        public static Font cu12_67_75;
     }
 }

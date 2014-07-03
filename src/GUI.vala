@@ -260,7 +260,7 @@ namespace BrickDisplayManager {
                 }
             }
 
-            if (msg >= ElementCallbackMessage.SPACE) {
+            if (msg >= ElementMessage.SPACE) {
                 nav.data_char(msg);      // assign the char
                 return nav.user_next();  // go to next position
             }

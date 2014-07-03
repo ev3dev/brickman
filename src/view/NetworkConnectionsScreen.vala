@@ -102,7 +102,7 @@ namespace BrickDisplayManager {
             });
             _menu = new GStrList (MENU_INDICATOR_WIDTH) {
                 font = FontSpec.F0,
-                extra_column_size = MENU_TEXT_WIDTH,
+                extra_column_width = MENU_TEXT_WIDTH,
                 extra_column_font = FontSpec.F0,
                 visible_line_count = 5
             };

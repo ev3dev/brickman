@@ -48,7 +48,7 @@ namespace M2tk {
             toggle.func = (ElementFunc)Toggle.Func;
             var result = toggle.func(arg);
             toggle.func = (ElementFunc)hook_func;
-            if (arg.msg == ElementCallbackMessage.SELECT)
+            if (arg.msg == ElementMessage.SELECT)
                 GElement.element_map[arg.element].notify_property("checked");
             return result;
         }
