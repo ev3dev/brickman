@@ -91,7 +91,7 @@ namespace BrickDisplayManager {
             Systemd.new_async.begin ((obj, res) => {
                 try {
                     systemd = Systemd.new_async.end (res);
-                    shutdown_screen.shutdown_button_pressed.connect (() => {
+                    shutdown_screen.power_off_button_pressed.connect (() => {
                         systemd.logind_manager.power_off.begin (false, (obj, res) => {
                             try {
                                 systemd.logind_manager.power_off.end (res);
@@ -101,7 +101,7 @@ namespace BrickDisplayManager {
                             }
                         });
                     });
-                    shutdown_screen.restart_button_pressed.connect (() => {
+                    shutdown_screen.reboot_button_pressed.connect (() => {
                         systemd.logind_manager.reboot.begin (false, (obj, res) => {
                             try {
                                 systemd.logind_manager.reboot.end (res);

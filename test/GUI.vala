@@ -92,8 +92,8 @@ namespace BrickDisplayManager {
             network_status_screen = new NetworkStatusScreen ();
             battery_info_screen = new BatteryInfoScreen ();
             shutdown_screen = new ShutdownScreen ();
-            shutdown_screen.shutdown_button_pressed.connect (on_shutdown_button_pressed);
-            shutdown_screen.restart_button_pressed.connect (on_restart_button_pressed);
+            shutdown_screen.power_off_button_pressed.connect (on_shutdown_button_pressed);
+            shutdown_screen.reboot_button_pressed.connect (on_restart_button_pressed);
             battery_status_bar_item = new BatteryStatusBarItem ();
             status_bar = new StatusBar ();
 

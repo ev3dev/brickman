@@ -27,38 +27,38 @@ using M2tk;
 
 namespace BrickDisplayManager {
     public class ShutdownScreen : Screen {
-        GButton _shutdown_button;
-        GButton _restart_button;
+        GButton _power_off_button;
+        GButton _reboot_button;
         GSpace _space;
         GVList _content_list;
 
-        public signal void shutdown_button_pressed ();
-        public signal void restart_button_pressed ();
+        public signal void power_off_button_pressed ();
+        public signal void reboot_button_pressed ();
 
         public ShutdownScreen() {
-            _shutdown_button = new GButton("Shutdown");
-            _shutdown_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
-            _shutdown_button.width = 80;
-            _shutdown_button.pressed.connect(on_shutdown_button_pressed);
-            _restart_button = new GButton("Restart");
-            _restart_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
-            _restart_button.width = 80;
-            _restart_button.pressed.connect(on_restart_button_pressed);
+            _power_off_button = new GButton("Power Off");
+            _power_off_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
+            _power_off_button.width = 80;
+            _power_off_button.pressed.connect(on_power_off_button_pressed);
+            _reboot_button = new GButton("Reboot");
+            _reboot_button.font = FontSpec.F0 | FontSpec.HIGHLIGHT | FontSpec.CENTER;
+            _reboot_button.width = 80;
+            _reboot_button.pressed.connect(on_reboot_button_pressed);
             _space = new GSpace(0, 5);
             _content_list = new GVList();
-            _content_list.children.add(_shutdown_button);
+            _content_list.children.add(_power_off_button);
             _content_list.children.add(_space);
-            _content_list.children.add(_restart_button);
+            _content_list.children.add(_reboot_button);
 
             child = _content_list;
         }
 
-        void on_shutdown_button_pressed () {
-            shutdown_button_pressed ();
+        void on_power_off_button_pressed () {
+            power_off_button_pressed ();
         }
 
-        void on_restart_button_pressed () {
-            restart_button_pressed ();
+        void on_reboot_button_pressed () {
+            reboot_button_pressed ();
         }
     }
 }
