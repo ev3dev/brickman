@@ -30,6 +30,7 @@ else(BRICKDM_TEST)
         src/GUI.vala
         src/Network.vala
         #src/Power.vala
+        src/systemd.vala
     )
 endif(BRICKDM_TEST)
 
@@ -56,6 +57,8 @@ set (BRICKDM_COMMON_SOURCE_FILES
     lib/m2tk-glib/GToggle.vala
     lib/m2tk-glib/GVList.vala
     lib/m2tk-glib/GVScrollBar.vala
+    lib/systemd/logind-interfaces.vala
+    lib/systemd/systemd-interfaces.vala
     src/view/BatteryInfoScreen.vala
     src/view/BatteryHistScreen.vala
     src/view/BatteryStatsScreen.vala
@@ -76,6 +79,7 @@ pkg_check_modules(DEPS REQUIRED
     gobject-2.0
     gmodule-2.0
     gio-2.0
+    gio-unix-2.0
     gee-1.0
     ncurses
     ${BRICKDM_TEST_MODULES}
@@ -97,6 +101,7 @@ PACKAGES
     gobject-2.0
     gmodule-2.0
     gio-2.0
+    gio-unix-2.0
     gee-1.0
     curses
     posix

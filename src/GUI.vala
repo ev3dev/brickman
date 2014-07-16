@@ -44,10 +44,12 @@ namespace BrickDisplayManager {
         MainLoop main_loop = new MainLoop();
         Deque<RootInfo> root_stack = new LinkedList<RootInfo>();
 
-        HomeScreen home_screen = new HomeScreen();
-        //Power power = new Power();
-        Networking networking = new Networking();
-        StatusBar status_bar = new StatusBar();
+        HomeScreen home_screen;
+        ShutdownScreen shutdown_screen;
+        //Power power;
+        Networking networking;
+        Systemd systemd;
+        StatusBar status_bar;
 
         public bool active {
             get { return !Curses.isendwin(); }
@@ -69,20 +71,61 @@ namespace BrickDisplayManager {
             vtOut = FileStream.fdopen(vtfd, "w");
             term = new Curses.Screen("linux", vtIn, vtOut);
 
+            GM2tk.init_graphics (Device.linux_framebuffer, U8gGraphics.font_icon_handler);
+            U8gGraphics.set_toggle_font_icon(Font.m2tk_icon_9, 73, 72);
+            U8gGraphics.set_radio_font_icon(Font.m2tk_icon_9, 82, 80);
+            U8gGraphics.set_additional_text_x_padding(3);
+
+            home_screen = new HomeScreen();
+            home_screen.menu_item_selected.connect ((index, user_data) => {
+                var screen = user_data as Screen;
+                m2tk.set_root (screen, 0, index);
+            });
             home_screen.add_menu_item("Network", networking.network_status_screen);
             //home_screen.add_menu_item("Battery", power.battery_info_screen);
-            //home_screen.add_menu_item("Shutdown", power.shutdown_screen);
+
+            shutdown_screen = new ShutdownScreen ();
+
+            //power = new Power();
+            networking = new Networking();
+            Systemd.new_async.begin ((obj, res) => {
+                try {
+                    systemd = Systemd.new_async.end (res);
+                    shutdown_screen.shutdown_button_pressed.connect (() => {
+                        systemd.logind_manager.power_off.begin (false, (obj, res) => {
+                            try {
+                                systemd.logind_manager.power_off.end (res);
+                                main_loop.quit();
+                            } catch (IOError err) {
+                                critical (err.message);
+                            }
+                        });
+                    });
+                    shutdown_screen.restart_button_pressed.connect (() => {
+                        systemd.logind_manager.reboot.begin (false, (obj, res) => {
+                            try {
+                                systemd.logind_manager.reboot.end (res);
+                                main_loop.quit();
+                            } catch (IOError err) {
+                                critical (err.message);
+                            }
+                        });
+                    });
+                } catch (IOError err) {
+                    critical (err.message);
+                }
+            });
+            home_screen.add_menu_item("Shutdown", shutdown_screen);
+
+            status_bar = new StatusBar();
             //status_bar.add_right(power.battery_status_bar_item);
 
-            init_graphics (Device.linux_framebuffer, font_icon_handler);
             m2tk = new GM2tk(home_screen, event_source, event_handler,
                 box_shadow_frame_graphics_handler);
-            //m2tk.home2 = power.shutdown_screen;
+            m2tk.home2 = shutdown_screen;
             m2tk.font[0] = Font.x11_7x13;
             m2tk.font[1] = Font.m2tk_icon_9;
-            set_toggle_font_icon(Font.m2tk_icon_9, 73, 72);
-            set_radio_font_icon(Font.m2tk_icon_9, 82, 80);
-            set_additional_text_x_padding(3);
+            m2tk.font[2] = Font.cu12_67_75;
             m2tk.root_element_changed.connect(on_root_element_changed);
         }
 
