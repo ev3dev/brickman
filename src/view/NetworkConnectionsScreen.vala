@@ -20,7 +20,7 @@
 /*
  * NetworkConnectionsScreen.vala:
  *
- * Monitors network status and performs other network related functions
+ * Displays list of network connections.
  */
 
 using Gee;
@@ -31,18 +31,12 @@ namespace BrickDisplayManager {
         const uchar MENU_TEXT_WIDTH = 130;
         const uchar MENU_INDICATOR_WIDTH = 20;
 
-        HashMap<Object, NetworkTechnologyItem> technology_map;
+        HashMap<Object, NetworkConnectionItem> connection_map;
 
         GLabel _title_label;
         GBox _title_underline;
         GSpace _space;
         GLabel _loading_label;
-        GLabel _state_label;
-        GLabel _state_value_label;
-        GHList _state_hlist;
-        GAlign _state_align;
-        GStrItem _manage_connections_item;
-        NetworkTechnologyItem _airplane_mode_item;
         GStrList _menu;
         GVScrollBar _menu_scroll_bar;
         GHList _menu_hlist;
@@ -65,55 +59,25 @@ namespace BrickDisplayManager {
             }
         }
 
-        public string state {
-            get { return _state_value_label.text; }
-            set { _state_value_label.text = value; }
-        }
-
-        public bool airplane_mode {
-            get { return _airplane_mode_item.powered; }
-            set { _airplane_mode_item.powered = value; }
-        }
-
-        public signal void manage_connections_selected ();
+        public signal void connection_selected (Object user_data);
 
         public NetworkConnectionsScreen () {
-            technology_map = new HashMap<Object, NetworkTechnologyItem> ();
-            _title_label = new GLabel ("Network");
+            connection_map = new HashMap<Object, NetworkConnectionItem> ();
+            _title_label = new GLabel ("Network Connections");
             _title_underline = new GBox (MENU_TEXT_WIDTH + MENU_INDICATOR_WIDTH, 1);
             _space = new GSpace (4, 5);
             _loading_label = new GLabel ("Loading...");
-            _state_label = new GLabel ("Status:");
-            _state_value_label = new GLabel ("???");
-            _state_hlist = new GHList ();
-            _state_hlist.children.add (_state_label);
-            _state_hlist.children.add (_space);
-            _state_hlist.children.add (_state_value_label);
-            _state_align = new GAlign (_state_hlist) {
-                width = MENU_TEXT_WIDTH + MENU_INDICATOR_WIDTH,
-                height = 20
-            };
-            _manage_connections_item = new GStrItem ("", "Manage connections...");
-            _manage_connections_item.selected.connect ((i) =>
-                manage_connections_selected ());
-            _airplane_mode_item = new NetworkTechnologyItem ("Airplane Mode");
-            _airplane_mode_item.notify["powered"].connect ((s, p) => {
-                notify_property ("airplane-mode");
-            });
             _menu = new GStrList (MENU_INDICATOR_WIDTH) {
                 font = FontSpec.F0,
                 extra_column_width = MENU_TEXT_WIDTH,
                 extra_column_font = FontSpec.F0,
                 visible_line_count = 5
             };
-            _menu.item_list.add (_manage_connections_item);
-            add_technology (_airplane_mode_item, _airplane_mode_item);
             _menu_scroll_bar = new GVScrollBar ();
             _menu_hlist = new GHList ();
             _menu_hlist.children.add (_menu);
             _menu_hlist.children.add (_menu_scroll_bar);
             _status_list = new GVList ();
-            _status_list.children.add (_state_align);
             _status_list.children.add (_menu_hlist);
             _content_list = new GVList ();
             _content_list.children.add (_title_label);
@@ -124,19 +88,19 @@ namespace BrickDisplayManager {
             child = _content_list;
         }
 
-        public void add_technology(NetworkTechnologyItem item, Object user_data) {
-            technology_map[user_data] = item;
-            _menu.item_list.add(item._tech_str_item);
+        public void add_connection(NetworkConnectionItem item, Object user_data) {
+            connection_map[user_data] = item;
+            _menu.item_list.add(item._connection_str_item);
         }
 
-        public bool has_technology (Object user_data) {
-            return technology_map.has_key (user_data);
+        public bool has_connection (Object user_data) {
+            return connection_map.has_key (user_data);
         }
 
-        public bool remove_technology (Object user_data) {
-            NetworkTechnologyItem item;
-            if (technology_map.unset (user_data, out item)) {
-                _menu.item_list.remove (item._tech_str_item);
+        public bool remove_connection (Object user_data) {
+            NetworkConnectionItem item;
+            if (connection_map.unset (user_data, out item)) {
+                _menu.item_list.remove (item._connection_str_item);
                 return true;
             }
             return false;

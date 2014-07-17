@@ -64,6 +64,7 @@ set (BRICKDM_COMMON_SOURCE_FILES
     src/view/BatteryStatsScreen.vala
     src/view/BatteryStatusBarItem.vala
     src/view/HomeScreen.vala
+    src/view/NetworkConnectionItem.vala
     src/view/NetworkConnectionsScreen.vala
     src/view/NetworkStatusScreen.vala
     src/view/NetworkTechnologyItem.vala

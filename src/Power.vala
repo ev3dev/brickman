@@ -43,12 +43,10 @@ namespace BrickDisplayManager {
         Device ev3_battery;
 
         public BatteryInfoScreen battery_info_screen { get; private set; }
-        public ShutdownScreen shutdown_screen { get; private set; }
         public BatteryStatusBarItem battery_status_bar_item { get; private set; }
 
         public Power() {
             battery_info_screen = new BatteryInfoScreen();
-            shutdown_screen = new ShutdownScreen();
             battery_status_bar_item = new BatteryStatusBarItem();
             Bus.get_proxy.begin<Device>(BusType.SYSTEM,
                 UPower.WELL_KNOWN_NAME, EV3_BATTERY_PATH,

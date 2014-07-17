@@ -60,18 +60,13 @@ namespace BrickDisplayManager {
                 manager.get_property(prop.name, ref val);
                 //debug ("%s - %s", prop.name, val.strdup_contents());
             }
-            var technologies = yield manager.get_technologies();
-            foreach(var item in technologies) {
-                var view = new NetworkTechnologyItem(item.name);
-                item.bind_property("powered", view, "powered",
-                    BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
-                network_status_screen.add_technology(item, view);
-                foreach(var prop in item.get_class().list_properties()) {
-                    Value val = Value(prop.value_type);
-                    item.get_property(prop.name, ref val);
-                    //debug ("%s - %s", prop.name, val.strdup_contents());
-                }
-            }
+            manager.technology_added.connect ((sender, tech) =>
+                add_technology (tech));
+            manager.technology_removed.connect ((sender, tech) =>
+                remove_technology (tech));
+            var technologies = yield manager.get_technologies ();
+            foreach(var item in technologies)
+                add_technology (item);
             var services = yield manager.get_services();
             foreach(var item in services) {
                 foreach(var prop in item.get_class().list_properties()) {
@@ -80,6 +75,22 @@ namespace BrickDisplayManager {
                     //debug ("%s - %s", prop.name, val.strdup_contents());
                 }
             }
+        }
+
+        void add_technology (Technology tech) {
+            var view = new NetworkTechnologyItem (tech.name);
+            tech.bind_property("powered", view, "powered",
+                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            network_status_screen.add_technology (view, tech);
+            foreach(var prop in tech.get_class ().list_properties ()) {
+                Value val = Value(prop.value_type);
+                tech.get_property(prop.name, ref val);
+                //debug ("%s - %s", prop.name, val.strdup_contents());
+            }
+        }
+
+        void remove_technology (Technology tech) {
+            network_status_screen.remove_technology (tech);
         }
 
         static bool convert_manager_state_to_string(Binding binding,

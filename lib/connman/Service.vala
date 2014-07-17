@@ -298,18 +298,24 @@ namespace ConnMan {
                 }
             }
         }
-        public string ethernet_interface {
+        public string? ethernet_interface {
             owned get {
+                if (dbus_proxy.ethernet[ETHERENET_INTERFACE_KEY] == null)
+                    return null;
                 return dbus_proxy.ethernet[ETHERENET_INTERFACE_KEY].dup_string();
             }
         }
-        public string ethernet_mac_address {
+        public string? ethernet_mac_address {
             owned get {
+                if (dbus_proxy.ethernet[ETHERENET_ADDRESS_KEY] == null)
+                    return null;
                 return dbus_proxy.ethernet[ETHERENET_ADDRESS_KEY].dup_string();
             }
         }
-        public uint ethernet_mtu {
+        public uint? ethernet_mtu {
             get {
+                if (dbus_proxy.ethernet[ETHERENET_MTU_KEY] == null)
+                    return null;
                 return dbus_proxy.ethernet[ETHERENET_MTU_KEY].get_uint16();
             }
         }

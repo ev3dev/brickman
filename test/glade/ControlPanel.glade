@@ -2,6 +2,94 @@
 <!-- Generated with glade 3.16.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <object class="GtkListStore" id="connman_service_liststore">
+    <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
+      <!-- column-name STATE -->
+      <column type="gchararray"/>
+      <!-- column-name ERROR -->
+      <column type="gchararray"/>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+      <!-- column-name TYPE -->
+      <column type="gchararray"/>
+      <!-- column-name SECURITY -->
+      <column type="gpointer"/>
+      <!-- column-name STRENGTH -->
+      <column type="gchararray"/>
+      <!-- column-name FAVORITE -->
+      <column type="gboolean"/>
+      <!-- column-name IMMUTABLE -->
+      <column type="gboolean"/>
+      <!-- column-name AUTO_CONNECT -->
+      <column type="gboolean"/>
+      <!-- column-name ROAMING -->
+      <column type="gboolean"/>
+      <!-- column-name NAMESERVERS -->
+      <column type="gpointer"/>
+      <!-- column-name NAMESERVERS_CONFIG -->
+      <column type="gpointer"/>
+      <!-- column-name TIMESERVERS -->
+      <column type="gpointer"/>
+      <!-- column-name TIMESERVERS_CONFIG -->
+      <column type="gpointer"/>
+      <!-- column-name DOMAINS -->
+      <column type="gpointer"/>
+      <!-- column-name DOMAINS_CONFIG -->
+      <column type="gpointer"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">False</col>
+        <col id="1" translatable="yes">online</col>
+        <col id="2" translatable="yes">&lt;none&gt;</col>
+        <col id="3" translatable="yes">Wireless</col>
+        <col id="4" translatable="yes">wifi</col>
+        <col id="6" translatable="yes">0</col>
+        <col id="7">False</col>
+        <col id="8">False</col>
+        <col id="9">False</col>
+        <col id="10">False</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="connman_service_state_liststore">
+    <columns>
+      <!-- column-name STATE -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">idle</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">failure</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">association</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">configuration</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ready</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">disconnect</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">online</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="connman_service_strength_adjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkListStore" id="connman_technology_liststore">
     <columns>
       <!-- column-name PRESENT -->
@@ -85,7 +173,105 @@
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkFrame" id="network_status_screen_frame">
+                  <object class="GtkFrame" id="networking_screens_frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">10</property>
+                    <property name="margin_right">10</property>
+                    <property name="margin_top">10</property>
+                    <property name="margin_bottom">10</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment4">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkGrid" id="grid3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="column_spacing">10</property>
+                            <child>
+                              <object class="GtkCheckButton" id="networking_loading_checkbutton">
+                                <property name="label" translatable="yes">Loading</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="show_network_status_screen_button">
+                                <property name="label" translatable="yes">Show Networking screen</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="relief">half</property>
+                                <property name="xalign">0.49000000953674316</property>
+                                <property name="yalign">0.4699999988079071</property>
+                                <signal name="clicked" handler="brick_display_manager_gui_on_show_network_status_screen_button_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="show_network_connections_screen_button">
+                                <property name="label" translatable="yes">Show Networking Services screen</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="relief">half</property>
+                                <property name="xalign">0.49000000953674316</property>
+                                <property name="yalign">0.4699999988079071</property>
+                                <signal name="clicked" handler="brick_display_manager_gui_on_show_network_connections_screen_button_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label6">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Networking Screens</property>
+                        <property name="lines">0</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="comman_manager_frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
@@ -109,67 +295,6 @@
                             <property name="margin_bottom">6</property>
                             <property name="column_spacing">10</property>
                             <child>
-                              <object class="GtkCheckButton" id="networking_loading_checkbutton">
-                                <property name="label" translatable="yes">Loading</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">0</property>
-                                <property name="yalign">0.49000000953674316</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButtonBox" id="buttonbox1">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="layout_style">start</property>
-                                <child>
-                                  <object class="GtkLabel" id="label3">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">State</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBoxText" id="connman_state_comboboxtext">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="active">0</property>
-                                    <property name="active_id">offline</property>
-                                    <items>
-                                      <item id="Offline" translatable="yes">offline</item>
-                                      <item id="Idle" translatable="yes">idle</item>
-                                      <item id="Ready" translatable="yes">ready</item>
-                                      <item id="Online" translatable="yes">online</item>
-                                    </items>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkScrolledWindow" id="scrolledwindow2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -182,7 +307,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="hscroll_policy">natural</property>
                                     <property name="model">connman_technology_liststore</property>
-                                    <property name="search_column">2</property>
+                                    <property name="search_column">3</property>
                                     <child internal-child="selection">
                                       <object class="GtkTreeSelection" id="treeview-selection1"/>
                                     </child>
@@ -252,38 +377,39 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="connman_offline_mode_checkbutton">
-                                <property name="label" translatable="yes">Offline Mode</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">0</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButtonBox" id="buttonbox3">
+                              <object class="GtkButtonBox" id="buttonbox1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="layout_style">center</property>
+                                <property name="layout_style">start</property>
                                 <child>
-                                  <object class="GtkButton" id="show_network_status_screen_button">
-                                    <property name="label" translatable="yes">Show screen</property>
+                                  <object class="GtkLabel" id="label3">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <signal name="clicked" handler="brick_display_manager_gui_on_show_network_status_screen_button" swapped="no"/>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">State</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="connman_state_comboboxtext">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="active">0</property>
+                                    <property name="active_id">offline</property>
+                                    <items>
+                                      <item id="Offline" translatable="yes">offline</item>
+                                      <item id="Idle" translatable="yes">idle</item>
+                                      <item id="Ready" translatable="yes">ready</item>
+                                      <item id="Online" translatable="yes">online</item>
+                                    </items>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -294,6 +420,28 @@
                                 <property name="height">1</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="connman_offline_mode_checkbutton">
+                                <property name="label" translatable="yes">Offline Mode</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -302,7 +450,7 @@
                       <object class="GtkLabel" id="label2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Networking Status Screen</property>
+                        <property name="label" translatable="yes">Connman Manager</property>
                         <property name="lines">0</property>
                       </object>
                     </child>
@@ -310,14 +458,154 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
+                  <object class="GtkFrame" id="connman_service_frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">10</property>
+                    <property name="margin_right">10</property>
+                    <property name="margin_bottom">10</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkGrid" id="grid2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="column_spacing">10</property>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scrolledwindow1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="hscrollbar_policy">never</property>
+                                <property name="vscrollbar_policy">never</property>
+                                <property name="shadow_type">in</property>
+                                <child>
+                                  <object class="GtkTreeView" id="connman_services_treeview">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="hscroll_policy">natural</property>
+                                    <property name="model">connman_service_liststore</property>
+                                    <property name="search_column">3</property>
+                                    <property name="show_expanders">False</property>
+                                    <child internal-child="selection">
+                                      <object class="GtkTreeSelection" id="treeview-selection3"/>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_present_column">
+                                        <property name="title" translatable="yes">Present</property>
+                                        <child>
+                                          <object class="GtkCellRendererToggle" id="connman_service_present_cellrenderertoggle"/>
+                                          <attributes>
+                                            <attribute name="active">0</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_state_column">
+                                        <property name="min_width">125</property>
+                                        <property name="title" translatable="yes">State</property>
+                                        <child>
+                                          <object class="GtkCellRendererCombo" id="connman_service_state_cellrenderercombo">
+                                            <property name="editable">True</property>
+                                            <property name="has_entry">False</property>
+                                            <property name="model">connman_service_state_liststore</property>
+                                            <property name="text_column">0</property>
+                                          </object>
+                                          <attributes>
+                                            <attribute name="text">1</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_error_column">
+                                        <property name="title" translatable="yes">Error</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="connman_service_error_cellrenderertext"/>
+                                          <attributes>
+                                            <attribute name="text">2</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_name_column">
+                                        <property name="title" translatable="yes">Name</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="connman_service_name_cellrenderertext"/>
+                                          <attributes>
+                                            <attribute name="text">3</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_type_column">
+                                        <property name="title" translatable="yes">Type</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="connman_service_type_cellrenderertext"/>
+                                          <attributes>
+                                            <attribute name="text">4</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_strength_treeviewcolumn">
+                                        <property name="min_width">90</property>
+                                        <property name="title" translatable="yes">Strength</property>
+                                        <child>
+                                          <object class="GtkCellRendererSpin" id="connman_service_strength_cellrendererspin">
+                                            <property name="editable">True</property>
+                                            <property name="adjustment">connman_service_strength_adjustment</property>
+                                          </object>
+                                          <attributes>
+                                            <attribute name="text">6</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                                <property name="height">4</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Connman Services</property>
+                        <property name="lines">0</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
                 </child>
               </object>
             </child>
@@ -404,7 +692,7 @@
                 <property name="use_stock">True</property>
                 <property name="xalign">0.51999998092651367</property>
                 <property name="yalign">0.49000000953674316</property>
-                <signal name="clicked" handler="brick_display_manager_gui_on_quit_button_pressed" swapped="no"/>
+                <signal name="clicked" handler="brick_display_manager_gui_on_quit_button_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

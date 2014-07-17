@@ -30,75 +30,103 @@ namespace ConnMan {
         public ManagerState state {
             get { return dbus_proxy.state; }
         }
+
         public bool offline_mode {
             get { return dbus_proxy.offline_mode; }
             set {
                 try {
-                    dbus_proxy.set_property_sync("OfflineMode", value);
+                    dbus_proxy.set_property_sync ("OfflineMode", value);
                 } catch (Error err) {
-                    critical("%s", err.message);
+                    critical ("%s", err.message);
                 }
             }
         }
 
-        public static async Manager new_async() throws IOError {
-            var manager = new Manager();
-            manager.dbus_proxy = yield Bus.get_proxy(BusType.SYSTEM,
+        public signal void technology_added (Object sender, Technology technology);
+        public signal void technology_removed (Object sender, Technology technology);
+
+        public static async Manager new_async () throws IOError {
+            var manager = new Manager ();
+            manager.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 net.connman.SERVICE_NAME, net.connman.Manager.OBJECT_PATH);
-            manager.dbus_proxy.property_changed.connect(manager.on_property_changed);
-            var properties = yield manager.dbus_proxy.get_properties();
-            properties.foreach((k, v) =>
-                ((DBusProxy)manager.dbus_proxy).set_cached_property(k, v));
+            manager.dbus_proxy.property_changed.connect (manager.on_property_changed);
+            var properties = yield manager.dbus_proxy.get_properties ();
+            properties.foreach ((k, v) =>
+                ((DBusProxy)manager.dbus_proxy).set_cached_property (k, v));
+            manager.dbus_proxy.technology_added.connect ((path, properties) =>
+                manager.on_technology_added.begin (path, properties));
+            manager.dbus_proxy.technology_removed.connect ((path) =>
+                manager.on_technology_removed.begin (path));
             return manager;
         }
 
-        public async Gee.List<Technology> get_technologies() throws IOError {
-            var technologies = yield dbus_proxy.get_technologies();
-            var result = new ArrayList<Technology>();
+        public async Gee.List<Technology> get_technologies () throws IOError {
+            var technologies = yield dbus_proxy.get_technologies ();
+            var result = new ArrayList<Technology> ();
             foreach (var item in technologies) {
-                var tech = yield Technology.from_path(item.path);
-                item.properties.foreach((k, v) =>
+                var tech = yield Technology.from_path (item.path);
+                item.properties.foreach ((k, v) =>
                     ((DBusProxy)tech.dbus_proxy).set_cached_property(k, v));
-                result.add(tech);
+                result.add (tech);
             }
             return result;
         }
 
-        public async Gee.List<Service> get_services() throws IOError {
-            var services = yield dbus_proxy.get_services();
-            var result = new ArrayList<Service>();
+        public async Gee.List<Service> get_services () throws IOError {
+            var services = yield dbus_proxy.get_services ();
+            var result = new ArrayList<Service> ();
             foreach (var item in services) {
-                var serv = yield Service.from_path(item.path);
-                item.properties.foreach((k, v) =>
-                    ((DBusProxy)serv.dbus_proxy).set_cached_property(k, v));
-                result.add(serv);
+                var serv = yield Service.from_path (item.path);
+                item.properties.foreach ((k, v) =>
+                    ((DBusProxy)serv.dbus_proxy).set_cached_property (k, v));
+                result.add (serv);
             }
             return result;
         }
 
-        public async Gee.List<Peer> get_peers() throws IOError {
-            var peers = yield dbus_proxy.get_peers();
-            var result = new ArrayList<Peer>();
+        public async Gee.List<Peer> get_peers () throws IOError {
+            var peers = yield dbus_proxy.get_peers ();
+            var result = new ArrayList<Peer> ();
             foreach (var item in peers) {
-                var peer = yield Peer.from_path(item.path);
-                item.properties.foreach((k, v) =>
-                    ((DBusProxy)peer.dbus_proxy).set_cached_property(k, v));
-                result.add(peer);
+                var peer = yield Peer.from_path (item.path);
+                item.properties.foreach ((k, v) =>
+                    ((DBusProxy)peer.dbus_proxy).set_cached_property (k, v));
+                result.add (peer);
             }
             return result;
         }
 
-        void on_property_changed(string name, Variant? value) {
-            ((DBusProxy)dbus_proxy).set_cached_property(name, value);
+        async void on_technology_added (ObjectPath path, HashTable<string, Variant?> properties) {
+            try {
+                var tech = yield Technology.from_path (path);
+                properties.foreach ((k, v) =>
+                    ((DBusProxy)tech.dbus_proxy).set_cached_property(k, v));
+                technology_added (this, tech);
+            } catch (IOError err) {
+                critical ("ConnMan.Manager.on_technology_added: %s", err.message);
+            }
+        }
+
+        async void on_technology_removed (ObjectPath path) {
+            try {
+                var tech = yield Technology.from_path (path);
+                technology_added (this, tech);
+            } catch (IOError err) {
+                critical ("ConnMan.Manager.on_technology_removed: %s", err.message);
+            }
+        }
+
+        void on_property_changed (string name, Variant? value) {
+            ((DBusProxy)dbus_proxy).set_cached_property (name, value);
             switch (name) {
             case "State":
-                notify_property("state");
+                notify_property ("state");
                 break;
             case "OfflineMode":
-                notify_property("offline-mode");
+                notify_property ("offline-mode");
                 break;
             default:
-                critical("ConnMan.Manager: unknown dbus property '%s'", name);
+                critical ("ConnMan.Manager: unknown dbus property '%s'", name);
                 break;
             }
         }
@@ -124,30 +152,30 @@ namespace net.connman {
     public interface Manager : Object {
         public const string OBJECT_PATH = "/";
 
-        public abstract async HashTable<string, Variant?> get_properties() throws IOError;
-        public abstract async void set_property(string name, Variant? value) throws IOError;
+        public abstract async HashTable<string, Variant?> get_properties () throws IOError;
+        public abstract async void set_property (string name, Variant? value) throws IOError;
         [DBus (name = "SetProperty")]
-        public abstract void set_property_sync(string name, Variant? value) throws IOError;
-        public abstract async ManagerObject[] get_technologies() throws IOError;
-        public abstract async ManagerObject[] get_services() throws IOError;
-        public abstract async ManagerObject[] get_peers() throws IOError;
+        public abstract void set_property_sync (string name, Variant? value) throws IOError;
+        public abstract async ManagerObject[] get_technologies () throws IOError;
+        public abstract async ManagerObject[] get_services () throws IOError;
+        public abstract async ManagerObject[] get_peers () throws IOError;
         // deprecated
-        //public abstract async ObjectPath ConnectProvider(HashTable<string, Variant?> provider throws IOError;
-        //public abstract async void remove_provider(ObjectPath path) throws IOError;
-        public abstract async void register_agent(ObjectPath object) throws IOError;
-        public abstract async void unregister_agent(ObjectPath object) throws IOError;
-        public abstract async void register_counter(ObjectPath path, uint accuracy, uint period) throws IOError;
-        public abstract async void unregister_counter(ObjectPath path) throws IOError;
-        public abstract async ObjectPath create_session(HashTable<string, Variant?> settings, ObjectPath notifier) throws IOError;
-        public abstract async void destroy_session(ObjectPath session) throws IOError;
-        public abstract async ObjectPath request_private_network(HashTable<string, Variant?> options, out HashTable<string, Variant?> fd) throws IOError;
-        public abstract async void release_private_network(ObjectPath path) throws IOError;
+        //public abstract async ObjectPath ConnectProvider (HashTable<string, Variant?> provider throws IOError;
+        //public abstract async void remove_provider (ObjectPath path) throws IOError;
+        public abstract async void register_agent (ObjectPath object) throws IOError;
+        public abstract async void unregister_agent (ObjectPath object) throws IOError;
+        public abstract async void register_counter (ObjectPath path, uint accuracy, uint period) throws IOError;
+        public abstract async void unregister_counter (ObjectPath path) throws IOError;
+        public abstract async ObjectPath create_session (HashTable<string, Variant?> settings, ObjectPath notifier) throws IOError;
+        public abstract async void destroy_session (ObjectPath session) throws IOError;
+        public abstract async ObjectPath request_private_network (HashTable<string, Variant?> options, out HashTable<string, Variant?> fd) throws IOError;
+        public abstract async void release_private_network (ObjectPath path) throws IOError;
 
-        public signal void technology_added(ObjectPath path, HashTable<string, Variant?> properties);
-        public signal void technology_removed(ObjectPath path);
-        public signal void services_changed(ManagerObject[] changed, ObjectPath[] removed);
-        public signal void peers_changed(ManagerObject[] changed, ObjectPath[] removed);
-        public signal void property_changed(string name, Variant? value);
+        public signal void technology_added (ObjectPath path, HashTable<string, Variant?> properties);
+        public signal void technology_removed (ObjectPath path);
+        public signal void services_changed (ManagerObject[] changed, ObjectPath[] removed);
+        public signal void peers_changed (ManagerObject[] changed, ObjectPath[] removed);
+        public signal void property_changed (string name, Variant? value);
 
         public abstract ConnMan.ManagerState state { get; }
         public abstract bool offline_mode { get; }

@@ -47,6 +47,28 @@ namespace BrickDisplayManager {
             COLUMN_COUNT;
         }
 
+        enum NetworkServiceColumn {
+            PRESENT,
+            STATE,
+            ERROR,
+            NAME,
+            TYPE,
+            SECURITY,
+            STRENGTH,
+            FAVORITE,
+            IMMUTABLE,
+            AUTO_CONNECT,
+            ROAMING,
+            NAMESERVERS,
+            NAMESERVERS_CONFIG,
+            TIMESERVERS,
+            TIMESERVERS_CONFIG,
+            DOMAINS,
+            DOMAINS_CONFIG,
+            USER_DATA,
+            COLUMN_COUNT;
+        }
+
         static HashMap<weak GM2tk, weak GUI> gui_map;
 
         static construct {
@@ -59,6 +81,7 @@ namespace BrickDisplayManager {
         GM2tk m2tk;
         HomeScreen home_screen;
         NetworkStatusScreen network_status_screen;
+        NetworkConnectionsScreen network_connections_screen;
         BatteryInfoScreen battery_info_screen;
         ShutdownScreen shutdown_screen;
         BatteryStatusBarItem battery_status_bar_item;
@@ -66,6 +89,8 @@ namespace BrickDisplayManager {
         bool dirty = true;
         bool active { get { return lcd.u8g_active; } }
         ListStore connman_technology_liststore;
+        ListStore connman_service_liststore;
+        ListStore connman_service_state_liststore;
 
         public FakeEV3LCDDevice lcd { get; private set; }
         public Window control_panel { get; private set; }
@@ -90,6 +115,7 @@ namespace BrickDisplayManager {
                 m2tk.set_root (screen, 0, index);
             });
             network_status_screen = new NetworkStatusScreen ();
+            network_connections_screen = new NetworkConnectionsScreen ();
             battery_info_screen = new BatteryInfoScreen ();
             shutdown_screen = new ShutdownScreen ();
             shutdown_screen.power_off_button_pressed.connect (on_shutdown_button_pressed);
@@ -102,7 +128,7 @@ namespace BrickDisplayManager {
             home_screen.add_menu_item ("Shutdown", shutdown_screen);
 
             network_status_screen.manage_connections_selected.connect (
-                () => m2tk.set_root (home_screen));
+                () => m2tk.set_root (network_connections_screen));
 
             status_bar.add_right (battery_status_bar_item);
 
@@ -122,6 +148,9 @@ namespace BrickDisplayManager {
                 builder.get_object ("networking_loading_checkbutton")
                     .bind_property("active", network_status_screen, "loading",
                     BindingFlags.SYNC_CREATE);
+                builder.get_object ("networking_loading_checkbutton")
+                    .bind_property("active", network_connections_screen, "loading",
+                    BindingFlags.SYNC_CREATE);
                 builder.get_object ("connman_offline_mode_checkbutton")
                     .bind_property("active", network_status_screen, "airplane-mode",
                     BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
@@ -140,7 +169,7 @@ namespace BrickDisplayManager {
                             break;
                         }
                     });
-                    network_status_screen.add_technology(item, item);
+                    network_status_screen.add_technology (item, item);
                     connman_technology_liststore.set (iter, NetworkTechnologyColumn.PRESENT, true);
                     connman_technology_liststore.set (iter, NetworkTechnologyColumn.USER_DATA, item);
                     return false;
@@ -161,11 +190,46 @@ namespace BrickDisplayManager {
                         tech.powered = powered.get_boolean ();
                 });
                 (builder.get_object ("connman_technology_present_cellrenderertoggle") as CellRendererToggle)
-                    .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.PRESENT));
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (connman_technology_liststore, toggle, path, NetworkTechnologyColumn.PRESENT));
                 (builder.get_object ("connman_technology_powered_cellrenderertoggle") as CellRendererToggle)
-                    .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.POWERED));
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (connman_technology_liststore, toggle, path, NetworkTechnologyColumn.POWERED));
                 (builder.get_object ("connman_technology_connected_cellrenderertoggle") as CellRendererToggle)
-                    .toggled.connect ((toggle, path) => update_listview_toggle_item (toggle, path, NetworkTechnologyColumn.CONNECTED));
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (connman_technology_liststore, toggle, path, NetworkTechnologyColumn.CONNECTED));
+
+                connman_service_liststore = builder.get_object ("connman_service_liststore") as ListStore;
+                connman_service_state_liststore = builder.get_object ("connman_service_state_liststore") as ListStore;
+                connman_service_liststore.foreach ((model, path, iter) => {
+                    Value name;
+                    connman_service_liststore.get_value (iter, NetworkServiceColumn.NAME, out name);
+                    var item = new NetworkConnectionItem (name.dup_string ());
+                    network_connections_screen.add_connection (item, item);
+                    connman_service_liststore.set (iter, NetworkServiceColumn.PRESENT, true);
+                    connman_service_liststore.set (iter, NetworkServiceColumn.USER_DATA, item);
+                    return false;
+                });
+                connman_service_liststore.row_changed.connect ((path, iter) => {
+                    Value present;
+                    connman_service_liststore.get_value (iter, NetworkServiceColumn.PRESENT, out present);
+                    Value state;
+                    connman_service_liststore.get_value (iter, NetworkServiceColumn.STATE, out state);
+                    Value user_data;
+                    connman_service_liststore.get_value (iter, NetworkServiceColumn.USER_DATA, out user_data);
+                    var connection = (NetworkConnectionItem)user_data.get_pointer ();
+                    if (network_connections_screen.has_connection (connection) && !present.get_boolean ())
+                        network_connections_screen.remove_connection (connection);
+                    else if (!network_connections_screen.has_connection (connection) && present.get_boolean ())
+                        network_connections_screen.add_connection (connection, connection);
+                });
+                (builder.get_object ("connman_service_present_cellrenderertoggle") as CellRendererToggle)
+                    .toggled.connect ((toggle, path) => update_listview_toggle_item (
+                        connman_service_liststore, toggle, path, NetworkServiceColumn.PRESENT));
+                (builder.get_object ("connman_service_state_cellrenderercombo") as CellRendererCombo)
+                    .edited.connect ((path, new_text) => update_listview_text_item (
+                        connman_service_liststore, path, new_text, NetworkServiceColumn.STATE));
+                (builder.get_object ("connman_service_strength_cellrendererspin") as CellRendererSpin)
+                    .edited.connect ((path, new_text) => update_listview_text_item (
+                        connman_service_liststore, path, new_text, NetworkServiceColumn.STRENGTH));
+
                 builder.connect_signals (this);
                 control_panel.show_all ();
             } catch (Error err) {
@@ -222,20 +286,36 @@ namespace BrickDisplayManager {
         }
 
         [CCode (instance_pos = -1)]
-        public void on_show_network_status_screen_button (Gtk.Button button) {
+        public void on_show_network_status_screen_button_clicked (Gtk.Button button) {
             m2tk.set_root (network_status_screen);
         }
 
         [CCode (instance_pos = -1)]
-        public void on_quit_button_pressed (Gtk.Button button) {
+        public void on_show_network_connections_screen_button_clicked (Gtk.Button button) {
+            m2tk.set_root (network_connections_screen);
+        }
+
+        [CCode (instance_pos = -1)]
+        public void on_quit_button_clicked (Gtk.Button button) {
             on_shutdown_button_pressed ();
         }
 
-        void update_listview_toggle_item (CellRendererToggle toggle, string path, int column) {
+        void update_listview_toggle_item (ListStore store,
+            CellRendererToggle toggle, string path, int column)
+        {
             TreePath tree_path = new TreePath.from_string (path);
             TreeIter iter;
-            connman_technology_liststore.get_iter (out iter, tree_path);
-            connman_technology_liststore.set (iter, column, !toggle.active);
+            store.get_iter (out iter, tree_path);
+            store.set (iter, column, !toggle.active);
+        }
+
+        void update_listview_text_item (ListStore store,
+            string path, string new_text, int column)
+        {
+            TreePath tree_path = new TreePath.from_string (path);
+            TreeIter iter;
+            store.get_iter (out iter, tree_path);
+            store.set (iter, column, new_text);
         }
 
         static uint8 event_source(M2 m2, EventSourceMessage msg) {
