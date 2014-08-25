@@ -1,0 +1,29 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": ".",
+		}
+	],
+
+	"build_systems":
+	[
+		{
+			"name": "brickman",
+			"cmd": [ "make", "-C", "$project_path/build"],
+			"file_regex": "([^:]+):(\\d+)[\\.:](\\d+)(?:-\\d+\\.\\d+)?: (?:error|warning|note): (.*)",
+		},
+		{
+			"name": "brickman-desktop-test",
+			"cmd": [ "make", "-C", "$project_path/build-desktop-test"],
+			"file_regex": "([^:]+):(\\d+)[\\.:](\\d+)(?:-\\d+\\.\\d+)?: (?:error|warning|note): (.*)",
+		}
+	],
+
+	"settings":
+	{
+		"sublimegdb_commandline": "gdb --interpreter=mi brickman",
+		"sublimegdb_workingdir": "${folder:${project_path:build-desktop-test/brickman}}",
+	}
+}
