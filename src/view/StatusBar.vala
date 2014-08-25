@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -20,14 +20,14 @@
 /*
  * StatusBar.vala:
  *
- * The brickdm status bar. Contains info like battery status, wi-fi
+ * The brickman status bar. Contains info like battery status, wi-fi
  * status, bluetooth status, etc.
  */
 
 using Gee;
 using U8g;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
     public class StatusBar : Object {
         public const ushort HEIGHT = 13;
         const ushort PADDING = 2;

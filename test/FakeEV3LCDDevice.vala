@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -28,7 +28,7 @@ using Gtk;
 using M2tk;
 using U8g;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
     public class FakeEV3LCDDevice : Gtk.EventBox {
         const uint16 WIDTH = 178;
         const uint16 HEIGHT = 128;

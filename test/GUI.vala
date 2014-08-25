@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -20,7 +20,7 @@
 /*
  * GUI.vala:
  *
- * Version of Brick Display Manager that runs in GTK for testing.
+ * Version of Brick Manager that runs in GTK for testing.
  */
 
 using Gee;
@@ -28,7 +28,7 @@ using Gtk;
 using M2tk;
 using U8g;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
     public class RootInfo {
         public unowned M2tk.Element element;
         public uint8 value;

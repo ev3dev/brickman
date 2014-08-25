@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -25,7 +25,7 @@
 
 using U8g;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
     public abstract class StatusBarItem : Object {
         public const ushort HEIGHT = 9;
 

@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -18,21 +18,21 @@
  */
 
 /*
- * BrickDisplayManager.vala:
+ * BrickManager.vala:
  *
- * Version of Brick Display Manager that runs in GTK for testing.
+ * Version of Brick Manager that runs in GTK for testing.
  */
 
 using Gtk;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
 
     static int main (string[] args)
     {
         Gtk.init (ref args);
 
         var main_window = new Window ();
-        main_window.title = "Brick Display Manager Test";
+        main_window.title = "Brick Manager Test";
         main_window.window_position = WindowPosition.CENTER;
         main_window.destroy.connect (Gtk.main_quit);
 

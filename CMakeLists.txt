@@ -1,4 +1,4 @@
-project (brickdm)
+project (brickman)
 
 cmake_minimum_required (VERSION 2.6)
 
@@ -6,35 +6,35 @@ list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 
-set (PKGDATADIR "${DATADIR}/brickdm")
-set (EXEC_NAME "brickdm")
-set (RELEASE_NAME "Brick Display Manager")
+set (PKGDATADIR "${DATADIR}/brickman")
+set (EXEC_NAME "brickman")
+set (RELEASE_NAME "Brick Manager")
 set (VERSION "0.1")
 set (VERSION_INFO "alpha")
 
-if(BRICKDM_TEST)
-    set (BRICKDM_TEST_MODULES gtk+-3.0)
-    set (BRICKDM_TEST_PACKAGES gtk+-3.0)
-    set (BRICKDM_SOURCE_FILES
-        test/BrickDisplayManager.vala
+if(BRICKMAN_TEST)
+    set (BRICKMAN_TEST_MODULES gtk+-3.0)
+    set (BRICKMAN_TEST_PACKAGES gtk+-3.0)
+    set (BRICKMAN_SOURCE_FILES
+        test/BrickManager.vala
         test/FakeEV3LCDDevice.vala
         test/GUI.vala
     )
-else(BRICKDM_TEST)
-    set (BRICKDM_SOURCE_FILES
+else(BRICKMAN_TEST)
+    set (BRICKMAN_SOURCE_FILES
         lib/connman/Manager.vala
         lib/connman/Peer.vala
         lib/connman/Service.vala
         lib/connman/Technology.vala
-        src/BrickDisplayManager.vala
+        src/BrickManager.vala
         src/GUI.vala
         src/Network.vala
         #src/Power.vala
         src/systemd.vala
     )
-endif(BRICKDM_TEST)
+endif(BRICKMAN_TEST)
 
-set (BRICKDM_COMMON_SOURCE_FILES
+set (BRICKMAN_COMMON_SOURCE_FILES
     lib/m2tk-glib/GM2tk.vala
     lib/m2tk-glib/GElement.vala
     lib/m2tk-glib/GAlign.vala
@@ -83,7 +83,7 @@ pkg_check_modules(DEPS REQUIRED
     gio-unix-2.0
     gee-1.0
     ncurses
-    ${BRICKDM_TEST_MODULES}
+    ${BRICKMAN_TEST_MODULES}
 )
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES} u8g m2tk)
@@ -95,8 +95,8 @@ ensure_vala_version("0.24" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C ${EXEC_NAME}
-    ${BRICKDM_SOURCE_FILES}
-    ${BRICKDM_COMMON_SOURCE_FILES}
+    ${BRICKMAN_SOURCE_FILES}
+    ${BRICKMAN_COMMON_SOURCE_FILES}
 PACKAGES
     glib-2.0
     gobject-2.0
@@ -107,7 +107,7 @@ PACKAGES
     curses
     posix
     linux
-    ${BRICKDM_TEST_PACKAGES}
+    ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
     bindings/*.vapi
 OPTIONS
@@ -119,11 +119,11 @@ OPTIONS
 
 add_executable(${EXEC_NAME} ${VALA_C})
 
-if (BRICKDM_TEST)
+if (BRICKMAN_TEST)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )
-endif (BRICKDM_TEST)
+endif (BRICKMAN_TEST)
 
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION bin)
 

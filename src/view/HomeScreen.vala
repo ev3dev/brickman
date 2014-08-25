@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -20,13 +20,13 @@
 /*
  * HomeScreen.vala:
  *
- * The home screen for brickdm.
+ * The home screen for brickman.
  */
 
 using Gee;
 using M2tk;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
 
     class HomeScreen : Screen {
         HashMap<GStrItem, ScreenInfo?> screen_info_map;

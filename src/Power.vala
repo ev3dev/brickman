@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -33,7 +33,7 @@ errordomain InitError {
     EV3_BATTERY
 }
 
-namespace BrickDisplayManager {
+namespace BrickManager {
 
     class Power {
         const string EV3_BATTERY_PATH =

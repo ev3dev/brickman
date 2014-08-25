@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -26,7 +26,7 @@
 using Gee;
 using Gtk;
 
-namespace BrickDisplayManager {
+namespace BrickManager {
     public class ControlPanel : Gtk.Window {
         const string glade_file = "ControlPanel.glade";
 

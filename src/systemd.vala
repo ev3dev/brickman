@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -26,7 +26,7 @@
  * Interactions with systemd
  */
 
-namespace BrickDisplayManager {
+namespace BrickManager {
 
     class Systemd {
         internal org.freedesktop.login1.Manager logind_manager;

@@ -1,5 +1,5 @@
 /*
- * brickdm -- Brick Display Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -18,7 +18,7 @@
  */
 
 /*
- * brickdm.vala:
+ * brickman.vala:
  *
  * This is the main program. It works like this:
  *
@@ -36,7 +36,7 @@ errordomain ConsoleError {
     MODE
 }
 
-namespace BrickDisplayManager
+namespace BrickManager
 {
     static int vtfd;
     static int vtnum;
