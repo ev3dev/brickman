@@ -25,7 +25,7 @@
  */
 
 using Gee;
-using U8g;
+using GRX;
 
 namespace BrickManager {
     public class StatusBar : Object {
@@ -63,16 +63,14 @@ namespace BrickManager {
             }
         }
 
-        public void draw(Graphics u8g) {
-            u8g.set_default_background_color();
-            u8g.set_default_forground_color();
+        public void draw (Context context) {
             var x = 0;
             foreach (var item in left_items)
-                x += item.draw(u8g, x, Align.LEFT) + PADDING;
-            x = u8g.width - 1;
+                x += item.draw (context, x, Align.LEFT) + PADDING;
+            x = context.width - 1;
             foreach (var item in right_items)
-                x -= item.draw(u8g, x, Align.RIGHT) + PADDING;
-            u8g.draw_line(0, HEIGHT, u8g.width, HEIGHT);
+                x -= item.draw (context, x, Align.RIGHT) + PADDING;
+            line (0, HEIGHT, context.width, HEIGHT, Color.black);
         }
 
         public void add_left(StatusBarItem item) {

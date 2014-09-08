@@ -26,7 +26,7 @@
  * Monitors battery status and performs other power related functions
  */
 
-using M2tk;
+using EV3DevTk;
 using UPower;
 
 errordomain InitError {
@@ -42,11 +42,11 @@ namespace BrickManager {
         //double battery_hist_data[100];
         Device ev3_battery;
 
-        public BatteryInfoScreen battery_info_screen { get; private set; }
+        public BatteryInfoWindow battery_info_screen { get; private set; }
         public BatteryStatusBarItem battery_status_bar_item { get; private set; }
 
         public Power() {
-            battery_info_screen = new BatteryInfoScreen();
+            battery_info_screen = new BatteryInfoWindow();
             battery_status_bar_item = new BatteryStatusBarItem();
             Bus.get_proxy.begin<Device>(BusType.SYSTEM,
                 UPower.WELL_KNOWN_NAME, EV3_BATTERY_PATH,

@@ -23,6 +23,8 @@
 
 	"settings":
 	{
+		"tab_size": 4,
+		"translate_tabs_to_spaces": true,
 		"sublimegdb_commandline": "gdb --interpreter=mi brickman",
 		"sublimegdb_workingdir": "${folder:${project_path:build-desktop-test/brickman}}",
 	}

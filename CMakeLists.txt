@@ -12,66 +12,68 @@ set (RELEASE_NAME "Brick Manager")
 set (VERSION "0.1")
 set (VERSION_INFO "alpha")
 
-if(BRICKMAN_TEST)
+if (BRICKMAN_TEST)
     set (BRICKMAN_TEST_MODULES gtk+-3.0)
     set (BRICKMAN_TEST_PACKAGES gtk+-3.0)
     set (BRICKMAN_SOURCE_FILES
-        test/BrickManager.vala
-        test/FakeEV3LCDDevice.vala
-        test/GUI.vala
+        test/main.vala
+        test/ControlPanel.vala
+        test/controller/FakeNetworkController.vala
+        lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
+        lib/ev3devKit/src/desktop/DesktopScreen.vala
+        lib/ev3devKit/src/desktop/DesktopTestApp.vala
     )
-else(BRICKMAN_TEST)
+else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
         lib/connman/Manager.vala
         lib/connman/Peer.vala
         lib/connman/Service.vala
         lib/connman/Technology.vala
+        lib/ev3devKit/src/ev3/EV3Screen.vala
+        lib/ev3devKit/src/ConsoleApp.vala
         src/BrickManager.vala
         src/GUI.vala
         src/Network.vala
         #src/Power.vala
         src/systemd.vala
     )
-endif(BRICKMAN_TEST)
+endif (BRICKMAN_TEST)
 
 set (BRICKMAN_COMMON_SOURCE_FILES
-    lib/m2tk-glib/GM2tk.vala
-    lib/m2tk-glib/GElement.vala
-    lib/m2tk-glib/GAlign.vala
-    lib/m2tk-glib/GBox.vala
-    lib/m2tk-glib/GButton.vala
-    lib/m2tk-glib/GElementList.vala
-    lib/m2tk-glib/GFontList.vala
-    lib/m2tk-glib/GGridList.vala
-    lib/m2tk-glib/GHide.vala
-    lib/m2tk-glib/GHList.vala
-    lib/m2tk-glib/GLabel.vala
-    lib/m2tk-glib/GListElement.vala
-    lib/m2tk-glib/GNullElement.vala
-    lib/m2tk-glib/GRoot.vala
-    lib/m2tk-glib/GScrollable.vala
-    lib/m2tk-glib/GSpace.vala
-    lib/m2tk-glib/GStrItem.vala
-    lib/m2tk-glib/GStrItemList.vala
-    lib/m2tk-glib/GStrList.vala
-    lib/m2tk-glib/GToggle.vala
-    lib/m2tk-glib/GVList.vala
-    lib/m2tk-glib/GVScrollBar.vala
+    lib/ev3devKit/src/Align.vala
+    lib/ev3devKit/src/Box.vala
+    lib/ev3devKit/src/Button.vala
+    lib/ev3devKit/src/CheckboxMenuItem.vala
+    lib/ev3devKit/src/CheckButton.vala
+    lib/ev3devKit/src/Container.vala
+    lib/ev3devKit/src/Dialog.vala
+    lib/ev3devKit/src/Grid.vala
+    lib/ev3devKit/src/Label.vala
+    lib/ev3devKit/src/Menu.vala
+    lib/ev3devKit/src/MenuItem.vala
+    lib/ev3devKit/src/OnScreenKeyboard.vala
+    lib/ev3devKit/src/Rectangle.vala
+    lib/ev3devKit/src/Screen.vala
+    lib/ev3devKit/src/Scroll.vala
+    lib/ev3devKit/src/Spacer.vala
+    lib/ev3devKit/src/TextEntry.vala
+    lib/ev3devKit/src/Widget.vala
+    lib/ev3devKit/src/Window.vala
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
-    src/view/BatteryInfoScreen.vala
-    src/view/BatteryHistScreen.vala
-    src/view/BatteryStatsScreen.vala
-    src/view/BatteryStatusBarItem.vala
-    src/view/HomeScreen.vala
-    src/view/NetworkConnectionItem.vala
-    src/view/NetworkConnectionsScreen.vala
-    src/view/NetworkStatusScreen.vala
-    src/view/NetworkTechnologyItem.vala
-    src/view/Screen.vala
-    src/view/ShutdownScreen.vala
-    src/view/StatusBar.vala
-    src/view/StatusBarItem.vala
+    src/controller/IBrickManagerModule.vala
+    #src/view/BatteryInfoWindow.vala
+    #src/view/BatteryHistWindow.vala
+    #src/view/BatteryStatsWindow.vala
+    #src/view/BatteryStatusBarItem.vala
+    src/view/BrickManagerWindow.vala
+    src/view/HomeWindow.vala
+    src/view/NetworkConnectionMenuItem.vala
+    src/view/NetworkConnectionsWindow.vala
+    src/view/NetworkStatusWindow.vala
+    src/view/ShutdownDialog.vala
+    #src/view/StatusBar.vala
+    #src/view/StatusBarItem.vala
 )
 
 find_package(PkgConfig REQUIRED)
@@ -83,10 +85,11 @@ pkg_check_modules(DEPS REQUIRED
     gio-unix-2.0
     gee-1.0
     ncurses
+    libpng12
     ${BRICKMAN_TEST_MODULES}
 )
 add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES} u8g m2tk)
+link_libraries(${DEPS_LIBRARIES} grx20 jpeg png)
 link_directories(${DEPS_LIBRARY_DIRS})
 
 find_package(Vala REQUIRED)
@@ -109,17 +112,18 @@ PACKAGES
     linux
     ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
-    bindings/*.vapi
+    lib/ev3devKit/bindings/*.vapi
 OPTIONS
     --target-glib=2.40
-    #this option isn't in any released version of gcc yet, but will
-    # be nice to have when it does get released.
-    --Xcc=Wno-discarded-qualifiers
+    --thread
 )
 
 add_executable(${EXEC_NAME} ${VALA_C})
 
 if (BRICKMAN_TEST)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/ev3devKit/src/desktop/main_window.glade
+    ${CMAKE_CURRENT_BINARY_DIR}/main_window.glade COPYONLY )
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )

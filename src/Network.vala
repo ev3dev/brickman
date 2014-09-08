@@ -24,26 +24,22 @@
  */
 
 using ConnMan;
-using M2tk;
+using EV3DevTk;
 
 namespace BrickManager {
     class Networking : GLib.Object {
         Manager manager;
 
-        public NetworkStatusScreen network_status_screen { get; private set; }
+        public NetworkStatusWindow network_status_screen { get; private set; }
 
         public Networking() {
-            network_status_screen = new NetworkStatusScreen();
+            network_status_screen = new NetworkStatusWindow();
             init.begin((obj, res) => {
                 try {
                     init.end(res);
-                    manager.bind_property("state",
-                        network_status_screen,
-                        "state", BindingFlags.SYNC_CREATE,
-                        convert_manager_state_to_string);
-                    manager.bind_property("offline-mode",
-                        network_status_screen,
-                        "airplane-mode",
+                    manager.bind_property("state", network_status_screen, "state",
+                        BindingFlags.SYNC_CREATE, convert_manager_state_to_string);
+                    manager.bind_property("offline-mode", network_status_screen, "airplane-mode",
                         BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
                     network_status_screen.loading = false;
                 } catch (Error err) {

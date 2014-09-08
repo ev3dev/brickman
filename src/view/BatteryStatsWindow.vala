@@ -1,12 +1,12 @@
 /*
- * m2tk-glib -- GLib bindings for m2tklib graphical toolkit
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * (at your option) any later versionfa.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,23 +18,20 @@
  */
 
 /*
- * GStrItem.vala:
+ * BatteryStatsWindow.vala:
  *
- * List items used by GStrList
+ * Window for displaying battery statistics
  */
 
-namespace M2tk {
-    public class GStrItem : Object {
-        public string text { get; set; }
-        public string? extended_text { get; set; }
-        public Object? user_data { get; set; }
+using EV3devKit;
 
-        public signal void selected (uchar index, GStrItem item);
+namespace BrickManager {
+    public class BatteryStatsWindow : Window {
+        Label title_label;
 
-        public GStrItem (string text, string? extended_text = null, Object? user_data = null) {
-            this.text = text;
-            this.extended_text = extended_text;
-            this.user_data = user_data;
+        public BatteryStatsWindow() {
+            title_label = new Label ("Statistics");
+            add (title_label);
         }
     }
 }

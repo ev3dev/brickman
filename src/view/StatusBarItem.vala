@@ -23,13 +23,13 @@
  * Base class for items shown in StatusBar
  */
 
-using U8g;
+using GRX;
 
 namespace BrickManager {
     public abstract class StatusBarItem : Object {
-        public const ushort HEIGHT = 9;
+        public const int HEIGHT = 9;
 
         public virtual bool dirty { get; set; default = true; }
-        public abstract ushort draw(Graphics u8g, ushort x, StatusBar.Align align);
+        public abstract int draw(Context context, int x, StatusBar.Align align);
     }
 }

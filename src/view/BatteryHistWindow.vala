@@ -1,5 +1,5 @@
 /*
- * m2tk-glib -- GLib bindings for m2tklib graphical toolkit
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -18,24 +18,20 @@
  */
 
 /*
- * GGridList.vala:
+ * BatteryHistWindow.vala:
  *
- * wrapper for m2tk GRIDLIST
+ * Window for displaying battery history
  */
 
-namespace M2tk {
-    public class GGridList : M2tk.GListElement {
-        public uint8 column_count {
-            get { return _column_count; }
-            set {
-                _column_count = value;
-                update_format();
-            }
-        }
+using EV3devKit;
 
-        public GGridList(uchar column_count) {
-            base(GridList.create({}));
-            this.column_count = column_count;
+namespace BrickManager {
+    public class BatteryHistWindow : Window {
+        Label title_label;
+
+        public BatteryHistWindow() {
+            title_label = new Label ("History");
+            add (title_label);
         }
     }
 }

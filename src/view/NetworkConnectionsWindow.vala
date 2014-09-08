@@ -1,5 +1,5 @@
 /*
- * m2tk-glib -- GLib bindings for m2tklib graphical toolkit
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
  * Copyright (C) 2014 David Lechner <david@lechnology.com>
  *
@@ -18,15 +18,25 @@
  */
 
 /*
- * GVList.vala:
+ * NetworkConnectionsWindow.vala:
  *
- * wrapper for m2tk VLIST
+ * Displays list of network connections.
  */
 
-namespace M2tk {
-    public class GVList : M2tk.GListElement {
-        public GVList() {
-            base(VList.create({}));
+using Gee;
+using EV3devKit;
+
+namespace BrickManager {
+    class NetworkConnectionsWindow : BrickManagerWindow {
+        internal EV3devKit.Menu menu;
+
+        public signal void connection_selected (Object user_data);
+
+        public NetworkConnectionsWindow () {
+            title = "Network Connections";
+            menu = new EV3devKit.Menu ();
+            menu.spacing = 2;
+            content_vbox.add (menu);
         }
     }
 }

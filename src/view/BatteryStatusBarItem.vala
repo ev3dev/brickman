@@ -23,8 +23,7 @@
  * Indicates battery status
  */
 
-using M2tk;
-using U8g;
+using GRX;
 
 namespace BrickManager {
     public class BatteryStatusBarItem : StatusBarItem {
@@ -49,7 +48,7 @@ namespace BrickManager {
             }
         }
 
-        public override ushort draw(Graphics u8g, ushort x, StatusBar.Align align) {
+        public override ushort draw (Context context, ushort x, StatusBar.Align align) {
             u8g.set_font(font);
             var main_width = u8g.get_string_width(_text) + PADDING * 2 + 2;
             var total_width = main_width + END_WIDTH;
