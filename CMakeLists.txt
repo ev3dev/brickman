@@ -19,6 +19,7 @@ if (BRICKMAN_TEST)
         test/main.vala
         test/ControlPanel.vala
         test/controller/FakeNetworkController.vala
+        test/controller/FakeUSBController.vala
         lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
         lib/ev3devKit/src/desktop/DesktopScreen.vala
         lib/ev3devKit/src/desktop/DesktopTestApp.vala
@@ -29,13 +30,11 @@ else (BRICKMAN_TEST)
         lib/connman/Peer.vala
         lib/connman/Service.vala
         lib/connman/Technology.vala
-        lib/ev3devKit/src/ev3/EV3Screen.vala
         lib/ev3devKit/src/ConsoleApp.vala
-        src/BrickManager.vala
-        src/GUI.vala
-        src/Network.vala
+        src/controller/USBController.vala
+        #src/Network.vala
+        src/main.vala
         #src/Power.vala
-        src/systemd.vala
     )
 endif (BRICKMAN_TEST)
 
@@ -52,6 +51,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/Menu.vala
     lib/ev3devKit/src/MenuItem.vala
     lib/ev3devKit/src/OnScreenKeyboard.vala
+    lib/ev3devKit/src/RadioMenuItem.vala
     lib/ev3devKit/src/Rectangle.vala
     lib/ev3devKit/src/Screen.vala
     lib/ev3devKit/src/Scroll.vala
@@ -59,6 +59,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/TextEntry.vala
     lib/ev3devKit/src/Widget.vala
     lib/ev3devKit/src/Window.vala
+    lib/systemd/Logind.vala
+    lib/systemd/Systemd.vala
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
     src/controller/IBrickManagerModule.vala
@@ -74,6 +76,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/ShutdownDialog.vala
     #src/view/StatusBar.vala
     #src/view/StatusBarItem.vala
+    src/view/USBWindow.vala
 )
 
 find_package(PkgConfig REQUIRED)
@@ -128,6 +131,12 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )
 endif (BRICKMAN_TEST)
+
+add_custom_target(run
+    COMMAND ${EXEC_NAME}
+    DEPENDS ${EXEC_NAME}
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+)
 
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION bin)
 

@@ -11,13 +11,24 @@
 	[
 		{
 			"name": "brickman",
-			"cmd": [ "make", "-C", "$project_path/build"],
+			"cmd": [ "make", "-C", "$project_path/build" ],
 			"file_regex": "([^:]+):(\\d+)[\\.:](\\d+)(?:-\\d+\\.\\d+)?: (?:error|warning|note): (.*)",
 		},
 		{
 			"name": "brickman-desktop-test",
-			"cmd": [ "make", "-C", "$project_path/build-desktop-test"],
+			"cmd": [ "make", "-C", "$project_path/build-desktop-test" ],
 			"file_regex": "([^:]+):(\\d+)[\\.:](\\d+)(?:-\\d+\\.\\d+)?: (?:error|warning|note): (.*)",
+			"variants":
+			[
+				{
+					"name": "Run",
+					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "run" ],
+				},
+				{
+					"name": "Clean",
+					"cmd": [ "make", "-C", "clean" ],
+				}
+			]
 		}
 	],
 

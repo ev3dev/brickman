@@ -32,6 +32,7 @@ namespace BrickManager {
 
         public Gtk.Window window;
         public FakeNetworkController network_controller;
+        public FakeUSBController usb_controller;
 
         enum NetworkTechnologyColumn {
             PRESENT,
@@ -73,6 +74,7 @@ namespace BrickManager {
                 window = builder.get_object ("control_panel_window") as Gtk.Window;
 
                 network_controller = new FakeNetworkController (builder);
+                usb_controller = new FakeUSBController (builder);
 
                 builder.connect_signals (this);
                 window.show_all ();
