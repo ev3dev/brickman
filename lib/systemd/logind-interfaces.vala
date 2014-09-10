@@ -21,7 +21,7 @@ namespace org.freedesktop.login1 {
     public const string SERVICE_NAME = "org.freedesktop.login1";
 
     [DBus  (name = "org.freedesktop.login1.Manager")]
-    public interface Manager : org.freedesktop.Properties, DBusProxy {
+    public interface Manager : DBusProxy {
         public const string OBJECT_PATH = "/org/freedesktop/login1";
 
         public struct SessionInfo {

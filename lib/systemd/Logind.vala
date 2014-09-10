@@ -46,7 +46,7 @@ namespace Systemd.Logind {
         DELAY;
     }
 
-    public class Manager {
+    public class Manager : Object {
         static Gee.HashMap<ObjectPath, weak Manager> object_map;
 
         static construct {
@@ -55,6 +55,7 @@ namespace Systemd.Logind {
 
         ObjectPath path;
         org.freedesktop.login1.Manager manager;
+        org.freedesktop.DBus.Properties properties;
 
         public uint32 auto_vt_count { get { return manager.auto_vt_count; } }
         public string[] kill_only_users { owned get { return manager.kill_only_users; } }
@@ -91,6 +92,8 @@ namespace Systemd.Logind {
             instance.path = path;
             instance.manager = yield Bus.get_proxy (BusType.SYSTEM,
                 org.freedesktop.login1.SERVICE_NAME, path);
+            instance.properties = yield Bus.get_proxy (BusType.SYSTEM,
+                org.freedesktop.login1.SERVICE_NAME, path);
             object_map[path] = instance;
             weak Manager weak_instance = instance;
             //instance.manager.session_new.connect ((id, path) => weak_instance.on_session_new.begin (id, path));
@@ -101,7 +104,7 @@ namespace Systemd.Logind {
             //instance.manager.seat_removed.connect ((id, path) => weak_instance.on_seat_removed.begin (id, path));
             instance.manager.prepare_for_shutdown.connect ((before) => weak_instance.on_prepare_for_shutdown (before));
             instance.manager.prepare_for_sleep.connect ((before) => weak_instance.on_prepare_for_sleep (before));
-            instance.manager.properties_changed.connect (weak_instance.on_properties_changed);
+            instance.properties.properties_changed.connect (weak_instance.on_properties_changed);
             return instance;
         }
 
@@ -232,8 +235,29 @@ namespace Systemd.Logind {
             (before_shutdown);
         }
 
-        void on_properties_changed (string iface, HashTable<string, Variant?> changed_properties, string[] invalidated_properties) {
-            // TODO: notify properties
+        void on_properties_changed (string iface, HashTable<string,
+            Variant?> changed_properties, string[] invalidated_properties)
+        {
+            foreach (var property in invalidated_properties) {
+                switch (property) {
+                // Most properties are constants
+                case "IdleHint":
+                    notify_property ("idle-hint");
+                    break;
+                case "IdleSinceHint":
+                    notify_property ("idle-since-hint");
+                    break;
+                case "IdleSinceHintMonotonic":
+                    notify_property ("idle-since-hint-monotonic");
+                    break;
+                case "BlockInhibited":
+                    notify_property ("block-inhibited");
+                    break;
+                case "DelayInhibited":
+                    notify_property ("delay-inhibited");
+                    break;
+                }
+            }
         }
     }
 }

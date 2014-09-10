@@ -25,7 +25,7 @@ namespace org.freedesktop.systemd1 {
     public const string SERVICE_NAME = "org.freedesktop.systemd1";
 
     [DBus (name = "org.freedesktop.systemd1.Manager")]
-    public interface Manager : org.freedesktop.Properties, DBusProxy {
+    public interface Manager : DBusProxy {
         public const string OBJECT_PATH = "/org/freedesktop/systemd1";
 
         public struct UnitInfo {
@@ -96,7 +96,7 @@ namespace org.freedesktop.systemd1 {
     }
 
     [DBus (name = "org.freedesktop.systemd1.Unit")]
-    public interface Unit : org.freedesktop.Properties, DBusProxy {
+    public interface Unit : DBusProxy {
         public struct JobLink {
             uint32 id;
             ObjectPath path;
@@ -120,7 +120,7 @@ namespace org.freedesktop.systemd1 {
         public abstract string[] on_failure { owned get; }
         public abstract string description { owned get; }
         public abstract string load_state { owned get; }
-        public abstract string active_state { owned get; }
+        public abstract Systemd.UnitActiveState active_state { owned get; }
         public abstract string sub_state { owned get; }
         public abstract string fragment_path { owned get; }
         public abstract uint64 inactive_exit_timestamp { owned get; }
@@ -153,7 +153,7 @@ namespace org.freedesktop.systemd1 {
     }
 
     [DBus (name = "org.freedesktop.systemd1.Job")]
-    public interface Job : org.freedesktop.Properties, DBusProxy {
+    public interface Job : DBusProxy {
         public struct UnitLink {
             string id;
             ObjectPath path;
@@ -168,10 +168,11 @@ namespace org.freedesktop.systemd1 {
     }
 }
 
-namespace org.freedesktop {
-    [DBus (name = "org.freedesktop.Properties")]
+namespace org.freedesktop.DBus {
+    [DBus (name = "org.freedesktop.DBus.Properties")]
     public interface Properties : DBusProxy {
         public abstract async Variant? get (string iface, string property) throws IOError;
+        public abstract async void set (string iface, string property, Variant? value) throws IOError;
         public abstract signal void properties_changed (string iface, HashTable<string, Variant?> changed_properties, string[] invalidated_properties);
     }
 }

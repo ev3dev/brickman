@@ -48,6 +48,8 @@ using EV3devKit;
                 } else {
                     window_vbox.remove (loading_label);
                     window_vbox.add (_content_vbox);
+                    if (!_content_vbox.descendant_has_focus)
+                        _content_vbox.focus_first ();
                 }
             }
         }

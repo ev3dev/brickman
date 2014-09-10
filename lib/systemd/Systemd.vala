@@ -18,7 +18,7 @@
  */
 
 namespace Systemd {
-    [DBus (use_string_marshaling = true)]
+    [DBus (use_string_marshalling = true)]
     public enum UnitMode {
         [DBus (value = "replace")]
         REPLACE,
@@ -32,7 +32,23 @@ namespace Systemd {
         IGNORE_REQUIREMENTS,
     }
 
-    [DBus (use_string_marshaling = true)]
+    [DBus (use_string_marshalling = true)]
+    public enum UnitActiveState {
+        [DBus (value = "active")]
+        ACTIVE,
+        [DBus (value = "reloading")]
+        RELOADING,
+        [DBus (value = "inactive")]
+        INACTIVE,
+        [DBus (value = "failed")]
+        FAILED,
+        [DBus (value = "activating")]
+        ACTIVATING,
+        [DBus (value = "deactivating")]
+        DEACTIVATING
+    }
+
+    [DBus (use_string_marshalling = true)]
     public enum JobResult {
         [DBus (value = "done")]
         DONE, 
@@ -99,10 +115,11 @@ namespace Systemd {
 
         ObjectPath path;
         org.freedesktop.systemd1.Manager manager;
+        org.freedesktop.DBus.Properties properties;
 
         public static async Manager get_system_manager () throws IOError {
             return yield Manager.get_instance_for_path (
-                    (ObjectPath)org.freedesktop.systemd1.Manager.OBJECT_PATH);
+                    new ObjectPath (org.freedesktop.systemd1.Manager.OBJECT_PATH));
         }
 
         static async Manager get_instance_for_path (ObjectPath path) throws IOError {
@@ -116,6 +133,8 @@ namespace Systemd {
             instance.path = path;
             instance.manager = yield Bus.get_proxy (BusType.SYSTEM,
                 org.freedesktop.systemd1.SERVICE_NAME, path);
+            instance.properties = yield Bus.get_proxy (BusType.SYSTEM,
+                org.freedesktop.systemd1.SERVICE_NAME, path);
             object_map[path] = instance;
             yield instance.manager.subscribe ();
             weak Manager weak_instance = instance;
@@ -123,7 +142,7 @@ namespace Systemd {
             instance.manager.unit_removed.connect ((id, path) => weak_instance.on_unit_removed.begin (id, path));
             instance.manager.job_new.connect ((id, path) => weak_instance.on_job_new.begin (id, path));
             instance.manager.job_removed.connect ((id, path, result) => weak_instance.on_job_removed.begin (id, path, result));
-            instance.manager.properties_changed.connect (weak_instance.on_properties_changed);
+            instance.properties.properties_changed.connect (weak_instance.on_properties_changed);
             return instance;
         }
 
@@ -269,8 +288,11 @@ namespace Systemd {
             }
         }
 
-        void on_properties_changed (string iface, HashTable<string, Variant?> changed_properties, string[] invalidated_properties) {
-            // TODO: notify properties
+        void on_properties_changed (string iface, HashTable<string,
+            Variant?> changed_properties, string[] invalidated_properties)
+        {
+            //foreach (var property in invalidated_properties)
+            // TODO: no properties in this class yet
         }
     }
 /*
@@ -298,6 +320,7 @@ namespace Systemd {
 
         ObjectPath path;
         org.freedesktop.systemd1.Unit unit;
+        org.freedesktop.DBus.Properties properties;
 
         public string id { owned get { return unit.id; } }
         public string[] names { owned get { return unit.names; } }
@@ -317,7 +340,7 @@ namespace Systemd {
         public string[] on_failure { owned get { return unit.on_failure; } }
         public string description { owned get { return unit.description; } }
         public string load_state { owned get { return unit.load_state; } }
-        public string active_state { owned get { return unit.active_state; } }
+        public UnitActiveState active_state { get { return unit.active_state; } }
         public string sub_state { owned get { return unit.sub_state; } }
         public string fragment_path { owned get { return unit.fragment_path; } }
         public uint64 inactive_exit_timestamp { get { return unit.inactive_exit_timestamp; } }
@@ -349,8 +372,10 @@ namespace Systemd {
             instance.path = path;
             instance.unit = yield Bus.get_proxy (BusType.SYSTEM,
                 org.freedesktop.systemd1.SERVICE_NAME, path);
+            instance.properties = yield Bus.get_proxy (BusType.SYSTEM,
+                org.freedesktop.systemd1.SERVICE_NAME, path);
             object_map[path] = instance;
-            instance.unit.properties_changed.connect (instance.on_properties_changed);
+            instance.properties.properties_changed.connect (instance.on_properties_changed);
             return instance;
         }
 
@@ -358,31 +383,31 @@ namespace Systemd {
             object_map.unset (path);
         }
 
-        public async Job start (UnitMode mode) throws IOError {
+        public async Job start (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.start (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job stop (UnitMode mode) throws IOError {
+        public async Job stop (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.stop (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job reload (UnitMode mode) throws IOError {
+        public async Job reload (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.reload (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job restart (UnitMode mode) throws IOError {
+        public async Job restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.restart (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job try_restart (UnitMode mode) throws IOError {
+        public async Job try_restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.try_restart (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job reload_or_restart (UnitMode mode) throws IOError {
+        public async Job reload_or_restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.reload_or_restart (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job reload_or_try_restart (UnitMode mode) throws IOError {
+        public async Job reload_or_try_restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
             var path = yield unit.reload_or_try_restart (mode);
             return yield Job.get_instance_for_path (path);
         }
@@ -391,8 +416,202 @@ namespace Systemd {
             yield unit.reset_failed ();
         }
 
-        void on_properties_changed (string iface, HashTable<string, Variant?> changed_properties, string[] invalidated_properties) {
-            // TODO: notify properties
+        void on_properties_changed (string iface, HashTable<string,
+            Variant?> changed_properties, string[] invalidated_properties)
+        {
+            foreach (var property in invalidated_properties) {
+                switch (property) {
+                case "Id":
+                    notify_property ("id");
+                    break;
+                case "Names":
+                    notify_property ("names");
+                    break;
+                case "Following":
+                    notify_property ("following");
+                    break;
+                case "Requires":
+                    notify_property ("requires");
+                    break;
+                case "RequiresOverridable":
+                    notify_property ("requires-overridable");
+                    break;
+                case "Requisite":
+                    notify_property ("requisite");
+                    break;
+                case "RequisiteOverridable":
+                    notify_property ("requisite-overridable");
+                    break;
+                case "Wants":
+                    notify_property ("wants");
+                    break;
+                case "BindsTo":
+                    notify_property ("binds-to");
+                    break;
+                case "PartOf":
+                    notify_property ("part-of");
+                    break;
+                case "RequiredBy":
+                    notify_property ("required-by");
+                    break;
+                case "RequiredByOverridable":
+                    notify_property ("required-by-overridable");
+                    break;
+                case "WantedBy":
+                    notify_property ("wanted-by");
+                    break;
+                case "BoundBy":
+                    notify_property ("bound-by");
+                    break;
+                case "ConsistsOf":
+                    notify_property ("consists-of");
+                    break;
+                case "Conflicts":
+                    notify_property ("conflicts");
+                    break;
+                case "ConflictedBy":
+                    notify_property ("conflicted-by");
+                    break;
+                case "Before":
+                    notify_property ("before");
+                    break;
+                case "After":
+                    notify_property ("after");
+                    break;
+                case "OnFailure":
+                    notify_property ("on-failure");
+                    break;
+                case "Triggers":
+                    notify_property ("triggers");
+                    break;
+                case "TriggeredBy":
+                    notify_property ("triggered-by");
+                    break;
+                case "PropagatesReloadTo":
+                    notify_property ("propagates-reload-to");
+                    break;
+                case "ReloadPropagatedFrom":
+                    notify_property ("reload-propagated-from");
+                    break;
+                case "RequiresMountsFor":
+                    notify_property ("requires-mounts-for");
+                    break;
+                case "Description":
+                    notify_property ("description");
+                    break;
+                case "SourcePath":
+                    notify_property ("source-path");
+                    break;
+                case "DropInPaths":
+                    notify_property ("drop-in-paths");
+                    break;
+                case "Documentation":
+                    notify_property ("documentation");
+                    break;
+                case "LoadState":
+                    notify_property ("load-state");
+                    break;
+                case "ActiveState":
+                    notify_property ("active-state");
+                    break;
+                case "SubState":
+                    notify_property ("sub-state");
+                    break;
+                case "FragmentPath":
+                    notify_property ("fragment-path");
+                    break;
+                case "UnitFileState":
+                    notify_property ("unit-file-state");
+                    break;
+                case "InactiveExitTimestamp":
+                    notify_property ("inactive-exit-timestamp");
+                    break;
+                case "InactiveExitTimestampMonotonic":
+                    notify_property ("inactive-exit-timestamp-monotonic");
+                    break;
+                case "ActiveEnterTimestamp":
+                    notify_property ("active-enter-timestamp");
+                    break;
+                case "ActiveEnterTimestampMonotonic":
+                    notify_property ("active-enter-timestamp-monotonic");
+                    break;
+                case "ActiveExitTimestamp":
+                    notify_property ("active-exit-timestamp");
+                    break;
+                case "ActiveExitTimestampMonotonic":
+                    notify_property ("active-exit-timestamp-monotonic");
+                    break;
+                case "InactiveEnterTimestamp":
+                    notify_property ("inactive-enter-timestamp");
+                    break;
+                case "InactiveEnterTimestampMonotonic":
+                    notify_property ("inactive-enter-timestamp-monotonic");
+                    break;
+                case "CanStart":
+                    notify_property ("can-start");
+                    break;
+                case "CanStop":
+                    notify_property ("can-stop");
+                    break;
+                case "CanReload":
+                    notify_property ("can-reload");
+                    break;
+                case "CanIsolate":
+                    notify_property ("can-isolate");
+                    break;
+//              case "Job":
+//                  notify_property ("job");
+//                  break;
+                case "StopWhenUnneeded":
+                    notify_property ("stop-when-unneeded");
+                    break;
+                case "RefuseManualStart":
+                    notify_property ("refuse-manual-start");
+                    break;
+                case "RefuseManualStop":
+                    notify_property ("refuse-manual-stop");
+                    break;
+                case "AllowIsolate":
+                    notify_property ("allow-isolate");
+                    break;
+                case "DefaultDependencies":
+                    notify_property ("default-dependencies");
+                    break;
+                case "OnFailureIsolate":
+                    notify_property ("on-failure-isolate");
+                    break;
+                case "IgnoreOnIsolate":
+                    notify_property ("ignore-on-isolate");
+                    break;
+                case "IgnoreOnSnapshot":
+                    notify_property ("ignore-on-snapshot");
+                    break;
+                case "NeedDaemonReload":
+                    notify_property ("need-daemon-reload");
+                    break;
+                case "JobTimeoutUSec":
+                    notify_property ("job-timeout-usec");
+                    break;
+                case "ConditionTimestamp":
+                    notify_property ("condition-timestamp");
+                    break;
+                case "ConditionTimestampMonotonic":
+                    notify_property ("condition-timestamp-monotonic");
+                    break;
+                case "ConditionResult":
+                    notify_property ("condition-result");
+                    break;
+                case "Conditions":
+                    notify_property ("conditions");
+                    break;
+                case "LoadError":
+                    notify_property ("load-error");
+                    break;
+                case "Transient":
+                    notify_property ("transient");
+                    break;
+                }
+            }
         }
     }
 /*
@@ -420,6 +639,7 @@ namespace Systemd {
 
         ObjectPath path;
         org.freedesktop.systemd1.Job job;
+        org.freedesktop.DBus.Properties properties;
 
         public uint32 id { get { return job.id; } }
         public string state { owned get { return job.state; } }
@@ -437,8 +657,10 @@ namespace Systemd {
             instance.path = path;
             instance.job = yield Bus.get_proxy (BusType.SYSTEM,
                 org.freedesktop.systemd1.SERVICE_NAME, path);
+            instance.properties = yield Bus.get_proxy (BusType.SYSTEM,
+                org.freedesktop.systemd1.SERVICE_NAME, path);
             object_map[path] = instance;
-            instance.job.properties_changed.connect (instance.on_properties_changed);
+            instance.properties.properties_changed.connect (instance.on_properties_changed);
             return instance;
         }
 
@@ -450,8 +672,25 @@ namespace Systemd {
             yield job.cancel ();
         }
 
-        void on_properties_changed (string iface, HashTable<string, Variant?> changed_properties, string[] invalidated_properties) {
-            // TODO: notify properties
+        void on_properties_changed (string iface, HashTable<string,
+            Variant?> changed_properties, string[] invalidated_properties)
+        {
+            foreach (var property in invalidated_properties) {
+                switch (property) {
+                case "Id":
+                    notify_property ("id");
+                    break;
+//              case "Unit":
+//                  notify_property ("unit");
+//                  break;
+                case "JobType":
+                    notify_property ("job-type");
+                    break;
+                case "State":
+                    notify_property ("state");
+                    break;
+                }
+            }
         }
     }
 }

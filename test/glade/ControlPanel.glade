@@ -288,10 +288,11 @@
                         <property name="can_focus">False</property>
                         <property name="left_padding">12</property>
                         <child>
-                          <object class="GtkBox" id="box5">
+                          <object class="GtkGrid" id="grid6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
+                            <property name="row_spacing">3</property>
+                            <property name="column_spacing">12</property>
                             <child>
                               <object class="GtkRadioButton" id="usb_gadget_none_radiobutton">
                                 <property name="label" translatable="yes">None</property>
@@ -303,9 +304,10 @@
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
@@ -317,12 +319,12 @@
                                 <property name="xalign">0</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">usb_gadget_none_radiobutton</property>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
@@ -335,13 +337,67 @@
                                 <property name="yalign">0.51999998092651367</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">usb_gadget_none_radiobutton</property>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="usb_gadget_rndis_comboboxtext">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="active">0</property>
+                                <items>
+                                  <item id="active" translatable="yes">Active</item>
+                                  <item id="reloading" translatable="yes">Reloading</item>
+                                  <item id="inactive" translatable="yes">Inactive</item>
+                                  <item id="failed" translatable="yes">Failed</item>
+                                  <item id="activating" translatable="yes">Activating</item>
+                                  <item id="deactivating" translatable="yes">Deactivating</item>
+                                </items>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="usb_gadget_cdc_comboboxtext">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="active">2</property>
+                                <items>
+                                  <item id="active" translatable="yes">Active</item>
+                                  <item id="reloading" translatable="yes">Reloading</item>
+                                  <item id="inactive" translatable="yes">Inactive</item>
+                                  <item id="failed" translatable="yes">Failed</item>
+                                  <item id="activating" translatable="yes">Activating</item>
+                                  <item id="deactivating" translatable="yes">Deactivating</item>
+                                </items>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>

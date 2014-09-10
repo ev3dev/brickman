@@ -35,12 +35,16 @@ namespace BrickManager {
 
             var usb_loading_checkbutton = builder.get_object ("usb_loading_checkbutton") as Gtk.CheckButton;
             usb_loading_checkbutton.bind_property ("active", usb_window, "loading", BindingFlags.SYNC_CREATE);
-            var usb_gadget_none_radiobutton = (builder.get_object ("usb_gadget_none_radiobutton") as Gtk.RadioButton);
+            var usb_gadget_none_radiobutton = builder.get_object ("usb_gadget_none_radiobutton") as Gtk.RadioButton;
             usb_gadget_none_radiobutton.notify["active"].connect(() => usb_window.device_port_service = USBDevicePortService.NONE);
-            var usb_gadget_rndis_radiobutton = (builder.get_object ("usb_gadget_rndis_radiobutton") as Gtk.RadioButton);
+            var usb_gadget_rndis_radiobutton = builder.get_object ("usb_gadget_rndis_radiobutton") as Gtk.RadioButton;
             usb_gadget_rndis_radiobutton.notify["active"].connect(() => usb_window.device_port_service = USBDevicePortService.RNDIS);
-            var usb_gadget_cdc_radiobutton = (builder.get_object ("usb_gadget_cdc_radiobutton") as Gtk.RadioButton);
+            var usb_gadget_cdc_radiobutton = builder.get_object ("usb_gadget_cdc_radiobutton") as Gtk.RadioButton;
             usb_gadget_cdc_radiobutton.notify["active"].connect(() => usb_window.device_port_service = USBDevicePortService.CDC);
+            (builder.get_object ("usb_gadget_rndis_comboboxtext") as Gtk.ComboBoxText)
+                .bind_property ("active-id", usb_window, "device-port-service-rndis-state", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("usb_gadget_cdc_comboboxtext") as Gtk.ComboBoxText)
+                .bind_property ("active-id", usb_window, "device-port-service-cdc-state", BindingFlags.SYNC_CREATE);
             usb_window.notify["device-port-service"].connect (() => {
                 switch (usb_window.device_port_service) {
                 case USBDevicePortService.NONE:
@@ -57,6 +61,7 @@ namespace BrickManager {
                     break;
                 }
             });
+            usb_window.device_port_service = USBDevicePortService.NONE;
         }
     }
 }
