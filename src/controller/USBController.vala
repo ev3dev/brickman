@@ -63,8 +63,10 @@ namespace BrickManager {
         }
 
         void on_active_state_changed () {
-            usb_window.device_port_service_rndis_state = rndis_service.active_state.to_string ().replace ("SYSTEMD_UNIT_ACTIVE_STATE_", "");
-            usb_window.device_port_service_cdc_state = cdc_service.active_state.to_string ().replace ("SYSTEMD_UNIT_ACTIVE_STATE_", "");
+            usb_window.device_port_service_rndis_state =
+                unit_active_state_to_string (rndis_service.active_state);
+            usb_window.device_port_service_cdc_state =
+                unit_active_state_to_string (cdc_service.active_state);
             if (rndis_service.active_state in active_states)
                 usb_window.device_port_service = USBDevicePortService.RNDIS;
             else if (cdc_service.active_state in active_states)
@@ -92,6 +94,25 @@ namespace BrickManager {
                     cdc_service.stop.begin ();
                 break;
             }
+        }
+
+        string unit_active_state_to_string (Systemd.UnitActiveState state) {
+            switch (state) {
+            case Systemd.UnitActiveState.ACTIVE:
+                return "Active";
+            case Systemd.UnitActiveState.RELOADING:
+                return "Reloading";
+            case Systemd.UnitActiveState.INACTIVE:
+                return "Inactive";
+            case Systemd.UnitActiveState.FAILED:
+                return "Failed";
+            case Systemd.UnitActiveState.ACTIVATING:
+                return "Activating";
+            case Systemd.UnitActiveState.DEACTIVATING:
+                return "Deactivating";
+            }
+            critical ("Unknown UnitActiveState");
+            return "Unknown";
         }
     }
 }
