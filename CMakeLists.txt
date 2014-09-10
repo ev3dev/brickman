@@ -18,6 +18,7 @@ if (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
         test/main.vala
         test/ControlPanel.vala
+        test/controller/FakeBatteryController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
         lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
@@ -31,10 +32,10 @@ else (BRICKMAN_TEST)
         lib/connman/Service.vala
         lib/connman/Technology.vala
         lib/ev3devKit/src/ConsoleApp.vala
+        src/controller/BatteryController.vala
         src/controller/USBController.vala
         #src/Network.vala
         src/main.vala
-        #src/Power.vala
     )
 endif (BRICKMAN_TEST)
 
@@ -64,9 +65,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
     src/controller/IBrickManagerModule.vala
-    #src/view/BatteryInfoWindow.vala
-    #src/view/BatteryHistWindow.vala
-    #src/view/BatteryStatsWindow.vala
+    src/view/BatteryInfoWindow.vala
     #src/view/BatteryStatusBarItem.vala
     src/view/BrickManagerWindow.vala
     src/view/HomeWindow.vala
@@ -87,6 +86,7 @@ pkg_check_modules(DEPS REQUIRED
     gio-2.0
     gio-unix-2.0
     gee-1.0
+    gudev-1.0
     ncurses
     libpng12
     ${BRICKMAN_TEST_MODULES}
@@ -110,6 +110,7 @@ PACKAGES
     gio-2.0
     gio-unix-2.0
     gee-1.0
+    gudev-1.0
     curses
     posix
     linux

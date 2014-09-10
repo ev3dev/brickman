@@ -32,6 +32,8 @@ namespace BrickManager {
 
         public FakeUSBController (Gtk.Builder builder) {
             usb_window = new USBWindow ();
+            var control_panel_notebook = builder.get_object ("control_panel_notebook") as Gtk.Notebook;
+            usb_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.USB);
 
             var usb_loading_checkbutton = builder.get_object ("usb_loading_checkbutton") as Gtk.CheckButton;
             usb_loading_checkbutton.bind_property ("active", usb_window, "loading", BindingFlags.SYNC_CREATE);
