@@ -39,7 +39,7 @@ namespace BrickManager {
         Systemd.Unit rndis_service;
         Systemd.Unit cdc_service;
 
-        public string menu_item_text { get { return "USB Device Port"; } }
+        public string menu_item_text { get { return "USB"; } }
         public Window start_window { get { return usb_window; } }
 
         public USBController () {
@@ -47,9 +47,6 @@ namespace BrickManager {
             init.begin ();
         }
 
-        /**
-         * initalization that requires global systemd object goes here
-         */
         public async void init () {
             try {
                 var manager = yield Systemd.Manager.get_system_manager ();

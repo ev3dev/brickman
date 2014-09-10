@@ -96,7 +96,7 @@ namespace BrickManager {
             content_vbox.add (device_port_service_menu);
             device_port_service_radio_group = new CheckButtonGroup ();
             device_port_service_none_menu_item = new EV3devKit.RadioMenuItem (
-                "None", device_port_service_radio_group);
+                "Off", device_port_service_radio_group);
             device_port_service_none_menu_item.button.border = 1;
             device_port_service_none_menu_item.radio.weak_represented_object =
                 ((int)USBDevicePortService.NONE).to_pointer ();

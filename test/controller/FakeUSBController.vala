@@ -27,7 +27,7 @@ namespace BrickManager {
     public class FakeUSBController : Object, IBrickManagerModule {
         USBWindow usb_window;
 
-        public string menu_item_text { get { return "USB Device Port"; } }
+        public string menu_item_text { get { return "USB"; } }
         public Window start_window { get { return usb_window; } }
 
         public FakeUSBController (Gtk.Builder builder) {
