@@ -26,29 +26,38 @@ using EV3devKit;
 namespace BrickManager {
     public class BatteryController : Object, IBrickManagerModule {
         BatteryInfoWindow battery_window;
+        internal BatteryStatusBarItem battery_status_bar_item;
         GUdev.Client power_supply_client;
-        GUdev.Device ev3_battery;
 
         public string menu_item_text { get { return "Battery"; } }
         public Window start_window { get { return battery_window; } }
 
         public BatteryController () {
             battery_window = new BatteryInfoWindow ();
+            battery_status_bar_item = new BatteryStatusBarItem ();
             power_supply_client = new GUdev.Client ({ "power_supply"});
-            ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
+            var ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
             if (ev3_battery == null)
                 critical ("Could not get legoev3-battery device");
             else {
                 battery_window.technology = ev3_battery.get_sysfs_attr ("technology") ?? "Error";
                 update_battery_info ();
-                Timeout.add_seconds (10, update_battery_info);
+                Timeout.add_seconds (5, update_battery_info);
                 battery_window.loading = false;
             }
         }
 
         bool update_battery_info () {
-            battery_window.voltage = ev3_battery.get_sysfs_attr_as_int ("voltage_now") / 1000000.0;
-            battery_window.current = ev3_battery.get_sysfs_attr_as_int ("current_now") / 1000.0;
+            var ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
+            if (ev3_battery == null) {
+                critical ("could not get legoev3-battery device");
+                return false;
+            }
+            var voltage = ev3_battery.get_sysfs_attr_as_int ("voltage_now") / 1000000.0;
+            var current = ev3_battery.get_sysfs_attr_as_int ("current_now") / 1000.0;
+            battery_window.voltage = voltage;
+            battery_window.current = current;
+            battery_status_bar_item.voltage = voltage;
             return true;
         }
     }

@@ -33,7 +33,9 @@ namespace BrickManager {
 
         public HomeWindow () {
             shutdown_dialog = new ShutdownDialog ();
-            menu = new EV3devKit.Menu ();
+            menu = new EV3devKit.Menu () {
+                border = 0
+            };
             add (menu);
         }
 

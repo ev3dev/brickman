@@ -46,6 +46,8 @@ namespace BrickManager {
         home_window.add_controller (control_panel.network_controller);
         home_window.add_controller (control_panel.usb_controller);
         home_window.add_controller (control_panel.battery_controller);
+        DesktopTestApp.screen.status_bar.add_right (
+            control_panel.battery_controller.battery_status_bar_item);
         home_window.shutdown_dialog.power_off_button_pressed.connect (() =>
             DesktopTestApp.quit ());
         home_window.shutdown_dialog.reboot_button_pressed.connect (() => {

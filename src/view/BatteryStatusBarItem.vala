@@ -23,6 +23,7 @@
  * Indicates battery status
  */
 
+using EV3devKit;
 using GRX;
 
 namespace BrickManager {
@@ -30,34 +31,50 @@ namespace BrickManager {
         const ushort END_WIDTH = 2;
         const ushort END_OFFEST = 2;
         const ushort PADDING = 1;
-        const ushort TOP = 2;
-        static unowned Font font = Font.dsg4_04b_03b;
+        const ushort TOP = 1;
+        static Font font;
+
+        static construct {
+            font =  Font.load ("xm4x6");
+        }
 
         string _text = "???";
+        TextOption text_option;
 
         double _voltage;
         public double voltage {
             get { return _voltage; }
             set {
+                if (_voltage == value)
+                    return;
                 _voltage = value;
                 if (voltage >= 10)
-                    _text = "%.1f".printf(value);
+                    _text = "%.1f".printf (value);
                 else
-                    _text = "%.2f".printf(value);
-                dirty = true;
+                    _text = "%.2f".printf (value);
+                redraw ();
             }
         }
 
-        public override ushort draw (Context context, ushort x, StatusBar.Align align) {
-            u8g.set_font(font);
-            var main_width = u8g.get_string_width(_text) + PADDING * 2 + 2;
+        public BatteryStatusBarItem () {
+            text_option = new TextOption () {
+                font = BatteryStatusBarItem.font,
+                bg_color = Color.no_color
+            };
+        }
+
+        public override int draw (int x, StatusBar.Align align) {
+            var color = status_bar.screen.fg_color;
+            text_option.fg_color = color;
+            var main_width = text_option.vala_string_width(_text) + PADDING * 2 + 2;
             var total_width = main_width + END_WIDTH;
             if (align ==  StatusBar.Align.RIGHT)
                 x -= total_width - 1;
-            u8g.draw_frame(x, TOP, main_width, HEIGHT);
-            u8g.draw_box(x + main_width, TOP + END_OFFEST,
-                END_WIDTH, HEIGHT - END_OFFEST * 2);
-            u8g.draw_str(x + 1 + PADDING, TOP + HEIGHT - 2, _text);
+            box (x, TOP, x + main_width - 1, TOP + HEIGHT - 1, color);
+            filled_box (x + main_width, TOP + END_OFFEST,
+                x + main_width + END_WIDTH - 1, TOP + HEIGHT - END_OFFEST - 1,
+                color);
+            draw_vala_string (_text, x + 1 + PADDING, TOP + 1 + PADDING, text_option);
             return total_width;
         }
     }

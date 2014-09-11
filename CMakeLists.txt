@@ -57,6 +57,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/Screen.vala
     lib/ev3devKit/src/Scroll.vala
     lib/ev3devKit/src/Spacer.vala
+    lib/ev3devKit/src/StatusBar.vala
+    lib/ev3devKit/src/StatusBarItem.vala
     lib/ev3devKit/src/TextEntry.vala
     lib/ev3devKit/src/Widget.vala
     lib/ev3devKit/src/Window.vala
@@ -66,15 +68,13 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/systemd/systemd-interfaces.vala
     src/controller/IBrickManagerModule.vala
     src/view/BatteryInfoWindow.vala
-    #src/view/BatteryStatusBarItem.vala
+    src/view/BatteryStatusBarItem.vala
     src/view/BrickManagerWindow.vala
     src/view/HomeWindow.vala
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
     src/view/NetworkStatusWindow.vala
     src/view/ShutdownDialog.vala
-    #src/view/StatusBar.vala
-    #src/view/StatusBarItem.vala
     src/view/USBWindow.vala
 )
 

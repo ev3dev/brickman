@@ -26,6 +26,7 @@ using EV3devKit;
 namespace BrickManager {
     public class FakeBatteryController : Object, IBrickManagerModule {
         BatteryInfoWindow battery_window;
+        internal BatteryStatusBarItem battery_status_bar_item;
 
         public string menu_item_text { get { return "Battery"; } }
         public Window start_window { get { return battery_window; } }
@@ -43,6 +44,10 @@ namespace BrickManager {
                 .bind_property ("value", battery_window, "voltage", BindingFlags.SYNC_CREATE);
             (builder.get_object ("battery_current_spinbutton") as Gtk.SpinButton)
                 .bind_property ("value", battery_window, "current", BindingFlags.SYNC_CREATE);
+
+            battery_status_bar_item = new BatteryStatusBarItem ();
+            (builder.get_object ("battery_voltage_spinbutton") as Gtk.SpinButton)
+                .bind_property ("value", battery_status_bar_item, "voltage", BindingFlags.SYNC_CREATE);
         }
     }
 }

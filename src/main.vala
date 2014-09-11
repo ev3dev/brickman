@@ -34,6 +34,7 @@ namespace BrickManager {
         home_window.add_controller (usb_controller);
         var battery_controller = new BatteryController ();
         home_window.add_controller (battery_controller);
+        ConsoleApp.screen.status_bar.add_right (battery_controller.battery_status_bar_item);
 
         Systemd.Logind.Manager logind_manager = null;
         Systemd.Logind.Manager.get_system_manager.begin ((obj, res) => {
