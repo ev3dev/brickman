@@ -36,6 +36,7 @@ namespace BrickManager {
             Systemd.UnitActiveState.DEACTIVATING
         };
         USBWindow usb_window;
+        Systemd.Manager manager;
         Systemd.Unit rndis_service;
         Systemd.Unit cdc_service;
 
@@ -49,7 +50,7 @@ namespace BrickManager {
 
         public async void init () {
             try {
-                var manager = yield Systemd.Manager.get_system_manager ();
+                manager = yield Systemd.Manager.get_system_manager ();
                 rndis_service = yield manager.load_unit ("rndis-gadget.service");
                 cdc_service = yield manager.load_unit ("cdc-gadget.service");
                 rndis_service.notify["active-state"].connect (on_active_state_changed);
@@ -81,17 +82,23 @@ namespace BrickManager {
                 if (rndis_service.active_state == Systemd.UnitActiveState.INACTIVE
                     || rndis_service.active_state == Systemd.UnitActiveState.FAILED)
                     rndis_service.start.begin ();
+                manager.enable_unit_files.begin ({ rndis_service.id });
+                manager.disable_unit_files.begin ({ cdc_service.id });
                 break;
             case USBDevicePortService.CDC:
                 if (cdc_service.active_state == Systemd.UnitActiveState.INACTIVE
                         || cdc_service.active_state == Systemd.UnitActiveState.FAILED)
                     cdc_service.start.begin ();
+                manager.enable_unit_files.begin ({ cdc_service.id });
+                manager.disable_unit_files.begin ({ rndis_service.id });
                 break;
             case USBDevicePortService.NONE:
                 if (rndis_service.active_state == Systemd.UnitActiveState.ACTIVE)
                     rndis_service.stop.begin ();
                 if (cdc_service.active_state == Systemd.UnitActiveState.ACTIVE)
                     cdc_service.stop.begin ();
+                manager.disable_unit_files.begin ({ rndis_service.id });
+                manager.disable_unit_files.begin ({ cdc_service.id });
                 break;
             }
         }

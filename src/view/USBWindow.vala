@@ -35,7 +35,7 @@ namespace BrickManager {
     public class USBWindow : BrickManagerWindow {
         const string device_port_service_none_tip_text = "Disables USB port";
         const string device_port_service_rndis_tip_text = "For connecting to Windows";
-        const string device_port_service_cdc_tip_text = "For connection to Mac/Linux";
+        const string device_port_service_cdc_tip_text = "For connecting to Mac/Linux";
         const string device_port_service_rndis_label_text = "RNDIS (%s)";
         const string device_port_service_cdc_label_text = "CDC (%s)";
 

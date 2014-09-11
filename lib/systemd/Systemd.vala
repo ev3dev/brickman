@@ -29,7 +29,9 @@ namespace Systemd {
         [DBus (value = "ignore-dependencies")]
         IGNORE_DEPENENCIES,
         [DBus (value = "ignore-requirements")]
-        IGNORE_REQUIREMENTS,
+        IGNORE_REQUIREMENTS;
+
+        public static extern UnitMode from_string (string value) throws Error;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -45,7 +47,33 @@ namespace Systemd {
         [DBus (value = "activating")]
         ACTIVATING,
         [DBus (value = "deactivating")]
-        DEACTIVATING
+        DEACTIVATING;
+
+        public static extern UnitActiveState from_string (string value) throws Error;
+    }
+
+    [DBus (use_string_marshalling = true)]
+    public enum UnitFileState {
+        [DBus (value = "enabled")]
+        ENABLED,
+        [DBus (value = "enabled-runtime")]
+        ENABLED_RUNTIME,
+        [DBus (value = "linked")]
+        LINKED,
+        [DBus (value = "linked-runtime")]
+        LINKED_RUNTIME,
+        [DBus (value = "masked")]
+        MASKED,
+        [DBus (value = "masked-runtime")]
+        MASKED_RUNTIME,
+        [DBus (value = "static")]
+        STATIC,
+        [DBus (value = "disabled")]
+        DISABLED,
+        [DBus (value = "invalid")]
+        INVALID;
+
+        public static extern UnitFileState from_string (string value) throws Error;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -61,7 +89,42 @@ namespace Systemd {
         [DBus (value = "dependency")]
         DEPENENCY, 
         [DBus (value = "skipped")]
-        SKIPPED
+        SKIPPED;
+
+        public static extern JobResult from_string (string value) throws Error;
+    }
+
+    [DBus (use_string_marshalling = true)]
+    public enum Who {
+        [DBus (value = "main")]
+        MAIN,
+        [DBus (value = "control")]
+        CONTROL,
+        [DBus (value = "all")]
+        ALL;
+
+        public static extern Who from_string (string value) throws Error;
+    }
+
+    [DBus (use_string_marshalling = true)]
+    public enum UnitLinkChangeType {
+        [DBus (value = "symlink")]
+        SYMLINK,
+        [DBus (value = "unlink")]
+        UNLINK;
+
+        public static extern UnitLinkChangeType from_string (string value) throws Error;
+    }
+
+    public struct UnitFileInfo {
+        string name;
+        UnitFileState state;
+    }
+
+    public struct UnitLinkChangeInfo {
+        UnitLinkChangeType change_type;
+        string symlink_name;
+        string destination_name;
     }
 
     public class UnitInfo {
@@ -136,7 +199,6 @@ namespace Systemd {
             instance.properties = yield Bus.get_proxy (BusType.SYSTEM,
                 org.freedesktop.systemd1.SERVICE_NAME, path);
             object_map[path] = instance;
-            yield instance.manager.subscribe ();
             weak Manager weak_instance = instance;
             instance.manager.unit_new.connect ((id, path) => weak_instance.on_unit_new.begin (id, path));
             instance.manager.unit_removed.connect ((id, path) => weak_instance.on_unit_removed.begin (id, path));
@@ -152,6 +214,84 @@ namespace Systemd {
 
         public string[] environment { owned get { return manager.environment; } }
 
+        /**
+         * Get the unit object path for a unit name.
+         * @param name The unit name
+         * @return A Unit object.
+         * @throws IOError Unit has not been loaded yet or DBus error
+         */
+        public async Unit get_unit (string name) throws IOError {
+            var path = yield manager.get_unit (name);
+            return yield Unit.get_instance_for_path (path);
+        }
+
+        public async Unit get_unit_by_pid (uint32 pid) throws IOError {
+            var path = yield manager.get_unit_by_pid (pid);
+            return yield Unit.get_instance_for_path (path);
+        }
+
+        public async Unit load_unit (string name) throws IOError {
+            var path = yield manager.load_unit (name);
+            return yield Unit.get_instance_for_path (path);
+        }
+
+        public async Job start_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
+            var path = yield manager.start_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job start_unit_replace (string old_unit, string new_unit, UnitMode mode = UnitMode.REPLACE) throws IOError {
+            var path = yield manager.start_unit_replace (old_unit, new_unit, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job stop_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
+            var path = yield manager.stop_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job reload_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
+            var path = yield manager.reload_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+            var path = yield manager.restart_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+            var path = yield manager.try_restart_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job reload_or_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+            var path = yield manager.reload_or_restart_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async Job reload_or_try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+            var path = yield manager.reload_or_try_restart_unit (name, mode);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async void kill_unit (string name, Who who, int32 @signal = Posix.SIGKILL) throws IOError {
+            yield manager.kill_unit (name, who, @signal);
+        }
+
+        public async Job get_job (uint32 id) throws IOError {
+            var path = yield manager.get_job (id);
+            return yield Job.get_instance_for_path (path);
+        }
+
+        public async void clear_jobs () throws IOError {
+            yield manager.clear_jobs ();
+        }
+
+        public async void reset_failed_unit (string name) throws IOError {
+            yield manager.reset_failed_unit (name);
+        }
+
         public async UnitInfo[] list_units () throws IOError {
             var units = yield manager.list_units ();
             var result = new UnitInfo[units.length];
@@ -161,6 +301,7 @@ namespace Systemd {
             }
             return result;
         }
+
         public async JobInfo[] list_jobs () throws IOError {
             var jobs = yield manager.list_jobs ();
             var result = new JobInfo[jobs.length];
@@ -171,62 +312,21 @@ namespace Systemd {
             return result;
         }
 
-        public async Unit get_unit (string name) throws IOError {
-            var path = yield manager.get_unit (name);
-            return yield Unit.get_instance_for_path (path);
-        }
-        public async Unit get_unit_by_pid (uint32 pid) throws IOError {
-            var path = yield manager.get_unit_by_pid (pid);
-            return yield Unit.get_instance_for_path (path);
-        }
-        public async Unit load_unit (string name) throws IOError {
-            var path = yield manager.load_unit (name);
-            return yield Unit.get_instance_for_path (path);
-        }
-        public async Job get_job (uint32 id) throws IOError {
-            var path = yield manager.get_job (id);
-            return yield Job.get_instance_for_path (path);
+        public async void subscribe () throws IOError {
+            yield manager.subscribe ();
         }
 
-        public async Job start_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
-            var path = yield manager.start_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job start_unit_replace (string old_unit, string new_unit, UnitMode mode = UnitMode.REPLACE) throws IOError {
-            var path = yield manager.start_unit_replace (old_unit, new_unit, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job stop_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
-            var path = yield manager.stop_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job reload_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
-            var path = yield manager.reload_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
-            var path = yield manager.restart_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
-            var path = yield manager.try_restart_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job reload_or_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
-            var path = yield manager.reload_or_restart_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
-        }
-        public async Job reload_or_try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
-            var path = yield manager.reload_or_try_restart_unit (name, mode);
-            return yield Job.get_instance_for_path (path);
+        public async void unsubscribe () throws IOError {
+            yield manager.unsubscribe ();
         }
 
-        public async void reset_failed_unit (string name) throws IOError {
-            yield manager.reset_failed_unit (name);
+        public async Unit create_snapshot (string name, bool cleanup = true) throws IOError {
+            var path = yield manager.create_snapshot (name, cleanup);
+            return yield Unit.get_instance_for_path (path);
         }
 
-        public async void clear_jobs () throws IOError {
-            yield manager.clear_jobs ();
+        public async void remove_snapshot (string name) throws IOError {
+            yield manager.remove_snapshot (name);
         }
 
         public async void reload () throws IOError {
@@ -239,11 +339,6 @@ namespace Systemd {
             yield manager.exit ();
         }
 
-        public async Unit create_snapshot (string name, bool cleanup = true) throws IOError {
-            var path = yield manager.create_snapshot (name, cleanup);
-            return yield Unit.get_instance_for_path (path);
-        }
-
         public async void set_environment (string[] names) throws IOError {
             yield manager.set_environment (names);
         }
@@ -251,24 +346,106 @@ namespace Systemd {
             yield manager.unset_environment (names);
         }
 
-        public signal void unit_new (string id, Unit unit);
+        public async void unset_and_set_environment (string[] unset, string[] @set) throws IOError {
+            yield manager.unset_and_set_environment (unset, @set);
+        }
+
+        public async UnitFileInfo[] list_unit_files () throws IOError {
+            var info = yield manager.list_unit_files ();
+            var result = new UnitFileInfo[info.length];
+            for (int i = 0; i < info.length; i++) {
+                result[i].name = info[i].name;
+                try {
+                    result[i].state = UnitFileState.from_string (info[i].state);
+                } catch (Error err) {
+                    critical (err.message);
+                }
+            }
+            return result;
+        }
+
+        public async UnitFileState get_unit_file_state (string file) throws IOError {
+            return yield manager.get_unit_file_state (file);
+        }
+
+        /**
+         * Enables one or more units in the system (by creating symlinks to them
+         * in /etc or /run).
+         *
+         * @param files List of unit files to enable (either just file names or
+         * full absolute paths if the unit files are residing outside the usual
+         * unit search paths).
+         * @param runtime Whether the unit shall be enabled for runtime only
+         * (true, /run), or persistently (false, /etc).
+         * @param force Whether symlinks pointing to other units shall be
+         * replaced if necessary.
+         * @param carries_install_info Signals whether the unit files contained
+         * any enablement information (i.e. an [Install]) section.
+         * @return The changes list.
+         */
+        public async UnitLinkChangeInfo[] enable_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws IOError {
+            var info = yield manager.enable_unit_files (files, runtime, force, out carries_install_info);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] disable_unit_files (string[] files, bool runtime = false) throws IOError {
+            var info = yield manager.disable_unit_files (files, runtime);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] reenable_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws IOError {
+            var info =  yield manager.reenable_unit_files (files, runtime, force, out carries_install_info);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] link_unit_files (string[] files, bool runtime = false) throws IOError {
+            var info =  yield manager.link_unit_files (files, runtime);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] preset_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws IOError {
+            var info =  yield manager.preset_unit_files (files, runtime, force, out carries_install_info);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] mask_unit_files (string[] files, bool runtime = false) throws IOError {
+            var info =  yield manager.mask_unit_files (files, runtime);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] unmask_unit_files (string[] files, bool runtime = false) throws IOError {
+            var info =  yield manager.unmask_unit_files (files, runtime);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async UnitLinkChangeInfo[] set_default_target (string[] files) throws IOError {
+            var info =  yield manager.set_default_target (files);
+            return marshal_unit_link_change_info (info);
+        }
+
+        public async string get_default_target () throws IOError {
+            return yield manager.get_default_target ();
+        }
+
+//      public async void set_unit_properties (string name, bool runtime, UnitProperty[] properties) throws IOError {
+//          yield manager.set_unit_properties (name, runtime, properties);
+//      }
+
+//      public async Unit start_transiend_unit (string name, string mode, UnitProperty[] properties, UnitPropertyGroup[] aux) throws IOError {
+//          var path = yield manager.start_transiend_unit (name, mode, properties, aux);
+//          return yield Unit.get_instance_from_path (path);
+//      }
+
+        public signal void unit_new (string id);
         async void on_unit_new (string id, ObjectPath path) {
-            try {
-                var unit = yield Unit.get_instance_for_path (path);
-                unit_new (id, unit);
-            } catch (IOError err) {
-                critical (err.message);
-            }
+            unit_new (id);
         }
-        public signal void unit_removed (string id, Unit unit);
+
+        public signal void unit_removed (string id);
         async void on_unit_removed (string id, ObjectPath path) {
-            try {
-                var unit = yield Unit.get_instance_for_path (path);
-                unit_removed (id, unit);
-            } catch (IOError err) {
-                critical (err.message);
-            }
+            unit_removed (id);
         }
+
         public signal void job_new (uint32 id, Unit unit);
         async void on_job_new (uint32 id, ObjectPath path) {
             try {
@@ -286,6 +463,21 @@ namespace Systemd {
             } catch (IOError err) {
                 critical (err.message);
             }
+        }
+
+        UnitLinkChangeInfo[] marshal_unit_link_change_info (org.freedesktop.systemd1.Manager.UnitLinkChangeInfo[] info) {
+            var result = new UnitLinkChangeInfo[info.length];
+            for (int i = 0; i < info.length; i++) {
+                try {
+                    result[i].change_type = UnitLinkChangeType.from_string (info[i].change_type);
+                } catch (Error err) {
+                    critical (err.message);
+                }
+                result[i].symlink_name = info[i].symlink_name;
+                result[i].destination_name = info[i].destination_name;
+                i++;
+            }
+            return result;
         }
 
         void on_properties_changed (string iface, HashTable<string,
@@ -343,6 +535,7 @@ namespace Systemd {
         public UnitActiveState active_state { get { return unit.active_state; } }
         public string sub_state { owned get { return unit.sub_state; } }
         public string fragment_path { owned get { return unit.fragment_path; } }
+        public UnitFileState unit_file_state { get { return unit.unit_file_state; } }
         public uint64 inactive_exit_timestamp { get { return unit.inactive_exit_timestamp; } }
         public uint64 active_enter_timestamp { get { return unit.active_enter_timestamp; } }
         public uint64 active_exit_timestamp { get { return unit.active_exit_timestamp; } }
