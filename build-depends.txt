@@ -1,5 +1,5 @@
 EV3:
-cmake valac libgee-dev libgirepository1.0-dev libgudev-1.0-dev libncurses5-dev libjpeg-dev libpng12-dev libgrx-dev
+cmake valac libgee-0.8-dev libgirepository1.0-dev libgudev-1.0-dev libncurses5-dev libjpeg-dev libpng12-dev libgrx-dev
 
 Desktop (all of above plus...):
 libgtk-3-dev
