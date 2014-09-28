@@ -51,6 +51,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/Label.vala
     lib/ev3devKit/src/Menu.vala
     lib/ev3devKit/src/MenuItem.vala
+    lib/ev3devKit/src/Notebook.vala
+    lib/ev3devKit/src/NotebookTab.vala
     lib/ev3devKit/src/OnScreenKeyboard.vala
     lib/ev3devKit/src/RadioMenuItem.vala
     lib/ev3devKit/src/Rectangle.vala
@@ -59,6 +61,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/Spacer.vala
     lib/ev3devKit/src/StatusBar.vala
     lib/ev3devKit/src/StatusBarItem.vala
+    lib/ev3devKit/src/TabButton.vala
     lib/ev3devKit/src/TextEntry.vala
     lib/ev3devKit/src/Widget.vala
     lib/ev3devKit/src/Window.vala
@@ -73,6 +76,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/HomeWindow.vala
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
+    src/view/NetworkPropertiesWindow.vala
     src/view/NetworkStatusWindow.vala
     src/view/ShutdownDialog.vala
     src/view/USBWindow.vala

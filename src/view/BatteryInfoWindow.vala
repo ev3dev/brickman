@@ -106,6 +106,7 @@ namespace BrickManager {
             info_grid.add (current_value_label);
             info_grid.add (power_label);
             info_grid.add (power_value_label);
+            content_vbox.add (new Spacer ());
         }
 
         void update_power() {

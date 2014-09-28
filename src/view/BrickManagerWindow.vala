@@ -59,13 +59,14 @@ using EV3devKit;
         protected BrickManagerWindow () {
             window_vbox = new Box.vertical ();
             title_label = new Label () {
+                vertical_align = WidgetAlign.START,
                 padding = 3,
                 border_bottom = 1,
                 margin_bottom = 3
             };
             window_vbox.add (title_label);
             loading_label = new Label ("Loading...") {
-                margin_top = 20
+                margin_bottom = 30
             };
             window_vbox.add (loading_label);
             _content_vbox = new Box.vertical ();

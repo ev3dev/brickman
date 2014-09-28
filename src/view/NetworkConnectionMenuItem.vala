@@ -49,12 +49,22 @@ namespace BrickManager {
 
         public NetworkConnectionMenuItem () {
             base.with_button (new Button (), new Label ());
+            button.pressed.connect (on_button_pressed);
             var hbox = new Box.horizontal ();
             button.add (hbox);
             hbox.add (label);
             hbox.add (new Spacer ());
             signal_strength_label = new Label ();
             hbox.add (signal_strength_label);
+        }
+
+        void on_button_pressed () {
+            if (menu == null)
+                return;
+            var network_connections_window = menu.window as NetworkConnectionsWindow;
+            if (network_connections_window == null)
+                return;
+            network_connections_window.connection_selected (represented_object);
         }
     }
 }

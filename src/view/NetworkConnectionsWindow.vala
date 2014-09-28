@@ -34,8 +34,9 @@ namespace BrickManager {
 
         public NetworkConnectionsWindow () {
             title = "Network Connections";
-            menu = new EV3devKit.Menu ();
-            menu.spacing = 2;
+            menu = new EV3devKit.Menu () {
+                spacing = 2
+            };
             content_vbox.add (menu);
         }
     }

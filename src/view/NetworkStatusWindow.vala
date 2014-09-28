@@ -56,7 +56,9 @@ namespace BrickManager {
             state_hbox.add (state_label);
             state_value_label = new Label ("???");
             state_hbox.add (state_value_label);
-            menu = new EV3devKit.Menu ();
+            menu = new EV3devKit.Menu () {
+                max_preferred_height = 83
+            };
             content_vbox.add (menu);
             manage_connections_menu_item = new EV3devKit.MenuItem ("Manage connections...");
             manage_connections_menu_item.button.pressed.connect (() => manage_connections_selected ());

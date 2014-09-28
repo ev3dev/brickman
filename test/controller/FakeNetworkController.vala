@@ -95,7 +95,8 @@ namespace BrickManager {
                 Value name;
                 connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.NAME, out name);
                 var menu_item = new NetworkConnectionMenuItem () {
-                    connection_name = name.dup_string ()
+                    connection_name = name.dup_string (),
+                    represented_object = new NetworkService (iter)
                 };
                 network_connections_window.menu.add_menu_item (menu_item);
                 connman_service_liststore.set (iter, ControlPanel.NetworkServiceColumn.PRESENT, true);
@@ -136,6 +137,9 @@ namespace BrickManager {
             (builder.get_object ("connman_service_present_cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     connman_service_liststore, toggle, path, ControlPanel.NetworkServiceColumn.PRESENT));
+            (builder.get_object ("connman_service_auto_connect_cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    connman_service_liststore, toggle, path, ControlPanel.NetworkServiceColumn.AUTO_CONNECT));
             (builder.get_object ("connman_service_state_cellrenderercombo") as Gtk.CellRendererCombo)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     connman_service_liststore, path, new_text, ControlPanel.NetworkServiceColumn.STATE));
@@ -145,6 +149,59 @@ namespace BrickManager {
             (builder.get_object ("connman_service_strength_cellrendererspin") as Gtk.CellRendererSpin)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     connman_service_liststore, path, new_text, ControlPanel.NetworkServiceColumn.STRENGTH));
+
+            network_connections_window.connection_selected.connect ((user_data) => {
+                var service = user_data as NetworkService;
+                Value name;
+                connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.NAME, out name);
+                Value auto_connect;
+                connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.AUTO_CONNECT, out auto_connect);
+                Value state;
+                connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.STATE, out state);
+                Value security;
+                connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.SECURITY, out security);
+                Value strength;
+                connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.STRENGTH, out strength);
+                var network_properties_window = new NetworkPropertiesWindow (name.dup_string ()) {
+                    auto_connect = auto_connect.get_boolean (),
+                    state = state.get_string (),
+                    // security = security.get_string (),
+                    strength = (uchar)int.parse (strength.get_string())
+                };
+                networking_loading_checkbutton.bind_property ("active", network_properties_window, "loading", BindingFlags.SYNC_CREATE);
+                network_status_window.screen.push_window (network_properties_window);
+                weak NetworkPropertiesWindow weak_network_properties_window = network_properties_window;
+                network_properties_window.notify["auto-connect"].connect (() => connman_service_liststore.set (
+                    service.iter, ControlPanel.NetworkServiceColumn.AUTO_CONNECT,
+                    weak_network_properties_window.auto_connect));
+                var row_changed_handler_id = connman_service_liststore.row_changed.connect ((path, iter) => {
+                    if (service.iter != iter)
+                        return;
+                    connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.AUTO_CONNECT, out auto_connect);
+                    connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.STATE, out state);
+                    connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.SECURITY, out security);
+                    connman_service_liststore.get_value (service.iter, ControlPanel.NetworkServiceColumn.STRENGTH, out strength);
+                    if (weak_network_properties_window.auto_connect != auto_connect.get_boolean ())
+                        weak_network_properties_window.auto_connect = auto_connect.get_boolean ();
+                    if (weak_network_properties_window.state != state.get_string ())
+                        weak_network_properties_window.state = state.get_string ();
+                    // if (weak_network_properties_window.security != security.get_string ())
+                    //     weak_network_properties_window.security = security.get_string ();
+                    if (weak_network_properties_window.strength != int.parse (strength.get_string ()))
+                        weak_network_properties_window.strength = (uchar)int.parse (strength.get_string ());
+                });
+                network_properties_window.weak_ref((obj) => {
+                    SignalHandler.disconnect (connman_service_liststore, row_changed_handler_id);
+                });
+            });
+        }
+
+        class NetworkService : Object {
+            public Gtk.TreeIter iter { get; private set; }
+
+            public NetworkService (Gtk.TreeIter iter) {
+                this.iter = iter;
+            }
         }
     }
 }
