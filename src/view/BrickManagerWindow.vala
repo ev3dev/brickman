@@ -27,6 +27,14 @@ using EV3devKit;
 
  namespace BrickManager {
     public abstract class BrickManagerWindow : Window {
+        static GRX.Font _small_font;
+        public static weak GRX.Font small_font;
+
+        static construct {
+            _small_font = GRX.Font.load ("helv11");
+            small_font = _small_font ?? GRX.Font.default;
+        }
+
         Box window_vbox;
         Label title_label;
         Label loading_label;

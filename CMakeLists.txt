@@ -135,6 +135,9 @@ configure_file(
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnManServiceIPv4Dialog.glade
+    ${CMAKE_CURRENT_BINARY_DIR}/ConnManServiceIPv4Dialog.glade COPYONLY )
 endif (BRICKMAN_TEST)
 
 add_custom_target(run

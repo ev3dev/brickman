@@ -28,7 +28,7 @@ using Gtk;
 
 namespace BrickManager {
     public class ControlPanel : Object {
-        const string glade_file = "ControlPanel.glade";
+        const string CONTROL_PANEL_GLADE_FILE = "ControlPanel.glade";
 
         public Gtk.Window window;
         public FakeNetworkController network_controller;
@@ -71,13 +71,15 @@ namespace BrickManager {
             DOMAINS,
             DOMAINS_CONFIG,
             USER_DATA,
+            IPV4_DATA,
+            ENET_DATA,
             COLUMN_COUNT;
         }
 
         public ControlPanel () {
             var builder = new Builder ();
             try {
-                builder.add_from_file (glade_file);
+                builder.add_from_file (CONTROL_PANEL_GLADE_FILE);
                 window = builder.get_object ("control_panel_window") as Gtk.Window;
 
                 network_controller = new FakeNetworkController (builder);

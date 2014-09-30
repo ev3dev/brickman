@@ -13,6 +13,29 @@
     <property name="step_increment">0.25</property>
     <property name="page_increment">1</property>
   </object>
+  <object class="GtkListStore" id="connman_security_liststore">
+    <columns>
+      <!-- column-name SECURITY -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">none</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">wep</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">psk</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ieee8021x</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">wps</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="connman_service_liststore">
     <columns>
       <!-- column-name PRESENT -->
@@ -26,7 +49,7 @@
       <!-- column-name TYPE -->
       <column type="gchararray"/>
       <!-- column-name SECURITY -->
-      <column type="gpointer"/>
+      <column type="gchararray"/>
       <!-- column-name HAS_STRENGTH -->
       <column type="gboolean"/>
       <!-- column-name STRENGTH -->
@@ -53,6 +76,10 @@
       <column type="gpointer"/>
       <!-- column-name USER_DATA -->
       <column type="gpointer"/>
+      <!-- column-name IPV4_DATA -->
+      <column type="gpointer"/>
+      <!-- column-name ENET_DATA -->
+      <column type="gpointer"/>
     </columns>
     <data>
       <row>
@@ -61,6 +88,7 @@
         <col id="2" translatable="yes">&lt;none&gt;</col>
         <col id="3" translatable="yes">Wireless</col>
         <col id="4" translatable="yes">wifi</col>
+        <col id="5" translatable="yes">psk</col>
         <col id="6">True</col>
         <col id="7" translatable="yes">97</col>
         <col id="8">False</col>
@@ -74,6 +102,7 @@
         <col id="2" translatable="yes">&lt;none&gt;</col>
         <col id="3" translatable="yes">Wired</col>
         <col id="4" translatable="yes">ethernet</col>
+        <col id="5" translatable="yes">none</col>
         <col id="6">False</col>
         <col id="7" translatable="yes">0</col>
         <col id="8">False</col>
@@ -87,6 +116,7 @@
         <col id="2" translatable="yes">&lt;none&gt;</col>
         <col id="3" translatable="yes">Gadget</col>
         <col id="4" translatable="yes">gadget</col>
+        <col id="5" translatable="yes">none</col>
         <col id="6">False</col>
         <col id="7" translatable="yes">0</col>
         <col id="8">False</col>
@@ -100,6 +130,7 @@
         <col id="2" translatable="yes">&lt;none&gt;</col>
         <col id="3" translatable="yes">Bluetooth</col>
         <col id="4" translatable="yes">bluetooth</col>
+        <col id="5" translatable="yes">none</col>
         <col id="6">False</col>
         <col id="7" translatable="yes">0</col>
         <col id="8">False</col>
@@ -189,18 +220,11 @@
       </row>
     </data>
   </object>
-  <object class="GtkComboBox" id="connman_state_combobox">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="model">connman_technology_liststore</property>
-    <property name="active">0</property>
-  </object>
   <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
   <object class="GtkWindow" id="control_panel_window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Brick Manager Control Panel</property>
     <property name="resizable">False</property>
-    <property name="type_hint">utility</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="deletable">False</property>
     <property name="has_resize_grip">False</property>
@@ -578,6 +602,22 @@
                                       </object>
                                     </child>
                                     <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_security_treeviewcolumn">
+                                        <property name="title" translatable="yes">Security</property>
+                                        <child>
+                                          <object class="GtkCellRendererCombo" id="connman_service_security_cellrenderercombo">
+                                            <property name="editable">True</property>
+                                            <property name="has_entry">False</property>
+                                            <property name="model">connman_security_liststore</property>
+                                            <property name="text_column">0</property>
+                                          </object>
+                                          <attributes>
+                                            <attribute name="text">5</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
                                       <object class="GtkTreeViewColumn" id="connman_service_has_strength_treeviewcolumn">
                                         <property name="title" translatable="yes">Has Strength</property>
                                         <child>
@@ -600,6 +640,16 @@
                                           <attributes>
                                             <attribute name="text">7</attribute>
                                           </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="connman_service_ipv4_treeviewcolumn">
+                                        <property name="title" translatable="yes">IPv4</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="connman_service_ipv4_cellrenderertext">
+                                            <property name="text">...</property>
+                                          </object>
                                         </child>
                                       </object>
                                     </child>
