@@ -202,8 +202,8 @@ namespace Systemd {
             weak Manager weak_instance = instance;
             instance.manager.unit_new.connect ((id, path) => weak_instance.on_unit_new.begin (id, path));
             instance.manager.unit_removed.connect ((id, path) => weak_instance.on_unit_removed.begin (id, path));
-            instance.manager.job_new.connect ((id, path) => weak_instance.on_job_new.begin (id, path));
-            instance.manager.job_removed.connect ((id, path, result) => weak_instance.on_job_removed.begin (id, path, result));
+            instance.manager.job_new.connect ((id, path, unit) => weak_instance.on_job_new.begin (id, path, unit));
+            instance.manager.job_removed.connect ((id, path, unit, result) => weak_instance.on_job_removed.begin (id, path, unit, result));
             instance.properties.properties_changed.connect (weak_instance.on_properties_changed);
             return instance;
         }
@@ -446,23 +446,18 @@ namespace Systemd {
             unit_removed (id);
         }
 
-        public signal void job_new (uint32 id, Unit unit);
-        async void on_job_new (uint32 id, ObjectPath path) {
+        public signal void job_new (uint32 id, Job job, string unit);
+        async void on_job_new (uint32 id, ObjectPath path, string unit) {
             try {
-                var unit = yield Unit.get_instance_for_path (path);
-                job_new (id, unit);
+                var job = yield Job.get_instance_for_path (path);
+                job_new (id, job, unit);
             } catch (IOError err) {
                 critical (err.message);
             }
         }
-        public signal void job_removed (uint32 id, Unit unit, JobResult result);
-        async void on_job_removed (uint32 id, ObjectPath path, JobResult result) {
-            try {
-                var unit = yield Unit.get_instance_for_path (path);
-                job_removed (id, unit, result);
-            } catch (IOError err) {
-                critical (err.message);
-            }
+        public signal void job_removed (uint32 id, string unit, JobResult result);
+        async void on_job_removed (uint32 id, ObjectPath path, string unit, JobResult result) {
+            job_removed (id, unit, result);
         }
 
         UnitLinkChangeInfo[] marshal_unit_link_change_info (org.freedesktop.systemd1.Manager.UnitLinkChangeInfo[] info) {

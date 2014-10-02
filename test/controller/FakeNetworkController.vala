@@ -101,13 +101,12 @@ namespace BrickManager {
                 };
                 network_connections_window.menu.add_menu_item (menu_item);
                 connman_service_liststore.set (iter, ControlPanel.NetworkServiceColumn.PRESENT, true);
-                Value has_strength;
-                connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.HAS_STRENGTH, out has_strength);
-                if (has_strength.get_boolean ()) {
-                    Value strength;
-                    connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.STRENGTH, out strength);
-                    menu_item.signal_strength = int.parse (strength.get_string ());
-                }
+                Value type;
+                connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.TYPE, out type);
+                menu_item.connection_type = type.dup_string ();
+                Value strength;
+                connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.STRENGTH, out strength);
+                menu_item.signal_strength = int.parse (strength.get_string ());
                 // liststore USER_DATA is gpointer, so it does not take a ref
                 connman_service_liststore.set (iter, ControlPanel.NetworkServiceColumn.USER_DATA, menu_item.ref ());
                 // same with IPV4_DATA
@@ -121,8 +120,6 @@ namespace BrickManager {
                 connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.PRESENT, out present);
                 Value state;
                 connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.STATE, out state);
-                Value has_strength;
-                connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.HAS_STRENGTH, out has_strength);
                 Value strength;
                 connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.STRENGTH, out strength);
                 Value user_data;
@@ -132,12 +129,8 @@ namespace BrickManager {
                     network_connections_window.menu.remove_menu_item (menu_item);
                 else if (!network_connections_window.menu.has_menu_item (menu_item) && present.get_boolean ())
                     network_connections_window.menu.add_menu_item (menu_item);
-                if (has_strength.get_boolean ()) {
-                    if (menu_item.signal_strength == null || menu_item.signal_strength != int.parse (strength.get_string ()))
-                        menu_item.signal_strength = int.parse (strength.get_string ());
-                } else if (menu_item.signal_strength != null) {
-                    menu_item.signal_strength = null;
-                }
+                if (menu_item.signal_strength != int.parse (strength.get_string ()))
+                    menu_item.signal_strength = int.parse (strength.get_string ());
             });
             (builder.get_object ("connman_services_treeview") as Gtk.TreeView).row_activated.connect ((path, column) => {
                 Gtk.TreeIter iter;
@@ -207,9 +200,6 @@ namespace BrickManager {
             (builder.get_object ("connman_service_security_cellrenderercombo") as Gtk.CellRendererCombo)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     connman_service_liststore, path, new_text, ControlPanel.NetworkServiceColumn.SECURITY));
-            (builder.get_object ("connman_service_has_strength_cellrenderertoggle") as Gtk.CellRendererToggle)
-                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
-                    connman_service_liststore, toggle, path, ControlPanel.NetworkServiceColumn.HAS_STRENGTH));
             (builder.get_object ("connman_service_strength_cellrendererspin") as Gtk.CellRendererSpin)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     connman_service_liststore, path, new_text, ControlPanel.NetworkServiceColumn.STRENGTH));

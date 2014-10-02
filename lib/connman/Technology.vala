@@ -79,14 +79,26 @@ namespace ConnMan {
             }
         }
 
-        internal static async Technology from_path(ObjectPath path) throws IOError {
-            var technology = new Technology();
-            if (object_map.has_key(path))
+        internal static async Technology from_path (ObjectPath path) throws IOError {
+            if (object_map != null && object_map.has_key (path))
                 return object_map[path];
-            technology.dbus_proxy = yield Bus.get_proxy(BusType.SYSTEM,
+            var technology = new Technology ();
+            technology.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 net.connman.SERVICE_NAME, path);
             technology.path = path;
-            technology.dbus_proxy.property_changed.connect(technology.on_property_changed);
+            technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
+            object_map[path] = technology;
+            return technology;
+        }
+
+        internal static Technology from_path_sync (ObjectPath path) throws IOError {
+            if (object_map != null && object_map.has_key (path))
+                return object_map[path];
+            var technology = new Technology ();
+            technology.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
+                net.connman.SERVICE_NAME, path);
+            technology.path = path;
+            technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
             object_map[path] = technology;
             return technology;
         }

@@ -33,8 +33,8 @@ else (BRICKMAN_TEST)
         lib/connman/Technology.vala
         lib/ev3devKit/src/ConsoleApp.vala
         src/controller/BatteryController.vala
+        src/controller/NetworkController.vala
         src/controller/USBController.vala
-        #src/Network.vala
         src/main.vala
     )
 endif (BRICKMAN_TEST)

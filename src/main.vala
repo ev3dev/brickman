@@ -30,6 +30,8 @@ namespace BrickManager {
         ConsoleApp.init ();
 
         var home_window = new HomeWindow ();
+        var network_controller = new NetworkController ();
+        home_window.add_controller (network_controller);
         var usb_controller = new USBController ();
         home_window.add_controller (usb_controller);
         var battery_controller = new BatteryController ();

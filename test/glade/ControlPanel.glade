@@ -50,8 +50,6 @@
       <column type="gchararray"/>
       <!-- column-name SECURITY -->
       <column type="gchararray"/>
-      <!-- column-name HAS_STRENGTH -->
-      <column type="gboolean"/>
       <!-- column-name STRENGTH -->
       <column type="gchararray"/>
       <!-- column-name FAVORITE -->
@@ -89,12 +87,11 @@
         <col id="3" translatable="yes">Wireless</col>
         <col id="4" translatable="yes">wifi</col>
         <col id="5" translatable="yes">psk</col>
-        <col id="6">True</col>
-        <col id="7" translatable="yes">97</col>
+        <col id="6" translatable="yes">97</col>
+        <col id="7">False</col>
         <col id="8">False</col>
         <col id="9">False</col>
         <col id="10">False</col>
-        <col id="11">False</col>
       </row>
       <row>
         <col id="0">False</col>
@@ -103,12 +100,11 @@
         <col id="3" translatable="yes">Wired</col>
         <col id="4" translatable="yes">ethernet</col>
         <col id="5" translatable="yes">none</col>
-        <col id="6">False</col>
-        <col id="7" translatable="yes">0</col>
+        <col id="6" translatable="yes">0</col>
+        <col id="7">False</col>
         <col id="8">False</col>
         <col id="9">False</col>
         <col id="10">False</col>
-        <col id="11">False</col>
       </row>
       <row>
         <col id="0">False</col>
@@ -117,12 +113,11 @@
         <col id="3" translatable="yes">Gadget</col>
         <col id="4" translatable="yes">gadget</col>
         <col id="5" translatable="yes">none</col>
-        <col id="6">False</col>
-        <col id="7" translatable="yes">0</col>
+        <col id="6" translatable="yes">0</col>
+        <col id="7">False</col>
         <col id="8">False</col>
         <col id="9">False</col>
         <col id="10">False</col>
-        <col id="11">False</col>
       </row>
       <row>
         <col id="0">False</col>
@@ -131,12 +126,11 @@
         <col id="3" translatable="yes">Bluetooth</col>
         <col id="4" translatable="yes">bluetooth</col>
         <col id="5" translatable="yes">none</col>
-        <col id="6">False</col>
-        <col id="7" translatable="yes">0</col>
+        <col id="6" translatable="yes">0</col>
+        <col id="7">False</col>
         <col id="8">False</col>
         <col id="9">False</col>
         <col id="10">False</col>
-        <col id="11">False</col>
       </row>
     </data>
   </object>
@@ -523,7 +517,6 @@
                                     <property name="can_focus">True</property>
                                     <property name="hscroll_policy">natural</property>
                                     <property name="model">connman_service_liststore</property>
-                                    <property name="search_column">3</property>
                                     <property name="show_expanders">False</property>
                                     <property name="enable_grid_lines">horizontal</property>
                                     <child internal-child="selection">
@@ -618,17 +611,6 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_has_strength_treeviewcolumn">
-                                        <property name="title" translatable="yes">Has Strength</property>
-                                        <child>
-                                          <object class="GtkCellRendererToggle" id="connman_service_has_strength_cellrenderertoggle"/>
-                                          <attributes>
-                                            <attribute name="active">6</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
                                       <object class="GtkTreeViewColumn" id="connman_service_strength_treeviewcolumn">
                                         <property name="min_width">90</property>
                                         <property name="title" translatable="yes">Strength</property>
@@ -638,7 +620,7 @@
                                             <property name="adjustment">connman_service_strength_adjustment</property>
                                           </object>
                                           <attributes>
-                                            <attribute name="text">7</attribute>
+                                            <attribute name="text">6</attribute>
                                           </attributes>
                                         </child>
                                       </object>

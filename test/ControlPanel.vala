@@ -58,7 +58,6 @@ namespace BrickManager {
             NAME,
             TYPE,
             SECURITY,
-            HAS_STRENGTH,
             STRENGTH,
             FAVORITE,
             IMMUTABLE,

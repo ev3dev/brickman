@@ -56,9 +56,9 @@ namespace ConnMan {
         }
 
         internal static async Peer from_path(ObjectPath path) throws IOError {
-            var peer = new Peer();
-            if (object_map.has_key(path))
+            if (object_map != null && object_map.has_key(path))
                 return object_map[path];
+            var peer = new Peer();
             peer.dbus_proxy = yield Bus.get_proxy(BusType.SYSTEM,
                 net.connman.SERVICE_NAME, path);
             peer.path = path;

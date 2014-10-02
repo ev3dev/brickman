@@ -175,8 +175,8 @@ namespace org.freedesktop.systemd1 {
 
         public abstract signal void unit_new (string id, ObjectPath path);
         public abstract signal void unit_removed (string id, ObjectPath path);
-        public abstract signal void job_new (uint32 id, ObjectPath path);
-        public abstract signal void job_removed (uint32 id, ObjectPath path, Systemd.JobResult res);
+        public abstract signal void job_new (uint32 id, ObjectPath path, string unit);
+        public abstract signal void job_removed (uint32 id, ObjectPath path, string unit, Systemd.JobResult res);
         public abstract signal void startup_finished (uint64 firmware, uint64 loader, uint64 kernel, uint64 initrd, uint64 userspace, uint64 total);
         public abstract signal void unit_files_changed ();
         public abstract signal void reloading (bool active);

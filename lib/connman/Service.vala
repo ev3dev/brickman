@@ -60,8 +60,13 @@ namespace ConnMan {
         public string error { owned get { return dbus_proxy.error; } }
         public string name { owned get { return dbus_proxy.name; } }
         public string service_type { owned get { return dbus_proxy.type_; } }
-        public ConnMan.ServiceSecurity[] security {
-            owned get { return dbus_proxy.security; }
+        public GenericArray<ServiceSecurity> security {
+            owned get {
+                var array = new GenericArray<ServiceSecurity> (dbus_proxy.security.length);
+                foreach (var item in dbus_proxy.security)
+                    array.add (item);
+                return (owned)array;
+            }
         }
         public uint8 strength { get { return dbus_proxy.strength; } }
         public bool favorite { get { return dbus_proxy.favorite; } }
@@ -178,11 +183,11 @@ namespace ConnMan {
                 return dbus_proxy.ipv6[IPV6_ADDRESS_KEY].dup_string();
             }
         }
-        public uchar? ipv6_prefix_length {
+        public uchar ipv6_prefix_length {
             get {
                 if (dbus_proxy.ipv6[IPV6_PREFIX_LENGTH_KEY] == null)
-                    return null;
-                return dbus_proxy.ipv6[IPV6_PREFIX_LENGTH_KEY].get_byte();
+                    return 0;
+                return dbus_proxy.ipv6[IPV6_PREFIX_LENGTH_KEY].get_byte ();
             }
         }
         public string? ipv6_gateway {
@@ -312,22 +317,34 @@ namespace ConnMan {
                 return dbus_proxy.ethernet[ETHERENET_ADDRESS_KEY].dup_string();
             }
         }
-        public uint? ethernet_mtu {
+        public uint ethernet_mtu {
             get {
                 if (dbus_proxy.ethernet[ETHERENET_MTU_KEY] == null)
-                    return null;
+                    return uint.MAX;
                 return dbus_proxy.ethernet[ETHERENET_MTU_KEY].get_uint16();
             }
         }
 
-        internal static async Service from_path(ObjectPath path) throws IOError {
-            var service = new Service();
-            if (object_map.has_key(path))
+        internal static async Service from_path (ObjectPath path) throws IOError {
+            if (object_map != null && object_map.has_key (path))
                 return object_map[path];
-            service.dbus_proxy = yield Bus.get_proxy(BusType.SYSTEM,
+            var service = new Service ();
+            service.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 net.connman.SERVICE_NAME, path);
             service.path = path;
-            service.dbus_proxy.property_changed.connect(service.on_property_changed);
+            service.dbus_proxy.property_changed.connect (service.on_property_changed);
+            object_map[path] = service;
+            return service;
+        }
+
+        internal static Service from_path_sync (ObjectPath path) throws IOError {
+            if (object_map != null && object_map.has_key (path))
+                return object_map[path];
+            var service = new Service ();
+            service.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
+                net.connman.SERVICE_NAME, path);
+            service.path = path;
+            service.dbus_proxy.property_changed.connect (service.on_property_changed);
             object_map[path] = service;
             return service;
         }
@@ -360,7 +377,7 @@ namespace ConnMan {
             yield dbus_proxy.reset_counters();
         }
 
-        void on_property_changed(string name, Variant? value) {
+        internal void on_property_changed (string name, Variant? value) {
             ((DBusProxy)dbus_proxy).set_cached_property(name, value);
             switch (name) {
             case "State":
@@ -412,28 +429,44 @@ namespace ConnMan {
                 notify_property("domains-configuration");
                 break;
             case "IPv4":
-                notify_property("ipv4");
+                notify_property ("ipv4-method");
+                notify_property ("ipv4-address");
+                notify_property ("ipv4-netmask");
+                notify_property ("ipv4-gateway");
                 break;
             case "IPv4.Configuration":
                 notify_property("ipv4-configuration");
                 break;
             case "IPv6":
-                notify_property("ipv6");
+                notify_property ("ipv6-method");
+                notify_property ("ipv6-address");
+                notify_property ("ipv6-prefix-length");
+                notify_property ("ipv6-gateway");
+                notify_property ("ipv6-privacy");
                 break;
             case "IPv6.Configuration":
                 notify_property("ipv6-configuration");
                 break;
             case "Proxy":
-                notify_property("proxy");
+                notify_property ("proxy-method");
+                notify_property ("proxy-url");
+                notify_property ("proxy-servers");
+                notify_property ("proxy-excludes");
                 break;
             case "Proxy.Configuration":
                 notify_property("proxy-configuration");
                 break;
             case "Provider":
-                notify_property("provider");
+                notify_property ("provider-host");
+                notify_property ("provider-domain");
+                notify_property ("provider-name");
+                notify_property ("provider-type");
                 break;
             case "Ethernet":
-                notify_property("ethernet");
+                notify_property ("ethernet-method");
+                notify_property ("ethernet-interface");
+                notify_property ("ethernet-mac-address");
+                notify_property ("ethernet-mtu");
                 break;
             default:
                 critical("ConnMan.Service: unknown dbus property '%s'", name);

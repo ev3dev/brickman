@@ -26,24 +26,38 @@ using EV3devKit;
 namespace BrickManager {
     public class NetworkConnectionMenuItem : EV3devKit.MenuItem {
         const string PERCENT = "%";
-
-        public string connection_name {
-            get { return label.text; }
-            set { label.text = value; }
-        }
+        const string[] CONNECTION_TYPES_WITHOUT_STRENGTH = {
+            "ethernet",
+            "gadget"
+        };
 
         Label signal_strength_label;
-        public int? signal_strength {
-            get {
-                if (signal_strength_label.text == null)
-                    return null;
-                return int.parse (signal_strength_label.text[0:-PERCENT.length]);
-            }
+
+        string _connection_type;
+        public string connection_type {
+            get { return _connection_type; }
             set {
-                if (value == null)
-                    signal_strength_label.text = null;
-                else
-                    signal_strength_label.text = "%d%s".printf (value, PERCENT);
+                _connection_type = value;
+                update_connection_name_label_text ();
+                update_signal_strength_label_text ();
+            }
+        }
+
+        string _connection_name;
+        public string connection_name {
+            get { return _connection_name; }
+            set {
+                _connection_name = value;
+                update_connection_name_label_text ();
+            }
+        }
+
+        int _signal_strength;
+        public int signal_strength {
+            get { return _signal_strength; }
+            set {
+                _signal_strength = value;
+                update_signal_strength_label_text ();
             }
         }
 
@@ -65,6 +79,18 @@ namespace BrickManager {
             if (network_connections_window == null)
                 return;
             network_connections_window.connection_selected (represented_object);
+        }
+
+        void update_connection_name_label_text () {
+            label.text = "%s%s".printf (_connection_name,
+                 _connection_type == "gadget" ? " (USB)" : "");
+        }
+
+        void update_signal_strength_label_text () {
+            if (_connection_type in CONNECTION_TYPES_WITHOUT_STRENGTH)
+                signal_strength_label.text = null;
+            else
+                signal_strength_label.text = "%d%s".printf (_signal_strength, PERCENT);
         }
     }
 }

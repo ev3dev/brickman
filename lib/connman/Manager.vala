@@ -42,21 +42,22 @@ namespace ConnMan {
             }
         }
 
-        public signal void technology_added (Object sender, Technology technology);
-        public signal void technology_removed (Object sender, Technology technology);
+        public signal void technology_added (Technology technology);
+        public signal void technology_removed (ObjectPath path);
+        public signal void services_changed (Service[] changed, ObjectPath[] removed);
 
         public static async Manager new_async () throws IOError {
             var manager = new Manager ();
+            weak Manager weak_manager = manager;
             manager.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 net.connman.SERVICE_NAME, net.connman.Manager.OBJECT_PATH);
-            manager.dbus_proxy.property_changed.connect (manager.on_property_changed);
+            manager.dbus_proxy.property_changed.connect (weak_manager.on_property_changed);
             var properties = yield manager.dbus_proxy.get_properties ();
             properties.foreach ((k, v) =>
                 ((DBusProxy)manager.dbus_proxy).set_cached_property (k, v));
-            manager.dbus_proxy.technology_added.connect ((path, properties) =>
-                manager.on_technology_added.begin (path, properties));
-            manager.dbus_proxy.technology_removed.connect ((path) =>
-                manager.on_technology_removed.begin (path));
+            manager.dbus_proxy.technology_added.connect (weak_manager.on_technology_added);
+            manager.dbus_proxy.technology_removed.connect (weak_manager.on_technology_removed);
+            manager.dbus_proxy.services_changed.connect (weak_manager.on_services_changed);
             return manager;
         }
 
@@ -96,23 +97,32 @@ namespace ConnMan {
             return result;
         }
 
-        async void on_technology_added (ObjectPath path, HashTable<string, Variant?> properties) {
+        void on_technology_added (ObjectPath path, HashTable<string, Variant?> properties) {
             try {
-                var tech = yield Technology.from_path (path);
+                var tech = Technology.from_path_sync (path);
                 properties.foreach ((k, v) =>
-                    ((DBusProxy)tech.dbus_proxy).set_cached_property(k, v));
-                technology_added (this, tech);
+                    ((DBusProxy)tech.dbus_proxy).set_cached_property (k, v));
+                technology_added (tech);
             } catch (IOError err) {
                 critical ("ConnMan.Manager.on_technology_added: %s", err.message);
             }
         }
 
-        async void on_technology_removed (ObjectPath path) {
+        void on_technology_removed (ObjectPath path) {
+            technology_removed (path);
+        }
+
+        void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
             try {
-                var tech = yield Technology.from_path (path);
-                technology_added (this, tech);
+                Service[] services = new Service[changed.length];
+                for (int i = 0; i < services.length; i++) {
+                    services[i] = Service.from_path_sync (changed[i].path);
+                    changed[i].properties.foreach ((k, v) =>
+                        services[i].on_property_changed (k, v));
+                }
+                services_changed (services, removed);
             } catch (IOError err) {
-                critical ("ConnMan.Manager.on_technology_removed: %s", err.message);
+                critical ("ConnMan.Manager.on_services_changed: %s", err.message);
             }
         }
 
