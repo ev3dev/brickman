@@ -74,10 +74,12 @@ namespace ConnMan {
         public bool auto_connect {
             get { return dbus_proxy.auto_connect; }
             set {
+                if (value == auto_connect)
+                    return;
                 try {
-                    dbus_proxy.set_property_sync("AutoConnect", value);
+                    dbus_proxy.set_property_sync ("AutoConnect", value);
                 } catch (Error err) {
-                    critical("%s", err.message);
+                    critical ("%s", err.message);
                 }
             }
         }
@@ -332,7 +334,8 @@ namespace ConnMan {
             service.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 net.connman.SERVICE_NAME, path);
             service.path = path;
-            service.dbus_proxy.property_changed.connect (service.on_property_changed);
+            weak Service weak_service = service;
+            service.dbus_proxy.property_changed.connect (weak_service.on_property_changed);
             object_map[path] = service;
             return service;
         }
@@ -344,13 +347,14 @@ namespace ConnMan {
             service.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
                 net.connman.SERVICE_NAME, path);
             service.path = path;
-            service.dbus_proxy.property_changed.connect (service.on_property_changed);
+            weak Service weak_service = service;
+            service.dbus_proxy.property_changed.connect (weak_service.on_property_changed);
             object_map[path] = service;
             return service;
         }
 
-        ~Service() {
-            object_map.unset(path);
+        ~Service () {
+            object_map.unset (path);
         }
 
         public async void connect_service() throws IOError {
@@ -469,7 +473,7 @@ namespace ConnMan {
                 notify_property ("ethernet-mtu");
                 break;
             default:
-                critical("ConnMan.Service: unknown dbus property '%s'", name);
+                critical ("Unknown dbus property '%s'", name);
                 break;
             }
         }

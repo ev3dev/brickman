@@ -38,10 +38,12 @@ namespace ConnMan {
         public bool powered {
             get { return dbus_proxy.powered; }
             set {
+                if (value == powered)
+                    return;
                 try {
-                    dbus_proxy.set_property_sync("Powered", value);
+                    dbus_proxy.set_property_sync ("Powered", value);
                 } catch (Error err) {
-                    critical("%s", err.message);
+                    critical ("%s", err.message);
                 }
             }
         }
@@ -51,30 +53,36 @@ namespace ConnMan {
         public bool tethering {
             get { return dbus_proxy.tethering; }
             set {
+                if (value = tethering)
+                    return;
                 try {
-                    dbus_proxy.set_property_sync("Tethering", value);
+                    dbus_proxy.set_property_sync ("Tethering", value);
                 } catch (Error err) {
-                    critical("%s", err.message);
+                    critical ("%s", err.message);
                 }
             }
         }
         public string tethering_identifier {
             owned get { return dbus_proxy.tethering_identifier; }
             set {
+                if (value == tethering_identifier)
+                    return;
                 try {
-                    dbus_proxy.set_property_sync("TetheringIdentifier", value);
+                    dbus_proxy.set_property_sync ("TetheringIdentifier", value);
                 } catch (Error err) {
-                    critical("%s", err.message);
+                    critical ("%s", err.message);
                 }
             }
         }
         public string tethering_passphrase {
             owned get { return dbus_proxy.tethering_passphrase; }
             set {
+                if (value == tethering_passphrase)
+                    return;
                 try {
-                    dbus_proxy.set_property_sync("TetheringPassphrase", value);
+                    dbus_proxy.set_property_sync ("TetheringPassphrase", value);
                 } catch (Error err) {
-                    critical("%s", err.message);
+                    critical ("%s", err.message);
                 }
             }
         }
@@ -136,7 +144,7 @@ namespace ConnMan {
                 notify_property("tethering-passphrase");
                 break;
             default:
-                critical("ConnMan.Manager: unknown dbus property '%s'", name);
+                critical ("Unknown dbus property '%s'", name);
                 break;
             }
         }

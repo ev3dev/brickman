@@ -32,16 +32,16 @@ namespace BrickManager {
         Label state_value_label;
         internal EV3devKit.Menu menu;
         EV3devKit.MenuItem manage_connections_menu_item;
-        EV3devKit.CheckboxMenuItem airplane_mode_menu_item;
+        EV3devKit.CheckboxMenuItem offline_mode_menu_item;
 
         public string state {
             get { return state_value_label.text; }
             set { state_value_label.text = value; }
         }
 
-        public bool airplane_mode {
-            get { return airplane_mode_menu_item.checkbox.checked; }
-            set { airplane_mode_menu_item.checkbox.checked = value; }
+        public bool offline_mode {
+            get { return offline_mode_menu_item.checkbox.checked; }
+            set { offline_mode_menu_item.checkbox.checked = value; }
         }
 
         public signal void manage_connections_selected ();
@@ -64,11 +64,11 @@ namespace BrickManager {
             manage_connections_menu_item.button.pressed.connect (() => manage_connections_selected ());
             manage_connections_menu_item.label.text_horizontal_align = GRX.TextHorizAlign.LEFT;
             menu.add_menu_item (manage_connections_menu_item);
-            airplane_mode_menu_item = new EV3devKit.CheckboxMenuItem ("Airplane Mode");
-            airplane_mode_menu_item.checkbox.notify["checked"].connect ((s, p) => {
-                notify_property ("airplane-mode");
+            offline_mode_menu_item = new EV3devKit.CheckboxMenuItem ("Offline Mode");
+            offline_mode_menu_item.checkbox.notify["checked"].connect ((s, p) => {
+                notify_property ("offline-mode");
             });
-            menu.add_menu_item (airplane_mode_menu_item);
+            menu.add_menu_item (offline_mode_menu_item);
         }
     }
 }

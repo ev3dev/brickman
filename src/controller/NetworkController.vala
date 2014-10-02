@@ -30,8 +30,8 @@ namespace BrickManager {
         static Gee.Map<weak Service, weak NetworkConnectionMenuItem> service_map;
 
         static construct {
-            technology_map = new Gee.HashMap<Technology, CheckboxMenuItem> ();
-            service_map = new Gee.HashMap<Service, NetworkConnectionMenuItem> ();
+            technology_map = new Gee.HashMap<weak Technology, weak CheckboxMenuItem> ();
+            service_map = new Gee.HashMap<weak Service, weak NetworkConnectionMenuItem> ();
         }
 
         NetworkStatusWindow status_window;
@@ -64,14 +64,14 @@ namespace BrickManager {
             manager = yield Manager.new_async ();
             manager.bind_property ("state", status_window, "state",
                 BindingFlags.SYNC_CREATE, transform_manager_state_to_string);
-            manager.bind_property ("offline-mode", status_window, "airplane-mode",
+            manager.bind_property ("offline-mode", status_window, "offline-mode",
                 BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
             manager.technology_added.connect (on_technology_added);
             manager.technology_removed.connect (on_technology_removed);
             foreach (var technology in yield manager.get_technologies ())
                 on_technology_added (technology);
             manager.services_changed.connect (on_services_changed);
-            on_services_changed ((yield manager.get_services ()).to_array (), { });
+            on_services_changed (yield manager.get_services (), { });
         }
 
         bool transform_manager_state_to_string (Binding binding,
@@ -112,13 +112,13 @@ namespace BrickManager {
                 if (technology.path == path) {
                     iter.unset ();
                     status_window.menu.remove_menu_item (menu_item);
-                    return true;
+                    return false; // break
                 }
-                return false;
+                return true;
             });
         }
 
-        void on_services_changed (Service[] changed, ObjectPath[] removed) {
+        void on_services_changed (GenericArray<Service> changed, ObjectPath[] removed) {
             if (removed.length > 0) {
                 var iter = service_map.map_iterator ();
                 iter.foreach ((service, menu_item) => {
@@ -126,18 +126,17 @@ namespace BrickManager {
                         iter.unset ();
                         connections_window.menu.remove_menu_item (menu_item);
                     }
-                    return false;
+                    return true;
                 });
             }
-            foreach (var service in changed) {
+            changed.foreach ((service) => {
                 NetworkConnectionMenuItem menu_item;
                 if (service_map.has_key (service)) {
                     menu_item = service_map[service];
                     connections_window.menu.remove_menu_item (menu_item);
                 } else {
-                    menu_item = new NetworkConnectionMenuItem () {
-                        represented_object = service
-                    };
+                    menu_item = new NetworkConnectionMenuItem ();
+                    menu_item.represented_object = service;
                     service.bind_property ("service-type", menu_item, "connection-type",
                         BindingFlags.SYNC_CREATE);
                     service.bind_property ("name", menu_item, "connection-name",
@@ -147,7 +146,7 @@ namespace BrickManager {
                     service_map[service] = menu_item;
                 }
                 connections_window.menu.add_menu_item (menu_item);
-            }
+            });
         }
 
         bool transform_service_state_to_string (Binding binding,

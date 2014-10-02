@@ -92,7 +92,7 @@ namespace ConnMan {
                 notify_property("ipv4");
                 break;
             default:
-                critical("ConnMan.Peer: unknown dbus property '%s'", name);
+                critical ("Unknown dbus property '%s'", name);
                 break;
             }
         }

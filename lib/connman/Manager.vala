@@ -34,6 +34,8 @@ namespace ConnMan {
         public bool offline_mode {
             get { return dbus_proxy.offline_mode; }
             set {
+                if (value == offline_mode)
+                    return;
                 try {
                     dbus_proxy.set_property_sync ("OfflineMode", value);
                 } catch (Error err) {
@@ -44,7 +46,7 @@ namespace ConnMan {
 
         public signal void technology_added (Technology technology);
         public signal void technology_removed (ObjectPath path);
-        public signal void services_changed (Service[] changed, ObjectPath[] removed);
+        public signal void services_changed (GenericArray<Service> changed, ObjectPath[] removed);
 
         public static async Manager new_async () throws IOError {
             var manager = new Manager ();
@@ -73,9 +75,9 @@ namespace ConnMan {
             return result;
         }
 
-        public async Gee.List<Service> get_services () throws IOError {
+        public async GenericArray<Service> get_services () throws IOError {
             var services = yield dbus_proxy.get_services ();
-            var result = new ArrayList<Service> ();
+            var result = new GenericArray<Service> ();
             foreach (var item in services) {
                 var serv = yield Service.from_path (item.path);
                 item.properties.foreach ((k, v) =>
@@ -104,7 +106,7 @@ namespace ConnMan {
                     ((DBusProxy)tech.dbus_proxy).set_cached_property (k, v));
                 technology_added (tech);
             } catch (IOError err) {
-                critical ("ConnMan.Manager.on_technology_added: %s", err.message);
+                critical ("%s", err.message);
             }
         }
 
@@ -114,15 +116,16 @@ namespace ConnMan {
 
         void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
             try {
-                Service[] services = new Service[changed.length];
-                for (int i = 0; i < services.length; i++) {
-                    services[i] = Service.from_path_sync (changed[i].path);
-                    changed[i].properties.foreach ((k, v) =>
-                        services[i].on_property_changed (k, v));
+                var services = new GenericArray<Service>(changed.length);
+                foreach (var item in changed) {
+                    var service = Service.from_path_sync (item.path);
+                    item.properties.foreach ((k, v) =>
+                        service.on_property_changed (k, v));
+                    services.add (service);
                 }
                 services_changed (services, removed);
             } catch (IOError err) {
-                critical ("ConnMan.Manager.on_services_changed: %s", err.message);
+                critical ("%s", err.message);
             }
         }
 
@@ -136,7 +139,7 @@ namespace ConnMan {
                 notify_property ("offline-mode");
                 break;
             default:
-                critical ("ConnMan.Manager: unknown dbus property '%s'", name);
+                critical ("Unknown dbus property '%s'", name);
                 break;
             }
         }

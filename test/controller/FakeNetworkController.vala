@@ -41,7 +41,7 @@ namespace BrickManager {
             var networking_loading_checkbutton = builder.get_object ("networking_loading_checkbutton") as Gtk.CheckButton;
             networking_loading_checkbutton.bind_property ("active", network_status_window, "loading", BindingFlags.SYNC_CREATE);
             (builder.get_object ("connman_offline_mode_checkbutton") as Gtk.CheckButton)
-                .bind_property ("active", network_status_window, "airplane-mode",
+                .bind_property ("active", network_status_window, "offline-mode",
                     BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
             (builder.get_object ("connman_state_comboboxtext") as Gtk.ComboBoxText)
                 .bind_property ("active-id", network_status_window, "state", BindingFlags.SYNC_CREATE);
