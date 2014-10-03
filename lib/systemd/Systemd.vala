@@ -31,7 +31,7 @@ namespace Systemd {
         [DBus (value = "ignore-requirements")]
         IGNORE_REQUIREMENTS;
 
-        public static extern UnitMode from_string (string value) throws Error;
+        public static extern UnitMode from_string (string value) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -49,7 +49,7 @@ namespace Systemd {
         [DBus (value = "deactivating")]
         DEACTIVATING;
 
-        public static extern UnitActiveState from_string (string value) throws Error;
+        public static extern UnitActiveState from_string (string value) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -73,7 +73,7 @@ namespace Systemd {
         [DBus (value = "invalid")]
         INVALID;
 
-        public static extern UnitFileState from_string (string value) throws Error;
+        public static extern UnitFileState from_string (string value) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -91,7 +91,7 @@ namespace Systemd {
         [DBus (value = "skipped")]
         SKIPPED;
 
-        public static extern JobResult from_string (string value) throws Error;
+        public static extern JobResult from_string (string value) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -103,7 +103,7 @@ namespace Systemd {
         [DBus (value = "all")]
         ALL;
 
-        public static extern Who from_string (string value) throws Error;
+        public static extern Who from_string (string value) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -113,7 +113,7 @@ namespace Systemd {
         [DBus (value = "unlink")]
         UNLINK;
 
-        public static extern UnitLinkChangeType from_string (string value) throws Error;
+        public static extern UnitLinkChangeType from_string (string value) throws DBusError;
     }
 
     public struct UnitFileInfo {
@@ -357,7 +357,7 @@ namespace Systemd {
                 result[i].name = info[i].name;
                 try {
                     result[i].state = UnitFileState.from_string (info[i].state);
-                } catch (Error err) {
+                } catch (DBusError err) {
                     critical (err.message);
                 }
             }
@@ -465,7 +465,7 @@ namespace Systemd {
             for (int i = 0; i < info.length; i++) {
                 try {
                     result[i].change_type = UnitLinkChangeType.from_string (info[i].change_type);
-                } catch (Error err) {
+                } catch (DBusError err) {
                     critical (err.message);
                 }
                 result[i].symlink_name = info[i].symlink_name;

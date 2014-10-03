@@ -193,22 +193,36 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE, transform_service_security_array_to_string);
             service.bind_property ("strength", properties_window, "strength",
                 BindingFlags.SYNC_CREATE);
-            service.bind_property ("ipv4-method", properties_window, "ipv4-method",
-                BindingFlags.SYNC_CREATE, transform_service_ipv4_method_to_string);
-            service.bind_property ("ipv4-address", properties_window, "ipv4-address",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ipv4-netmask", properties_window, "ipv4-netmask",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ipv4-gateway", properties_window, "ipv4-gateway",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ethernet-method", properties_window, "enet-method",
-                BindingFlags.SYNC_CREATE, transform_service_enet_method_to_string);
-            service.bind_property ("ethernet-interface", properties_window, "enet-interface",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ethernet-mac-address", properties_window, "enet-address",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ethernet-mtu", properties_window, "enet-mtu",
-                BindingFlags.SYNC_CREATE);
+            service.bind_property ("ipv4", properties_window, "ipv4-method",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_method_string);
+            service.bind_property ("ipv4", properties_window, "ipv4-address",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
+            service.bind_property ("ipv4", properties_window, "ipv4-netmask",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_netmask_string);
+            service.bind_property ("ipv4", properties_window, "ipv4-gateway",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_gateway_string);
+            service.bind_property ("ethernet", properties_window, "enet-method",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_method_string);
+            service.bind_property ("ethernet", properties_window, "enet-interface",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_interface_string);
+            service.bind_property ("ethernet", properties_window, "enet-address",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_address_string);
+            service.bind_property ("ethernet", properties_window, "enet-mtu",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_mtu_int);
+            properties_window.dns_change_requested.connect ((addresses) =>
+                service.nameservers_configuration = addresses);
+            properties_window.ipv4_change_requested.connect ((method, address, netmask, gateway) => {
+                try {
+                    service.ipv4_configuration = new IPv4Info () {
+                        method = IPv4Method.from_string (method),
+                        address = address,
+                        netmask = netmask,
+                        gateway = gateway
+                    };
+                } catch (DBusError err) {
+                    critical ("Failed to convert method '%s' to IPv4Info", method);
+                }
+            });
             connections_window.screen.push_window (properties_window);
         }
 
@@ -252,10 +266,15 @@ namespace BrickManager {
             return true;
         }
 
-        bool transform_service_ipv4_method_to_string (Binding binding,
+        bool transform_service_ipv4_to_method_string (Binding binding,
             Value source_value, ref Value target_value)
         {
-            switch (source_value.get_enum ()) {
+            unowned IPv4Info info = (IPv4Info)source_value.get_pointer ();
+            if (info.method == null) {
+                target_value.set_string ("");
+                return true;
+            }
+            switch (info.method) {
             case IPv4Method.DHCP:
                 target_value.set_string ("DHCP");
                 break;
@@ -271,10 +290,39 @@ namespace BrickManager {
             return true;
         }
 
-        bool transform_service_enet_method_to_string (Binding binding,
+        bool transform_service_ipv4_to_address_string (Binding binding,
             Value source_value, ref Value target_value)
         {
-            switch (source_value.get_enum ()) {
+            unowned IPv4Info info = (IPv4Info)source_value.get_pointer ();
+            target_value.set_string (info.address ?? "");
+            return true;
+        }
+
+        bool transform_service_ipv4_to_netmask_string (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            unowned IPv4Info info = (IPv4Info)source_value.get_pointer ();
+            target_value.set_string (info.netmask ?? "");
+            return true;
+        }
+
+        bool transform_service_ipv4_to_gateway_string (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            unowned IPv4Info info = (IPv4Info)source_value.get_pointer ();
+            target_value.set_string (info.gateway ?? "");
+            return true;
+        }
+
+        bool transform_service_ethernet_to_method_string (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            unowned EthernetInfo info = (EthernetInfo)source_value.get_pointer ();
+            if (info.method == null) {
+                target_value.set_string ("");
+                return true;
+            }
+            switch (info.method) {
             case EthernetMethod.AUTO:
                 target_value.set_string ("Automatic");
                 break;
@@ -284,6 +332,30 @@ namespace BrickManager {
             default:
                 return false;
             }
+            return true;
+        }
+
+        bool transform_service_ethernet_to_interface_string (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            unowned EthernetInfo info = (EthernetInfo)source_value.get_pointer ();
+            target_value.set_string (info.interface ?? "");
+            return true;
+        }
+
+        bool transform_service_ethernet_to_address_string (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            unowned EthernetInfo info = (EthernetInfo)source_value.get_pointer ();
+            target_value.set_string (info.address ?? "");
+            return true;
+        }
+
+        bool transform_service_ethernet_to_mtu_int (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            unowned EthernetInfo info = (EthernetInfo)source_value.get_pointer ();
+            target_value.set_int (info.mtu ?? 0);
             return true;
         }
     }

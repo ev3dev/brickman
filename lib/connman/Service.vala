@@ -48,10 +48,10 @@ namespace ConnMan {
         const string PROVIDER_DOMAIN_KEY = "Domain";
         const string PROVIDER_NAME_KEY = "Name";
         const string PROVIDER_TYPE_KEY = "Type";
-        const string ETHERENET_METHOD_KEY = "Method";
-        const string ETHERENET_INTERFACE_KEY = "Interface";
-        const string ETHERENET_ADDRESS_KEY = "Address";
-        const string ETHERENET_MTU_KEY = "MTU";
+        const string ETHERNET_METHOD_KEY = "Method";
+        const string ETHERNET_INTERFACE_KEY = "Interface";
+        const string ETHERNET_ADDRESS_KEY = "Address";
+        const string ETHERNET_MTU_KEY = "MTU";
 
         internal net.connman.Service dbus_proxy;
 
@@ -91,7 +91,7 @@ namespace ConnMan {
             owned get { return dbus_proxy.nameservers_configuration; }
             set {
                 try {
-                    dbus_proxy.set_property_sync("NameserversConfiguration", value);
+                    dbus_proxy.set_property_sync ("Nameservers.Configuration", value);
                 } catch (Error err) {
                     critical("%s", err.message);
                 }
@@ -104,7 +104,7 @@ namespace ConnMan {
             owned get { return dbus_proxy.timeservers_configuration; }
             set {
                 try {
-                    dbus_proxy.set_property_sync("TimeserversConfiguration", value);
+                    dbus_proxy.set_property_sync ("Timeservers.Configuration", value);
                 } catch (Error err) {
                     critical("%s", err.message);
                 }
@@ -115,215 +115,246 @@ namespace ConnMan {
             owned get { return dbus_proxy.domains_configuration; }
             set {
                 try {
-                    dbus_proxy.set_property_sync("DomainsConfiguration", value);
+                    dbus_proxy.set_property_sync ("Domains.Configuration", value);
                 } catch (Error err) {
                     critical("%s", err.message);
                 }
             }
         }
-        public IPv4Method? ipv4_method {
-            get {
-                if (dbus_proxy.ipv4[IPV4_METHOD_KEY] == null)
-                    return null;
-                try {
-                    return IPv4Method.from_string(
-                        dbus_proxy.ipv4[IPV4_METHOD_KEY].get_string());
-                } catch (Error err) {
-                    critical("%s", err.message);
-                    return IPv4Method.DHCP;
+
+        public IPv4Info ipv4 {
+            owned get {
+                var config = dbus_proxy.ipv4;
+                var info = new IPv4Info ();
+                if (config[IPV4_METHOD_KEY] != null) {
+                    try {
+                        info.method = IPv4Method.from_string (
+                            config[IPV4_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
                 }
+                if (config[IPV4_ADDRESS_KEY] != null)
+                    info.address = config[IPV4_ADDRESS_KEY].dup_string ();
+                if (config[IPV4_NETMASK_KEY] != null)
+                    info.netmask = config[IPV4_NETMASK_KEY].dup_string ();
+                if (config[IPV4_GATEWAY_KEY] != null)
+                    info.gateway = config[IPV4_GATEWAY_KEY].dup_string ();
+                return info;
             }
         }
-        public string? ipv4_address {
+
+        public IPv4Info ipv4_configuration {
             owned get {
-                if (dbus_proxy.ipv4[IPV4_ADDRESS_KEY] == null)
-                    return null;
-                return dbus_proxy.ipv4[IPV4_ADDRESS_KEY].dup_string();
+                var config = dbus_proxy.ipv4_configuration;
+                var info = new IPv4Info ();
+                    if (config[IPV4_METHOD_KEY] != null) {
+                    try {
+                        info.method = IPv4Method.from_string (
+                            config[IPV4_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
+                }
+                if (config[IPV4_ADDRESS_KEY] != null)
+                    info.address = config[IPV4_ADDRESS_KEY].dup_string ();
+                if (config[IPV4_NETMASK_KEY] != null)
+                    info.netmask = config[IPV4_NETMASK_KEY].dup_string ();
+                if (config[IPV4_GATEWAY_KEY] != null)
+                    info.gateway = config[IPV4_GATEWAY_KEY].dup_string ();
+                return info;
             }
-        }
-        public string? ipv4_netmask {
-            owned get {
-                if (dbus_proxy.ipv4[IPV4_NETMASK_KEY] == null)
-                    return null;
-                return dbus_proxy.ipv4[IPV4_NETMASK_KEY].dup_string();
-            }
-        }
-        public string? ipv4_gateway {
-            owned get {
-                if (dbus_proxy.ipv4[IPV4_GATEWAY_KEY] == null)
-                    return null;
-                return dbus_proxy.ipv4[IPV4_GATEWAY_KEY].dup_string();
-            }
-        }
-        public HashTable<string, Variant?> ipv4_configuration {
-            owned get { return dbus_proxy.ipv4_configuration; }
             set {
                 try {
-                    dbus_proxy.set_property_sync("IPv4Configuration", value);
+                    var config = new HashTable<string, Variant?> (null, null);
+                    if (value.method != null)
+                        config[IPV4_METHOD_KEY] = new Variant.string (value.method.to_string ());
+                    if (value.address != null)
+                        config[IPV4_ADDRESS_KEY] = new Variant.string (value.address);
+                    if (value.netmask != null)
+                        config[IPV4_NETMASK_KEY] = new Variant.string (value.netmask);
+                    if (value.gateway != null)
+                        config[IPV4_GATEWAY_KEY] = new Variant.string (value.gateway);
+                    dbus_proxy.set_property_sync ("IPv4.Configuration", config);
                 } catch (Error err) {
                     critical("%s", err.message);
                 }
             }
         }
-        public IPv6Method? ipv6_method {
-            get {
-                if (dbus_proxy.ipv6[IPV6_METHOD_KEY] == null)
-                    return null;
-                try {
-                    return IPv6Method.from_string(
-                        dbus_proxy.ipv6[IPV6_METHOD_KEY].get_string());
-                } catch (Error err) {
-                    critical("%s", err.message);
-                    return IPv6Method.DHCP;
-                }
-            }
-        }
-        public string? ipv6_address {
+
+         public IPv6Info ipv6 {
             owned get {
-                if (dbus_proxy.ipv6[IPV6_ADDRESS_KEY] == null)
-                    return null;
-                return dbus_proxy.ipv6[IPV6_ADDRESS_KEY].dup_string();
-            }
-        }
-        public uchar ipv6_prefix_length {
-            get {
-                if (dbus_proxy.ipv6[IPV6_PREFIX_LENGTH_KEY] == null)
-                    return 0;
-                return dbus_proxy.ipv6[IPV6_PREFIX_LENGTH_KEY].get_byte ();
-            }
-        }
-        public string? ipv6_gateway {
-            owned get {
-                if (dbus_proxy.ipv6[IPV6_GATEWAY_KEY] == null)
-                    return null;
-                return dbus_proxy.ipv6[IPV6_GATEWAY_KEY].dup_string();
-            }
-        }
-        public IPv6Privacy? ipv6_privacy {
-            get {
-                if (dbus_proxy.ipv6[IPV6_PRIVACY_KEY] == null)
-                    return null;
-                try {
-                    return IPv6Privacy.from_string(
-                        dbus_proxy.ipv6[IPV6_PRIVACY_KEY].get_string());
-                } catch (Error err) {
-                    critical("%s", err.message);
-                    return IPv6Privacy.DISABLED;
+                var config = dbus_proxy.ipv6;
+                var info = new IPv6Info ();
+                if (config[IPV6_METHOD_KEY] != null) {
+                    try {
+                        info.method = IPv6Method.from_string (
+                            config[IPV6_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
                 }
+                if (config[IPV6_ADDRESS_KEY] != null)
+                    info.address = config[IPV6_ADDRESS_KEY].dup_string ();
+                if (config[IPV6_PREFIX_LENGTH_KEY] != null)
+                    info.prefix_length = config[IPV6_PREFIX_LENGTH_KEY].dup_string ();
+                if (config[IPV6_GATEWAY_KEY] != null)
+                    info.gateway = config[IPV6_GATEWAY_KEY].dup_string ();
+                if (config[IPV6_PRIVACY_KEY] != null) {
+                    try {
+                        info.privacy = IPv6Privacy.from_string (
+                            config[IPV6_PRIVACY_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
+                }
+                return info;
             }
         }
-        public HashTable<string, Variant?> ipv6_configuration {
-            owned get { return dbus_proxy.ipv6_configuration; }
+
+        public IPv6Info ipv6_configuration {
+            owned get {
+                var config = dbus_proxy.ipv6_configuration;
+                var info = new IPv6Info ();
+                if (config[IPV6_METHOD_KEY] != null) {
+                    try {
+                        info.method = IPv6Method.from_string (
+                            config[IPV6_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
+                }
+                if (config[IPV6_ADDRESS_KEY] != null)
+                    info.address = config[IPV6_ADDRESS_KEY].dup_string ();
+                if (config[IPV6_PREFIX_LENGTH_KEY] != null)
+                    info.prefix_length = config[IPV6_PREFIX_LENGTH_KEY].dup_string ();
+                if (config[IPV6_GATEWAY_KEY] != null)
+                    info.gateway = config[IPV6_GATEWAY_KEY].dup_string ();
+                if (config[IPV6_PRIVACY_KEY] != null) {
+                    try {
+                        info.privacy = IPv6Privacy.from_string (
+                            config[IPV6_PRIVACY_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
+                }
+                return info;
+            }
             set {
                 try {
-                    dbus_proxy.set_property_sync("IPv6Configuration", value);
+                    var config = new HashTable<string, Variant?> (null, null);
+                    if (value.method != null)
+                        config[IPV6_METHOD_KEY] = new Variant.string (value.method.to_string ());
+                    if (value.address != null)
+                        config[IPV6_ADDRESS_KEY] = new Variant.string (value.address);
+                    if (value.prefix_length != null)
+                        config[IPV6_PREFIX_LENGTH_KEY] = new Variant.string (value.prefix_length);
+                    if (value.gateway != null)
+                        config[IPV6_GATEWAY_KEY] = new Variant.string (value.gateway);
+                    if (value.privacy != null)
+                        config[IPV6_PRIVACY_KEY] = new Variant.string (value.privacy.to_string ());
+                    dbus_proxy.set_property_sync ("IPv6.Configuration", config);
                 } catch (Error err) {
                     critical("%s", err.message);
                 }
             }
         }
-        public ProxyMethod? proxy_method {
-             get {
-                 if (dbus_proxy.proxy[PROXY_METHOD_KEY] == null)
-                    return null;
-                 try {
-                    return ProxyMethod.from_string(
-                        dbus_proxy.proxy[PROXY_METHOD_KEY].get_string());
-                } catch (Error err) {
-                    critical("%s", err.message);
-                    return ProxyMethod.AUTO;
+
+         public ProxyInfo proxy {
+            owned get {
+                var config = dbus_proxy.proxy;
+                var info = new ProxyInfo ();
+                if (config[PROXY_METHOD_KEY] != null) {
+                    try {
+                        info.method = ProxyMethod.from_string (
+                            config[PROXY_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
                 }
+                if (config[PROXY_URL_KEY] != null)
+                    info.url = config[PROXY_URL_KEY].dup_string ();
+                if (config[PROXY_SERVERS_KEY] != null)
+                    info.servers = config[PROXY_SERVERS_KEY].dup_strv ();
+                if (config[PROXY_EXCLUDES_KEY] != null)
+                    info.excludes = config[PROXY_EXCLUDES_KEY].dup_strv ();
+                return info;
             }
         }
-        public string? proxy_url {
+
+        public ProxyInfo proxy_configuration {
             owned get {
-                if (dbus_proxy.proxy[PROXY_URL_KEY] == null)
-                    return null;
-                return dbus_proxy.proxy[PROXY_URL_KEY].dup_string();
+                var config = dbus_proxy.proxy_configuration;
+                var info = new ProxyInfo ();
+                if (config[PROXY_METHOD_KEY] != null) {
+                    try {
+                        info.method = ProxyMethod.from_string (
+                            config[PROXY_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
+                }
+                if (config[PROXY_URL_KEY] != null)
+                    info.url = config[PROXY_URL_KEY].dup_string ();
+                if (config[PROXY_SERVERS_KEY] != null)
+                    info.servers = config[PROXY_SERVERS_KEY].dup_strv ();
+                if (config[PROXY_EXCLUDES_KEY] != null)
+                    info.excludes = config[PROXY_EXCLUDES_KEY].dup_strv ();
+                return info;
             }
-        }
-        public string[]? proxy_servers {
-            owned get {
-                if (dbus_proxy.proxy[PROXY_SERVERS_KEY] == null)
-                    return null;
-                return dbus_proxy.proxy[PROXY_SERVERS_KEY].dup_strv();
-            }
-        }
-        public string[]? proxy_excludes{
-            owned get {
-                if (dbus_proxy.proxy[PROXY_EXCLUDES_KEY] == null)
-                    return null;
-                return dbus_proxy.proxy[PROXY_EXCLUDES_KEY].dup_strv();
-            }
-        }
-        public HashTable<string, Variant?> proxy_configuration {
-            owned get { return dbus_proxy.proxy_configuration; }
             set {
                 try {
-                    dbus_proxy.set_property_sync("ProxyConfiguration", value);
+                    var config = new HashTable<string, Variant?> (null, null);
+                    if (value.method != null)
+                        config[PROXY_METHOD_KEY] = new Variant.string (value.method.to_string ());
+                    if (value.url != null)
+                        config[PROXY_URL_KEY] = new Variant.string (value.url);
+                    if (value.servers != null)
+                        config[PROXY_SERVERS_KEY] = new Variant.strv (value.servers);
+                    if (value.excludes != null)
+                        config[PROXY_EXCLUDES_KEY] = new Variant.strv (value.excludes);
+                    dbus_proxy.set_property_sync ("Proxy.Configuration", config);
                 } catch (Error err) {
                     critical("%s", err.message);
                 }
             }
         }
-        public string? provider_host {
+
+         public ProviderInfo provider {
             owned get {
-                if (dbus_proxy.provider[PROVIDER_HOST_KEY] == null)
-                    return null;
-                return dbus_proxy.provider[PROVIDER_HOST_KEY].dup_string();
+                var config = dbus_proxy.provider;
+                var info = new ProviderInfo ();
+                if (config[PROVIDER_HOST_KEY] != null)
+                    info.host = config[PROVIDER_HOST_KEY].dup_string ();
+                if (config[PROVIDER_DOMAIN_KEY] != null)
+                    info.domain = config[PROVIDER_DOMAIN_KEY].dup_string ();
+                if (config[PROVIDER_NAME_KEY] != null)
+                    info.name = config[PROVIDER_NAME_KEY].dup_string ();
+                if (config[PROVIDER_TYPE_KEY] != null)
+                    info.type = config[PROVIDER_TYPE_KEY].dup_string ();
+                return info;
             }
         }
-        public string? provider_domain {
+
+         public EthernetInfo ethernet {
             owned get {
-                if (dbus_proxy.provider[PROVIDER_DOMAIN_KEY] == null)
-                    return null;
-                return dbus_proxy.provider[PROVIDER_DOMAIN_KEY].dup_string();
-            }
-        }
-        public string? provider_name {
-            owned get {
-                if (dbus_proxy.provider[PROVIDER_NAME_KEY] == null)
-                    return null;
-                return dbus_proxy.provider[PROVIDER_NAME_KEY].dup_string();
-            }
-        }
-        public string? provider_type {
-            owned get {
-                if (dbus_proxy.provider[PROVIDER_TYPE_KEY] == null)
-                    return null;
-                return dbus_proxy.provider[PROVIDER_TYPE_KEY].dup_string();
-            }
-        }
-        public EthernetMethod ethernet_method {
-            get {
-                try {
-                    return EthernetMethod.from_string(
-                        dbus_proxy.ethernet[ETHERENET_METHOD_KEY].get_string());
-                } catch (Error err) {
-                    critical("%s", err.message);
-                    return EthernetMethod.AUTO;
+                var config = dbus_proxy.ethernet;
+                var info = new EthernetInfo ();
+                if (config[ETHERNET_METHOD_KEY] != null) {
+                    try {
+                        info.method = EthernetMethod.from_string (
+                            config[ETHERNET_METHOD_KEY].get_string ());
+                    } catch (DBusError err) {
+                        critical ("%s", err.message);
+                    }
                 }
-            }
-        }
-        public string? ethernet_interface {
-            owned get {
-                if (dbus_proxy.ethernet[ETHERENET_INTERFACE_KEY] == null)
-                    return null;
-                return dbus_proxy.ethernet[ETHERENET_INTERFACE_KEY].dup_string();
-            }
-        }
-        public string? ethernet_mac_address {
-            owned get {
-                if (dbus_proxy.ethernet[ETHERENET_ADDRESS_KEY] == null)
-                    return null;
-                return dbus_proxy.ethernet[ETHERENET_ADDRESS_KEY].dup_string();
-            }
-        }
-        public uint ethernet_mtu {
-            get {
-                if (dbus_proxy.ethernet[ETHERENET_MTU_KEY] == null)
-                    return uint.MAX;
-                return dbus_proxy.ethernet[ETHERENET_MTU_KEY].get_uint16();
+                if (config[ETHERNET_INTERFACE_KEY] != null)
+                    info.interface = config[ETHERNET_INTERFACE_KEY].dup_string ();
+                if (config[ETHERNET_ADDRESS_KEY] != null)
+                    info.address = config[ETHERNET_ADDRESS_KEY].dup_string ();
+                if (config[ETHERNET_MTU_KEY] != null)
+                    info.mtu = config[ETHERNET_MTU_KEY].get_uint16 ();
+                return info;
             }
         }
 
@@ -433,44 +464,28 @@ namespace ConnMan {
                 notify_property("domains-configuration");
                 break;
             case "IPv4":
-                notify_property ("ipv4-method");
-                notify_property ("ipv4-address");
-                notify_property ("ipv4-netmask");
-                notify_property ("ipv4-gateway");
+                notify_property ("ipv4");
                 break;
             case "IPv4.Configuration":
                 notify_property("ipv4-configuration");
                 break;
             case "IPv6":
-                notify_property ("ipv6-method");
-                notify_property ("ipv6-address");
-                notify_property ("ipv6-prefix-length");
-                notify_property ("ipv6-gateway");
-                notify_property ("ipv6-privacy");
+                notify_property ("ipv6");
                 break;
             case "IPv6.Configuration":
                 notify_property("ipv6-configuration");
                 break;
             case "Proxy":
-                notify_property ("proxy-method");
-                notify_property ("proxy-url");
-                notify_property ("proxy-servers");
-                notify_property ("proxy-excludes");
+                notify_property ("proxy");
                 break;
             case "Proxy.Configuration":
                 notify_property("proxy-configuration");
                 break;
             case "Provider":
-                notify_property ("provider-host");
-                notify_property ("provider-domain");
-                notify_property ("provider-name");
-                notify_property ("provider-type");
+                notify_property ("provider");
                 break;
             case "Ethernet":
-                notify_property ("ethernet-method");
-                notify_property ("ethernet-interface");
-                notify_property ("ethernet-mac-address");
-                notify_property ("ethernet-mtu");
+                notify_property ("ethernet");
                 break;
             default:
                 critical ("Unknown dbus property '%s'", name);
@@ -520,8 +535,14 @@ namespace ConnMan {
         [DBus (value = "off")]
         OFF;
 
-        // hack to expose method created by DBus use_string_marshalling
-        public static extern IPv4Method from_string(string method) throws Error;
+        // hacks to expose methods created by DBus use_string_marshalling
+        [CCode (cname = "conn_man_ipv4_method_to_string (self)")]
+        extern const string to_string_hack;
+        [CCode (cname = "conn_man_ipv4_method_to_string_wrapper")]
+        public string to_string () {
+            return to_string_hack;
+        }
+        public static extern IPv4Method from_string (string method) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -535,8 +556,14 @@ namespace ConnMan {
         [DBus (value = "off")]
         OFF;
 
-        // hack to expose method created by DBus use_string_marshalling
-        public static extern IPv6Method from_string(string method) throws Error;
+        // hacks to expose methods created by DBus use_string_marshalling
+        [CCode (cname = "conn_man_ipv6_method_to_string (self)")]
+        extern const string to_string_hack;
+        [CCode (cname = "conn_man_ipv6_method_to_string_wrapper")]
+        public string to_string () {
+            return to_string_hack;
+        }
+        public static extern IPv6Method from_string (string method) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -548,8 +575,14 @@ namespace ConnMan {
         [DBus (value = "preferred")]
         PREFERRED;
 
-        // hack to expose method created by DBus use_string_marshalling
-        public static extern IPv6Privacy from_string(string method) throws Error;
+        // hacks to expose methods created by DBus use_string_marshalling
+        [CCode (cname = "conn_man_ipv6_privacy_to_string (self)")]
+        extern const string to_string_hack;
+        [CCode (cname = "conn_man_ipv6_privacy_to_string_wrapper")]
+        public string to_string () {
+            return to_string_hack;
+        }
+        public static extern IPv6Privacy from_string (string method) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -561,8 +594,14 @@ namespace ConnMan {
         [DBus (value = "manual")]
         MANUAL;
 
-        // hack to expose method created by DBus use_string_marshalling
-        public static extern ProxyMethod from_string(string method) throws Error;
+        // hacks to expose methods created by DBus use_string_marshalling
+        [CCode (cname = "conn_man_proxy_method_to_string (self)")]
+        extern const string to_string_hack;
+        [CCode (cname = "conn_man_proxy_method_to_string_wrapper")]
+        public string to_string () {
+            return to_string_hack;
+        }
+        public static extern ProxyMethod from_string (string method) throws DBusError;
     }
 
     [DBus (use_string_marshalling = true)]
@@ -572,8 +611,55 @@ namespace ConnMan {
         [DBus (value = "manual")]
         MANUAL;
 
-        // hack to expose method created by DBus use_string_marshalling
-        public static extern EthernetMethod from_string(string method) throws Error;
+        // hacks to expose methods created by DBus use_string_marshalling
+        [CCode (cname = "conn_man_ethernet_method_to_string (self)")]
+        extern const string to_string_hack;
+        [CCode (cname = "conn_man_ethernet_method_to_string_wrapper")]
+        public string to_string () {
+            return to_string_hack;
+        }
+        public static extern EthernetMethod from_string (string method) throws DBusError;
+    }
+
+    [Compact]
+    public class IPv4Info {
+        public IPv4Method? method;
+        public string? address;
+        public string? netmask;
+        public string? gateway;
+    }
+
+    [Compact]
+    public class IPv6Info {
+        public IPv6Method? method;
+        public string? address;
+        public string? prefix_length;
+        public string? gateway;
+        public IPv6Privacy? privacy;
+    }
+
+    [Compact]
+    public class ProxyInfo {
+        public ProxyMethod? method;
+        public string? url;
+        public string[]? servers;
+        public string[]? excludes;
+    }
+
+    [Compact]
+    public class ProviderInfo {
+        public string? host;
+        public string? domain;
+        public string? name;
+        public string? type;
+    }
+
+    [Compact]
+    public class EthernetInfo {
+        public EthernetMethod? method;
+        public string? interface;
+        public string? address;
+        public uint16? mtu;
     }
 }
 
