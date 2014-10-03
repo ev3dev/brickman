@@ -29,11 +29,41 @@ using EV3devKit;
 namespace BrickManager {
     class NetworkConnectionsWindow : BrickManagerWindow {
         internal EV3devKit.Menu menu;
+        Button scan_wifi_button;
 
+        public bool has_wifi { get; set; }
+        public bool scan_wifi_busy { get; set; }
+
+        public signal void scan_wifi_selected ();
         public signal void connection_selected (Object user_data);
 
         public NetworkConnectionsWindow () {
             title = "Network Connections";
+            scan_wifi_button = new Button.with_label ("Scan WiFi", small_font) {
+                horizontal_align = WidgetAlign.START,
+                vertical_align = WidgetAlign.START,
+                border_radius = 3,
+                margin_top = -4,
+                margin_bottom = -1,
+                margin_left = 3,
+                padding_top = -2
+            };
+            scan_wifi_button.pressed.connect (() => {
+                if (!_scan_wifi_busy)
+                    scan_wifi_selected ();
+            });
+            notify["has-wifi"].connect (() => {
+                if (_has_wifi)
+                    content_vbox.insert_before (scan_wifi_button, menu);
+                else
+                    content_vbox.remove (scan_wifi_button);
+            });
+            notify["scan-wifi-busy"].connect (() => {
+                if (_scan_wifi_busy)
+                    ((Label)scan_wifi_button.child).text = "Scanning";
+                else
+                    ((Label)scan_wifi_button.child).text = "Scan WiFi";
+            });
             menu = new EV3devKit.Menu () {
                 spacing = 2
             };

@@ -69,7 +69,10 @@ namespace BrickManager {
             get { return _strength; }
             set {
                 _strength = value;
-                strength_label.text = "%u%%".printf (value);
+                if (value == 0)
+                    strength_label.text = "N/A";
+                else
+                    strength_label.text = "%u%%".printf (value);
             }
         }
 
@@ -128,8 +131,8 @@ namespace BrickManager {
 
         public signal void dns_change_requested (string[] addresses);
 
-        public signal void ipv4_change_requested (string method, string address,
-            string netmask, string gateway);
+        public signal void ipv4_change_requested (string method, string? address,
+            string? netmask, string? gateway);
 
         public NetworkPropertiesWindow (string title) {
             this.title = title;
@@ -141,14 +144,15 @@ namespace BrickManager {
 
             info_tab = new NotebookTab ("Info");
             notebook.add_tab (info_tab);
-            info_tab_grid = new Grid (5, 2);
+            info_tab_grid = new Grid (6, 2);
             info_tab.add (info_tab_grid);
             var auto_connect_hbox = new Box.horizontal () {
                 horizontal_align = WidgetAlign.CENTER
             };
             info_tab_grid.add_at (auto_connect_hbox, 0, 0, 1, 2);
-            auto_connect_hbox.add (new Label ("Auto. Connect:") {
-                horizontal_align = WidgetAlign.END
+            auto_connect_hbox.add (new Label ("Connect automatically:") {
+                horizontal_align = WidgetAlign.END,
+                font = small_font
             });
             auto_connect_checkbox = new CheckButton.checkbox () {
                 horizontal_align = WidgetAlign.START
@@ -158,26 +162,32 @@ namespace BrickManager {
             auto_connect_hbox.add (auto_connect_checkbox);
             info_tab_grid.add (new Label ("State:") {
                 horizontal_align = WidgetAlign.END,
+                font = small_font,
                 margin_right = 4
             });
             state_label = new Label () {
-                horizontal_align = WidgetAlign.START
+                horizontal_align = WidgetAlign.START,
+                font = small_font
             };
             info_tab_grid.add (state_label);
             info_tab_grid.add (new Label ("Security:") {
                 horizontal_align = WidgetAlign.END,
+                font = small_font,
                 margin_right = 4
             });
             security_label = new Label () {
-                horizontal_align = WidgetAlign.START
+                horizontal_align = WidgetAlign.START,
+                font = small_font
             };
             info_tab_grid.add (security_label);
             info_tab_grid.add (new Label ("Strength:") {
                 horizontal_align = WidgetAlign.END,
+                font = small_font,
                 margin_right = 4
             });
             strength_label = new Label () {
-                horizontal_align = WidgetAlign.START
+                horizontal_align = WidgetAlign.START,
+                font = small_font
             };
             info_tab_grid.add (strength_label);
 
@@ -360,7 +370,8 @@ namespace BrickManager {
                 padding_top = -1
             };
             dchp_button.pressed.connect (() => {
-                ipv4_change_requested ("dhcp", "", "", "");
+                ipv4_change_requested ("dhcp", null, null, null);
+                dns_change_requested ({ });
                 screen.pop_window ();
             });
             button_vbox.add (dchp_button);

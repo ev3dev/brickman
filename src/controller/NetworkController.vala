@@ -37,6 +37,7 @@ namespace BrickManager {
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
         Manager manager;
+        Technology? wifi_technology;
 
         public string menu_item_text { get { return "Network"; } }
         public Window start_window { get { return status_window; } }
@@ -47,6 +48,8 @@ namespace BrickManager {
             connections_window = new NetworkConnectionsWindow ();
             status_window.manage_connections_selected.connect (() =>
                 weak_status_window.screen.push_window (connections_window));
+            connections_window.scan_wifi_selected.connect (() =>
+                on_connections_window_scan_wifi_selected.begin ());
             connections_window.connection_selected.connect (
                 on_connections_window_connection_selected);
             init_async.begin ((obj, res) => {
@@ -82,10 +85,10 @@ namespace BrickManager {
                 target_value.set_string ("Offline");
                 break;
             case ManagerState.IDLE:
-                target_value.set_string ("Idle");
+                target_value.set_string ("No connections");
                 break;
             case ManagerState.READY:
-                target_value.set_string ("Ready");
+                target_value.set_string ("Connected");
                 break;
             case ManagerState.ONLINE:
                 target_value.set_string ("Online");
@@ -104,6 +107,12 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
             status_window.menu.add_menu_item (menu_item);
             technology_map[technology] = menu_item;
+
+            if (technology.technology_type == "wifi") {
+                technology.bind_property ("powered", connections_window,
+                    "has-wifi", BindingFlags.SYNC_CREATE);
+                wifi_technology = technology;
+            }
         }
 
         void on_technology_removed (ObjectPath path) {
@@ -111,6 +120,10 @@ namespace BrickManager {
             iter.foreach ((technology, menu_item) => {
                 if (technology.path == path) {
                     iter.unset ();
+                    if (technology.technology_type == "wifi") {
+                        connections_window.has_wifi = false;
+                        wifi_technology = null;
+                    }
                     status_window.menu.remove_menu_item (menu_item);
                     return false; // break
                 }
@@ -137,8 +150,6 @@ namespace BrickManager {
                 } else {
                     menu_item = new NetworkConnectionMenuItem ();
                     menu_item.represented_object = service;
-                    service.bind_property ("service-type", menu_item, "connection-type",
-                        BindingFlags.SYNC_CREATE);
                     service.bind_property ("name", menu_item, "connection-name",
                         BindingFlags.SYNC_CREATE);
                     service.bind_property ("strength", menu_item, "signal-strength",
@@ -154,22 +165,22 @@ namespace BrickManager {
         {
             switch (source_value.get_enum ()) {
             case ServiceState.IDLE:
-                target_value.set_string ("Idle");
+                target_value.set_string ("Disconnected");
                 break;
             case ServiceState.FAILURE:
-                target_value.set_string ("Failure");
+                target_value.set_string ("Failed");
                 break;
             case ServiceState.ASSOCIATION:
-                target_value.set_string ("Association");
+                target_value.set_string ("Associating");
                 break;
             case ServiceState.CONFIGURATION:
-                target_value.set_string ("Configuration");
+                target_value.set_string ("Configuring");
                 break;
             case ServiceState.READY:
-                target_value.set_string ("Ready");
+                target_value.set_string ("Connected");
                 break;
             case ServiceState.DISCONNECT:
-                target_value.set_string ("Disconnect");
+                target_value.set_string ("Disconnecting");
                 break;
             case ServiceState.ONLINE:
                 target_value.set_string ("Online");
@@ -178,6 +189,19 @@ namespace BrickManager {
                 return false;
             }
             return true;
+        }
+
+        async void on_connections_window_scan_wifi_selected ()
+            requires (wifi_technology != null && wifi_technology.powered)
+        {
+            connections_window.scan_wifi_busy = true;
+            try {
+                yield wifi_technology.scan ();
+            } catch (IOError err) {
+                // TODO: Show error message
+            } finally {
+                connections_window.scan_wifi_busy = false;
+            }
         }
 
         void on_connections_window_connection_selected (Object user_data) {
@@ -201,6 +225,8 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE, transform_service_ipv4_to_netmask_string);
             service.bind_property ("ipv4", properties_window, "ipv4-gateway",
                 BindingFlags.SYNC_CREATE, transform_service_ipv4_to_gateway_string);
+            service.bind_property ("nameservers", properties_window, "dns-addresses",
+                BindingFlags.SYNC_CREATE);
             service.bind_property ("ethernet", properties_window, "enet-method",
                 BindingFlags.SYNC_CREATE, transform_service_ethernet_to_method_string);
             service.bind_property ("ethernet", properties_window, "enet-interface",
@@ -245,10 +271,10 @@ namespace BrickManager {
                     builder.append ("WEP");
                     break;
                 case ServiceSecurity.PSK:
-                    builder.append ("PSK");
+                    builder.append ("WPA/2 PSK");
                     break;
                 case ServiceSecurity.IEEE8021X:
-                    builder.append ("IEEE8021X");
+                    builder.append ("WPA EAP");
                     break;
                 case ServiceSecurity.WPS:
                     builder.append ("WPS");

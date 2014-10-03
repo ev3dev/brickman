@@ -84,19 +84,6 @@
         <col id="0">False</col>
         <col id="1" translatable="yes">online</col>
         <col id="2" translatable="yes">&lt;none&gt;</col>
-        <col id="3" translatable="yes">Wireless</col>
-        <col id="4" translatable="yes">wifi</col>
-        <col id="5" translatable="yes">psk</col>
-        <col id="6" translatable="yes">97</col>
-        <col id="7">False</col>
-        <col id="8">False</col>
-        <col id="9">False</col>
-        <col id="10">False</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">online</col>
-        <col id="2" translatable="yes">&lt;none&gt;</col>
         <col id="3" translatable="yes">Wired</col>
         <col id="4" translatable="yes">ethernet</col>
         <col id="5" translatable="yes">none</col>
@@ -108,9 +95,22 @@
       </row>
       <row>
         <col id="0">False</col>
+        <col id="1" translatable="yes">online</col>
+        <col id="2" translatable="yes">&lt;none&gt;</col>
+        <col id="3" translatable="yes">Wireless</col>
+        <col id="4" translatable="yes">wifi</col>
+        <col id="5" translatable="yes">psk</col>
+        <col id="6" translatable="yes">97</col>
+        <col id="7">False</col>
+        <col id="8">False</col>
+        <col id="9">False</col>
+        <col id="10">False</col>
+      </row>
+      <row>
+        <col id="0">False</col>
         <col id="1" translatable="yes">offline</col>
         <col id="2" translatable="yes">&lt;none&gt;</col>
-        <col id="3" translatable="yes">Gadget</col>
+        <col id="3" translatable="yes">Wired</col>
         <col id="4" translatable="yes">gadget</col>
         <col id="5" translatable="yes">none</col>
         <col id="6" translatable="yes">0</col>

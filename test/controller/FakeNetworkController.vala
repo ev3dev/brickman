@@ -32,6 +32,8 @@ namespace BrickManager {
         public Window start_window { get { return network_status_window; } }
         NetworkConnectionsWindow network_connections_window;
 
+        protected bool has_wifi { get; set; default = true; }
+
         public FakeNetworkController (Gtk.Builder builder) throws Error {
             /* NetworkStatusWindow */
             network_status_window = new NetworkStatusWindow ();
@@ -62,11 +64,15 @@ namespace BrickManager {
             connman_technology_liststore.row_changed.connect ((path, iter) => {
                 Value present;
                 connman_technology_liststore.get_value (iter, ControlPanel.NetworkTechnologyColumn.PRESENT, out present);
+                Value type;
+                connman_technology_liststore.get_value (iter, ControlPanel.NetworkTechnologyColumn.TYPE, out type);
                 Value powered;
                 connman_technology_liststore.get_value (iter, ControlPanel.NetworkTechnologyColumn.POWERED, out powered);
                 Value user_data;
                 connman_technology_liststore.get_value (iter, ControlPanel.NetworkTechnologyColumn.USER_DATA, out user_data);
                 var menu_item = (CheckboxMenuItem)user_data.get_pointer ();
+                if (type.get_string () == "wifi")
+                    has_wifi = present.get_boolean ();
                 if (network_status_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
                     network_status_window.menu.remove_menu_item (menu_item);
                 else if (!network_status_window.menu.has_menu_item (menu_item) && present.get_boolean ())
@@ -87,6 +93,14 @@ namespace BrickManager {
             /* NetworkConnectionsWindow */
 
             network_connections_window = new NetworkConnectionsWindow ();
+            bind_property ("has-wifi", network_connections_window, "has-wifi", BindingFlags.SYNC_CREATE);
+            network_connections_window.scan_wifi_selected.connect (() => {
+                network_connections_window.scan_wifi_busy = true;
+                Timeout.add_seconds (3, () => {
+                    network_connections_window.scan_wifi_busy = false;
+                    return false;
+                });
+            });
             network_status_window.manage_connections_selected.connect (() =>
                 network_status_window.screen.push_window (network_connections_window));
 
@@ -101,9 +115,6 @@ namespace BrickManager {
                 };
                 network_connections_window.menu.add_menu_item (menu_item);
                 connman_service_liststore.set (iter, ControlPanel.NetworkServiceColumn.PRESENT, true);
-                Value type;
-                connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.TYPE, out type);
-                menu_item.connection_type = type.dup_string ();
                 Value strength;
                 connman_service_liststore.get_value (iter, ControlPanel.NetworkServiceColumn.STRENGTH, out strength);
                 menu_item.signal_strength = int.parse (strength.get_string ());
