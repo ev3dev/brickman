@@ -275,6 +275,14 @@ namespace BrickManager {
                 network_properties_window.weak_ref((obj) => {
                     SignalHandler.disconnect (connman_service_liststore, row_changed_handler_id);
                 });
+                network_properties_window.connect_requested.connect (() => {
+                    network_properties_window.is_connect_busy = true;
+                    Timeout.add_seconds (2, () => {
+                        network_properties_window.is_connected = !network_properties_window.is_connected;
+                        network_properties_window.is_connect_busy = false;
+                        return false;
+                    });
+                });
                 network_properties_window.ipv4_change_requested.connect ((method, address, netmask, gateway) => {
                     weak_network_properties_window.ipv4_method = method;
                     weak_network_properties_window.ipv4_address = address;

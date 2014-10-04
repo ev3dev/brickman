@@ -160,6 +160,93 @@ namespace BrickManager {
             });
         }
 
+        async void on_connections_window_scan_wifi_selected ()
+            requires (wifi_technology != null && wifi_technology.powered)
+        {
+            connections_window.scan_wifi_busy = true;
+            try {
+                yield wifi_technology.scan ();
+            } catch (IOError err) {
+                // TODO: Show error message in UI
+                critical ("%s", err.message);
+            } finally {
+                connections_window.scan_wifi_busy = false;
+            }
+        }
+
+        void on_connections_window_connection_selected (Object user_data) {
+            var service = (Service)user_data;
+            var properties_window = new NetworkPropertiesWindow (service.name) {
+                loading = false
+            };
+            service.bind_property ("auto-connect", properties_window, "auto-connect",
+                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            service.bind_property ("state", properties_window, "state",
+                BindingFlags.SYNC_CREATE , transform_service_state_to_string);
+            service.bind_property ("state", properties_window, "is-connect-busy",
+                BindingFlags.SYNC_CREATE , transform_service_state_to_busy_bool);
+            service.bind_property ("state", properties_window, "is-connected",
+                BindingFlags.SYNC_CREATE , transform_service_state_to_connected_bool);
+            service.bind_property ("security", properties_window, "security",
+                BindingFlags.SYNC_CREATE, transform_service_security_array_to_string);
+            service.bind_property ("strength", properties_window, "strength",
+                BindingFlags.SYNC_CREATE);
+            service.bind_property ("ipv4", properties_window, "ipv4-method",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_method_string);
+            service.bind_property ("ipv4", properties_window, "ipv4-address",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
+            service.bind_property ("ipv4", properties_window, "ipv4-netmask",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_netmask_string);
+            service.bind_property ("ipv4", properties_window, "ipv4-gateway",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_gateway_string);
+            service.bind_property ("nameservers", properties_window, "dns-addresses",
+                BindingFlags.SYNC_CREATE);
+            service.bind_property ("ethernet", properties_window, "enet-method",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_method_string);
+            service.bind_property ("ethernet", properties_window, "enet-interface",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_interface_string);
+            service.bind_property ("ethernet", properties_window, "enet-address",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_address_string);
+            service.bind_property ("ethernet", properties_window, "enet-mtu",
+                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_mtu_int);
+            properties_window.connect_requested.connect ((disconnect) =>
+                on_properties_window_connect_requested.begin (service, disconnect));
+            properties_window.dns_change_requested.connect ((addresses) =>
+                service.nameservers_configuration = addresses);
+            properties_window.ipv4_change_requested.connect ((method, address, netmask, gateway) => {
+                try {
+                    service.ipv4_configuration = new IPv4Info () {
+                        method = IPv4Method.from_string (method),
+                        address = address,
+                        netmask = netmask,
+                        gateway = gateway
+                    };
+                } catch (DBusError err) {
+                    critical ("Failed to convert method '%s' to IPv4Info", method);
+                }
+            });
+            connections_window.screen.push_window (properties_window);
+        }
+
+        async void on_properties_window_connect_requested (Service service, bool disconnect) {
+            if (disconnect) {
+                try {
+                    yield service.disconnect_service ();
+                } catch (IOError err) {
+                    // TODO: show error in UI
+                    critical ("%s", err.message);
+                }
+            } else {
+                try {
+                    yield service.connect_service ();
+                } catch (IOError err) {
+                    // TODO: show error in UI
+                    critical ("%s", err.message);
+                }
+            }
+        }
+
+
         bool transform_service_state_to_string (Binding binding,
             Value source_value, ref Value target_value)
         {
@@ -191,65 +278,46 @@ namespace BrickManager {
             return true;
         }
 
-        async void on_connections_window_scan_wifi_selected ()
-            requires (wifi_technology != null && wifi_technology.powered)
+        bool transform_service_state_to_busy_bool (Binding binding,
+            Value source_value, ref Value target_value)
         {
-            connections_window.scan_wifi_busy = true;
-            try {
-                yield wifi_technology.scan ();
-            } catch (IOError err) {
-                // TODO: Show error message
-            } finally {
-                connections_window.scan_wifi_busy = false;
+            switch (source_value.get_enum ()) {
+            case ServiceState.IDLE:
+            case ServiceState.FAILURE:
+            case ServiceState.READY:
+            case ServiceState.ONLINE:
+                target_value.set_boolean (false);
+                break;
+            case ServiceState.ASSOCIATION:
+            case ServiceState.CONFIGURATION:
+            case ServiceState.DISCONNECT:
+                target_value.set_boolean (true);
+                break;
+            default:
+                return false;
             }
+            return true;
         }
 
-        void on_connections_window_connection_selected (Object user_data) {
-            var service = (Service)user_data;
-            var properties_window = new NetworkPropertiesWindow (service.name) {
-                loading = false
-            };
-            service.bind_property ("auto-connect", properties_window, "auto-connect",
-                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
-            service.bind_property ("state", properties_window, "state",
-                BindingFlags.SYNC_CREATE , transform_service_state_to_string);
-            service.bind_property ("security", properties_window, "security",
-                BindingFlags.SYNC_CREATE, transform_service_security_array_to_string);
-            service.bind_property ("strength", properties_window, "strength",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ipv4", properties_window, "ipv4-method",
-                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_method_string);
-            service.bind_property ("ipv4", properties_window, "ipv4-address",
-                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
-            service.bind_property ("ipv4", properties_window, "ipv4-netmask",
-                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_netmask_string);
-            service.bind_property ("ipv4", properties_window, "ipv4-gateway",
-                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_gateway_string);
-            service.bind_property ("nameservers", properties_window, "dns-addresses",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("ethernet", properties_window, "enet-method",
-                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_method_string);
-            service.bind_property ("ethernet", properties_window, "enet-interface",
-                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_interface_string);
-            service.bind_property ("ethernet", properties_window, "enet-address",
-                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_address_string);
-            service.bind_property ("ethernet", properties_window, "enet-mtu",
-                BindingFlags.SYNC_CREATE, transform_service_ethernet_to_mtu_int);
-            properties_window.dns_change_requested.connect ((addresses) =>
-                service.nameservers_configuration = addresses);
-            properties_window.ipv4_change_requested.connect ((method, address, netmask, gateway) => {
-                try {
-                    service.ipv4_configuration = new IPv4Info () {
-                        method = IPv4Method.from_string (method),
-                        address = address,
-                        netmask = netmask,
-                        gateway = gateway
-                    };
-                } catch (DBusError err) {
-                    critical ("Failed to convert method '%s' to IPv4Info", method);
-                }
-            });
-            connections_window.screen.push_window (properties_window);
+        bool transform_service_state_to_connected_bool (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            switch (source_value.get_enum ()) {
+            case ServiceState.READY:
+            case ServiceState.ONLINE:
+            case ServiceState.DISCONNECT:
+                target_value.set_boolean (true);
+                break;
+            case ServiceState.IDLE:
+            case ServiceState.FAILURE:
+            case ServiceState.ASSOCIATION:
+            case ServiceState.CONFIGURATION:
+                target_value.set_boolean (false);
+                break;
+            default:
+                return false;
+            }
+            return true;
         }
 
         bool transform_service_security_array_to_string (Binding binding,

@@ -29,12 +29,14 @@ using EV3devKit;
 namespace BrickManager {
     class NetworkPropertiesWindow : BrickManagerWindow {
         Notebook notebook;
-        NotebookTab info_tab;
-        Grid info_tab_grid;
-        CheckButton auto_connect_checkbox;
+        NotebookTab connection_tab;
         Label state_label;
         Label security_label;
         Label strength_label;
+        CheckButton auto_connect_checkbox;
+        Box connect_vbox;
+        Button connect_button;
+        Label connect_busy_label;
         NotebookTab ipv4_tab;
         Label ipv4_method_label;
         Label ipv4_address_label;
@@ -48,11 +50,6 @@ namespace BrickManager {
         Label enet_interface_label;
         Label enet_address_label;
         Label enet_mtu_label;
-
-        public bool auto_connect {
-            get { return auto_connect_checkbox.checked; }
-            set { auto_connect_checkbox.checked = value; }
-        }
 
         public string state {
             get { return state_label.text; }
@@ -73,6 +70,38 @@ namespace BrickManager {
                     strength_label.text = "N/A";
                 else
                     strength_label.text = "%u%%".printf (value);
+            }
+        }
+
+        public bool auto_connect {
+            get { return auto_connect_checkbox.checked; }
+            set { auto_connect_checkbox.checked = value; }
+        }
+
+        bool _is_connected;
+        public bool is_connected {
+            get { return _is_connected; }
+            set {
+                if (value)
+                    ((Label)connect_button.child).text = "Disconnect";
+                else
+                    ((Label)connect_button.child).text = "Connect";
+                _is_connected = value;
+            }
+        }
+
+        bool _is_connect_busy;
+        public bool is_connect_busy {
+            get { return _is_connect_busy; }
+            set {
+                if (value) {
+                    connect_vbox.remove (connect_button);
+                    connect_vbox.add (connect_busy_label);
+                } else {
+                    connect_vbox.remove (connect_busy_label);
+                    connect_vbox.add (connect_button);
+                }
+                _is_connect_busy = value;
             }
         }
 
@@ -129,6 +158,13 @@ namespace BrickManager {
             }
         }
 
+        /**
+         * Connect/disconnect requested
+         *
+         * User pressed the Connect/Disconnect button on the Connection tab
+         */
+        public signal void connect_requested (bool disconnect);
+
         public signal void dns_change_requested (string[] addresses);
 
         public signal void ipv4_change_requested (string method, string? address,
@@ -140,27 +176,13 @@ namespace BrickManager {
                 margin_top = 0
             };
 
-            /* Info Tab */
+            /* Connection Tab */
 
-            info_tab = new NotebookTab ("Info");
-            notebook.add_tab (info_tab);
-            info_tab_grid = new Grid (6, 2);
-            info_tab.add (info_tab_grid);
-            var auto_connect_hbox = new Box.horizontal () {
-                horizontal_align = WidgetAlign.CENTER
-            };
-            info_tab_grid.add_at (auto_connect_hbox, 0, 0, 1, 2);
-            auto_connect_hbox.add (new Label ("Connect automatically:") {
-                horizontal_align = WidgetAlign.END,
-                font = small_font
-            });
-            auto_connect_checkbox = new CheckButton.checkbox () {
-                horizontal_align = WidgetAlign.START
-            };
-            auto_connect_checkbox.notify["checked"].connect (() =>
-                notify_property ("auto-connect"));
-            auto_connect_hbox.add (auto_connect_checkbox);
-            info_tab_grid.add (new Label ("State:") {
+            connection_tab = new NotebookTab ("Conn.");
+            notebook.add_tab (connection_tab);
+            var connection_tab_grid = new Grid (6, 2);
+            connection_tab.add (connection_tab_grid);
+            connection_tab_grid.add (new Label ("State:") {
                 horizontal_align = WidgetAlign.END,
                 font = small_font,
                 margin_right = 4
@@ -169,8 +191,8 @@ namespace BrickManager {
                 horizontal_align = WidgetAlign.START,
                 font = small_font
             };
-            info_tab_grid.add (state_label);
-            info_tab_grid.add (new Label ("Security:") {
+            connection_tab_grid.add (state_label);
+            connection_tab_grid.add (new Label ("Security:") {
                 horizontal_align = WidgetAlign.END,
                 font = small_font,
                 margin_right = 4
@@ -179,8 +201,8 @@ namespace BrickManager {
                 horizontal_align = WidgetAlign.START,
                 font = small_font
             };
-            info_tab_grid.add (security_label);
-            info_tab_grid.add (new Label ("Strength:") {
+            connection_tab_grid.add (security_label);
+            connection_tab_grid.add (new Label ("Strength:") {
                 horizontal_align = WidgetAlign.END,
                 font = small_font,
                 margin_right = 4
@@ -189,7 +211,37 @@ namespace BrickManager {
                 horizontal_align = WidgetAlign.START,
                 font = small_font
             };
-            info_tab_grid.add (strength_label);
+            connection_tab_grid.add (strength_label);
+            var auto_connect_vbox = new Box.horizontal () {
+                horizontal_align = WidgetAlign.CENTER
+            };
+            connection_tab_grid.add_at (auto_connect_vbox, 3, 0, 1, 2);
+            auto_connect_vbox.add (new Label ("Connect automatically:") {
+                horizontal_align = WidgetAlign.END,
+                font = small_font
+            });
+            auto_connect_checkbox = new CheckButton.checkbox () {
+                horizontal_align = WidgetAlign.START,
+                margin_bottom = -2
+            };
+            auto_connect_checkbox.notify["checked"].connect (() =>
+                notify_property ("auto-connect"));
+            auto_connect_vbox.add (auto_connect_checkbox);
+            var connect_hbox = new Box.horizontal ();
+            connection_tab_grid.add_at (connect_hbox, 4, 0, 2, 2);
+            connect_vbox = new Box.vertical () {
+                vertical_align = WidgetAlign.CENTER
+            };
+            connect_hbox.add (connect_vbox);
+            connect_button = new Button.with_label ("Connect") {
+                horizontal_align = WidgetAlign.CENTER,
+                vertical_align = WidgetAlign.CENTER,
+                border_radius = 3,
+                margin = 3
+            };
+            connect_button.pressed.connect (on_connect_button_pressed);
+            connect_vbox.add (connect_button);
+            connect_busy_label = new Label ("Busy");
 
             /* IPv4 Tab */
 
@@ -319,6 +371,11 @@ namespace BrickManager {
             enet_grid.add (enet_mtu_label);
 
             content_vbox.add (notebook);
+        }
+
+        void on_connect_button_pressed () {
+            if (!_is_connect_busy)
+                connect_requested (_is_connected);
         }
 
         void on_ipv4_change_button_pressed () {
