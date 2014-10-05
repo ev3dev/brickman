@@ -125,6 +125,10 @@ namespace BrickManager {
             set { ipv4_gateway_label.text = value; }
         }
 
+        public string ipv4_config_address { get; set; }
+        public string ipv4_config_netmask { get; set; }
+        public string ipv4_config_gateway { get; set; }
+
         public string[] dns_addresses {
             set {
                 foreach (var child in dns_scroll.children)
@@ -377,6 +381,7 @@ namespace BrickManager {
 
         void on_ipv4_change_button_pressed () {
             var dialog = new Dialog ();
+            weak Dialog weak_dialog = dialog;
             var button_vbox = new Box.vertical () {
                 margin = 4
             };
@@ -387,7 +392,7 @@ namespace BrickManager {
             windows_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "192.168.137.3", "255.255.255.0", "192.168.137.1");
                 dns_change_requested ({ "192.168.137.1" });
-                screen.close_window (this);
+                screen.close_window (weak_dialog);
             });
             button_vbox.add (windows_button);
             var mac_button = new Button.with_label ("Load Mac defaults", small_font) {
@@ -396,7 +401,7 @@ namespace BrickManager {
             mac_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "192.168.2.3", "255.255.255.0", "192.168.2.1");
                 dns_change_requested ({ "192.168.2.1" });
-                screen.close_window (this);
+                screen.close_window (weak_dialog);
             });
             button_vbox.add (mac_button);
             var linux_button = new Button.with_label ("Load Linux defaults", small_font) {
@@ -405,14 +410,15 @@ namespace BrickManager {
             linux_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "10.42.0.3", "255.255.255.0", "10.42.0.1");
                 dns_change_requested ({ "10.42.0.1" });
-                screen.close_window (this);
+                screen.close_window (weak_dialog);
             });
             button_vbox.add (linux_button);
             var custom_button = new Button.with_label ("Enter custom values", small_font) {
                 padding_top = -1
             };
             custom_button.pressed.connect (() => {
-                // TODO add custom entry dialog
+                screen.close_window (weak_dialog);
+                on_ipv4_change_custom_button_pressed ();
             });
             button_vbox.add (custom_button);
             var dchp_button = new Button.with_label ("Use DHCP", small_font) {
@@ -421,9 +427,65 @@ namespace BrickManager {
             dchp_button.pressed.connect (() => {
                 ipv4_change_requested ("dhcp", null, null, null);
                 dns_change_requested ({ });
-                screen.close_window (this);
+                screen.close_window (weak_dialog);
             });
             button_vbox.add (dchp_button);
+            screen.show_window (dialog);
+        }
+
+        void on_ipv4_change_custom_button_pressed () {
+            var dialog = new Dialog ();
+            weak Dialog weak_dialog = dialog;
+            var dialog_vscroll = new Scroll.vertical () {
+                can_focus = false,
+                margin = 3,
+                border = 0
+            };
+            dialog.add (dialog_vscroll);
+            var dialog_vbox = new Box.vertical ();
+            dialog_vscroll.add (dialog_vbox);
+            var address_label = new Label ("IP address");
+            dialog_vbox.add (address_label);
+            var address_entry = new TextEntry (_ipv4_config_address ?? "") {
+                valid_chars = TextEntry.DECIMAL,
+                use_on_screen_keyboard = false
+            };
+            var address_entry_notify_has_focus_handler_id =
+                address_entry.notify["has-focus"].connect (() => {
+                    if (address_entry.has_focus)
+                        dialog_vscroll.scroll_to_child (address_label);
+                });
+            dialog_vbox.add (address_entry);
+            var netmask_label = new Label ("Network mask");
+            dialog_vbox.add (netmask_label);
+            var netmask_entry = new TextEntry (_ipv4_config_netmask ?? "");
+            dialog_vbox.add (netmask_entry);
+            var gateway_label = new Label ("Gateway");
+            dialog_vbox.add (gateway_label);
+            var gateway_entry = new TextEntry (_ipv4_config_gateway ?? "");
+            dialog_vbox.add (gateway_entry);
+            var accept_button = new Button.with_label ("Apply") {
+                horizontal_align = WidgetAlign.CENTER,
+                margin_top = 3
+            };
+            var accept_button_notify_has_focus_handler_id =
+                accept_button.notify["has-focus"].connect (() => {
+                    if (accept_button.has_focus)
+                        dialog_vscroll.scroll_to_child (accept_button);
+                });
+            accept_button.pressed.connect (() => {
+                // TODO: validate entries and make gateway to be null instead of empty string
+                ipv4_change_requested ("manual", address_entry.text,
+                    netmask_entry.text, gateway_entry.text);
+                screen.close_window (weak_dialog);
+            });
+            dialog_vbox.add (accept_button);
+            dialog.weak_ref ((obj) => {
+                SignalHandler.disconnect (address_entry,
+                    address_entry_notify_has_focus_handler_id);
+                SignalHandler.disconnect (accept_button,
+                    accept_button_notify_has_focus_handler_id);
+            });
             screen.show_window (dialog);
         }
     }

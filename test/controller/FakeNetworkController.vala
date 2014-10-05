@@ -246,6 +246,9 @@ namespace BrickManager {
                 ipv4_info.bind_property ("address", network_properties_window, "ipv4-address", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
                 ipv4_info.bind_property ("netmask", network_properties_window, "ipv4-netmask", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
                 ipv4_info.bind_property ("gateway", network_properties_window, "ipv4-gateway", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                ipv4_info.bind_property ("address", network_properties_window, "ipv4-config-address", BindingFlags.SYNC_CREATE);
+                ipv4_info.bind_property ("netmask", network_properties_window, "ipv4-config-netmask", BindingFlags.SYNC_CREATE);
+                ipv4_info.bind_property ("gateway", network_properties_window, "ipv4-config-gateway", BindingFlags.SYNC_CREATE);
 
                 var enet_info = (EnetInfo)enet_data.get_pointer ();
                 enet_info.bind_property ("method", network_properties_window, "enet-method", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);

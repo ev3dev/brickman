@@ -205,6 +205,12 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE, transform_service_ipv4_to_netmask_string);
             service.bind_property ("ipv4", properties_window, "ipv4-gateway",
                 BindingFlags.SYNC_CREATE, transform_service_ipv4_to_gateway_string);
+            service.bind_property ("ipv4-configuration", properties_window, "ipv4-config-address",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
+            service.bind_property ("ipv4-configuration", properties_window, "ipv4-config-netmask",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_netmask_string);
+            service.bind_property ("ipv4-configuration", properties_window, "ipv4-config-gateway",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_gateway_string);
             service.bind_property ("nameservers", properties_window, "dns-addresses",
                 BindingFlags.SYNC_CREATE);
             service.bind_property ("ethernet", properties_window, "enet-method",
