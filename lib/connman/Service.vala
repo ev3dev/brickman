@@ -57,8 +57,8 @@ namespace ConnMan {
 
         public ObjectPath path { get; private set; }
         public ServiceState state { get { return dbus_proxy.state; } }
-        public string error { owned get { return dbus_proxy.error; } }
-        public string name { owned get { return dbus_proxy.name; } }
+        public string? error { owned get { return dbus_proxy.error; } }
+        public string? name { owned get { return dbus_proxy.name; } }
         public string service_type { owned get { return dbus_proxy.type_; } }
         public GenericArray<ServiceSecurity> security {
             owned get {
@@ -166,7 +166,7 @@ namespace ConnMan {
             }
             set {
                 try {
-                    var config = new HashTable<string, Variant?> (null, null);
+                    var config = new HashTable<string, Variant> (null, null);
                     if (value.method != null)
                         config[IPV4_METHOD_KEY] = new Variant.string (value.method.to_string ());
                     if (value.address != null)
@@ -242,7 +242,7 @@ namespace ConnMan {
             }
             set {
                 try {
-                    var config = new HashTable<string, Variant?> (null, null);
+                    var config = new HashTable<string, Variant> (null, null);
                     if (value.method != null)
                         config[IPV6_METHOD_KEY] = new Variant.string (value.method.to_string ());
                     if (value.address != null)
@@ -304,7 +304,7 @@ namespace ConnMan {
             }
             set {
                 try {
-                    var config = new HashTable<string, Variant?> (null, null);
+                    var config = new HashTable<string, Variant> (null, null);
                     if (value.method != null)
                         config[PROXY_METHOD_KEY] = new Variant.string (value.method.to_string ());
                     if (value.url != null)
@@ -388,12 +388,25 @@ namespace ConnMan {
             object_map.unset (path);
         }
 
-        public async void connect_service() throws IOError {
-            yield dbus_proxy.connect();
+        public async void connect_service (bool long_timeout = false) throws IOError {
+            if (long_timeout)
+                try {
+                    yield ((DBusProxy)dbus_proxy).call ("Connect", null,
+                        DBusCallFlags.NONE, 120000);
+                } catch (IOError ioerr) {
+                    throw ioerr;
+                } catch (Error err) {
+                    // This should only happen if we were using cancellable
+                    // but we are not. Just catching it here to prevent compiler
+                    // warning.
+                    critical ("%s", err.message);
+                }
+            else
+                yield dbus_proxy.connect ();
         }
 
-        public async void disconnect_service() throws IOError {
-            yield dbus_proxy.disconnect();
+        public async void disconnect_service () throws IOError {
+            yield dbus_proxy.disconnect ();
         }
 
         public async void remove() throws IOError {
@@ -667,7 +680,7 @@ namespace net.connman {
     [DBus (name = "net.connman.Service")]
     public interface Service : Object {
         // deprecated
-        //public abstract async HashTable<string, Variant?> get_properties() throws IOError;
+        //public abstract async HashTable<string, Variant> get_properties() throws IOError;
         public abstract async void set_property(string name, Variant? value) throws IOError;
         [DBus (name = "SetProperty")]
         public abstract void set_property_sync(string name, Variant? value) throws IOError;
@@ -682,8 +695,8 @@ namespace net.connman {
         public signal void property_changed(string name, Variant? value);
 
         public abstract ConnMan.ServiceState state { get; }
-        public abstract string error { owned get; }
-        public abstract string name { owned get; }
+        public abstract string? error { owned get; }
+        public abstract string? name { owned get; }
         public abstract string type_ { owned get; }
         public abstract ConnMan.ServiceSecurity[] security { owned get; }
         public abstract uint8 strength { get; }
@@ -701,17 +714,17 @@ namespace net.connman {
         [DBus (name = "Domains.Configuration")]
         public abstract string[] domains_configuration { owned get; }
         [DBus (name = "IPv4")]
-        public abstract HashTable<string, Variant?> ipv4 { owned get; }
+        public abstract HashTable<string, Variant> ipv4 { owned get; }
         [DBus (name = "IPv4.Configuration")]
-        public abstract HashTable<string, Variant?> ipv4_configuration { owned get; }
+        public abstract HashTable<string, Variant> ipv4_configuration { owned get; }
         [DBus (name = "IPv6")]
-        public abstract HashTable<string, Variant?> ipv6 { owned get; }
+        public abstract HashTable<string, Variant> ipv6 { owned get; }
         [DBus (name = "IPv6.Configuration")]
-        public abstract HashTable<string, Variant?> ipv6_configuration { owned get; }
-        public abstract HashTable<string, Variant?> proxy { owned get; }
+        public abstract HashTable<string, Variant> ipv6_configuration { owned get; }
+        public abstract HashTable<string, Variant> proxy { owned get; }
         [DBus (name = "Proxy.Configuration")]
-        public abstract HashTable<string, Variant?> proxy_configuration { owned get; }
-        public abstract HashTable<string, Variant?> provider { owned get; }
-        public abstract HashTable<string, Variant?> ethernet { owned get; }
+        public abstract HashTable<string, Variant> proxy_configuration { owned get; }
+        public abstract HashTable<string, Variant> provider { owned get; }
+        public abstract HashTable<string, Variant> ethernet { owned get; }
     }
 }

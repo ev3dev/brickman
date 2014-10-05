@@ -42,7 +42,6 @@ namespace BrickManager {
             scan_wifi_button = new Button.with_label ("Scan WiFi", small_font) {
                 horizontal_align = WidgetAlign.START,
                 vertical_align = WidgetAlign.START,
-                border_radius = 3,
                 margin_top = -4,
                 margin_bottom = -1,
                 margin_left = 3,

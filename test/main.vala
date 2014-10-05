@@ -56,9 +56,9 @@ namespace BrickManager {
             };
             var label = new Label ("Reboot is not implemented.");
             dialog.add (label);
-            DesktopTestApp.screen.push_window (dialog);
+            DesktopTestApp.screen.show_window (dialog);
         });
-        DesktopTestApp.screen.push_window (home_window);
+        DesktopTestApp.screen.show_window (home_window);
         
         DesktopTestApp.run ();
 

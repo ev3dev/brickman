@@ -66,7 +66,7 @@ namespace BrickManager {
                 critical (err.message); // TODO show error message on brick
             }
         });
-        ConsoleApp.screen.push_window (home_window);
+        ConsoleApp.screen.show_window (home_window);
 
         ConsoleApp.run ();
 

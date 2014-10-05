@@ -69,7 +69,7 @@ namespace BrickManager {
         }
 
         void on_cancel_button_pressed () {
-            window.screen.pop_window ();
+            window.screen.close_window (this);
         }
     }
 }

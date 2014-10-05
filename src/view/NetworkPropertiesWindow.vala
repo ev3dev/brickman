@@ -236,7 +236,6 @@ namespace BrickManager {
             connect_button = new Button.with_label ("Connect") {
                 horizontal_align = WidgetAlign.CENTER,
                 vertical_align = WidgetAlign.CENTER,
-                border_radius = 3,
                 margin = 3
             };
             connect_button.pressed.connect (on_connect_button_pressed);
@@ -291,8 +290,7 @@ namespace BrickManager {
             ipv4_grid.add (ipv4_gateway_label);
             ipv4_change_button = new Button.with_label ("Change...") {
                 horizontal_align = WidgetAlign.CENTER,
-                vertical_align = WidgetAlign.CENTER,
-                border_radius = 3
+                vertical_align = WidgetAlign.CENTER
             };
             ipv4_change_button.pressed.connect (on_ipv4_change_button_pressed);
             ipv4_grid.add_at (ipv4_change_button, 4, 0, 2, 2);
@@ -316,7 +314,6 @@ namespace BrickManager {
             var dns_change_button = new Button.with_label ("Change...") {
                 horizontal_align = WidgetAlign.CENTER,
                 vertical_align = WidgetAlign.CENTER,
-                border_radius = 3,
                 margin_top = 2,
                 margin_bottom = 3
             };
@@ -385,37 +382,33 @@ namespace BrickManager {
             };
             dialog.add (button_vbox);
             var windows_button = new Button.with_label ("Load Windows defaults", small_font) {
-                border_radius = 3,
                 padding_top = -1
             };
             windows_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "192.168.137.3", "255.255.255.0", "192.168.137.1");
                 dns_change_requested ({ "192.168.137.1" });
-                screen.pop_window ();
+                screen.close_window (this);
             });
             button_vbox.add (windows_button);
             var mac_button = new Button.with_label ("Load Mac defaults", small_font) {
-                border_radius = 3,
                 padding_top = -1
             };
             mac_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "192.168.2.3", "255.255.255.0", "192.168.2.1");
                 dns_change_requested ({ "192.168.2.1" });
-                screen.pop_window ();
+                screen.close_window (this);
             });
             button_vbox.add (mac_button);
             var linux_button = new Button.with_label ("Load Linux defaults", small_font) {
-                border_radius = 3,
                 padding_top = -1
             };
             linux_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "10.42.0.3", "255.255.255.0", "10.42.0.1");
                 dns_change_requested ({ "10.42.0.1" });
-                screen.pop_window ();
+                screen.close_window (this);
             });
             button_vbox.add (linux_button);
             var custom_button = new Button.with_label ("Enter custom values", small_font) {
-                border_radius = 3,
                 padding_top = -1
             };
             custom_button.pressed.connect (() => {
@@ -423,16 +416,15 @@ namespace BrickManager {
             });
             button_vbox.add (custom_button);
             var dchp_button = new Button.with_label ("Use DHCP", small_font) {
-                border_radius = 3,
                 padding_top = -1
             };
             dchp_button.pressed.connect (() => {
                 ipv4_change_requested ("dhcp", null, null, null);
                 dns_change_requested ({ });
-                screen.pop_window ();
+                screen.close_window (this);
             });
             button_vbox.add (dchp_button);
-            screen.push_window (dialog);
+            screen.show_window (dialog);
         }
     }
 }

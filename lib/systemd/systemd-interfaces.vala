@@ -261,6 +261,6 @@ namespace org.freedesktop.DBus {
     public interface Properties : DBusProxy {
         public abstract async Variant? get (string iface, string property) throws IOError;
         public abstract async void set (string iface, string property, Variant? value) throws IOError;
-        public abstract signal void properties_changed (string iface, HashTable<string, Variant?> changed_properties, string[] invalidated_properties);
+        public abstract signal void properties_changed (string iface, HashTable<string, Variant> changed_properties, string[] invalidated_properties);
     }
 }

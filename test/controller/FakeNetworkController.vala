@@ -26,11 +26,14 @@ using EV3devKit;
 namespace BrickManager {
     public class FakeNetworkController : Object, IBrickManagerModule {
         const string CONNMAN_SERVICE_IPV4_DIALOG_GLADE_FILE = "ConnManServiceIPv4Dialog.glade";
+        const string CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE = "ConnManAgentRequestInputDialog.glade";
 
         public string menu_item_text { get { return "Networking"; } }
         NetworkStatusWindow network_status_window;
         public Window start_window { get { return network_status_window; } }
         NetworkConnectionsWindow network_connections_window;
+        ConnManAgent agent;
+        Gtk.Dialog? agent_request_input_dialog;
 
         protected bool has_wifi { get; set; default = true; }
 
@@ -102,7 +105,7 @@ namespace BrickManager {
                 });
             });
             network_status_window.manage_connections_selected.connect (() =>
-                network_status_window.screen.push_window (network_connections_window));
+                network_status_window.screen.show_window (network_connections_window));
 
             networking_loading_checkbutton.bind_property ("active", network_connections_window, "loading", BindingFlags.SYNC_CREATE);
             var connman_service_liststore = builder.get_object ("connman_service_liststore") as Gtk.ListStore;
@@ -251,7 +254,7 @@ namespace BrickManager {
                 enet_info.bind_property ("mtu", network_properties_window, "enet-mtu", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
 
                 networking_loading_checkbutton.bind_property ("active", network_properties_window, "loading", BindingFlags.SYNC_CREATE);
-                network_status_window.screen.push_window (network_properties_window);
+                network_status_window.screen.show_window (network_properties_window);
                 weak NetworkPropertiesWindow weak_network_properties_window = network_properties_window;
                 network_properties_window.notify["auto-connect"].connect (() => connman_service_liststore.set (
                     service.iter, ControlPanel.NetworkServiceColumn.AUTO_CONNECT,
@@ -293,6 +296,156 @@ namespace BrickManager {
                     weak_network_properties_window.dns_addresses = addresses;
                 });
             });
+
+            /* Agent */
+            agent = new ConnManAgent (DesktopTestApp.screen);
+            // (builder.get_object ("connman_agent_release_button") as Gtk.Button)
+            //     .clicked.connect (() => agent.release ());
+            (builder.get_object ("connman_agent_report_error_button") as Gtk.Button)
+                .clicked.connect (() => {
+                    agent.report_error.begin (new ObjectPath ("/service/path"),
+                            "Service error message.", (obj, res) => {
+                                try {
+                                    agent.report_error.end (res);
+                                } catch (ConnManAgentError err) {
+                                    show_message (err.message);
+                                }
+                            });
+                });
+            (builder.get_object ("connman_agent_report_peer_error_button") as Gtk.Button)
+                .clicked.connect (() => {
+                    agent.report_peer_error.begin (new ObjectPath ("/peer/path"),
+                            "Peer error message.", (obj, res) => {
+                                try {
+                                    agent.report_peer_error.end (res);
+                                } catch (ConnManAgentError err) {
+                                    show_message (err.message);
+                                }
+                            });
+                });
+            (builder.get_object ("connman_agent_request_browser_button") as Gtk.Button)
+                .clicked.connect (() => {
+                    agent.request_browser.begin (new ObjectPath ("/service/path"),
+                            "http://www.ev3dev.org", (obj, res) => {
+                                try {
+                                    agent.request_browser.end (res);
+                                } catch (ConnManAgentError err) {
+                                    show_message (err.message);
+                                }
+                            });
+                });
+            (builder.get_object ("connman_agent_request_input_button") as Gtk.Button)
+                .clicked.connect (on_show_agent_request_input_dialog);
+            (builder.get_object ("connman_agent_request_peer_authorization_button") as Gtk.Button)
+                .clicked.connect (() => {
+                    agent.request_peer_authorization.begin (new ObjectPath ("/peer/path"),
+                            new HashTable<string, Variant> (null, null), (obj, res) => {
+                                try {
+                                    var result = agent.request_peer_authorization.end (res);
+                                    var strbuilder = new StringBuilder ("Results (%u):".printf (result.size ()));
+                                    result.foreach ((k, v) =>
+                                        strbuilder.append ("\n%s: %s".printf (k, v.print (true))));
+                                    show_message (strbuilder.str);
+                                } catch (ConnManAgentError err) {
+                                    show_message (err.message);
+                                }
+                            });
+                });
+            (builder.get_object ("connman_agent_cancel_button") as Gtk.Button)
+                .clicked.connect (() => agent.cancel.begin ());
+        }
+
+        void on_show_agent_request_input_dialog () {
+            if (agent_request_input_dialog == null) {
+                var builder = new Gtk.Builder ();
+                try {
+                    builder.add_from_file (CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE);
+                    agent_request_input_dialog = builder.get_object ("dialog") as Gtk.Dialog;
+                    agent_request_input_dialog.response.connect ((id) => {
+                        agent_request_input_dialog.destroy ();
+                        agent_request_input_dialog = null;
+                    });
+                    (builder.get_object ("done_button") as Gtk.Button)
+                        .clicked.connect (() => agent_request_input_dialog.response (0));
+                    (builder.get_object ("request_psk_passphrase_button") as Gtk.Button)
+                        .clicked.connect (() => {
+                            var paramaters = new HashTable<string, Variant> (null, null);
+                            var passphrase_args = new HashTable<string, Variant> (null, null);
+                            passphrase_args["Type"] = "psk";
+                            passphrase_args["Requirement"] = "mandatory";
+                            paramaters["Passphrase"] = passphrase_args;
+                            var expected_result = new HashTable<string, Variant> (null, null);
+                            expected_result["Passphrase"] = "secret123";
+                            call_agent_request_input.begin (paramaters, expected_result);
+                        });
+                    (builder.get_object ("request_psk_passphrase_with_previous_button") as Gtk.Button)
+                        .clicked.connect (() => {
+                            var paramaters = new HashTable<string, Variant> (null, null);
+                            var passphrase_args = new HashTable<string, Variant> (null, null);
+                            passphrase_args["Type"] = "psk";
+                            passphrase_args["Requirement"] = "mandatory";
+                            paramaters["Passphrase"] = passphrase_args;
+                            var prev_passphrase_args = new HashTable<string, Variant> (null, null);
+                            prev_passphrase_args["Type"] = "psk";
+                            prev_passphrase_args["Requirement"] = "informational";
+                            prev_passphrase_args["Value"] = "secret123";
+                            paramaters["PreviousPassphrase"] = prev_passphrase_args;
+                            var expected_result = new HashTable<string, Variant> (null, null);
+                            expected_result["Passphrase"] = "anything-but-secret123";
+                            call_agent_request_input.begin (paramaters, expected_result);
+                        });
+                    (builder.get_object ("request_hiddend_ssid_button") as Gtk.Button)
+                        .clicked.connect (() => {
+                            var paramaters = new HashTable<string, Variant> (null, null);
+                            var name_args = new HashTable<string, Variant> (null, null);
+                            name_args["Type"] = "string";
+                            name_args["Requirement"] = "mandatory";
+                            name_args["Alternates"] = new string[] { "SSID" };
+                            paramaters["Name"] = name_args;
+                            var ssid_args = new HashTable<string, Variant> (null, null);
+                            ssid_args["Type"] = "ssid";
+                            ssid_args["Requirement"] = "alternate";
+                            paramaters["SSID"] = ssid_args;
+                            var passphrase_args = new HashTable<string, Variant> (null, null);
+                            passphrase_args["Type"] = "psk";
+                            passphrase_args["Requirement"] = "mandatory";
+                            paramaters["Passphrase"] = passphrase_args;
+                            var expected_result = new HashTable<string, Variant> (null, null);
+                            expected_result["Name"] = "SSID";
+                            expected_result["Passphrase"] = "secret123";
+                            call_agent_request_input.begin (paramaters, expected_result);
+                        });
+                } catch (Error err) {
+                    critical ("%s", err.message);
+                }
+            }
+            agent_request_input_dialog.show ();
+        }
+
+        async void call_agent_request_input (HashTable<string, Variant> paramaters,
+            HashTable<string, Variant> expected_result)
+        {
+            try {
+                var actual_result = yield agent.request_input (new ObjectPath ("/service/path"), paramaters);
+                var builder = new StringBuilder ();
+                builder.append ("Expected result (%u):".printf (expected_result.size ()));
+                expected_result.foreach ((k, v) =>
+                    builder.append ("\n%s: %s".printf (k, v.print (true))));
+                builder.append ("\n\n");
+                builder.append ("Actual result (%u):".printf (actual_result.size ()));
+                actual_result.foreach ((k, v) =>
+                    builder.append ("\n%s: %s".printf (k, v.print (true))));
+                show_message (builder.str);
+            } catch (ConnManAgentError err) {
+                show_message (err.message);
+            }
+        }
+
+        void show_message (string message) {
+            var dialog = new Gtk.MessageDialog (null, Gtk.DialogFlags.MODAL,
+                Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
+            dialog.response.connect ((id) => dialog.destroy ());
+            dialog.show ();
         }
 
         class NetworkService : Object {

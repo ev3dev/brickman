@@ -1,0 +1,171 @@
+/*
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
+ *
+ * Copyright 2014 David Lechner <david@lechnology.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ */
+
+/* ConnManAgent.vala - ConnMan Agent implementation */
+
+using EV3devKit;
+using ConnMan;
+
+namespace BrickManager {
+    [DBus (name = "net.connman.Agent")]
+    public class ConnManAgent : Object {
+        const string NAME_KEY                   = "Name";
+        const string SSID_KEY                   = "SSID";
+        const string IDENTITY_KEY               = "Identity";
+        const string PASSPHRASE_KEY             = "Passphrase";
+        const string PREVIOUS_PASSPHRASE_KEY    = "PreviousPassphrase";
+        const string WPS_KEY                    = "WPS";
+        const string USERNAME_KEY               = "Username";
+        const string PASSWORD_KEY               = "Password";
+        const string TYPE_KEY                   = "Type";
+        const string REQUIREMENT_KEY            = "Requirement";
+        const string ALTERNATES_KEY             = "Alternates";
+        const string VALUE_KEY                  = "Value";
+
+        Screen screen;
+
+        signal void canceled ();
+
+        public ConnManAgent (Screen screen) {
+            this.screen = screen;
+        }
+
+        public async void release () {
+            critical ("Released.");
+        }
+
+        public async void report_error (ObjectPath service_path, string error)
+            throws ConnManAgentError
+        {
+            //var service = Service.from_path_sync (service_path);
+            var dialog = new MessageDialog ("Error", error);
+            screen.show_window (dialog);
+            // TODO: get user feedback for retry
+            //throw new ConnManAgentError.RETRY ("User requested retry.");
+        }
+
+        public async void report_peer_error (ObjectPath peer_path, string error)
+            throws ConnManAgentError
+        {
+            //var peer = Peer.from_path_sync (peer_path);
+            var dialog = new MessageDialog ("Error", error);
+            screen.show_window (dialog);
+            // TODO: get user feedback for retry
+            //throw new ConnManAgentError.RETRY ("User requested retry.");
+        }
+
+        public async void request_browser (ObjectPath service_path, string url)
+            throws ConnManAgentError
+        {
+            //var service = Service.from_path_sync (service_path);
+           throw new ConnManAgentError.CANCELED ("Web browser not implemented.");
+        }
+
+        public async HashTable<string, Variant> request_input (ObjectPath service_path,
+            HashTable<string, Variant> fields) throws ConnManAgentError
+        {
+            try {
+                var service = Service.from_path_sync (service_path);
+                var required_field_names = new Gee.ArrayList<string> ();
+                string? previous_passphrase = null;
+                fields.foreach ((k, v) => {
+                    //debug ("%s %s", k, v.print (true));
+                    var requirement = v.lookup_value (REQUIREMENT_KEY, VariantType.STRING);
+                    if (requirement != null && requirement.get_string () == "mandatory")
+                        required_field_names.add (k);
+                    if (k == PREVIOUS_PASSPHRASE_KEY) {
+                        var previous_passphrase_value = v.lookup_value (VALUE_KEY, VariantType.STRING);
+                        if (previous_passphrase_value != null)
+                            previous_passphrase = previous_passphrase_value.dup_string ();
+                    }
+                });
+                var result = new HashTable<string, Variant> (null, null);
+                foreach (var required_field_name in required_field_names) {
+                    var dialog = new ConnManAgentInputDialog (
+                        "Please enter %s for %s.".printf (field_to_string (required_field_name),
+                            service.name),
+                        previous_passphrase ?? "");
+                    bool dialog_canceled = true;
+                    weak ConnManAgentInputDialog weak_dialog = dialog;
+                    dialog.responded.connect ((accepted) => {
+                        dialog_canceled = !accepted;
+                        result[required_field_name] = weak_dialog.text_value;
+                        request_input.callback ();
+                    });
+                    var handler_id = canceled.connect (() => {
+                        dialog.responded (false);
+                        screen.close_window (dialog);
+                        var message_dialog = new MessageDialog ("Info", "Request was canceled.");
+                        screen.show_window (message_dialog);
+                    });
+                    screen.show_window (dialog);
+                    yield;
+                    SignalHandler.disconnect (this, handler_id);
+                    if (dialog_canceled)
+                        throw new ConnManAgentError.CANCELED ("Canceled by the user.");
+                }
+                return result;
+            } catch (IOError err) {
+                critical ("%s", err.message);
+                throw new ConnManAgentError.CANCELED (err.message);
+            }
+        }
+
+        public async HashTable<string, Variant> request_peer_authorization (ObjectPath peer_path,
+            HashTable<string, Variant> fields) throws ConnManAgentError
+        {
+            //var peer = Peer.from_path_sync (peer_path);
+            throw new ConnManAgentError.CANCELED ("Not implemented.");
+        }
+
+        public async void cancel () {
+            canceled ();
+        }
+
+        string field_to_string (string field) {
+            switch (field) {
+                case NAME_KEY:
+                case SSID_KEY:
+                    return "SSID";
+                case IDENTITY_KEY:
+                case USERNAME_KEY:
+                    return "username";
+                case PASSPHRASE_KEY:
+                    return "passphrase";
+                case WPS_KEY:
+                    return "WPS PIN";
+                case PASSWORD_KEY:
+                    return "password";
+                default:
+                    critical ("Unexpected field '%s'", field);
+                    return "???";
+            }
+        }
+    }
+
+    [DBus (name = "net.connman.Agent.Error")]
+    public errordomain ConnManAgentError {
+        CANCELED,
+        LAUNCH_BROWSER,
+        REJECTED,
+        RETRY
+    }
+}

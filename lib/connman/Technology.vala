@@ -155,7 +155,7 @@ namespace net.connman {
     [DBus (name = "net.connman.Technology")]
     public interface Technology : Object {
         // deprecated
-        //public abstract async HashTable<string, Variant?> get_properties() throws IOError;
+        //public abstract async HashTable<string, Variant> get_properties() throws IOError;
         public abstract async void set_property(string name, Variant? value) throws IOError;
         [DBus (name = "SetProperty")]
         public abstract void set_property_sync(string name, Variant? value) throws IOError;

@@ -119,7 +119,7 @@ namespace net.connman {
     [DBus (name = "net.connman.Peer")]
     public interface Peer : Object {
         // deprecated
-        //public abstract async HashTable<string, Variant?> get_properties() throws IOError;
+        //public abstract async HashTable<string, Variant> get_properties() throws IOError;
         public abstract async void connect() throws IOError;
         public abstract async void disconnect() throws IOError;
 
@@ -128,6 +128,6 @@ namespace net.connman {
         public abstract ConnMan.PeerState state { get; }
         public abstract string name { owned get; }
         [DBus (name = "IPv4")]
-        public abstract HashTable<string, Variant?> ipv4 { owned get; }
+        public abstract HashTable<string, Variant> ipv4 { owned get; }
     }
 }

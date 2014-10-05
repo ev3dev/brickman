@@ -36,6 +36,7 @@ namespace BrickManager {
 
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
+        ConnManAgent agent;
         Manager manager;
         Technology? wifi_technology;
 
@@ -47,7 +48,7 @@ namespace BrickManager {
             weak NetworkStatusWindow weak_status_window = status_window;
             connections_window = new NetworkConnectionsWindow ();
             status_window.manage_connections_selected.connect (() =>
-                weak_status_window.screen.push_window (connections_window));
+                weak_status_window.screen.show_window (connections_window));
             connections_window.scan_wifi_selected.connect (() =>
                 on_connections_window_scan_wifi_selected.begin ());
             connections_window.connection_selected.connect (
@@ -64,11 +65,16 @@ namespace BrickManager {
         }
 
         async void init_async () throws IOError {
+            agent = new ConnManAgent (ConsoleApp.screen);
+            var bus = yield Bus.get (BusType.SYSTEM);
+            var agent_object_path = new ObjectPath ("/org/ev3dev/brickman/connman_agent");
+            bus.register_object<ConnManAgent> (agent_object_path, agent);
             manager = yield Manager.new_async ();
             manager.bind_property ("state", status_window, "state",
                 BindingFlags.SYNC_CREATE, transform_manager_state_to_string);
             manager.bind_property ("offline-mode", status_window, "offline-mode",
                 BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            yield manager.register_agent (agent_object_path);
             manager.technology_added.connect (on_technology_added);
             manager.technology_removed.connect (on_technology_removed);
             foreach (var technology in yield manager.get_technologies ())
@@ -176,7 +182,7 @@ namespace BrickManager {
 
         void on_connections_window_connection_selected (Object user_data) {
             var service = (Service)user_data;
-            var properties_window = new NetworkPropertiesWindow (service.name) {
+            var properties_window = new NetworkPropertiesWindow (service.name ?? "<hidden>") {
                 loading = false
             };
             service.bind_property ("auto-connect", properties_window, "auto-connect",
@@ -209,8 +215,9 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE, transform_service_ethernet_to_address_string);
             service.bind_property ("ethernet", properties_window, "enet-mtu",
                 BindingFlags.SYNC_CREATE, transform_service_ethernet_to_mtu_int);
+            weak NetworkPropertiesWindow weak_properties_window = properties_window;
             properties_window.connect_requested.connect ((disconnect) =>
-                on_properties_window_connect_requested.begin (service, disconnect));
+                on_properties_window_connect_requested.begin (weak_properties_window, service, disconnect));
             properties_window.dns_change_requested.connect ((addresses) =>
                 service.nameservers_configuration = addresses);
             properties_window.ipv4_change_requested.connect ((method, address, netmask, gateway) => {
@@ -225,23 +232,30 @@ namespace BrickManager {
                     critical ("Failed to convert method '%s' to IPv4Info", method);
                 }
             });
-            connections_window.screen.push_window (properties_window);
+            connections_window.screen.show_window (properties_window);
         }
 
-        async void on_properties_window_connect_requested (Service service, bool disconnect) {
+        async void on_properties_window_connect_requested (
+            NetworkPropertiesWindow properties_window, Service service, bool disconnect)
+        {
             if (disconnect) {
                 try {
+                    properties_window.is_connect_busy = true;
                     yield service.disconnect_service ();
                 } catch (IOError err) {
-                    // TODO: show error in UI
-                    critical ("%s", err.message);
+                    var dialog = new MessageDialog ("Error", err.message);
+                    ConsoleApp.screen.show_window (dialog);
+                    properties_window.is_connect_busy = false;
                 }
             } else {
                 try {
-                    yield service.connect_service ();
+                    properties_window.is_connect_busy = true;
+                    // Do long timeout for WiFi since we have to wait for password entry
+                    yield service.connect_service (service.service_type == "wifi");
                 } catch (IOError err) {
-                    // TODO: show error in UI
-                    critical ("%s", err.message);
+                    var dialog = new MessageDialog ("Error", err.message);
+                    ConsoleApp.screen.show_window (dialog);
+                    properties_window.is_connect_busy = false;
                 }
             }
         }

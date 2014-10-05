@@ -99,7 +99,15 @@ namespace ConnMan {
             return result;
         }
 
-        void on_technology_added (ObjectPath path, HashTable<string, Variant?> properties) {
+        public async void register_agent (ObjectPath path) throws IOError {
+            yield dbus_proxy.register_agent (path);
+        }
+
+        public async void unregister_agent (ObjectPath path) throws IOError {
+            yield dbus_proxy.unregister_agent (path);
+        }
+
+        void on_technology_added (ObjectPath path, HashTable<string, Variant> properties) {
             try {
                 var tech = Technology.from_path_sync (path);
                 properties.foreach ((k, v) =>
@@ -165,7 +173,7 @@ namespace net.connman {
     public interface Manager : Object {
         public const string OBJECT_PATH = "/";
 
-        public abstract async HashTable<string, Variant?> get_properties () throws IOError;
+        public abstract async HashTable<string, Variant> get_properties () throws IOError;
         public abstract async void set_property (string name, Variant? value) throws IOError;
         [DBus (name = "SetProperty")]
         public abstract void set_property_sync (string name, Variant? value) throws IOError;
@@ -173,18 +181,18 @@ namespace net.connman {
         public abstract async ManagerObject[] get_services () throws IOError;
         public abstract async ManagerObject[] get_peers () throws IOError;
         // deprecated
-        //public abstract async ObjectPath ConnectProvider (HashTable<string, Variant?> provider throws IOError;
+        //public abstract async ObjectPath ConnectProvider (HashTable<string, Variant> provider throws IOError;
         //public abstract async void remove_provider (ObjectPath path) throws IOError;
         public abstract async void register_agent (ObjectPath object) throws IOError;
         public abstract async void unregister_agent (ObjectPath object) throws IOError;
         public abstract async void register_counter (ObjectPath path, uint accuracy, uint period) throws IOError;
         public abstract async void unregister_counter (ObjectPath path) throws IOError;
-        public abstract async ObjectPath create_session (HashTable<string, Variant?> settings, ObjectPath notifier) throws IOError;
+        public abstract async ObjectPath create_session (HashTable<string, Variant> settings, ObjectPath notifier) throws IOError;
         public abstract async void destroy_session (ObjectPath session) throws IOError;
-        public abstract async ObjectPath request_private_network (HashTable<string, Variant?> options, out HashTable<string, Variant?> fd) throws IOError;
+        public abstract async ObjectPath request_private_network (HashTable<string, Variant> options, out HashTable<string, Variant> fd) throws IOError;
         public abstract async void release_private_network (ObjectPath path) throws IOError;
 
-        public signal void technology_added (ObjectPath path, HashTable<string, Variant?> properties);
+        public signal void technology_added (ObjectPath path, HashTable<string, Variant> properties);
         public signal void technology_removed (ObjectPath path);
         public signal void services_changed (ManagerObject[] changed, ObjectPath[] removed);
         public signal void peers_changed (ManagerObject[] changed, ObjectPath[] removed);
@@ -198,6 +206,6 @@ namespace net.connman {
 
     public struct ManagerObject {
         ObjectPath path;
-        HashTable<string, Variant?> properties;
+        HashTable<string, Variant> properties;
     }
 }

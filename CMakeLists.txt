@@ -18,6 +18,7 @@ if (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
         test/main.vala
         test/ControlPanel.vala
+        test/FakeConnMan.vala
         test/controller/FakeBatteryController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
@@ -51,6 +52,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/Label.vala
     lib/ev3devKit/src/Menu.vala
     lib/ev3devKit/src/MenuItem.vala
+    lib/ev3devKit/src/MessageDialog.vala
     lib/ev3devKit/src/Notebook.vala
     lib/ev3devKit/src/NotebookTab.vala
     lib/ev3devKit/src/OnScreenKeyboard.vala
@@ -70,9 +72,11 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
     src/controller/IBrickManagerModule.vala
+    src/dbus/ConnManAgent.vala
     src/view/BatteryInfoWindow.vala
     src/view/BatteryStatusBarItem.vala
     src/view/BrickManagerWindow.vala
+    src/view/ConnManAgentInputDialog.vala
     src/view/HomeWindow.vala
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
@@ -138,6 +142,9 @@ configure_file(
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnManServiceIPv4Dialog.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ConnManServiceIPv4Dialog.glade COPYONLY )
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnManAgentRequestInputDialog.glade
+    ${CMAKE_CURRENT_BINARY_DIR}/ConnManAgentRequestInputDialog.glade COPYONLY )
 endif (BRICKMAN_TEST)
 
 add_custom_target(run
