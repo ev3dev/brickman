@@ -130,6 +130,12 @@ namespace BrickManager {
         public string ipv4_config_gateway { get; set; }
 
         public string[] dns_addresses {
+            owned get {
+                var list = new Gee.ArrayList<string> ();
+                foreach (var child in dns_scroll.children)
+                    list.add (((Label)child).text);
+                return list.to_array ();
+            }
             set {
                 foreach (var child in dns_scroll.children)
                     dns_scroll.remove (child);
@@ -315,14 +321,25 @@ namespace BrickManager {
                 margin_right = 3
             };
             dns_vbox.add (dns_scroll);
-            var dns_change_button = new Button.with_label ("Change...") {
+            var dns_button_hbox = new Box.horizontal () {
                 horizontal_align = WidgetAlign.CENTER,
                 vertical_align = WidgetAlign.CENTER,
                 margin_top = 2,
                 margin_bottom = 3
             };
-            // dns_change_button.pressed.connect (on_dns_change_button_pressed);
-            dns_vbox.add (dns_change_button);
+            dns_vbox.add (dns_button_hbox);
+            var dns_add_button = new Button.with_label ("Add") {
+                horizontal_align = WidgetAlign.CENTER,
+                vertical_align = WidgetAlign.CENTER
+            };
+            dns_add_button.pressed.connect (on_dns_add_button_pressed);
+            dns_button_hbox.add (dns_add_button);
+            var dns_remove_button = new Button.with_label ("Remove All") {
+                horizontal_align = WidgetAlign.CENTER,
+                vertical_align = WidgetAlign.CENTER
+            };
+            dns_remove_button.pressed.connect (on_dns_remove_button_pressed);
+            dns_button_hbox.add (dns_remove_button);
 
             /* Enet Tab */
 
@@ -487,6 +504,38 @@ namespace BrickManager {
                     accept_button_notify_has_focus_handler_id);
             });
             screen.show_window (dialog);
+        }
+
+        void on_dns_add_button_pressed () {
+            var dialog = new Dialog ();
+            weak Dialog weak_dialog = dialog;
+            var dialog_vbox = new Box.vertical () {
+                spacing = 6,
+                margin = 3
+            };
+            dialog.add (dialog_vbox);
+            var message_label = new Label ("Enter DNS address.");
+            dialog_vbox.add (message_label);
+            var text_entry = new TextEntry ();
+            dialog_vbox.add (text_entry);
+            dialog_vbox.add (new Spacer ());
+            var add_button = new Button.with_label ("Add") {
+                horizontal_align = WidgetAlign.CENTER
+            };
+            add_button.pressed.connect (() => {
+                // TODO: validate values
+                var new_list = new Gee.ArrayList<string> ();
+                new_list.add_all_array (dns_addresses);
+                new_list.add (text_entry.text);
+                dns_change_requested (new_list.to_array ());
+                screen.close_window (weak_dialog);
+            });
+            dialog_vbox.add (add_button);
+            screen.show_window (dialog);
+        }
+
+        void on_dns_remove_button_pressed () {
+            dns_change_requested ({ });
         }
     }
 }
