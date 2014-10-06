@@ -30,14 +30,14 @@ To build for the EV3:
 <some-path-like-home/user/build-brickman> with your EV3.
 * On your EV3, connect the share and run `./brickman`
 
-To build the desktop test (make UI development much faster):
+To build the desktop test (makes UI development much faster):
 * Make sure you have installed the build-deps above, then...
 
-    mkdir -p <some-build-dir>
-    cd <some-build-dir>
-    cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=Debug -DBRICKMAN_TEST=1
-    make
-    make run
+        mkdir -p <some-build-dir>
+        cd <some-build-dir>
+        cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=Debug -DBRICKMAN_TEST=1
+        make
+        make run
 
 * Also see `brickman.sublime-project` for more build hints.
 
