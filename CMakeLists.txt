@@ -136,6 +136,7 @@ PACKAGES
     ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
     lib/ev3devKit/bindings/*.vapi
+    bindings/*.vapi
 OPTIONS
     --target-glib=2.40
     --thread

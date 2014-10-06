@@ -25,7 +25,13 @@ using EV3devKit;
 
 namespace BrickManager {
     public class AboutWindow : BrickManagerWindow {
+        Label kernel_label;
         Label eeprom_label;
+
+        public string kernel_version {
+            get { return kernel_label.text; }
+            set { kernel_label.text = value; }
+        }
 
         public string eeprom_version {
             get { return eeprom_label.text; }
@@ -37,18 +43,33 @@ namespace BrickManager {
             content_vbox.add (new Label ("%s v%s".printf (EXEC_NAME, VERSION)));
             content_vbox.add (new Label ("The ev3dev Brick Manager"));
             content_vbox.add (new Label ("(C) 2014 David Lechner"));
-            content_vbox.add (new Spacer ());
-            content_vbox.add (new Label ("Hardware Info") {
+            content_vbox.add (new Label ("System Info") {
                 border_bottom = 1,
                 padding_bottom = 3,
-                margin_bottom = 3
+                margin_top = 6
             });
-            var eeprom_hbox = new Box.horizontal ();
-            content_vbox.add (eeprom_hbox);
-            eeprom_hbox.add (new Label ("EEPROM version: "));
-            eeprom_label = new Label ("???");
-            eeprom_hbox.add (eeprom_label);
-            content_vbox.add (new Spacer ());
+            var system_info_grid = new Grid (2, 2);
+            content_vbox.add (system_info_grid);
+            system_info_grid.add (new Label ("Kernel:") {
+                horizontal_align = WidgetAlign.END,
+                font = small_font,
+                margin_right = 3
+            });
+            kernel_label = new Label ("???") {
+                horizontal_align = WidgetAlign.START,
+                font = small_font
+            };
+            system_info_grid.add (kernel_label);
+            system_info_grid.add (new Label ("EEPROM:") {
+                horizontal_align = WidgetAlign.END,
+                font = small_font,
+                margin_right = 3
+            });
+            eeprom_label = new Label ("???") {
+                horizontal_align = WidgetAlign.START,
+                font = small_font
+            };
+            system_info_grid.add (eeprom_label);
             content_vbox.add (new Spacer ());
         }
     }

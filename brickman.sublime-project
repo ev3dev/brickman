@@ -16,26 +16,26 @@
 		},
 		{
 			"name": "brickman-desktop-test",
-			"cmd": [ "make", "-C", "$project_path/build-desktop-test" ],
+			"cmd": [ "make", "-C", "~/build-area/brickman-desktop-test" ],
 			"file_regex": "([^:]+):(\\d+)[\\.:](\\d+)(?:-\\d+\\.\\d+)?: (?:error|warning|note): (.*)",
 			"variants":
 			[
 				{
 					"name": "CMake",
-					"cmd": [ "cmake", "../", "-DCMAKE_BUILD_TYPE=Debug", "-DBRICKMAN_TEST=1"],
-					"working_dir": "$project_path/build-desktop-test"
+					"cmd": [ "cmake", "$project_path", "-DCMAKE_BUILD_TYPE=Debug", "-DBRICKMAN_TEST=1"],
+					"working_dir": "~/build-area/brickman-desktop-test"
 				},
 				{
 					"name": "Rebuild CMake",
-					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "rebuild_cache"]
+					"cmd": [ "make", "-C", "~/build-area/brickman-desktop-test", "rebuild_cache"]
 				},
 				{
 					"name": "Edit CMake",
-					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "edit_cache"]
+					"cmd": [ "make", "-C", "~/build-area/brickman-desktop-test", "edit_cache"]
 				},
 				{
 					"name": "Run",
-					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "run" ]
+					"cmd": [ "make", "-C", "~/build-area/brickman-desktop-test", "run" ]
 				},
 				{
 					"name": "Clean",

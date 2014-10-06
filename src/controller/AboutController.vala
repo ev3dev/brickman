@@ -50,6 +50,12 @@ namespace BrickManager {
                     critical ("%s", e.message);
                 }
             }
+            var utsname = Posix.UTSName ();
+            if (Posix.uname (ref utsname) == 0) {
+                about_window.kernel_version = utsname.release;
+            } else {
+                critical ("Failed to get kernel version.");
+            }
         }
     }
 }

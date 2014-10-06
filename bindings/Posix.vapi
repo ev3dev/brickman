@@ -19,28 +19,19 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeAboutController.vala - Fake About controller for testing */
+/* Posix.vapi - More posix bindings */
 
-using EV3devKit;
-
-namespace BrickManager {
-    public class FakeAboutController : Object, IBrickManagerModule {
-        AboutWindow about_window;
-
-        public string menu_item_text { get { return "About"; } }
-        public Window start_window { get { return about_window; } }
-
-        public FakeAboutController (Gtk.Builder builder) {
-            about_window = new AboutWindow () {
-                loading = false,
-                eeprom_version = "V0.00"
-            };
-            var utsname = Posix.UTSName ();
-            if (Posix.uname (ref utsname) == 0) {
-                about_window.kernel_version = utsname.release;
-            } else {
-                critical ("Failed to get kernel version.");
-            }
-        }
+namespace Posix {
+    [CCode (cname = "struct utsname", destroy_function = "", has_type_id = false)]
+    struct UTSName {
+        public string sysname;
+        public string nodename;
+        public string release;
+        public string version;
+        public string machine;
+        public string domainname;
     }
+
+    [CCode (cheader_filename = "sys/utsname.h")]
+    static int uname (ref UTSName buf);
 }
