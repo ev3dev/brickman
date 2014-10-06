@@ -1,0 +1,55 @@
+/*
+ * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
+ *
+ * Copyright 2014 David Lechner <david@lechnology.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ */
+
+/* AboutController.vala - Controller for about window */
+
+using EV3devKit;
+
+namespace BrickManager {
+    public class AboutController : Object, IBrickManagerModule {
+        AboutWindow about_window;
+
+        public string menu_item_text { get { return "About"; } }
+        public Window start_window { get { return about_window; } }
+
+        public AboutController () {
+            about_window = new AboutWindow () {
+                loading = false
+            };
+            var i2c_client = new GUdev.Client ({ "i2c"});
+            var ev3_eeprom = i2c_client.query_by_subsystem_and_name ("i2c", "1-0050");
+            if (ev3_eeprom == null)
+                critical ("Could not get EV3 EEPROM device");
+            else {
+                var path = Path.build_filename (ev3_eeprom.get_sysfs_path (), "eeprom");
+                var eeprom_file = File.new_for_path (path);
+                try {
+                    var eeprom_input_stream = eeprom_file.read ();
+                    eeprom_input_stream.seek (0x3f00, SeekType.SET);
+                    var version = eeprom_input_stream.read_bytes (1);
+                    about_window.eeprom_version = "V%d.%d0".printf (version[0] / 10, version[0] % 10);
+                } catch (Error e) {
+                    critical ("%s", e.message);
+                }
+            }
+        }
+    }
+}

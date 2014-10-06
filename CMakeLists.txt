@@ -9,8 +9,9 @@ set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/brickman")
 set (EXEC_NAME "brickman")
 set (RELEASE_NAME "Brick Manager")
-set (VERSION "0.1")
-set (VERSION_INFO "alpha")
+set (VERSION "0.1.0")
+
+configure_file (src/Version.vala.in Version.vala)
 
 if (BRICKMAN_TEST)
     set (BRICKMAN_TEST_MODULES gtk+-3.0)
@@ -19,6 +20,7 @@ if (BRICKMAN_TEST)
         test/main.vala
         test/ControlPanel.vala
         test/FakeConnMan.vala
+        test/controller/FakeAboutController.vala
         test/controller/FakeBatteryController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
@@ -33,6 +35,7 @@ else (BRICKMAN_TEST)
         lib/connman/Service.vala
         lib/connman/Technology.vala
         lib/ev3devKit/src/ConsoleApp.vala
+        src/controller/AboutController.vala
         src/controller/BatteryController.vala
         src/controller/NetworkController.vala
         src/controller/USBController.vala
@@ -73,6 +76,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/systemd/systemd-interfaces.vala
     src/controller/IBrickManagerModule.vala
     src/dbus/ConnManAgent.vala
+    src/view/AboutWindow.vala
     src/view/BatteryInfoWindow.vala
     src/view/BatteryStatusBarItem.vala
     src/view/BrickManagerWindow.vala
@@ -108,7 +112,14 @@ include(ValaVersion)
 ensure_vala_version("0.24" MINIMUM)
 include(ValaPrecompile)
 
+# if the binary directory is a subdirectory of the source directory, it causes
+# the build to fail when including generated .vala files that are in the binary
+# directory. The solution is to use the relative path.
+string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" BRICKMAN_RELATIVE_BINARY_DIR
+    ${CMAKE_CURRENT_BINARY_DIR})
+
 vala_precompile(VALA_C ${EXEC_NAME}
+    ${BRICKMAN_RELATIVE_BINARY_DIR}/Version.vala
     ${BRICKMAN_SOURCE_FILES}
     ${BRICKMAN_COMMON_SOURCE_FILES}
 PACKAGES

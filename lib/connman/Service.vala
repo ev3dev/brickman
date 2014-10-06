@@ -62,7 +62,7 @@ namespace ConnMan {
         public string service_type { owned get { return dbus_proxy.type_; } }
         public GenericArray<ServiceSecurity> security {
             owned get {
-                var array = new GenericArray<ServiceSecurity> (dbus_proxy.security.length);
+                var array = new GenericArray<ServiceSecurity> ();
                 foreach (var item in dbus_proxy.security)
                     array.add (item);
                 return (owned)array;

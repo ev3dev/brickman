@@ -19,31 +19,10 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeConnMan.vala - Fake implementation of ConnMan dbus stuff for testing */
+/* Version.vala - Version info from CMakeLists.txt (automatically generated) */
 
-namespace ConnMan {
-    public class Service {
-        public ObjectPath path { get; private set; }
-        public string name { get { return path; } }
-
-        public Service (ObjectPath path) {
-            this.path = path;
-        }
-
-        public static Service from_path_sync (ObjectPath path) throws IOError {
-            return new Service (path);
-        }
-    }
-
-    public class Peer {
-        ObjectPath path { get; private set; }
-
-        public Peer (ObjectPath path) {
-            this.path = path;
-        }
-
-        public static Peer from_path_sync (ObjectPath path) throws IOError {
-            return new Peer (path);
-        }
-    }
+namespace BrickManager {
+    const string EXEC_NAME = "@EXEC_NAME@";
+    const string RELEASE_NAME = "@RELEASE_NAME@";
+    const string VERSION = "@VERSION@";
 }

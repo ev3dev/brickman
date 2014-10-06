@@ -124,7 +124,7 @@ namespace ConnMan {
 
         void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
             try {
-                var services = new GenericArray<Service>(changed.length);
+                var services = new GenericArray<Service>();
                 foreach (var item in changed) {
                     var service = Service.from_path_sync (item.path);
                     item.properties.foreach ((k, v) =>

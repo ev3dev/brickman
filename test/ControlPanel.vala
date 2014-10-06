@@ -34,6 +34,7 @@ namespace BrickManager {
         public FakeNetworkController network_controller;
         public FakeUSBController usb_controller;
         public FakeBatteryController battery_controller;
+        public FakeAboutController about_controller;
 
         enum Tab {
             NETWORK,
@@ -84,6 +85,7 @@ namespace BrickManager {
                 network_controller = new FakeNetworkController (builder);
                 usb_controller = new FakeUSBController (builder);
                 battery_controller = new FakeBatteryController (builder);
+                about_controller = new FakeAboutController (builder);
 
                 builder.connect_signals (this);
                 window.show_all ();

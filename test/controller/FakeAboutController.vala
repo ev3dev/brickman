@@ -19,31 +19,22 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeConnMan.vala - Fake implementation of ConnMan dbus stuff for testing */
+/* FakeAboutController.vala - Fake About controller for testing */
 
-namespace ConnMan {
-    public class Service {
-        public ObjectPath path { get; private set; }
-        public string name { get { return path; } }
+using EV3devKit;
 
-        public Service (ObjectPath path) {
-            this.path = path;
-        }
+namespace BrickManager {
+    public class FakeAboutController : Object, IBrickManagerModule {
+        AboutWindow about_window;
 
-        public static Service from_path_sync (ObjectPath path) throws IOError {
-            return new Service (path);
-        }
-    }
+        public string menu_item_text { get { return "About"; } }
+        public Window start_window { get { return about_window; } }
 
-    public class Peer {
-        ObjectPath path { get; private set; }
-
-        public Peer (ObjectPath path) {
-            this.path = path;
-        }
-
-        public static Peer from_path_sync (ObjectPath path) throws IOError {
-            return new Peer (path);
+        public FakeAboutController (Gtk.Builder builder) {
+            about_window = new AboutWindow () {
+                loading = false,
+                eeprom_version = "V0.00"
+            };
         }
     }
 }

@@ -21,12 +21,25 @@
 			"variants":
 			[
 				{
+					"name": "CMake",
+					"cmd": [ "cmake", "../", "-DCMAKE_BUILD_TYPE=Debug", "-DBRICKMAN_TEST=1"],
+					"working_dir": "$project_path/build-desktop-test"
+				},
+				{
+					"name": "Rebuild CMake",
+					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "rebuild_cache"]
+				},
+				{
+					"name": "Edit CMake",
+					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "edit_cache"]
+				},
+				{
 					"name": "Run",
-					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "run" ],
+					"cmd": [ "make", "-C", "$project_path/build-desktop-test", "run" ]
 				},
 				{
 					"name": "Clean",
-					"cmd": [ "make", "-C", "clean" ],
+					"cmd": [ "make", "-C", "clean" ]
 				}
 			]
 		}
