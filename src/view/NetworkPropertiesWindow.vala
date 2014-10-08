@@ -463,10 +463,7 @@ namespace BrickManager {
             dialog_vscroll.add (dialog_vbox);
             var address_label = new Label ("IP address");
             dialog_vbox.add (address_label);
-            var address_entry = new TextEntry (_ipv4_config_address ?? "") {
-                valid_chars = TextEntry.DECIMAL,
-                use_on_screen_keyboard = false
-            };
+            var address_entry = new TextEntry (_ipv4_config_address ?? "");
             var address_entry_notify_has_focus_handler_id =
                 address_entry.notify["has-focus"].connect (() => {
                     if (address_entry.has_focus)
