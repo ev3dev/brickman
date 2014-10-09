@@ -607,201 +607,209 @@ namespace Systemd {
         void on_properties_changed (string iface, HashTable<string,
             Variant?> changed_properties, string[] invalidated_properties)
         {
+            changed_properties.foreach ((k, v) => {
+                notify_dbus_property (k);
+            });
             foreach (var property in invalidated_properties) {
-                switch (property) {
-                case "Id":
-                    notify_property ("id");
-                    break;
-                case "Names":
-                    notify_property ("names");
-                    break;
-                case "Following":
-                    notify_property ("following");
-                    break;
-                case "Requires":
-                    notify_property ("requires");
-                    break;
-                case "RequiresOverridable":
-                    notify_property ("requires-overridable");
-                    break;
-                case "Requisite":
-                    notify_property ("requisite");
-                    break;
-                case "RequisiteOverridable":
-                    notify_property ("requisite-overridable");
-                    break;
-                case "Wants":
-                    notify_property ("wants");
-                    break;
-                case "BindsTo":
-                    notify_property ("binds-to");
-                    break;
-                case "PartOf":
-                    notify_property ("part-of");
-                    break;
-                case "RequiredBy":
-                    notify_property ("required-by");
-                    break;
-                case "RequiredByOverridable":
-                    notify_property ("required-by-overridable");
-                    break;
-                case "WantedBy":
-                    notify_property ("wanted-by");
-                    break;
-                case "BoundBy":
-                    notify_property ("bound-by");
-                    break;
-                case "ConsistsOf":
-                    notify_property ("consists-of");
-                    break;
-                case "Conflicts":
-                    notify_property ("conflicts");
-                    break;
-                case "ConflictedBy":
-                    notify_property ("conflicted-by");
-                    break;
-                case "Before":
-                    notify_property ("before");
-                    break;
-                case "After":
-                    notify_property ("after");
-                    break;
-                case "OnFailure":
-                    notify_property ("on-failure");
-                    break;
-                case "Triggers":
-                    notify_property ("triggers");
-                    break;
-                case "TriggeredBy":
-                    notify_property ("triggered-by");
-                    break;
-                case "PropagatesReloadTo":
-                    notify_property ("propagates-reload-to");
-                    break;
-                case "ReloadPropagatedFrom":
-                    notify_property ("reload-propagated-from");
-                    break;
-                case "RequiresMountsFor":
-                    notify_property ("requires-mounts-for");
-                    break;
-                case "Description":
-                    notify_property ("description");
-                    break;
-                case "SourcePath":
-                    notify_property ("source-path");
-                    break;
-                case "DropInPaths":
-                    notify_property ("drop-in-paths");
-                    break;
-                case "Documentation":
-                    notify_property ("documentation");
-                    break;
-                case "LoadState":
-                    notify_property ("load-state");
-                    break;
-                case "ActiveState":
-                    notify_property ("active-state");
-                    break;
-                case "SubState":
-                    notify_property ("sub-state");
-                    break;
-                case "FragmentPath":
-                    notify_property ("fragment-path");
-                    break;
-                case "UnitFileState":
-                    notify_property ("unit-file-state");
-                    break;
-                case "InactiveExitTimestamp":
-                    notify_property ("inactive-exit-timestamp");
-                    break;
-                case "InactiveExitTimestampMonotonic":
-                    notify_property ("inactive-exit-timestamp-monotonic");
-                    break;
-                case "ActiveEnterTimestamp":
-                    notify_property ("active-enter-timestamp");
-                    break;
-                case "ActiveEnterTimestampMonotonic":
-                    notify_property ("active-enter-timestamp-monotonic");
-                    break;
-                case "ActiveExitTimestamp":
-                    notify_property ("active-exit-timestamp");
-                    break;
-                case "ActiveExitTimestampMonotonic":
-                    notify_property ("active-exit-timestamp-monotonic");
-                    break;
-                case "InactiveEnterTimestamp":
-                    notify_property ("inactive-enter-timestamp");
-                    break;
-                case "InactiveEnterTimestampMonotonic":
-                    notify_property ("inactive-enter-timestamp-monotonic");
-                    break;
-                case "CanStart":
-                    notify_property ("can-start");
-                    break;
-                case "CanStop":
-                    notify_property ("can-stop");
-                    break;
-                case "CanReload":
-                    notify_property ("can-reload");
-                    break;
-                case "CanIsolate":
-                    notify_property ("can-isolate");
-                    break;
-//              case "Job":
-//                  notify_property ("job");
-//                  break;
-                case "StopWhenUnneeded":
-                    notify_property ("stop-when-unneeded");
-                    break;
-                case "RefuseManualStart":
-                    notify_property ("refuse-manual-start");
-                    break;
-                case "RefuseManualStop":
-                    notify_property ("refuse-manual-stop");
-                    break;
-                case "AllowIsolate":
-                    notify_property ("allow-isolate");
-                    break;
-                case "DefaultDependencies":
-                    notify_property ("default-dependencies");
-                    break;
-                case "OnFailureIsolate":
-                    notify_property ("on-failure-isolate");
-                    break;
-                case "IgnoreOnIsolate":
-                    notify_property ("ignore-on-isolate");
-                    break;
-                case "IgnoreOnSnapshot":
-                    notify_property ("ignore-on-snapshot");
-                    break;
-                case "NeedDaemonReload":
-                    notify_property ("need-daemon-reload");
-                    break;
-                case "JobTimeoutUSec":
-                    notify_property ("job-timeout-usec");
-                    break;
-                case "ConditionTimestamp":
-                    notify_property ("condition-timestamp");
-                    break;
-                case "ConditionTimestampMonotonic":
-                    notify_property ("condition-timestamp-monotonic");
-                    break;
-                case "ConditionResult":
-                    notify_property ("condition-result");
-                    break;
-                case "Conditions":
-                    notify_property ("conditions");
-                    break;
-                case "LoadError":
-                    notify_property ("load-error");
-                    break;
-                case "Transient":
-                    notify_property ("transient");
-                    break;
-                }
+                notify_dbus_property (property);
+            }
+        }
+
+        void notify_dbus_property (string property) {
+            switch (property) {
+            case "Id":
+                notify_property ("id");
+                break;
+            case "Names":
+                notify_property ("names");
+                break;
+            case "Following":
+                notify_property ("following");
+                break;
+            case "Requires":
+                notify_property ("requires");
+                break;
+            case "RequiresOverridable":
+                notify_property ("requires-overridable");
+                break;
+            case "Requisite":
+                notify_property ("requisite");
+                break;
+            case "RequisiteOverridable":
+                notify_property ("requisite-overridable");
+                break;
+            case "Wants":
+                notify_property ("wants");
+                break;
+            case "BindsTo":
+                notify_property ("binds-to");
+                break;
+            case "PartOf":
+                notify_property ("part-of");
+                break;
+            case "RequiredBy":
+                notify_property ("required-by");
+                break;
+            case "RequiredByOverridable":
+                notify_property ("required-by-overridable");
+                break;
+            case "WantedBy":
+                notify_property ("wanted-by");
+                break;
+            case "BoundBy":
+                notify_property ("bound-by");
+                break;
+            case "ConsistsOf":
+                notify_property ("consists-of");
+                break;
+            case "Conflicts":
+                notify_property ("conflicts");
+                break;
+            case "ConflictedBy":
+                notify_property ("conflicted-by");
+                break;
+            case "Before":
+                notify_property ("before");
+                break;
+            case "After":
+                notify_property ("after");
+                break;
+            case "OnFailure":
+                notify_property ("on-failure");
+                break;
+            case "Triggers":
+                notify_property ("triggers");
+                break;
+            case "TriggeredBy":
+                notify_property ("triggered-by");
+                break;
+            case "PropagatesReloadTo":
+                notify_property ("propagates-reload-to");
+                break;
+            case "ReloadPropagatedFrom":
+                notify_property ("reload-propagated-from");
+                break;
+            case "RequiresMountsFor":
+                notify_property ("requires-mounts-for");
+                break;
+            case "Description":
+                notify_property ("description");
+                break;
+            case "SourcePath":
+                notify_property ("source-path");
+                break;
+            case "DropInPaths":
+                notify_property ("drop-in-paths");
+                break;
+            case "Documentation":
+                notify_property ("documentation");
+                break;
+            case "LoadState":
+                notify_property ("load-state");
+                break;
+            case "ActiveState":
+                notify_property ("active-state");
+                break;
+            case "SubState":
+                notify_property ("sub-state");
+                break;
+            case "FragmentPath":
+                notify_property ("fragment-path");
+                break;
+            case "UnitFileState":
+                notify_property ("unit-file-state");
+                break;
+            case "InactiveExitTimestamp":
+                notify_property ("inactive-exit-timestamp");
+                break;
+            // case "InactiveExitTimestampMonotonic":
+            //     notify_property ("inactive-exit-timestamp-monotonic");
+            //     break;
+            case "ActiveEnterTimestamp":
+                notify_property ("active-enter-timestamp");
+                break;
+            // case "ActiveEnterTimestampMonotonic":
+            //     notify_property ("active-enter-timestamp-monotonic");
+            //     break;
+            case "ActiveExitTimestamp":
+                notify_property ("active-exit-timestamp");
+                break;
+            // case "ActiveExitTimestampMonotonic":
+            //     notify_property ("active-exit-timestamp-monotonic");
+            //     break;
+            case "InactiveEnterTimestamp":
+                notify_property ("inactive-enter-timestamp");
+                break;
+            // case "InactiveEnterTimestampMonotonic":
+            //     notify_property ("inactive-enter-timestamp-monotonic");
+            //     break;
+            case "CanStart":
+                notify_property ("can-start");
+                break;
+            case "CanStop":
+                notify_property ("can-stop");
+                break;
+            case "CanReload":
+                notify_property ("can-reload");
+                break;
+            case "CanIsolate":
+                notify_property ("can-isolate");
+                break;
+            // case "Job":
+            //     notify_property ("job");
+            //     break;
+            case "StopWhenUnneeded":
+                notify_property ("stop-when-unneeded");
+                break;
+            case "RefuseManualStart":
+                notify_property ("refuse-manual-start");
+                break;
+            case "RefuseManualStop":
+                notify_property ("refuse-manual-stop");
+                break;
+            case "AllowIsolate":
+                notify_property ("allow-isolate");
+                break;
+            case "DefaultDependencies":
+                notify_property ("default-dependencies");
+                break;
+            case "OnFailureIsolate":
+                notify_property ("on-failure-isolate");
+                break;
+            case "IgnoreOnIsolate":
+                notify_property ("ignore-on-isolate");
+                break;
+            case "IgnoreOnSnapshot":
+                notify_property ("ignore-on-snapshot");
+                break;
+            case "NeedDaemonReload":
+                notify_property ("need-daemon-reload");
+                break;
+            case "JobTimeoutUSec":
+                notify_property ("job-timeout-usec");
+                break;
+            // case "ConditionTimestamp":
+            //     notify_property ("condition-timestamp");
+            //     break;
+            // case "ConditionTimestampMonotonic":
+            //     notify_property ("condition-timestamp-monotonic");
+            //     break;
+            // case "ConditionResult":
+            //     notify_property ("condition-result");
+            //     break;
+            // case "Conditions":
+            //     notify_property ("conditions");
+            //     break;
+            // case "LoadError":
+            //     notify_property ("load-error");
+            //     break;
+            // case "Transient":
+            //     notify_property ("transient");
+            //     break;
             }
         }
     }
+
 /*
     [Compact]
     public class UnitLink {
@@ -863,21 +871,28 @@ namespace Systemd {
         void on_properties_changed (string iface, HashTable<string,
             Variant?> changed_properties, string[] invalidated_properties)
         {
+            changed_properties.foreach ((k, v) => {
+                notify_dbus_property (k);
+            });
             foreach (var property in invalidated_properties) {
-                switch (property) {
-                case "Id":
-                    notify_property ("id");
-                    break;
-//              case "Unit":
-//                  notify_property ("unit");
-//                  break;
-                case "JobType":
-                    notify_property ("job-type");
-                    break;
-                case "State":
-                    notify_property ("state");
-                    break;
-                }
+                notify_dbus_property (property);
+            }
+        }
+
+        void notify_dbus_property (string property) {
+            switch (property) {
+            case "Id":
+                notify_property ("id");
+                break;
+            // case "Unit":
+            //     notify_property ("unit");
+            //     break;
+            case "JobType":
+                notify_property ("job-type");
+                break;
+            case "State":
+                notify_property ("state");
+                break;
             }
         }
     }

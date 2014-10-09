@@ -238,25 +238,32 @@ namespace Systemd.Logind {
         void on_properties_changed (string iface, HashTable<string,
             Variant?> changed_properties, string[] invalidated_properties)
         {
+            changed_properties.foreach ((k, v) => {
+                notify_dbus_property (k);
+            });
             foreach (var property in invalidated_properties) {
-                switch (property) {
-                // Most properties are constants
-                case "IdleHint":
-                    notify_property ("idle-hint");
-                    break;
-                case "IdleSinceHint":
-                    notify_property ("idle-since-hint");
-                    break;
-                case "IdleSinceHintMonotonic":
-                    notify_property ("idle-since-hint-monotonic");
-                    break;
-                case "BlockInhibited":
-                    notify_property ("block-inhibited");
-                    break;
-                case "DelayInhibited":
-                    notify_property ("delay-inhibited");
-                    break;
-                }
+                notify_dbus_property (property);
+            }
+        }
+
+        void notify_dbus_property (string property) {
+            switch (property) {
+            // Most properties are constants
+            case "IdleHint":
+                notify_property ("idle-hint");
+                break;
+            case "IdleSinceHint":
+                notify_property ("idle-since-hint");
+                break;
+            case "IdleSinceHintMonotonic":
+                notify_property ("idle-since-hint-monotonic");
+                break;
+            case "BlockInhibited":
+                notify_property ("block-inhibited");
+                break;
+            case "DelayInhibited":
+                notify_property ("delay-inhibited");
+                break;
             }
         }
     }
