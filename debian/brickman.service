@@ -7,4 +7,4 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/brickman
+ExecStart=/usr/sbin/brickman
