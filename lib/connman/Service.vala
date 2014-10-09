@@ -478,6 +478,13 @@ namespace ConnMan {
                 break;
             case "IPv4":
                 notify_property ("ipv4");
+                // work around bug where nameserver does not work after
+                // switching from dhcp to manual
+                if (dbus_proxy.ipv4[IPV4_METHOD_KEY] != null
+                        && dbus_proxy.ipv4[IPV4_METHOD_KEY].get_string () == "manual"
+                        && dbus_proxy.ipv4[IPV4_GATEWAY_KEY] != null)
+                    dbus_proxy.set_property.begin ("Nameservers.Configuration",
+                        dbus_proxy.nameservers_configuration);
                 break;
             case "IPv4.Configuration":
                 notify_property("ipv4-configuration");
