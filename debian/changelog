@@ -1,3 +1,12 @@
+brickman (0.1.2) testing; urgency=medium
+
+  * Use on screen keyboard for ip address entry
+  * put executable in sbin instead of bin
+  * fix nameserver not working after switching from dhcp to manual
+  * fix dbus property notification not working
+
+ -- David Lechner <david@lechnology.com>  Wed, 08 Oct 2014 22:55:29 -0500
+
 brickman (0.1.1) testing; urgency=medium
 
   * fix systemd service not enabled after install
