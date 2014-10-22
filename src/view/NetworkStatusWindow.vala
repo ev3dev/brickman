@@ -49,7 +49,8 @@ namespace BrickManager {
         public NetworkStatusWindow () {
             title ="Networking";
             state_hbox = new Box.horizontal () {
-                horizontal_align = WidgetAlign.CENTER
+                horizontal_align = WidgetAlign.CENTER,
+                vertical_align = WidgetAlign.CENTER
             };
             content_vbox.add (state_hbox);
             state_label = new Label ("Status:");
