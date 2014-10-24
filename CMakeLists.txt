@@ -22,6 +22,7 @@ if (BRICKMAN_TEST)
         test/FakeConnMan.vala
         test/controller/FakeAboutController.vala
         test/controller/FakeBatteryController.vala
+        src/controller/BluetoothController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
         lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
@@ -37,6 +38,7 @@ else (BRICKMAN_TEST)
         lib/ev3devKit/src/ConsoleApp.vala
         src/controller/AboutController.vala
         src/controller/BatteryController.vala
+        src/controller/BluetoothController.vala
         src/controller/NetworkController.vala
         src/controller/USBController.vala
         src/main.vala
@@ -70,6 +72,11 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/TextEntry.vala
     lib/ev3devKit/src/Widget.vala
     lib/ev3devKit/src/Window.vala
+    lib/bluez5/Adapter.vala
+    lib/bluez5/Device.vala
+    lib/bluez5/Manager.vala
+    lib/dbus/ObjectManager.vala
+    lib/dbus/Properties.vala
     lib/systemd/Logind.vala
     lib/systemd/Systemd.vala
     lib/systemd/logind-interfaces.vala
@@ -79,6 +86,9 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/AboutWindow.vala
     src/view/BatteryInfoWindow.vala
     src/view/BatteryStatusBarItem.vala
+    src/view/BluetoothWindow.vala
+    src/view/BluetoothAdaptersWindow.vala
+    src/view/BluetoothDevicesWindow.vala
     src/view/BrickManagerWindow.vala
     src/view/ConnManAgentInputDialog.vala
     src/view/HomeWindow.vala

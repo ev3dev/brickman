@@ -32,6 +32,7 @@ namespace BrickManager {
 
         public Gtk.Window window;
         public FakeNetworkController network_controller;
+        public BluetoothController bluetooth_controller;
         public FakeUSBController usb_controller;
         public FakeBatteryController battery_controller;
         public FakeAboutController about_controller;
@@ -83,6 +84,7 @@ namespace BrickManager {
                 window = builder.get_object ("control_panel_window") as Gtk.Window;
 
                 network_controller = new FakeNetworkController (builder);
+                bluetooth_controller = new BluetoothController ();
                 usb_controller = new FakeUSBController (builder);
                 battery_controller = new FakeBatteryController (builder);
                 about_controller = new FakeAboutController (builder);
