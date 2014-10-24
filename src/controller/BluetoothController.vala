@@ -29,7 +29,7 @@ namespace BrickManager {
         BluetoothWindow main_window;
         BluetoothDevicesWindow devices_window;
         BluetoothAdaptersWindow adapters_window;
-        Manager manager;
+        DBusObjectManagerClient manager_client;
 
         public string menu_item_text { get { return "Bluetooth"; } }
         public Window start_window { get { return main_window; } }
@@ -49,24 +49,49 @@ namespace BrickManager {
                     main_window.loading = false;
                     devices_window.loading = false;
                     adapters_window.loading = false;
-                } catch (IOError err) {
+                } catch (Error err) {
                     critical ("%s", err.message);
                 }
             });
         }
 
-        async void init_async () throws IOError {
-            manager = yield Manager.new_async ();
-            manager.adapter_added.connect (on_adapter_added);
-            manager.device_added.connect (on_device_added);
+        delegate Type TypeFunc ();
+
+        async void init_async () throws Error {
+            manager_client = yield DBusObjectManagerClient.new_for_bus (
+                BusType.SYSTEM, DBusObjectManagerClientFlags.NONE, "org.bluez",
+                "/", (manager, object_path, interface_name) => {
+                    if (interface_name == null)
+                        return typeof (DBusObjectProxy);
+                    Type dev_type;
+                    switch (interface_name) {
+                    case "org.bluez.Adapter1":
+                        dev_type = typeof (Adapter);
+                        break;
+                    case "org.bluez.Device1":
+                        dev_type = typeof (Device);
+                        break;
+                    default:
+                        return typeof (DBusProxy);
+                    }
+                    // quark stuff is workaround for bug 710817
+                    var q = Quark.from_string ("vala-dbus-proxy-type");
+                    return ((TypeFunc)dev_type.get_qdata (q)) ();
+                });
+            manager_client.interface_added.connect (on_interface_added);
+            foreach (var obj in manager_client.get_objects ()) {
+                foreach (var iface in obj.get_interfaces ())
+                    on_interface_added (obj, iface);
+            }
         }
 
-        void on_adapter_added (Adapter adapter) {
-            adapters_window.add_adapter (adapter.name, adapter);
-        }
-
-        void on_device_added (Device device) {
-            devices_window.add_device (device.name, device);
+        void on_interface_added (DBusObject obj, DBusInterface iface) {
+            var adapter = iface as Adapter;
+            if (adapter != null)
+                adapters_window.add_adapter (adapter.name, adapter);
+            var device = iface as Device;
+            if (device != null)
+                devices_window.add_device (device.name, device);
         }
     }
 }
