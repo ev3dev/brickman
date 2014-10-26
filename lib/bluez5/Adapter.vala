@@ -22,8 +22,132 @@
  */
 
 namespace BlueZ5 {
+    public class Adapter : Object {
+        static Gee.HashMap<string, weak Adapter> adapter_map;
+
+        static construct {
+            adapter_map = new Gee.HashMap<string, weak Adapter> ();
+        }
+
+        org.bluez.Adapter1 dbus_proxy;
+
+        public string address { owned get { return dbus_proxy.address; } }
+
+        public string name { owned get { return dbus_proxy.name; } }
+
+        public string alias {
+            owned get { return dbus_proxy.alias; }
+            set { alias = value; }
+        }
+
+        public uint32 class { get { return dbus_proxy.class; } }
+
+        public bool powered {
+            get { return dbus_proxy.powered; }
+            set { powered = value; }
+        }
+
+        public bool discoverable {
+            get { return dbus_proxy.discoverable; }
+            set { discoverable = value; }
+        }
+
+        public bool pairable {
+            get { return dbus_proxy.pairable; }
+            set { pairable = value; }
+        }
+
+        public uint32 pairable_timeout {
+            get { return dbus_proxy.pairable_timeout; }
+            set { pairable_timeout = value; }
+        }
+
+        public uint32 discoverable_timeout {
+            get { return dbus_proxy.discoverable_timeout; }
+            set { discoverable_timeout = value; }
+        }
+
+        public bool discovering { get { return dbus_proxy.discovering; } }
+
+        public string[] uuids { owned get { return dbus_proxy.uuids; } }
+
+        public string modalias { owned get { return  dbus_proxy.modalias; } }
+
+        internal Adapter (DBusProxy proxy) {
+            dbus_proxy = (org.bluez.Adapter1)proxy;
+            adapter_map[proxy.g_object_path] = this;
+            proxy.g_properties_changed.connect ((changed, invalidated) => {
+                var iter = changed.iterator ();
+                string? name = null;
+                Variant? value = null;
+                while (iter.next ("{sv}", &name, &value)) {
+                    switch (name) {
+                    case "Address":
+                        notify_property ("address");
+                        break;
+                    case "Name":
+                        notify_property ("name");
+                        break;
+                    case "Alias":
+                        notify_property ("alias");
+                        break;
+                    case "Class":
+                        notify_property ("class");
+                        break;
+                    case "Powered":
+                        notify_property ("powered");
+                        break;
+                    case "Discoverable":
+                        notify_property ("discoverable");
+                        break;
+                    case "Pairable":
+                        notify_property ("pairable");
+                        break;
+                    case "PairableTimeout":
+                        notify_property ("pairable-timeout");
+                        break;
+                    case "DiscoverableTimeout":
+                        notify_property ("discoverable-timeout");
+                        break;
+                    case "Discovering":
+                        notify_property ("discovering");
+                        break;
+                    case "UUIDs":
+                        notify_property ("uuids");
+                        break;
+                    case "Modalias":
+                        notify_property ("modalias");
+                        break;
+                    }
+                }
+            });
+        }
+
+        ~Adapter () {
+            adapter_map.unset (((DBusProxy)dbus_proxy).g_object_path);
+        }
+
+        internal static Adapter get_for_object_path (string path) {
+            return adapter_map[path];
+        }
+
+        public async void start_discovery () throws IOError {
+            yield dbus_proxy.start_discovery ();
+        }
+
+        public async void stop_discovery () throws IOError {
+            yield dbus_proxy.stop_discovery ();
+        }
+
+        public async void remove_device (ObjectPath device) throws IOError {
+            yield dbus_proxy.remove_device (device);
+        }
+    }
+}
+
+namespace org.bluez {
     [DBus (name = "org.bluez.Adapter1")]
-    public interface Adapter : Object {
+    public interface Adapter1 : Object {
         public abstract async void start_discovery () throws IOError;
         public abstract async void stop_discovery () throws IOError;
         public abstract async void remove_device (ObjectPath device) throws IOError;
@@ -40,6 +164,6 @@ namespace BlueZ5 {
         public abstract bool discovering { get; }
         [DBus (name = "UUIDs")]
         public abstract string[] uuids { owned get; }
-        public abstract string? modalias { owned get; }
+        public abstract string modalias { owned get; }
     }
 }

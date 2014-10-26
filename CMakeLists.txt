@@ -74,6 +74,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/Window.vala
     lib/bluez5/Adapter.vala
     lib/bluez5/Device.vala
+    lib/bluez5/Manager.vala
     lib/dbus/Properties.vala
     lib/systemd/Logind.vala
     lib/systemd/Systemd.vala
