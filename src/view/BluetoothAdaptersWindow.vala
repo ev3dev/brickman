@@ -18,7 +18,7 @@
  */
 
 /*
- * BluetoothAdaptersWindow.vala: Main Bluetooth Menu
+ * BluetoothAdaptersWindow.vala: Displays list of availible bluetooth adapters.
  */
 
 using EV3devKit;
@@ -27,8 +27,10 @@ namespace BrickManager {
     public class BluetoothAdaptersWindow : BrickManagerWindow {
         internal EV3devKit.Menu menu;
 
+        public signal void adapter_selected (Object represented_object);
+
         public BluetoothAdaptersWindow () {
-            title ="Adapters";
+            title = "Adapters";
             menu = new EV3devKit.Menu ();
             content_vbox.add (menu);
         }
@@ -36,7 +38,14 @@ namespace BrickManager {
         public void add_adapter (string name, Object represented_object) {
             var menu_item = new EV3devKit.MenuItem (name);
             menu_item.represented_object = represented_object;
+            menu_item.button.pressed.connect (() =>
+                adapter_selected (represented_object));
             menu.add_menu_item (menu_item);
+        }
+
+        public void remove_adapter (Object represented_object) {
+            var menu_item = menu.get_menu_item (represented_object);
+            menu.remove_menu_item (menu_item);
         }
     }
 }

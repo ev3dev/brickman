@@ -85,7 +85,9 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/BatteryInfoWindow.vala
     src/view/BatteryStatusBarItem.vala
     src/view/BluetoothWindow.vala
+    src/view/BluetoothAdapterInfoWindow.vala
     src/view/BluetoothAdaptersWindow.vala
+    src/view/BluetoothDeviceInfoWindow.vala
     src/view/BluetoothDevicesWindow.vala
     src/view/BrickManagerWindow.vala
     src/view/ConnManAgentInputDialog.vala

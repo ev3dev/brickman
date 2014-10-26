@@ -23,7 +23,7 @@
 
 namespace BlueZ5 {
     [DBus (name = "org.bluez.Adapter1")]
-    public interface Adapter : DBusProxy {
+    public interface Adapter : Object {
         public abstract async void start_discovery () throws IOError;
         public abstract async void stop_discovery () throws IOError;
         public abstract async void remove_device (ObjectPath device) throws IOError;

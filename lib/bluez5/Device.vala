@@ -23,7 +23,7 @@
 
 namespace BlueZ5 {
     [DBus (name = "org.bluez.Device1")]
-    public interface Device : DBusProxy {
+    public interface Device : Object {
         public abstract async void connect () throws IOError;
         public abstract async void disconnect () throws IOError;
         public abstract async void connect_profile (string uuid) throws IOError;
