@@ -36,6 +36,8 @@ namespace BrickManager {
 
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
+        public NetworkStatusBarItem network_status_bar_item;
+        internal Binding status_bar_item_binding;
         ConnManAgent agent;
         Manager manager;
         Technology? wifi_technology;
@@ -62,6 +64,8 @@ namespace BrickManager {
                     critical ("%s", err.message);
                 }
             });
+
+            network_status_bar_item = new NetworkStatusBarItem();
         }
 
         async void init_async () throws IOError {
@@ -148,6 +152,10 @@ namespace BrickManager {
                     return true;
                 });
             }
+            if(status_bar_item_binding != null)
+                status_bar_item_binding.unbind();
+            status_bar_item_binding = null;
+
             changed.foreach ((service) => {
                 NetworkConnectionMenuItem menu_item;
                 if (service_map.has_key (service)) {
@@ -163,6 +171,15 @@ namespace BrickManager {
                     service_map[service] = menu_item;
                 }
                 connections_window.menu.add_menu_item (menu_item);
+
+                // Show the IP address of the primary service in the status bar
+                //      The list is ordered, so the first one is the one we want
+                if(status_bar_item_binding == null) {
+                    status_bar_item_binding = service.bind_property (
+                        "ipv4", network_status_bar_item, "text",
+                        BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
+                }
+
             });
         }
 

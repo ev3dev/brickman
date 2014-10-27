@@ -32,6 +32,7 @@ namespace BrickManager {
         NetworkStatusWindow network_status_window;
         public Window start_window { get { return network_status_window; } }
         NetworkConnectionsWindow network_connections_window;
+        public NetworkStatusBarItem network_status_bar_item;
         ConnManAgent agent;
         Gtk.Dialog? agent_request_input_dialog;
 
@@ -94,6 +95,8 @@ namespace BrickManager {
                     connman_technology_liststore, toggle, path, ControlPanel.NetworkTechnologyColumn.CONNECTED));
 
             /* NetworkConnectionsWindow */
+            network_status_bar_item = new NetworkStatusBarItem();
+            network_status_bar_item.text = "192.168.137.3";
 
             network_connections_window = new NetworkConnectionsWindow ();
             bind_property ("has-wifi", network_connections_window, "has-wifi", BindingFlags.SYNC_CREATE);
