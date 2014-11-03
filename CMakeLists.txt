@@ -9,7 +9,7 @@ set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/brickman")
 set (EXEC_NAME "brickman")
 set (RELEASE_NAME "Brick Manager")
-set (VERSION "0.1.2")
+set (VERSION "0.1.3")
 
 configure_file (src/Version.vala.in Version.vala)
 

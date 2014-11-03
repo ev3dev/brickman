@@ -1,15 +1,14 @@
 brickman (0.1.3) testing; urgency=medium
 
-  [ David Lechner ]
-  * fix Network status menu shrinking when technologies are removed
-
   [ WasabiFan ]
   * Add IP address to status bar
 
   [ David Lechner ]
+  * fix Network status menu shrinking when technologies are removed
   * Make brickman restart when connman restarts
+  * Fix build-depends due to libjpeg62 transitional packages being removed.
 
- -- David Lechner <david@lechnology.com>  Mon, 03 Nov 2014 12:58:55 -0600
+ -- David Lechner <david@lechnology.com>  Mon, 03 Nov 2014 13:01:59 -0600
 
 brickman (0.1.2) testing; urgency=medium
 
