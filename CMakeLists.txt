@@ -85,6 +85,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
     src/view/NetworkPropertiesWindow.vala
+    src/view/NetworkStatusBarItem.vala
     src/view/NetworkStatusWindow.vala
     src/view/ShutdownDialog.vala
     src/view/USBWindow.vala
