@@ -139,8 +139,9 @@ namespace BlueZ5 {
             yield dbus_proxy.stop_discovery ();
         }
 
-        public async void remove_device (ObjectPath device) throws IOError {
-            yield dbus_proxy.remove_device (device);
+        public async void remove_device (Device device) throws IOError {
+            var path = new ObjectPath (((DBusProxy)device).g_object_path);
+            yield dbus_proxy.remove_device (path);
         }
     }
 }

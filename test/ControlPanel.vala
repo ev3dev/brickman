@@ -32,13 +32,14 @@ namespace BrickManager {
 
         public Gtk.Window window;
         public FakeNetworkController network_controller;
-        public BluetoothController bluetooth_controller;
+        public FakeBluetoothController bluetooth_controller;
         public FakeUSBController usb_controller;
         public FakeBatteryController battery_controller;
         public FakeAboutController about_controller;
 
         enum Tab {
             NETWORK,
+            BLUETOOTH,
             USB,
             BATTERY
         }
@@ -77,6 +78,24 @@ namespace BrickManager {
             COLUMN_COUNT;
         }
 
+        enum BluetoothAdapterColumn {
+            PRESENT,
+            ADDRESS,
+            NAME,
+            ALIAS,
+            CLASS,
+            POWERED,
+            DISCOVERABLE,
+            PAIRABLE,
+            PAIRABLE_TIMEOUT,
+            DISCOVERABLE_TIMEOUT,
+            UUIDS,
+            DISCOVERING,
+            MODALIAS,
+            USER_DATA,
+            COLUMN_COUNT;
+        }
+
         public ControlPanel () {
             var builder = new Builder ();
             try {
@@ -84,7 +103,7 @@ namespace BrickManager {
                 window = builder.get_object ("control_panel_window") as Gtk.Window;
 
                 network_controller = new FakeNetworkController (builder);
-                bluetooth_controller = new BluetoothController ();
+                bluetooth_controller = new FakeBluetoothController (builder);
                 usb_controller = new FakeUSBController (builder);
                 battery_controller = new FakeBatteryController (builder);
                 about_controller = new FakeAboutController (builder);

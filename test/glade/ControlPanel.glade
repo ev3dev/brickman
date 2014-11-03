@@ -13,6 +13,60 @@
     <property name="step_increment">0.25</property>
     <property name="page_increment">1</property>
   </object>
+  <object class="GtkListStore" id="bluetooth-adapters-liststore">
+    <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
+      <!-- column-name ADDRESS -->
+      <column type="gchararray"/>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+      <!-- column-name ALIAS -->
+      <column type="gchararray"/>
+      <!-- column-name CLASS -->
+      <column type="guint"/>
+      <!-- column-name POWERED -->
+      <column type="gboolean"/>
+      <!-- column-name DISCOVERABLE -->
+      <column type="gboolean"/>
+      <!-- column-name PAIRABLE -->
+      <column type="gboolean"/>
+      <!-- column-name PAIRABLE_TIMEOUT -->
+      <column type="guint"/>
+      <!-- column-name DISCOVERABLE_TIMEOUT -->
+      <column type="guint"/>
+      <!-- column-name UUIDS -->
+      <column type="gpointer"/>
+      <!-- column-name DISCOVERING -->
+      <column type="gboolean"/>
+      <!-- column-name MODALIAS -->
+      <column type="gchararray"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">00:00:00:00:00:00</col>
+        <col id="2" translatable="yes">ev3dev</col>
+        <col id="3" translatable="yes">ev3dev</col>
+        <col id="4">0</col>
+        <col id="5">True</col>
+        <col id="6">False</col>
+        <col id="7">True</col>
+        <col id="8">0</col>
+        <col id="9">120</col>
+        <col id="11">False</col>
+        <col id="12" translatable="yes">usb:v1D6Bp0246d0517</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="bluetooth-discoverable-adjustment">
+    <property name="upper">1000</property>
+    <property name="value">120</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkListStore" id="connman_security_liststore">
     <columns>
       <!-- column-name SECURITY -->
@@ -231,7 +285,7 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkNotebook" id="control_panel_notebook">
+          <object class="GtkNotebook" id="control-panel-notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="margin_left">6</property>
@@ -239,7 +293,7 @@
             <property name="margin_top">6</property>
             <property name="margin_bottom">6</property>
             <child>
-              <object class="GtkBox" id="box2">
+              <object class="GtkBox" id="network-box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_left">10</property>
@@ -777,12 +831,9 @@
                   </packing>
                 </child>
               </object>
-              <packing>
-                <property name="position">1</property>
-              </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="network_label">
+              <object class="GtkLabel" id="network-label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Network</property>
@@ -792,7 +843,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="box4">
+              <object class="GtkBox" id="bluetooth-box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_left">10</property>
@@ -802,7 +853,274 @@
                 <property name="orientation">vertical</property>
                 <property name="spacing">10</property>
                 <child>
-                  <object class="GtkFrame" id="networking_screens_frame1">
+                  <object class="GtkFrame" id="bluetooth-screens-frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment11">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkCheckButton" id="bluetooth-loading-checkbutton">
+                            <property name="label" translatable="yes">Loading</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="xalign">0</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label14">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Bluetooth Screens</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="bluetooth-adapters-frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment9">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkTreeView" id="bluetooth-adapters-treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">bluetooth-adapters-liststore</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection4"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-present-treeviewcolumn">
+                                <property name="title" translatable="yes">Present</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-present-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-address-treeviewcolumn">
+                                <property name="title" translatable="yes">Address</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="bluetooth-adapters-address-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-name-treeviewcolumn">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="bluetooth-adapters-name-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-alias-treeviewcolumn">
+                                <property name="title" translatable="yes">Alias</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="bluetooth-adapters-alias-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-class-treeviewcolumn">
+                                <property name="title" translatable="yes">Class</property>
+                                <child>
+                                  <object class="GtkCellRendererSpin" id="bluetooth-adapters-class-cellrendererspin">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="markup">4</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-powered-treeviewcolumn">
+                                <property name="title" translatable="yes">Powered</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-powered-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">5</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-discoverable-treeviewcolumn">
+                                <property name="title" translatable="yes">Discoverable</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-discoverable-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">6</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-pairable-treeviewcolumn">
+                                <property name="title" translatable="yes">Pairable</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-pairable-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">7</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-pairable-timeout-treeviewcolumn">
+                                <property name="title" translatable="yes">Pair TO</property>
+                                <child>
+                                  <object class="GtkCellRendererSpin" id="bluetooth-adapters-pairable-timeout-cellrendererspin">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">8</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-discoverable-timeout-treeviewcolumn">
+                                <property name="title" translatable="yes">Disc. TO</property>
+                                <child>
+                                  <object class="GtkCellRendererSpin" id="bluetooth-adapters-discoverable-timeout-cellrendererspin">
+                                    <property name="editable">True</property>
+                                    <property name="adjustment">bluetooth-discoverable-adjustment</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">9</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-discovering-treeviewcolumn">
+                                <property name="title" translatable="yes">Discovering</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-discovering-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">11</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label12">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Adapters</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="bluetooth-devicess-frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment10">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label13">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Devices</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="bluetooth-label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Bluetooth</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="usb-box">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">10</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">10</property>
+                <child>
+                  <object class="GtkFrame" id="usb-screens-frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
@@ -982,25 +1300,30 @@
                 </child>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="usb_label">
+              <object class="GtkLabel" id="usb-label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">USB</property>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="box1">
+              <object class="GtkBox" id="battery-box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">10</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
                 <property name="orientation">vertical</property>
+                <property name="spacing">10</property>
                 <child>
                   <object class="GtkBox" id="box8">
                     <property name="visible">True</property>
@@ -1169,17 +1492,17 @@
                 </child>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="battery_label">
+              <object class="GtkLabel" id="battery-label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Battery</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>

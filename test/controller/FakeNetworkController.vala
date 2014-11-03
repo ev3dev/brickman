@@ -40,7 +40,7 @@ namespace BrickManager {
         public FakeNetworkController (Gtk.Builder builder) throws Error {
             /* NetworkStatusWindow */
             network_status_window = new NetworkStatusWindow ();
-            var control_panel_notebook = builder.get_object ("control_panel_notebook") as Gtk.Notebook;
+            var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             network_status_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK);
 
             var networking_loading_checkbutton = builder.get_object ("networking_loading_checkbutton") as Gtk.CheckButton;

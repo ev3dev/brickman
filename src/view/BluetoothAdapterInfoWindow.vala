@@ -25,9 +25,22 @@ using EV3devKit;
 
 namespace BrickManager {
     public class BluetoothAdapterInfoWindow : BrickManagerWindow {
+        Label address_value_label;
 
-        public BluetoothAdapterInfoWindow (string name) {
-            title = name;
+        public string address {
+            get { return address_value_label.text; }
+            set { address_value_label.text = value; }
+        }
+
+        public BluetoothAdapterInfoWindow () {
+            var vscroll = new Scroll.vertical ();
+            content_vbox.add (vscroll);
+            var vbox = new Box.vertical ();
+            vscroll.add (vbox);
+            var address_label = new Label ("Address:");
+            vbox.add (address_label);
+            address_value_label = new Label ("???");
+            vbox.add (address_value_label);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace BrickManager {
             devices_window = new BluetoothDevicesWindow ();
             devices_window.device_selected.connect ((obj) => {
                 var device = obj as Device;
-                var info_window = new BluetoothDeviceInfoWindow (device.name) {
+                var info_window = new BluetoothDeviceInfoWindow (device.alias) {
                     loading = false
                 };
                 device.bind_property ("address", info_window, "address",
@@ -60,7 +60,7 @@ namespace BrickManager {
             adapters_window = new BluetoothAdaptersWindow ();
             adapters_window.adapter_selected.connect ((obj) => {
                 var adapter = obj as Adapter;
-                var info_window = new BluetoothDeviceInfoWindow (adapter.name) {
+                var info_window = new BluetoothDeviceInfoWindow (adapter.alias) {
                     loading = false
                 };
                 weak_main_window.screen.show_window (info_window);
@@ -80,11 +80,11 @@ namespace BrickManager {
         async void init_async () throws Error {
             manager = yield Manager.new_async ();
             manager.adapter_added.connect ((adapter) =>
-                adapters_window.add_adapter (adapter.name, adapter));
+                adapters_window.add_adapter (adapter.alias, adapter));
             manager.adapter_removed.connect ((adapter) =>
                 adapters_window.remove_adapter (adapter));
             manager.device_added.connect ((device) =>
-                devices_window.add_device (device.name, device));
+                devices_window.add_device (device.alias, device));
             manager.device_removed.connect ((device) =>
                 devices_window.remove_device (device));
             manager.init ();

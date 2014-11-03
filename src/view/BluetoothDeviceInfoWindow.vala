@@ -59,8 +59,7 @@ namespace BrickManager {
             }
         }
 
-        public BluetoothDeviceInfoWindow (string name) {
-            title = name;
+        public BluetoothDeviceInfoWindow () {
             var vscroll = new Scroll.vertical ();
             content_vbox.add (vscroll);
             var scroll_vbox = new Box.vertical ();

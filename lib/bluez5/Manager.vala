@@ -64,7 +64,7 @@ namespace BlueZ5 {
         /**
          * Finish initializing.
          *
-         * Triggers ..._added signals for already existing objects.
+         * Triggers *_added signals for already existing objects.
          */
         public void init () {
             foreach (var obj in client.get_objects ()) {

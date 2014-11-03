@@ -22,7 +22,7 @@ if (BRICKMAN_TEST)
         test/FakeConnMan.vala
         test/controller/FakeAboutController.vala
         test/controller/FakeBatteryController.vala
-        src/controller/BluetoothController.vala
+        test/controller/FakeBluetoothController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
         lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala

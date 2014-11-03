@@ -33,7 +33,7 @@ namespace BrickManager {
 
         public FakeBatteryController (Gtk.Builder builder) {
             battery_window = new BatteryInfoWindow ();
-            var control_panel_notebook = builder.get_object ("control_panel_notebook") as Gtk.Notebook;
+            var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             battery_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.BATTERY);
 
             var battery_loading_checkbutton = builder.get_object ("battery_loading_checkbutton") as Gtk.CheckButton;
