@@ -47,6 +47,8 @@ namespace BrickManager {
             bluetooth_loading_checkbutton.bind_property ("active", adapters_window, "loading", BindingFlags.SYNC_CREATE);
             bluetooth_loading_checkbutton.bind_property ("active", devices_window, "loading", BindingFlags.SYNC_CREATE);
 
+            /* Adapters */
+
             var bluetooth_adapters_liststore = builder.get_object ("bluetooth-adapters-liststore") as Gtk.ListStore;
             bluetooth_adapters_liststore.foreach ((model, path, iter) => {
                 Value present;
@@ -127,6 +129,23 @@ namespace BrickManager {
             (builder.get_object ("bluetooth-adapters-discovering-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     bluetooth_adapters_liststore, toggle, path, ControlPanel.BluetoothAdapterColumn.DISCOVERING));
+
+            /* Agent */
+
+            var agent = new BlueZ5Agent (DesktopTestApp.screen);
+            (builder.get_object ("bluetooth-agent-display-pincode-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    agent.display_pin_code.begin (path, "000000", (obj, res) => {
+                        try {
+                            agent.display_pin_code.end (res);
+                        } catch (BlueZ5Error err) {
+                            critical ("%s", err.message);
+                        }
+                    });
+                });
+            (builder.get_object ("bluetooth-agent-cancel-button") as Gtk.Button)
+                .clicked.connect(() => agent.cancel ());
         }
     }
 }
