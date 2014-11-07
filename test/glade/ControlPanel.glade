@@ -1114,8 +1114,8 @@
                                 <property name="spacing">6</property>
                                 <property name="layout_style">center</property>
                                 <child>
-                                  <object class="GtkButton" id="bluetooth-agent-request-pincode-button">
-                                    <property name="label" translatable="yes">Request Pincode</property>
+                                  <object class="GtkButton" id="bluetooth-agent-request-pin-code-button">
+                                    <property name="label" translatable="yes">Request PIN Code</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -1127,8 +1127,8 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="bluetooth-agent-display-pincode-button">
-                                    <property name="label" translatable="yes">Display Pincode</property>
+                                  <object class="GtkButton" id="bluetooth-agent-display-pin-code-button">
+                                    <property name="label" translatable="yes">Display PIN Code</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>

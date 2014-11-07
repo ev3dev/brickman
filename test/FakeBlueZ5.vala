@@ -31,7 +31,7 @@ namespace BlueZ5 {
             this.path = path;
         }
 
-        public static Device get_for_object_path (ObjectPath path) throws IOError {
+        public static Device get_for_object_path (ObjectPath path) {
             return new Device (path);
         }
     }

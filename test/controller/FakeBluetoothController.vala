@@ -133,19 +133,90 @@ namespace BrickManager {
             /* Agent */
 
             var agent = new BlueZ5Agent (DesktopTestApp.screen);
-            (builder.get_object ("bluetooth-agent-display-pincode-button") as Gtk.Button)
+            (builder.get_object ("bluetooth-agent-request-pin-code-button") as Gtk.Button)
                 .clicked.connect(() => {
                     var path = new ObjectPath ("My Device");
-                    agent.display_pin_code.begin (path, "000000", (obj, res) => {
+                    agent.request_pin_code.begin (path, (obj, res) => {
                         try {
-                            agent.display_pin_code.end (res);
+                            var pin_code = agent.request_pin_code.end (res);
+                            show_message ("pin_code: %s".printf (pin_code));
                         } catch (BlueZ5Error err) {
-                            critical ("%s", err.message);
+                            message ("%s", err.message);
+                        }
+                    });
+                });
+            (builder.get_object ("bluetooth-agent-display-pin-code-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    // TODO: add UI to change this value.
+                    agent.display_pin_code (path, "000000");
+                });
+            (builder.get_object ("bluetooth-agent-request-passkey-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    agent.request_passkey.begin (path, (obj, res) => {
+                        try {
+                            var pin_code = agent.request_passkey.end (res);
+                            show_message ("passkey: %u".printf (pin_code));
+                        } catch (BlueZ5Error err) {
+                            message ("%s", err.message);
+                        }
+                    });
+                });
+            (builder.get_object ("bluetooth-agent-display-passkey-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    // TODO: add UI to change these values.
+                    agent.display_passkey (path, 0, 0);
+                });
+            (builder.get_object ("bluetooth-agent-request-confirmation-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    // TODO: add UI to change these values.
+                    agent.request_confirmation.begin (path, 0, (obj, res) => {
+                        try {
+                            agent.request_confirmation.end (res);
+                            show_message ("Accepted.");
+                        } catch (BlueZ5Error err) {
+                            show_message (err.message);
+                        }
+                    });
+                });
+            (builder.get_object ("bluetooth-agent-request-authorization-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    // TODO: add UI to change these values.
+                    agent.request_authorization.begin (path, (obj, res) => {
+                        try {
+                            agent.request_authorization.end (res);
+                            show_message ("Accepted.");
+                        } catch (BlueZ5Error err) {
+                            show_message (err.message);
+                        }
+                    });
+                });
+            (builder.get_object ("bluetooth-agent-authorize-service-button") as Gtk.Button)
+                .clicked.connect(() => {
+                    var path = new ObjectPath ("My Device");
+                    // TODO: add UI to change these values.
+                    agent.authorize_service.begin (path, "My Service", (obj, res) => {
+                        try {
+                            agent.authorize_service.end (res);
+                            show_message ("Accepted.");
+                        } catch (BlueZ5Error err) {
+                            show_message (err.message);
                         }
                     });
                 });
             (builder.get_object ("bluetooth-agent-cancel-button") as Gtk.Button)
                 .clicked.connect(() => agent.cancel ());
+        }
+
+        void show_message (string message) {
+            var dialog = new Gtk.MessageDialog (null, Gtk.DialogFlags.MODAL,
+                Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
+            dialog.response.connect ((id) => dialog.destroy ());
+            dialog.show ();
         }
     }
 }
