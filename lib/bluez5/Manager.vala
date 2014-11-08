@@ -23,6 +23,8 @@
 
 namespace BlueZ5 {
     public class Manager : Object {
+        public const string SERVICE_NAME = "org.bluez";
+
         DBusObjectManagerClient client;
 
         delegate Type TypeFunc ();
@@ -37,7 +39,7 @@ namespace BlueZ5 {
             var manager = new Manager ();
             weak Manager weak_manager = manager;
             manager.client = yield DBusObjectManagerClient.new_for_bus (
-                BusType.SYSTEM, DBusObjectManagerClientFlags.NONE, "org.bluez",
+                BusType.SYSTEM, DBusObjectManagerClientFlags.NONE, SERVICE_NAME,
                 "/", (manager, object_path, interface_name) => {
                     if (interface_name == null)
                         return typeof (DBusObjectProxy);

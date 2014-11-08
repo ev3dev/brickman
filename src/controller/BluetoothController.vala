@@ -44,9 +44,11 @@ namespace BrickManager {
             devices_window = new BluetoothDevicesWindow ();
             devices_window.device_selected.connect ((obj) => {
                 var device = obj as Device;
-                var info_window = new BluetoothDeviceInfoWindow (device.alias) {
+                var info_window = new BluetoothDeviceInfoWindow () {
                     loading = false
                 };
+                device.bind_property ("alias", info_window, "title",
+                    BindingFlags.SYNC_CREATE);
                 device.bind_property ("address", info_window, "address",
                     BindingFlags.SYNC_CREATE);
                 device.bind_property ("icon", info_window, "icon",
@@ -60,21 +62,32 @@ namespace BrickManager {
             adapters_window = new BluetoothAdaptersWindow ();
             adapters_window.adapter_selected.connect ((obj) => {
                 var adapter = obj as Adapter;
-                var info_window = new BluetoothDeviceInfoWindow (adapter.alias) {
+                var info_window = new BluetoothAdapterInfoWindow () {
+                    title = adapter.alias,
                     loading = false
                 };
                 weak_main_window.screen.show_window (info_window);
             });
-            init_async.begin ((obj, res) => {
-                try {
-                    init_async.end (res);
-                    main_window.loading = false;
-                    devices_window.loading = false;
-                    adapters_window.loading = false;
-                } catch (Error err) {
-                    critical ("%s", err.message);
-                }
-            });
+            Bus.watch_name (BusType.SYSTEM, Manager.SERVICE_NAME,
+                BusNameWatcherFlags.AUTO_START, () => {
+                    init_async.begin ((obj, res) => {
+                        try {
+                            init_async.end (res);
+                            main_window.loading = false;
+                            devices_window.loading = false;
+                            adapters_window.loading = false;
+                        } catch (Error err) {
+                            critical ("%s", err.message);
+                        }
+                    });
+                }, () => {
+                    main_window.loading = true;
+                    devices_window.remove_all ();
+                    devices_window.loading = true;
+                    adapters_window.remove_all ();
+                    adapters_window.loading = true;
+                    manager = null;
+                });
         }
 
         async void init_async () throws Error {

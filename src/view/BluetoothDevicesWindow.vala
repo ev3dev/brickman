@@ -47,5 +47,11 @@ namespace BrickManager {
             var menu_item = menu.get_menu_item (represented_object);
             menu.remove_menu_item (menu_item);
         }
+
+        public void remove_all () {
+            var iter = menu.menu_item_iter ();
+            while (iter.size > 0)
+                menu.remove_menu_item (iter[0]);
+        }
     }
 }
