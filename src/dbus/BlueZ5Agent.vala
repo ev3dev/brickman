@@ -42,25 +42,65 @@ namespace BrickManager {
 
         public async string request_pin_code (ObjectPath device_path) throws BlueZError
         {
+            var result = ConfirmationDialogResult.CANCELED;
             var device = Device.get_for_object_path (device_path);
-            var dialog = new ConnManAgentInputDialog ("Enter PIN Code for %s".printf (device.alias));
-            // TODO: validate input. Should be alphanumeric, 1 to 16 chars.
-            var accepeted = false;
-            var responded_handler_id = dialog.responded.connect ((a) => {
-                accepeted = a;
-                request_pin_code.callback ();
-            });
+            var dialog = new Dialog ();
+            weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
-                dialog.responded (false);
                 screen.close_window (dialog);
             });
+            dialog.closed.connect (() => {
+                SignalHandler.disconnect (this, canceled_handler_id);
+                request_pin_code.callback ();
+            });
+            var dialog_vbox = new Box.vertical () {
+                spacing = 6
+            };
+            dialog.add (dialog_vbox);
+            var title_label = new Label ("Bluetooth") {
+                vertical_align = WidgetAlign.START,
+                padding = 3,
+                border_bottom = 1
+            };
+            dialog_vbox.add (title_label);
+            var message_label = new Label ("Enter PIN for %s:".printf (device.alias));
+            dialog_vbox.add (message_label);
+            // TODO: may need to allow alpha and symbol chars.
+            var text_entry = new TextEntry ("                ") {
+                valid_chars = TextEntry.NUMERIC + " ",
+                use_on_screen_keyboard = false,
+                horizontal_align = WidgetAlign.CENTER
+            };
+            dialog_vbox.add (text_entry);
+            dialog_vbox.add (new Spacer ());
+            var button_vbox = new Box.vertical ();
+            dialog_vbox.add (button_vbox);
+            var button_hbox = new Box.horizontal () {
+                horizontal_align = WidgetAlign.CENTER,
+                margin_top = -6,
+                margin_bottom = 3
+            };
+            button_vbox.add (button_hbox);
+            var reject_button = new Button.with_label ("Reject");
+            reject_button.pressed.connect (() => {
+                result = ConfirmationDialogResult.REJECTED;
+                screen.close_window (weak_dialog);
+            });
+            button_hbox.add (reject_button);
+            var accept_button = new Button.with_label ("Accept");
+            accept_button.pressed.connect (() => {
+                result = ConfirmationDialogResult.ACCEPTED;
+                screen.close_window (weak_dialog);
+            });
+            button_hbox.add (accept_button);
+            text_entry.next_focus_widget_down = accept_button;
             screen.show_window (dialog);
             yield;
-            SignalHandler.disconnect (dialog, responded_handler_id);
-            SignalHandler.disconnect (this, canceled_handler_id);
-            if (accepeted)
-                return dialog.text_value;
-            throw new BlueZError.CANCELED ("Canceled.");
+            if (result == ConfirmationDialogResult.REJECTED)
+                throw new BlueZError.REJECTED ("Rejected.");
+            if (result == ConfirmationDialogResult.CANCELED)
+                throw new BlueZError.CANCELED ("Canceled.");
+            return text_entry.text.replace (" ", "");
         }
 
         public void display_pin_code (ObjectPath device_path, string pincode) {
@@ -80,26 +120,64 @@ namespace BrickManager {
         }
 
         public async uint32 request_passkey (ObjectPath device_path) throws BlueZError {
+            var result = ConfirmationDialogResult.CANCELED;
             var device = Device.get_for_object_path (device_path);
-            // TODO: create dialog with numeric only input.
-            var dialog = new ConnManAgentInputDialog ("Enter passkey for %s".printf (device.alias));
-            // TODO: validate input. Should be numeric from 0 to 999999.
-            var accepeted = false;
-            var responded_handler_id = dialog.responded.connect ((a) => {
-                accepeted = a;
-                request_passkey.callback ();
-            });
+            var dialog = new Dialog ();
+            weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
-                dialog.responded (false);
                 screen.close_window (dialog);
             });
+            dialog.closed.connect (() => {
+                SignalHandler.disconnect (this, canceled_handler_id);
+                request_passkey.callback ();
+            });
+            var dialog_vbox = new Box.vertical () {
+                spacing = 6
+            };
+            dialog.add (dialog_vbox);
+            var title_label = new Label ("Bluetooth") {
+                vertical_align = WidgetAlign.START,
+                padding = 3,
+                border_bottom = 1
+            };
+            dialog_vbox.add (title_label);
+            var message_label = new Label ("Enter passkey for %s:".printf (device.alias));
+            dialog_vbox.add (message_label);
+            var text_entry = new TextEntry ("000000") {
+                valid_chars = TextEntry.NUMERIC,
+                use_on_screen_keyboard = false,
+                horizontal_align = WidgetAlign.CENTER
+            };
+            dialog_vbox.add (text_entry);
+            dialog_vbox.add (new Spacer ());
+            var button_vbox = new Box.vertical ();
+            dialog_vbox.add (button_vbox);
+            var button_hbox = new Box.horizontal () {
+                horizontal_align = WidgetAlign.CENTER,
+                margin_top = -6,
+                margin_bottom = 3
+            };
+            button_vbox.add (button_hbox);
+            var reject_button = new Button.with_label ("Reject");
+            reject_button.pressed.connect (() => {
+                result = ConfirmationDialogResult.REJECTED;
+                screen.close_window (weak_dialog);
+            });
+            button_hbox.add (reject_button);
+            var accept_button = new Button.with_label ("Accept");
+            accept_button.pressed.connect (() => {
+                result = ConfirmationDialogResult.ACCEPTED;
+                screen.close_window (weak_dialog);
+            });
+            button_hbox.add (accept_button);
+            text_entry.next_focus_widget_down = accept_button;
             screen.show_window (dialog);
             yield;
-            SignalHandler.disconnect (dialog, responded_handler_id);
-            SignalHandler.disconnect (this, canceled_handler_id);
-            if (accepeted)
-                return (uint32)int.parse (dialog.text_value);
-            throw new BlueZError.CANCELED ("Canceled.");
+            if (result == ConfirmationDialogResult.REJECTED)
+                throw new BlueZError.REJECTED ("Rejected.");
+            if (result == ConfirmationDialogResult.CANCELED)
+                throw new BlueZError.CANCELED ("Canceled.");
+            return (uint32)int.parse (text_entry.text);
         }
 
         public void display_passkey (ObjectPath device_path, uint32 passkey, uint16 entered) {
@@ -154,23 +232,35 @@ namespace BrickManager {
                 device.alias, uuid));
         }
 
-        async void display_confirmation_dialog (string message) throws BlueZError{
+        async void display_confirmation_dialog (string message) throws BlueZError {
             var result = ConfirmationDialogResult.CANCELED;
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
+            var canceled_handler_id = canceled.connect(() => {
+                screen.close_window (dialog);
+            });
+            dialog.closed.connect (() => {
+                SignalHandler.disconnect (this, canceled_handler_id);
+                display_confirmation_dialog.callback ();
+            });
             var dialog_vbox = new Box.vertical () {
-                padding = 3,
                 spacing = 6
             };
-            dialog.closed.connect (() => display_confirmation_dialog.callback ());
             dialog.add (dialog_vbox);
+            var title_label = new Label ("Bluetooth") {
+                vertical_align = WidgetAlign.START,
+                padding = 3,
+                border_bottom = 1
+            };
+            dialog_vbox.add (title_label);
             var message_label = new Label (message);
             dialog_vbox.add (message_label);
             dialog_vbox.add (new Spacer ());
             var button_vbox = new Box.vertical ();
             dialog_vbox.add (button_vbox);
             var button_hbox = new Box.horizontal () {
-                horizontal_align = WidgetAlign.CENTER
+                horizontal_align = WidgetAlign.CENTER,
+                margin = 3
             };
             button_vbox.add (button_hbox);
             var reject_button = new Button.with_label ("Reject");
@@ -185,8 +275,8 @@ namespace BrickManager {
                 screen.close_window (weak_dialog);
             });
             button_hbox.add (accept_button);
-            // TODO: Do we need to listen for the agent canceled signal here?
             screen.show_window (dialog);
+            accept_button.focus ();
             yield;
             if (result == ConfirmationDialogResult.REJECTED)
                 throw new BlueZError.REJECTED ("Rejected.");
