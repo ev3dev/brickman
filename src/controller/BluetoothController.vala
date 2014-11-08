@@ -30,6 +30,8 @@ namespace BrickManager {
         BluetoothDevicesWindow devices_window;
         BluetoothAdaptersWindow adapters_window;
         Manager manager;
+        BlueZ5Agent? agent;
+        ObjectPath agent_object_path;
 
         public string menu_item_text { get { return "Bluetooth"; } }
         public Window start_window { get { return main_window; } }
@@ -101,6 +103,23 @@ namespace BrickManager {
             manager.device_removed.connect ((device) =>
                 devices_window.remove_device (device));
             manager.init ();
+            if (agent == null) {
+                agent = new BlueZ5Agent (ConsoleApp.screen);
+                var bus = yield Bus.get (BusType.SYSTEM);
+                agent_object_path = new ObjectPath ("/org/ev3dev/brickman/bluez5_agent");
+                bus.register_object<BlueZ5Agent> (agent_object_path, agent);
+            }
+            if (AgentManager.instance == null) {
+                critical ("No AgentManager instance.");
+            } else {
+                try {
+                    yield AgentManager.instance.register_agent (agent_object_path,
+                        AgentManagerCapability.KEYBOARD_DISPLAY);
+                    yield AgentManager.instance.request_default_agent (agent_object_path);
+                } catch (BlueZError err) {
+                    critical ("%s", err.message);
+                }
+            }
         }
     }
 }

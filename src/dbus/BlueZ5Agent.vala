@@ -40,7 +40,7 @@ namespace BrickManager {
             critical ("Released.");
         }
 
-        public async string request_pin_code (ObjectPath device_path) throws BlueZ5Error
+        public async string request_pin_code (ObjectPath device_path) throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
             var dialog = new ConnManAgentInputDialog ("Enter PIN Code for %s".printf (device.alias));
@@ -60,7 +60,7 @@ namespace BrickManager {
             SignalHandler.disconnect (this, canceled_handler_id);
             if (accepeted)
                 return dialog.text_value;
-            throw new BlueZ5Error.CANCELED ("Canceled.");
+            throw new BlueZError.CANCELED ("Canceled.");
         }
 
         public void display_pin_code (ObjectPath device_path, string pincode) {
@@ -79,7 +79,7 @@ namespace BrickManager {
             screen.show_window (dialog);
         }
 
-        public async uint32 request_passkey (ObjectPath device_path) throws BlueZ5Error {
+        public async uint32 request_passkey (ObjectPath device_path) throws BlueZError {
             var device = Device.get_for_object_path (device_path);
             // TODO: create dialog with numeric only input.
             var dialog = new ConnManAgentInputDialog ("Enter passkey for %s".printf (device.alias));
@@ -99,7 +99,7 @@ namespace BrickManager {
             SignalHandler.disconnect (this, canceled_handler_id);
             if (accepeted)
                 return (uint32)int.parse (dialog.text_value);
-            throw new BlueZ5Error.CANCELED ("Canceled.");
+            throw new BlueZError.CANCELED ("Canceled.");
         }
 
         public void display_passkey (ObjectPath device_path, uint32 passkey, uint16 entered) {
@@ -131,7 +131,7 @@ namespace BrickManager {
         }
 
         public async void request_confirmation (ObjectPath device_path, uint32 passkey)
-            throws BlueZ5Error
+            throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog ("Confirm passkey for %s:\n\n%s".printf (
@@ -139,14 +139,14 @@ namespace BrickManager {
         }
 
         public async void request_authorization (ObjectPath device_path)
-            throws BlueZ5Error
+            throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog ("Authorize %s.".printf (device.alias));
         }
 
         public async void authorize_service (ObjectPath device_path, string uuid)
-            throws BlueZ5Error
+            throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
             // TODO: translate uuid to service name. May not be needed if we "trust" every device.
@@ -154,7 +154,7 @@ namespace BrickManager {
                 device.alias, uuid));
         }
 
-        async void display_confirmation_dialog (string message) throws BlueZ5Error{
+        async void display_confirmation_dialog (string message) throws BlueZError{
             var result = ConfirmationDialogResult.CANCELED;
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
@@ -189,9 +189,9 @@ namespace BrickManager {
             screen.show_window (dialog);
             yield;
             if (result == ConfirmationDialogResult.REJECTED)
-                throw new BlueZ5Error.REJECTED ("Rejected.");
+                throw new BlueZError.REJECTED ("Rejected.");
             if (result == ConfirmationDialogResult.CANCELED)
-                throw new BlueZ5Error.CANCELED ("Canceled.");
+                throw new BlueZError.CANCELED ("Canceled.");
         }
 
         public void cancel () {
@@ -203,11 +203,5 @@ namespace BrickManager {
             REJECTED,
             CANCELED
         }
-    }
-
-    [DBus (name = "org.bluez.Error")]
-    public errordomain BlueZ5Error {
-        REJECTED,
-        CANCELED
     }
 }

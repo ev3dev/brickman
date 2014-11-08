@@ -21,6 +21,7 @@
 
 /* FakeBluetoothController.vala - Fake Bluetooth (BlueZ 5) controller for testing */
 
+using BlueZ5;
 using EV3devKit;
 
 namespace BrickManager {
@@ -140,7 +141,7 @@ namespace BrickManager {
                         try {
                             var pin_code = agent.request_pin_code.end (res);
                             show_message ("pin_code: %s".printf (pin_code));
-                        } catch (BlueZ5Error err) {
+                        } catch (BlueZError err) {
                             message ("%s", err.message);
                         }
                     });
@@ -158,7 +159,7 @@ namespace BrickManager {
                         try {
                             var pin_code = agent.request_passkey.end (res);
                             show_message ("passkey: %u".printf (pin_code));
-                        } catch (BlueZ5Error err) {
+                        } catch (BlueZError err) {
                             message ("%s", err.message);
                         }
                     });
@@ -177,7 +178,7 @@ namespace BrickManager {
                         try {
                             agent.request_confirmation.end (res);
                             show_message ("Accepted.");
-                        } catch (BlueZ5Error err) {
+                        } catch (BlueZError err) {
                             show_message (err.message);
                         }
                     });
@@ -190,7 +191,7 @@ namespace BrickManager {
                         try {
                             agent.request_authorization.end (res);
                             show_message ("Accepted.");
-                        } catch (BlueZ5Error err) {
+                        } catch (BlueZError err) {
                             show_message (err.message);
                         }
                     });
@@ -203,7 +204,7 @@ namespace BrickManager {
                         try {
                             agent.authorize_service.end (res);
                             show_message ("Accepted.");
-                        } catch (BlueZ5Error err) {
+                        } catch (BlueZError err) {
                             show_message (err.message);
                         }
                     });

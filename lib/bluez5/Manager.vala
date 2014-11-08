@@ -48,6 +48,9 @@ namespace BlueZ5 {
                     case "org.bluez.Adapter1":
                         dev_type = typeof (org.bluez.Adapter1);
                         break;
+                    case "org.bluez.AgentManager1":
+                        dev_type = typeof (org.bluez.AgentManager1);
+                        break;
                     case "org.bluez.Device1":
                         dev_type = typeof (org.bluez.Device1);
                         break;
@@ -79,6 +82,9 @@ namespace BlueZ5 {
             var adapter = iface as org.bluez.Adapter1;
             if (adapter != null)
                 adapter_added (new Adapter ((DBusProxy)adapter));
+            var agent_manager = iface as org.bluez.AgentManager1;
+            if (agent_manager != null)
+                AgentManager.instance = new AgentManager ((DBusProxy)agent_manager);
             var device = iface as org.bluez.Device1;
             if (device != null)
                 device_added (new Device ((DBusProxy)device));
@@ -89,6 +95,9 @@ namespace BlueZ5 {
             var adapter = iface as org.bluez.Adapter1;
             if (adapter != null)
                 adapter_removed (Adapter.get_for_object_path (path));
+            var agent_manager = iface as org.bluez.AgentManager1;
+            if (agent_manager != null)
+                AgentManager.instance = null;
             var device = iface as org.bluez.Device1;
             if (device != null)
                 device_removed (Device.get_for_object_path (path));

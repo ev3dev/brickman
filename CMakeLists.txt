@@ -33,6 +33,7 @@ if (BRICKMAN_TEST)
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
         lib/bluez5/Adapter.vala
+        lib/bluez5/AgentManager.vala
         lib/bluez5/Device.vala
         lib/bluez5/Manager.vala
         lib/connman/Manager.vala
@@ -76,6 +77,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3devKit/src/TextEntry.vala
     lib/ev3devKit/src/Widget.vala
     lib/ev3devKit/src/Window.vala
+    lib/bluez5/Error.vala
     lib/dbus/Properties.vala
     lib/systemd/Logind.vala
     lib/systemd/Systemd.vala
