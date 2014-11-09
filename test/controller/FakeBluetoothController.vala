@@ -131,6 +131,101 @@ namespace BrickManager {
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     bluetooth_adapters_liststore, toggle, path, ControlPanel.BluetoothAdapterColumn.DISCOVERING));
 
+            /* Devices */
+
+            var bluetooth_devices_liststore = builder.get_object ("bluetooth-devices-liststore") as Gtk.ListStore;
+            bluetooth_devices_liststore.foreach ((model, path, iter) => {
+                Value present;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.PRESENT, out present);
+                Value alias;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
+                var menu_item = new EV3devKit.MenuItem (alias.dup_string ());
+                // there is a reference cycle with menu_item here, but it doesn't matter because we never get rid of it.
+                menu_item.button.pressed.connect (() => {
+                Value address;
+                    bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ADDRESS, out address);
+                    bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
+                    var info_window = new BluetoothDeviceInfoWindow () {
+                        title = alias.dup_string (),
+                        address = address.dup_string (),
+                        loading = false
+                    };
+                    var handler_id = bluetooth_devices_liststore.row_changed.connect ((path, iter) => {
+                        bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ADDRESS, out address);
+                        bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
+                        if (info_window.title != alias.get_string ())
+                            info_window.title = alias.dup_string ();
+                        if (info_window.address != address.get_string ())
+                            info_window.address = address.dup_string ();
+                    });
+                    info_window.weak_ref (() => SignalHandler.disconnect (bluetooth_devices_liststore, handler_id));
+                    devices_window.screen.show_window (info_window);
+                });
+                if (present.get_boolean ())
+                    devices_window.menu.add_menu_item (menu_item);
+                menu_item.ref (); //liststore USER_DATA is gpointer, so it does not take a ref
+                bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, menu_item);
+                return false;
+            });
+            bluetooth_devices_liststore.row_changed.connect ((path, iter) => {
+                Value present;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.PRESENT, out present);
+                Value alias;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
+                Value user_data;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, out user_data);
+                var menu_item = (EV3devKit.MenuItem)user_data.get_pointer ();
+                if (devices_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
+                    devices_window.menu.remove_menu_item (menu_item);
+                else if (!devices_window.menu.has_menu_item (menu_item) && present.get_boolean ())
+                    devices_window.menu.add_menu_item (menu_item);
+                var menu_item_label = (Label)menu_item.button.child;
+                if (menu_item_label.text != alias.get_string ())
+                    menu_item_label.text = alias.dup_string ();
+            });
+            (builder.get_object ("bluetooth-devices-present-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    bluetooth_devices_liststore, toggle, path, ControlPanel.BluetoothDeviceColumn.PRESENT));
+            (builder.get_object ("bluetooth-devices-address-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.ADDRESS));
+            (builder.get_object ("bluetooth-devices-name-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.NAME));
+            (builder.get_object ("bluetooth-devices-icon-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.ICON));
+            (builder.get_object ("bluetooth-devices-class-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.CLASS));
+            (builder.get_object ("bluetooth-devices-appearance-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.APPEARANCE));
+            (builder.get_object ("bluetooth-devices-paired-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    bluetooth_devices_liststore, toggle, path, ControlPanel.BluetoothDeviceColumn.PAIRED));
+            (builder.get_object ("bluetooth-devices-connected-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    bluetooth_devices_liststore, toggle, path, ControlPanel.BluetoothDeviceColumn.CONNECTED));
+            (builder.get_object ("bluetooth-devices-trusted-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    bluetooth_devices_liststore, toggle, path, ControlPanel.BluetoothDeviceColumn.TRUSTED));
+            (builder.get_object ("bluetooth-devices-blocked-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    bluetooth_devices_liststore, toggle, path, ControlPanel.BluetoothDeviceColumn.BLOCKED));
+            (builder.get_object ("bluetooth-devices-alias-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.ALIAS));
+            (builder.get_object ("bluetooth-devices-adapter-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.ADAPTER));
+            (builder.get_object ("bluetooth-devices-legacy-pairing-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    bluetooth_devices_liststore, toggle, path, ControlPanel.BluetoothDeviceColumn.LEGACY_PAIRING));
+            (builder.get_object ("bluetooth-devices-rssi-cellrendererspin") as Gtk.CellRendererSpin)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    bluetooth_devices_liststore, path, new_text, ControlPanel.BluetoothDeviceColumn.RSSI));
+
             /* Agent */
 
             var agent = new BlueZ5Agent (DesktopTestApp.screen);

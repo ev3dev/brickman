@@ -96,6 +96,27 @@ namespace BrickManager {
             COLUMN_COUNT;
         }
 
+        enum BluetoothDeviceColumn {
+            PRESENT,
+            ADDRESS,
+            NAME,
+            ICON,
+            CLASS,
+            APPEARANCE,
+            UUIDS,
+            PAIRED,
+            CONNECTED,
+            TRUSTED,
+            BLOCKED,
+            ALIAS,
+            ADAPTER,
+            LEGACY_PAIRING,
+            MODALIAS,
+            RSSI,
+            USER_DATA,
+            COLUMN_COUNT;
+        }
+
         public ControlPanel () {
             var builder = new Builder ();
             try {
