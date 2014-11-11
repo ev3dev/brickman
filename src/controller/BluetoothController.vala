@@ -32,6 +32,7 @@ namespace BrickManager {
         Manager manager;
         BlueZ5Agent? agent;
         ObjectPath agent_object_path;
+        string? built_in_adapter_address;
 
         public string menu_item_text { get { return "Bluetooth"; } }
         public Window start_window { get { return main_window; } }
@@ -70,6 +71,29 @@ namespace BrickManager {
                 };
                 weak_main_window.screen.show_window (info_window);
             });
+
+            /* Use udev to find the address of the built-in Bluetooth adapter */
+            var udev_client = new GUdev.Client (null);
+            var udev_devices = udev_client.query_by_subsystem ("bluetooth");
+            if (udev_devices != null) {
+                foreach (var udev_device in udev_devices) {
+                    var parent = udev_device.get_parent ();
+                    if (parent != null && parent.get_name () == "ttyS2") {
+                        built_in_adapter_address = udev_device.get_sysfs_attr ("address");
+                        break;
+                    }
+                }
+            }
+
+            try {
+                agent = new BlueZ5Agent (ConsoleApp.screen);
+                var bus = Bus.get_sync (BusType.SYSTEM);
+                agent_object_path = new ObjectPath ("/org/ev3dev/brickman/bluez5_agent");
+                bus.register_object<BlueZ5Agent> (agent_object_path, agent);
+            } catch (IOError err) {
+                critical ("%s", err.message);
+            }
+
             Bus.watch_name (BusType.SYSTEM, Manager.SERVICE_NAME,
                 BusNameWatcherFlags.AUTO_START, () => {
                     init_async.begin ((obj, res) => {
@@ -103,12 +127,6 @@ namespace BrickManager {
             manager.device_removed.connect ((device) =>
                 devices_window.remove_device (device));
             manager.init ();
-            if (agent == null) {
-                agent = new BlueZ5Agent (ConsoleApp.screen);
-                var bus = yield Bus.get (BusType.SYSTEM);
-                agent_object_path = new ObjectPath ("/org/ev3dev/brickman/bluez5_agent");
-                bus.register_object<BlueZ5Agent> (agent_object_path, agent);
-            }
             if (AgentManager.instance == null) {
                 critical ("No AgentManager instance.");
             } else {
