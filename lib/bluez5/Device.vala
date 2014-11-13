@@ -79,7 +79,7 @@ namespace BlueZ5 {
 
         public string modalias { owned get { return dbus_proxy.modalias; } }
 
-        public int16 rssi { get { return dbus_proxy.rssi; } }
+        public int rssi { get { return dbus_proxy.rssi; } }
 
         internal Device (DBusProxy proxy) {
             dbus_proxy = (org.bluez.Device1)proxy;
@@ -93,14 +93,50 @@ namespace BlueZ5 {
                     case "Address":
                         notify_property ("address");
                         break;
+                    case "Name":
+                        notify_property ("name");
+                        break;
                     case "Icon":
                         notify_property ("icon");
+                        break;
+                    case "Class":
+                        notify_property ("class");
+                        break;
+                    case "Appearance":
+                        notify_property ("appearance");
+                        break;
+                    case "UUIDs":
+                        notify_property ("uuids");
                         break;
                     case "Paired":
                         notify_property ("paired");
                         break;
                     case "Connected":
                         notify_property ("connected");
+                        break;
+                    case "Trusted":
+                        notify_property ("trusted");
+                        break;
+                    case "Blocked":
+                        notify_property ("blocked");
+                        break;
+                    case "Alias":
+                        notify_property ("alias");
+                        break;
+                    case "Adapter":
+                        notify_property ("adapter");
+                        break;
+                    case "LegacyPairing":
+                        notify_property ("legacy-pairing");
+                        break;
+                    case "Modalias":
+                        notify_property ("modalias");
+                        break;
+                    case "RSSI":
+                        notify_property ("rssi");
+                        break;
+                    default:
+                        critical ("Unknown d-bus property: %s", name);
                         break;
                     }
                 }

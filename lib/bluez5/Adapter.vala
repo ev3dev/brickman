@@ -118,6 +118,9 @@ namespace BlueZ5 {
                     case "Modalias":
                         notify_property ("modalias");
                         break;
+                    default:
+                        critical ("Unknown d-bus property: %s", name);
+                        break;
                     }
                 }
             });
