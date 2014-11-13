@@ -61,8 +61,18 @@ namespace BlueZ5 {
                     var q = Quark.from_string ("vala-dbus-proxy-type");
                     return ((TypeFunc)dev_type.get_qdata (q)) ();
                 });
-            manager.client.interface_added.connect (weak_manager.on_interface_added);
-            manager.client.interface_removed.connect (weak_manager.on_interface_removed);
+            manager.client.object_added.connect ((obj) => {
+                foreach (var iface in obj.get_interfaces ())
+                    weak_manager.on_interface_added (obj, iface);
+            });
+            manager.client.object_removed.connect ((obj) => {
+                foreach (var iface in obj.get_interfaces ())
+                    weak_manager.on_interface_removed (obj, iface);
+            });
+            manager.client.interface_added.connect (
+                weak_manager.on_interface_added);
+            manager.client.interface_removed.connect (
+                weak_manager.on_interface_removed);
             return manager;
         }
 

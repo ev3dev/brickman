@@ -18,27 +18,20 @@
  */
 
 /*
- * BluetoothDeviceInfoWindow.vala:
+ * BluetoothDeviceWindow.vala:
  */
 
 using EV3devKit;
 
 namespace BrickManager {
-    public class BluetoothDeviceInfoWindow : BrickManagerWindow {
+    public class BluetoothDeviceWindow : BrickManagerWindow {
         Label address_label;
-        Label icon_label;
-        Label paired_label;
-        Label connected_label;
-        Box uuid_vbox; 
+        Button connect_button;
+        Button remove_button;
 
         public string address {
             get { return address_label.text; }
             set { address_label.text = value; }
-        }
-
-        public string icon {
-            get { return icon_label.text; }
-            set { icon_label.text = value; }
         }
 
         bool _paired;
@@ -46,7 +39,7 @@ namespace BrickManager {
             get { return _paired; }
             set {
                  _paired = value;
-                 paired_label.text = value ? "paried" : "unparied";
+                 update_connect_button ();
             }
         }
 
@@ -55,25 +48,32 @@ namespace BrickManager {
             get { return _connected; }
             set {
                  _connected = value;
-                 connected_label.text = value ? "connected" : "disconnected";
+                 update_connect_button ();
             }
         }
 
-        public BluetoothDeviceInfoWindow () {
-            var vscroll = new Scroll.vertical ();
-            content_vbox.add (vscroll);
-            var scroll_vbox = new Box.vertical ();
-            vscroll.add (scroll_vbox);
+        public signal void connect_selected ();
+        public signal void remove_selected ();
+
+        public BluetoothDeviceWindow () {
             address_label = new Label ();
-            scroll_vbox.add (address_label);
-            icon_label = new Label ();
-            scroll_vbox.add (icon_label);
-            paired_label = new Label ();
-            scroll_vbox.add (paired_label);
-            connected_label = new Label ();
-            scroll_vbox.add (connected_label);
-            uuid_vbox = new Box.vertical ();
-            scroll_vbox.add (uuid_vbox);
+            content_vbox.add (address_label);
+            content_vbox.add (new Spacer ());
+            var button_hbox = new Box.horizontal () {
+                margin = 6
+            };
+            content_vbox.add (button_hbox);
+            connect_button = new Button.with_label ("???");
+            connect_button.pressed.connect (() => connect_selected ());
+            button_hbox.add (connect_button);
+            remove_button = new Button.with_label ("Remove");
+            remove_button.pressed.connect (() => remove_selected ());
+            button_hbox.add (remove_button);
+        }
+
+        void update_connect_button () {
+            ((Label)connect_button.child).text = _paired ?
+                (_connected ? "Disconnect" : "Connect") : "Pair";
         }
     }
 }

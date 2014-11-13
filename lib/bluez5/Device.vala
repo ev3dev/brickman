@@ -29,7 +29,13 @@ namespace BlueZ5 {
             device_map = new Gee.HashMap<string, weak Device> ();
         }
 
-        org.bluez.Device1 dbus_proxy;
+        internal org.bluez.Device1 dbus_proxy;
+
+        public ObjectPath object_path {
+            owned get {
+                return new ObjectPath (((DBusProxy)dbus_proxy).g_object_path);
+            }
+        }
 
         public string address { owned get { return dbus_proxy.address; } }
 

@@ -37,34 +37,34 @@ namespace BlueZ5 {
 
         public string alias {
             owned get { return dbus_proxy.alias; }
-            set { alias = value; }
+            set { dbus_proxy.alias = value; }
         }
 
         public uint32 class { get { return dbus_proxy.class; } }
 
         public bool powered {
             get { return dbus_proxy.powered; }
-            set { powered = value; }
+            set { dbus_proxy.powered = value; }
         }
 
         public bool discoverable {
             get { return dbus_proxy.discoverable; }
-            set { discoverable = value; }
+            set { dbus_proxy.discoverable = value; }
         }
 
         public bool pairable {
             get { return dbus_proxy.pairable; }
-            set { pairable = value; }
+            set { dbus_proxy.pairable = value; }
         }
 
         public uint32 pairable_timeout {
             get { return dbus_proxy.pairable_timeout; }
-            set { pairable_timeout = value; }
+            set { dbus_proxy.pairable_timeout = value; }
         }
 
         public uint32 discoverable_timeout {
             get { return dbus_proxy.discoverable_timeout; }
-            set { discoverable_timeout = value; }
+            set { dbus_proxy.discoverable_timeout = value; }
         }
 
         public bool discovering { get { return dbus_proxy.discovering; } }
@@ -140,7 +140,7 @@ namespace BlueZ5 {
         }
 
         public async void remove_device (Device device) throws IOError {
-            var path = new ObjectPath (((DBusProxy)device).g_object_path);
+            var path = new ObjectPath (device.object_path);
             yield dbus_proxy.remove_device (path);
         }
     }

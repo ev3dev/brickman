@@ -27,26 +27,18 @@ using EV3devKit;
 namespace BrickManager {
     public class FakeBluetoothController : Object, IBrickManagerModule {
         BluetoothWindow bluetooth_window;
-        BluetoothAdaptersWindow adapters_window;
-        BluetoothDevicesWindow devices_window;
 
         public string menu_item_text { get { return "Bluetooth"; } }
         public Window start_window { get { return bluetooth_window; } }
 
         public FakeBluetoothController (Gtk.Builder builder) {
             bluetooth_window = new BluetoothWindow ();
-            bluetooth_window.adapters_selected.connect (() => bluetooth_window.screen.show_window (adapters_window));
-            bluetooth_window.devices_selected.connect (() => bluetooth_window.screen.show_window (devices_window));
-            adapters_window = new BluetoothAdaptersWindow ();
-            devices_window = new BluetoothDevicesWindow ();
 
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             bluetooth_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.BLUETOOTH);
 
             var bluetooth_loading_checkbutton = builder.get_object ("bluetooth-loading-checkbutton") as Gtk.CheckButton;
             bluetooth_loading_checkbutton.bind_property ("active", bluetooth_window, "loading", BindingFlags.SYNC_CREATE);
-            bluetooth_loading_checkbutton.bind_property ("active", adapters_window, "loading", BindingFlags.SYNC_CREATE);
-            bluetooth_loading_checkbutton.bind_property ("active", devices_window, "loading", BindingFlags.SYNC_CREATE);
 
             /* Adapters */
 
@@ -56,32 +48,19 @@ namespace BrickManager {
                 bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.PRESENT, out present);
                 Value alias;
                 bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.ALIAS, out alias);
-                var menu_item = new EV3devKit.MenuItem (alias.dup_string ());
-                // there is a reference cycle with menu_item here, but it doesn't matter because we never get rid of it.
-                menu_item.button.pressed.connect (() => {
-                Value address;
-                    bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.ADDRESS, out address);
-                    bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.ALIAS, out alias);
-                    var info_window = new BluetoothAdapterInfoWindow () {
-                        title = alias.dup_string (),
-                        address = address.dup_string (),
-                        loading = false
-                    };
-                    var handler_id = bluetooth_adapters_liststore.row_changed.connect ((path, iter) => {
-                        bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.ADDRESS, out address);
-                        bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.ALIAS, out alias);
-                        if (info_window.title != alias.get_string ())
-                            info_window.title = alias.dup_string ();
-                        if (info_window.address != address.get_string ())
-                            info_window.address = address.dup_string ();
-                    });
-                    info_window.weak_ref (() => SignalHandler.disconnect (bluetooth_adapters_liststore, handler_id));
-                    adapters_window.screen.show_window (info_window);
-                });
-                if (present.get_boolean ())
-                    adapters_window.menu.add_menu_item (menu_item);
-                menu_item.ref (); //liststore USER_DATA is gpointer, so it does not take a ref
-                bluetooth_adapters_liststore.set (iter, ControlPanel.BluetoothAdapterColumn.USER_DATA, menu_item);
+                Value discoverable;
+                bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.DISCOVERABLE, out discoverable);
+                Value discovering;
+                bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.DISCOVERING, out discovering);
+                // TODO: handle more than one adapter
+                bluetooth_window.bt_visible = discoverable.get_boolean ();
+                bluetooth_window.scanning = discovering.get_boolean ();
+                bluetooth_window.notify["bt-visible"].connect (() => bluetooth_adapters_liststore.set (
+                    iter, ControlPanel.BluetoothAdapterColumn.DISCOVERABLE, bluetooth_window.bt_visible));
+                bluetooth_window.notify["scanning"].connect (() => bluetooth_adapters_liststore.set (
+                    iter, ControlPanel.BluetoothAdapterColumn.DISCOVERING, bluetooth_window.scanning));
+                bluetooth_window.scan_selected.connect (() => bluetooth_adapters_liststore.set (
+                    iter, ControlPanel.BluetoothAdapterColumn.DISCOVERING, !bluetooth_window.scanning));
                 return false;
             });
             bluetooth_adapters_liststore.row_changed.connect ((path, iter) => {
@@ -89,16 +68,17 @@ namespace BrickManager {
                 bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.PRESENT, out present);
                 Value alias;
                 bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.ALIAS, out alias);
+                Value discoverable;
+                bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.DISCOVERABLE, out discoverable);
+                Value discovering;
+                bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.DISCOVERING, out discovering);
                 Value user_data;
                 bluetooth_adapters_liststore.get_value (iter, ControlPanel.BluetoothAdapterColumn.USER_DATA, out user_data);
-                var menu_item = (EV3devKit.MenuItem)user_data.get_pointer ();
-                if (adapters_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
-                    adapters_window.menu.remove_menu_item (menu_item);
-                else if (!adapters_window.menu.has_menu_item (menu_item) && present.get_boolean ())
-                    adapters_window.menu.add_menu_item (menu_item);
-                var menu_item_label = (Label)menu_item.button.child;
-                if (menu_item_label.text != alias.get_string ())
-                    menu_item_label.text = alias.dup_string ();
+                // TODO: handle more than one adapter
+                if (bluetooth_window.bt_visible != discoverable.get_boolean ())
+                    bluetooth_window.bt_visible = discoverable.get_boolean ();
+                if (bluetooth_window.scanning != discovering.get_boolean ())
+                    bluetooth_window.scanning = discovering.get_boolean ();
             });
             (builder.get_object ("bluetooth-adapters-present-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
@@ -139,30 +119,59 @@ namespace BrickManager {
                 bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.PRESENT, out present);
                 Value alias;
                 bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
-                var menu_item = new EV3devKit.MenuItem (alias.dup_string ());
+                Value connected;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.CONNECTED, out connected);
+                var menu_item = new BluetoothDeviceMenuItem () {
+                    name = alias.dup_string (),
+                    connected = connected.get_boolean ()
+                };
                 // there is a reference cycle with menu_item here, but it doesn't matter because we never get rid of it.
                 menu_item.button.pressed.connect (() => {
-                Value address;
+                    Value address;
                     bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ADDRESS, out address);
                     bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
-                    var info_window = new BluetoothDeviceInfoWindow () {
+                    Value paired;
+                    bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.PAIRED, out paired);
+                    bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.CONNECTED, out connected);
+                    var info_window = new BluetoothDeviceWindow () {
                         title = alias.dup_string (),
                         address = address.dup_string (),
+                        paired = paired.get_boolean (),
+                        connected = connected.get_boolean (),
                         loading = false
                     };
+                    weak BluetoothDeviceWindow weak_info_window = info_window;
+                    info_window.connect_selected.connect (() => {
+                        if (!paired.get_boolean ()) {
+                            bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.PAIRED, true);
+                        } else {
+                            bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.CONNECTED,
+                                !weak_info_window.connected);
+                        }
+                    });
+                    info_window.remove_selected.connect (() => {
+                        bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.PRESENT, false);
+                        bluetooth_window.screen.close_window (weak_info_window);
+                    });
                     var handler_id = bluetooth_devices_liststore.row_changed.connect ((path, iter) => {
                         bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ADDRESS, out address);
                         bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
-                        if (info_window.title != alias.get_string ())
-                            info_window.title = alias.dup_string ();
-                        if (info_window.address != address.get_string ())
-                            info_window.address = address.dup_string ();
+                        bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.PAIRED, out paired);
+                        bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.CONNECTED, out connected);
+                        if (weak_info_window.title != alias.get_string ())
+                            weak_info_window.title = alias.dup_string ();
+                        if (weak_info_window.address != address.get_string ())
+                            weak_info_window.address = address.dup_string ();
+                        if (weak_info_window.paired != paired.get_boolean ())
+                            weak_info_window.paired = paired.get_boolean ();
+                        if (weak_info_window.connected != connected.get_boolean ())
+                            weak_info_window.connected = connected.get_boolean ();
                     });
                     info_window.weak_ref (() => SignalHandler.disconnect (bluetooth_devices_liststore, handler_id));
-                    devices_window.screen.show_window (info_window);
+                    bluetooth_window.screen.show_window (info_window);
                 });
                 if (present.get_boolean ())
-                    devices_window.menu.add_menu_item (menu_item);
+                    bluetooth_window.menu.add_menu_item (menu_item);
                 menu_item.ref (); //liststore USER_DATA is gpointer, so it does not take a ref
                 bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, menu_item);
                 return false;
@@ -172,16 +181,19 @@ namespace BrickManager {
                 bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.PRESENT, out present);
                 Value alias;
                 bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ALIAS, out alias);
+                Value connected;
+                bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.CONNECTED, out connected);
                 Value user_data;
                 bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, out user_data);
-                var menu_item = (EV3devKit.MenuItem)user_data.get_pointer ();
-                if (devices_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
-                    devices_window.menu.remove_menu_item (menu_item);
-                else if (!devices_window.menu.has_menu_item (menu_item) && present.get_boolean ())
-                    devices_window.menu.add_menu_item (menu_item);
-                var menu_item_label = (Label)menu_item.button.child;
-                if (menu_item_label.text != alias.get_string ())
-                    menu_item_label.text = alias.dup_string ();
+                var menu_item = (BluetoothDeviceMenuItem)user_data.get_pointer ();
+                if (bluetooth_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
+                    bluetooth_window.menu.remove_menu_item (menu_item);
+                else if (!bluetooth_window.menu.has_menu_item (menu_item) && present.get_boolean ())
+                    bluetooth_window.menu.add_menu_item (menu_item);
+                if (menu_item.name != alias.get_string ())
+                    menu_item.name = alias.dup_string ();
+                if (menu_item.connected != connected.get_boolean ())
+                    menu_item.connected = connected.get_boolean ();
             });
             (builder.get_object ("bluetooth-devices-present-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (

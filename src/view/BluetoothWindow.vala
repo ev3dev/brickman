@@ -26,22 +26,44 @@ using EV3devKit;
 namespace BrickManager {
     public class BluetoothWindow : BrickManagerWindow {
         internal EV3devKit.Menu menu;
-        EV3devKit.MenuItem devices_menu_item;
-        EV3devKit.MenuItem adapters_menu_item;
+        CheckboxMenuItem visible_menu_item;
+        EV3devKit.MenuItem scan_menu_item;
 
-        public signal void devices_selected ();
-        public signal void adapters_selected ();
+        public bool bt_visible {
+            get { return visible_menu_item.checkbox.checked; }
+            set { visible_menu_item.checkbox.checked = value; }
+        }
+
+        bool _scanning;
+        public bool scanning {
+            get { return _scanning; }
+            set {
+                _scanning = value;
+                scan_menu_item.label.text = value ? "Stop Scan" : "Start Scan";
+            }
+        }
+
+        public signal void scan_selected ();
 
         public BluetoothWindow () {
             title ="Bluetooth";
-            menu = new EV3devKit.Menu ();
+            menu = new EV3devKit.Menu () {
+                max_preferred_height = 50
+            };
             content_vbox.add (menu);
-            devices_menu_item = new EV3devKit.MenuItem ("Devices");
-            devices_menu_item.button.pressed.connect (() => devices_selected ());
-            menu.add_menu_item (devices_menu_item);
-            adapters_menu_item = new EV3devKit.MenuItem ("Adapters");
-            adapters_menu_item.button.pressed.connect (() => adapters_selected ());
-            menu.add_menu_item (adapters_menu_item);
+            visible_menu_item = new CheckboxMenuItem ("Visible");
+            visible_menu_item.checkbox.notify["checked"].connect (() =>
+                notify_property ("bt-visible"));
+            menu.add_menu_item (visible_menu_item);
+            scan_menu_item = new EV3devKit.MenuItem ("???");
+            scan_menu_item.label.horizontal_align = WidgetAlign.START;
+            scan_menu_item.button.pressed.connect (() => scan_selected ());
+            menu.add_menu_item (scan_menu_item);
+            var devices_label_menu_item = new EV3devKit.MenuItem ("Devices");
+            devices_label_menu_item.button.border_bottom = 1;
+            devices_label_menu_item.button.margin_bottom = 2;
+            devices_label_menu_item.button.can_focus = false;
+            menu.add_menu_item (devices_label_menu_item);
         }
     }
 }
