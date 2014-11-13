@@ -223,7 +223,8 @@ namespace BrickManager {
             try {
                 yield device.adapter.remove_device (device);
             } catch (IOError err) {
-                critical ("%s", err.message);
+                var dialog = new MessageDialog ("Error", err.message);
+                main_window.screen.show_window (dialog);
             }
         }
 
@@ -232,7 +233,8 @@ namespace BrickManager {
                 yield device.pair ();
                 device.trusted = true;
             } catch (IOError err) {
-                critical ("%s", err.message);
+                var dialog = new MessageDialog ("Error", err.message);
+                main_window.screen.show_window (dialog);
             }
         }
 
@@ -240,7 +242,8 @@ namespace BrickManager {
             try {
                 yield device.disconnect_device ();
             } catch (IOError err) {
-                critical ("%s", err.message);
+                var dialog = new MessageDialog ("Error", err.message);
+                main_window.screen.show_window (dialog);
             }
         }
 
@@ -248,7 +251,8 @@ namespace BrickManager {
             try {
                 yield device.connect_device ();
             } catch (IOError err) {
-                critical ("%s", err.message);
+                var dialog = new MessageDialog ("Error", err.message);
+                main_window.screen.show_window (dialog);
             }
         }
     }
