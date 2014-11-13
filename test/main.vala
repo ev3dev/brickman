@@ -44,6 +44,7 @@ namespace BrickManager {
 
         var home_window = new HomeWindow ();
         home_window.add_controller (control_panel.network_controller);
+        home_window.add_controller (control_panel.bluetooth_controller);
         home_window.add_controller (control_panel.usb_controller);
         home_window.add_controller (control_panel.battery_controller);
         home_window.add_controller (control_panel.about_controller);

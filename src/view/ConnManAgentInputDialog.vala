@@ -18,10 +18,12 @@
  */
 
 /*
- * ShutdownDialog.vala:
+ * ConnManAgentInputDialog.vala:
  *
- * Dialog for shutting down/restarting the brick
+ * Dialog for getting user input (text).
  */
+
+// TODO: Move this class to EV3devKit.
 
 using EV3devKit;
 
