@@ -219,6 +219,9 @@ namespace BrickManager {
             main_window.menu.remove_menu_item (menu_item);
         }
 
+        // TODO: some kind of "spinner" to indicate that we are busy would be
+        // nice for the next 4 methods
+
         async void remove_device (Device device) {
             try {
                 yield device.adapter.remove_device (device);

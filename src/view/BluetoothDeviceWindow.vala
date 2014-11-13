@@ -64,16 +64,29 @@ namespace BrickManager {
             };
             content_vbox.add (button_hbox);
             connect_button = new Button.with_label ("???");
-            connect_button.pressed.connect (() => connect_selected ());
+            connect_button.pressed.connect (() => {
+                focus_none ();
+                connect_selected ();
+            });
             button_hbox.add (connect_button);
             remove_button = new Button.with_label ("Remove");
-            remove_button.pressed.connect (() => remove_selected ());
+            remove_button.pressed.connect (() => {
+                focus_none ();
+                remove_selected ();
+            });
             button_hbox.add (remove_button);
         }
 
         void update_connect_button () {
             ((Label)connect_button.child).text = _paired ?
                 (_connected ? "Disconnect" : "Connect") : "Pair";
+        }
+
+        void focus_none () {
+            do_recursive_children ((widget) => {
+                widget.has_focus = false;
+                return null;
+            });
         }
     }
 }
