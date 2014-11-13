@@ -43,6 +43,10 @@ namespace BrickManager {
             adapter_list = new Gee.LinkedList<Adapter> ();
             main_window = new BluetoothWindow ();
             main_window.scan_selected.connect (on_scan_selected);
+            main_window.closed.connect (() => {
+                if (selected_adapter != null && selected_adapter.discovering)
+                    selected_adapter.stop_discovery.begin ();
+            });
 
             /* Use udev to find the address of the built-in Bluetooth adapter */
             var udev_client = new GUdev.Client (null);
@@ -108,6 +112,8 @@ namespace BrickManager {
 
         void set_selected_adapter (Adapter? new_adapter) {
             if (selected_adapter != null) {
+                if (selected_adapter.discovering)
+                    selected_adapter.stop_discovery.begin ();
                 selected_adapter_visible_binding.unbind ();
                 selected_adapter_visible_binding = null;
                 selected_adapter_scanning_binding.unbind ();
@@ -141,7 +147,6 @@ namespace BrickManager {
                 selected_adapter.start_discovery.begin ((obj, res) => {
                     try {
                         selected_adapter.start_discovery.end (res);
-                        // TODO: add timeout to stop scanning.
                     } catch (IOError err) {
                         critical ("%s", err.message);
                     }
