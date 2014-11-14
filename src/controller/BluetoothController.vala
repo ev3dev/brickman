@@ -82,9 +82,11 @@ namespace BrickManager {
                     });
                 }, () => {
                     main_window.loading = true;
-                    var iter = main_window.menu.menu_item_iter ();
-                    while (iter.size > 0)
-                        main_window.menu.remove_menu_item (iter[0]);
+                    var devices = manager.get_devices ();
+                    foreach (var device in devices) {
+                        var menu_item = main_window.menu.get_menu_item (device);
+                        main_window.menu.remove_menu_item (menu_item);
+                    }
                     set_selected_adapter (null);
                     manager = null;
                 });
@@ -96,17 +98,16 @@ namespace BrickManager {
             manager.adapter_removed.connect (on_adapter_removed);
             manager.device_added.connect (on_device_added);
             manager.device_removed.connect (on_device_removed);
-            manager.init ();
-            if (AgentManager.instance == null) {
-                critical ("No AgentManager instance.");
-            } else {
-                try {
-                    yield AgentManager.instance.register_agent (agent_object_path,
-                        AgentManagerCapability.KEYBOARD_DISPLAY);
-                    yield AgentManager.instance.request_default_agent (agent_object_path);
-                } catch (BlueZError err) {
-                    critical ("%s", err.message);
-                }
+            foreach (var adapter in manager.get_adapters ())
+                on_adapter_added (adapter);
+            foreach (var device in manager.get_devices ())
+                on_device_added (device);
+            try {
+                yield manager.agent_manager.register_agent (agent_object_path,
+                    AgentManagerCapability.KEYBOARD_DISPLAY);
+                yield manager.agent_manager.request_default_agent (agent_object_path);
+            } catch (BlueZError err) {
+                critical ("%s", err.message);
             }
         }
 

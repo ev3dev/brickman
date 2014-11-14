@@ -26,14 +26,23 @@ namespace BlueZ5 {
         public const string SERVICE_NAME = "org.bluez";
 
         DBusObjectManagerClient client;
+        Gee.HashMap<string,Adapter> adapter_map;
+        Gee.HashMap<string,Device> device_map;
 
         delegate Type TypeFunc ();
+
+        public AgentManager agent_manager { get; private set; }
 
         public signal void adapter_added (Adapter adapter);
         public signal void adapter_removed (Adapter adapter);
 
         public signal void device_added (Device device);
         public signal void device_removed (Device device);
+
+        Manager () {
+            adapter_map = new Gee.HashMap<string,Adapter> ();
+            device_map = new Gee.HashMap<string,Device> ();
+        }
 
         public static async Manager new_async () throws Error {
             var manager = new Manager ();
@@ -73,44 +82,62 @@ namespace BlueZ5 {
                 weak_manager.on_interface_added);
             manager.client.interface_removed.connect (
                 weak_manager.on_interface_removed);
+            foreach (var obj in manager.client.get_objects ()) {
+                foreach (var iface in obj.get_interfaces ()) {
+                    manager.on_interface_added (obj, iface);
+                }
+            }
             return manager;
         }
 
         /**
-         * Finish initializing.
-         *
-         * Triggers *_added signals for already existing objects.
+         * Return a list of all Adapter objects
          */
-        public void init () {
-            foreach (var obj in client.get_objects ()) {
-                foreach (var iface in obj.get_interfaces ())
-                    on_interface_added (obj, iface);
-            }
+        public Gee.Collection<Adapter> get_adapters () {
+            return adapter_map.values;
+        }
+
+        /**
+         * Return a list of all Device objects
+         */
+        public Gee.Collection<Device> get_devices () {
+            return device_map.values;
         }
 
         void on_interface_added (DBusObject obj, DBusInterface iface) {
-            var adapter = iface as org.bluez.Adapter1;
-            if (adapter != null)
-                adapter_added (new Adapter ((DBusProxy)adapter));
-            var agent_manager = iface as org.bluez.AgentManager1;
-            if (agent_manager != null)
-                AgentManager.instance = new AgentManager ((DBusProxy)agent_manager);
-            var device = iface as org.bluez.Device1;
-            if (device != null)
-                device_added (new Device ((DBusProxy)device));
+            var path = obj.get_object_path ();
+            var adapter_proxy = iface as org.bluez.Adapter1;
+            if (adapter_proxy != null) {
+                var adapter = new Adapter ((DBusProxy)adapter_proxy);
+                adapter_map[path] = adapter;
+                adapter_added (adapter);
+            }
+            var agent_manager_proxy = iface as org.bluez.AgentManager1;
+            if (agent_manager_proxy != null)
+                agent_manager = new AgentManager ((DBusProxy)agent_manager_proxy);
+            var device_proxy = iface as org.bluez.Device1;
+            if (device_proxy != null) {
+                var device = new Device ((DBusProxy)device_proxy);
+                device_map[path] = device;
+                device_added (device);
+            }
         }
 
         void on_interface_removed (DBusObject obj, DBusInterface iface) {
             var path = obj.get_object_path ();
             var adapter = iface as org.bluez.Adapter1;
-            if (adapter != null)
+            if (adapter != null) {
+                adapter_map.unset (path);
                 adapter_removed (Adapter.get_for_object_path (path));
-            var agent_manager = iface as org.bluez.AgentManager1;
-            if (agent_manager != null)
-                AgentManager.instance = null;
+            }
+            var agent_manager_proxy = iface as org.bluez.AgentManager1;
+            if (agent_manager_proxy != null)
+                agent_manager = null;
             var device = iface as org.bluez.Device1;
-            if (device != null)
+            if (device != null) {
+                device_map.unset (path);
                 device_removed (Device.get_for_object_path (path));
+            }
         }
     }
 }

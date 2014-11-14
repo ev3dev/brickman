@@ -23,8 +23,6 @@
 
 namespace BlueZ5 {
     public class AgentManager : Object {
-        internal static AgentManager? instance;
-
         org.bluez.AgentManager1 dbus_proxy;
 
         internal AgentManager (DBusProxy proxy) {
