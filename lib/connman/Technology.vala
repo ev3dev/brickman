@@ -33,7 +33,7 @@ namespace ConnMan {
 
         internal net.connman.Technology dbus_proxy;
 
-        public ObjectPath path { get; private set; }
+        public ObjectPath object_path { get; private set; }
 
         public bool powered {
             get { return dbus_proxy.powered; }
@@ -92,8 +92,8 @@ namespace ConnMan {
                 return object_map[path];
             var technology = new Technology ();
             technology.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
-                net.connman.SERVICE_NAME, path);
-            technology.path = path;
+                Manager.SERVICE_NAME, path);
+            technology.object_path = path;
             technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
             object_map[path] = technology;
             return technology;
@@ -104,15 +104,15 @@ namespace ConnMan {
                 return object_map[path];
             var technology = new Technology ();
             technology.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
-                net.connman.SERVICE_NAME, path);
-            technology.path = path;
+                Manager.SERVICE_NAME, path);
+            technology.object_path = path;
             technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
             object_map[path] = technology;
             return technology;
         }
 
         ~Technology() {
-            object_map.unset(path);
+            object_map.unset(object_path);
         }
 
         public async void scan() throws IOError {

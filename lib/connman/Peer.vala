@@ -36,7 +36,7 @@ namespace ConnMan {
 
         internal net.connman.Peer dbus_proxy;
 
-        public ObjectPath path { get; private set; }
+        public ObjectPath object_path { get; private set; }
 
         public PeerState state { get { return dbus_proxy.state; } }
         public string name { owned get { return dbus_proxy.name; } }
@@ -60,15 +60,15 @@ namespace ConnMan {
                 return object_map[path];
             var peer = new Peer();
             peer.dbus_proxy = yield Bus.get_proxy(BusType.SYSTEM,
-                net.connman.SERVICE_NAME, path);
-            peer.path = path;
+                Manager.SERVICE_NAME, path);
+            peer.object_path = path;
             peer.dbus_proxy.property_changed.connect(peer.on_property_changed);
             object_map[path] = peer;
             return peer;
         }
 
         ~Peer() {
-            object_map.unset(path);
+            object_map.unset(object_path);
         }
 
         public async void connect_peer() throws IOError {

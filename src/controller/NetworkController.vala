@@ -36,10 +36,11 @@ namespace BrickManager {
 
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
-        public NetworkStatusBarItem network_status_bar_item;
-        internal Binding status_bar_item_binding;
+        internal NetworkStatusBarItem network_status_bar_item;
+        Binding? status_bar_item_binding;
         ConnManAgent agent;
-        Manager manager;
+        ObjectPath agent_object_path;
+        Manager? manager;
         Technology? wifi_technology;
 
         public string menu_item_text { get { return "Network"; } }
@@ -55,24 +56,47 @@ namespace BrickManager {
                 on_connections_window_scan_wifi_selected.begin ());
             connections_window.connection_selected.connect (
                 on_connections_window_connection_selected);
-            init_async.begin ((obj, res) => {
-                try {
-                    init_async.end (res);
-                    status_window.loading = false;
-                    connections_window.loading = false;
-                } catch (IOError err) {
-                    critical ("%s", err.message);
-                }
-            });
-
             network_status_bar_item = new NetworkStatusBarItem();
+
+            try {
+                agent = new ConnManAgent (ConsoleApp.screen);
+                var bus = Bus.get_sync (BusType.SYSTEM);
+                agent_object_path = new ObjectPath ("/org/ev3dev/brickman/connman_agent");
+                bus.register_object<ConnManAgent> (agent_object_path, agent);
+            } catch (IOError err) {
+                critical ("%s", err.message);
+            }
+
+            Bus.watch_name (BusType.SYSTEM, Manager.SERVICE_NAME,
+                BusNameWatcherFlags.AUTO_START, () => {
+                    init_async.begin ((obj, res) => {
+                        try {
+                            init_async.end (res);
+                            status_window.loading = false;
+                            connections_window.loading = false;
+                        } catch (IOError err) {
+                            critical ("%s", err.message);
+                        }
+                    });
+                }, () => {
+                    status_window.loading = true;
+                    connections_window.loading = true;
+                    var service_keys = service_map.keys.to_array ();
+                    var service_paths = new ObjectPath[service_keys.length];
+                    int i = 0;
+                    foreach (var key in service_keys) {
+                        service_paths[i] = key.object_path;
+                        i++;
+                    }
+                    on_services_changed (new GenericArray<Service> (), service_paths);
+                    var technology_keys = technology_map.keys.to_array ();
+                    foreach (var key in technology_keys)
+                        on_technology_removed (key.object_path);
+                    manager = null;
+                });
         }
 
         async void init_async () throws IOError {
-            agent = new ConnManAgent (ConsoleApp.screen);
-            var bus = yield Bus.get (BusType.SYSTEM);
-            var agent_object_path = new ObjectPath ("/org/ev3dev/brickman/connman_agent");
-            bus.register_object<ConnManAgent> (agent_object_path, agent);
             manager = yield Manager.new_async ();
             manager.bind_property ("state", status_window, "state",
                 BindingFlags.SYNC_CREATE, transform_manager_state_to_string);
@@ -128,7 +152,7 @@ namespace BrickManager {
         void on_technology_removed (ObjectPath path) {
             var iter = technology_map.map_iterator ();
             iter.foreach ((technology, menu_item) => {
-                if (technology.path == path) {
+                if (technology.object_path == path) {
                     iter.unset ();
                     if (technology.technology_type == "wifi") {
                         connections_window.has_wifi = false;
@@ -142,19 +166,21 @@ namespace BrickManager {
         }
 
         void on_services_changed (GenericArray<Service> changed, ObjectPath[] removed) {
+            if (status_bar_item_binding != null) {
+                status_bar_item_binding.unbind ();
+                status_bar_item_binding = null;
+            }
+
             if (removed.length > 0) {
                 var iter = service_map.map_iterator ();
                 iter.foreach ((service, menu_item) => {
-                    if (service.path in removed) {
+                    if (service.object_path in removed) {
                         iter.unset ();
                         connections_window.menu.remove_menu_item (menu_item);
                     }
                     return true;
                 });
             }
-            if(status_bar_item_binding != null)
-                status_bar_item_binding.unbind();
-            status_bar_item_binding = null;
 
             changed.foreach ((service) => {
                 NetworkConnectionMenuItem menu_item;
@@ -173,13 +199,12 @@ namespace BrickManager {
                 connections_window.menu.add_menu_item (menu_item);
 
                 // Show the IP address of the primary service in the status bar
-                //      The list is ordered, so the first one is the one we want
-                if(status_bar_item_binding == null) {
+                // The list is ordered, so the first one is the one we want
+                if (status_bar_item_binding == null) {
                     status_bar_item_binding = service.bind_property (
                         "ipv4", network_status_bar_item, "text",
                         BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
                 }
-
             });
         }
 

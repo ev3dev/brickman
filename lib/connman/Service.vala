@@ -55,7 +55,7 @@ namespace ConnMan {
 
         internal net.connman.Service dbus_proxy;
 
-        public ObjectPath path { get; private set; }
+        public ObjectPath object_path { get; private set; }
         public ServiceState state { get { return dbus_proxy.state; } }
         public string? error { owned get { return dbus_proxy.error; } }
         public string? name { owned get { return dbus_proxy.name; } }
@@ -363,8 +363,8 @@ namespace ConnMan {
                 return object_map[path];
             var service = new Service ();
             service.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
-                net.connman.SERVICE_NAME, path);
-            service.path = path;
+                Manager.SERVICE_NAME, path);
+            service.object_path = path;
             weak Service weak_service = service;
             service.dbus_proxy.property_changed.connect (weak_service.on_property_changed);
             object_map[path] = service;
@@ -376,8 +376,8 @@ namespace ConnMan {
                 return object_map[path];
             var service = new Service ();
             service.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
-                net.connman.SERVICE_NAME, path);
-            service.path = path;
+                Manager.SERVICE_NAME, path);
+            service.object_path = path;
             weak Service weak_service = service;
             service.dbus_proxy.property_changed.connect (weak_service.on_property_changed);
             object_map[path] = service;
@@ -385,7 +385,7 @@ namespace ConnMan {
         }
 
         ~Service () {
-            object_map.unset (path);
+            object_map.unset (object_path);
         }
 
         public async void connect_service (bool long_timeout = false) throws IOError {
@@ -414,11 +414,11 @@ namespace ConnMan {
         }
 
         public async void move_before(Service service) throws IOError {
-            yield dbus_proxy.move_before(service.path);
+            yield dbus_proxy.move_before(service.object_path);
         }
 
         public async void move_after(Service service) throws IOError {
-            yield dbus_proxy.move_after(service.path);
+            yield dbus_proxy.move_after(service.object_path);
         }
 
         public async void reset_counters() throws IOError {

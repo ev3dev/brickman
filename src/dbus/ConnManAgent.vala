@@ -49,7 +49,7 @@ namespace BrickManager {
         }
 
         public async void release () {
-            critical ("Released.");
+            //debug ("Released.");
         }
 
         public async void report_error (ObjectPath service_path, string error)

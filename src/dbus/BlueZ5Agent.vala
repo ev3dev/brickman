@@ -37,7 +37,7 @@ namespace BrickManager {
         }
 
         public void release () {
-            critical ("Released.");
+            //debug ("Released.");
         }
 
         public async string request_pin_code (ObjectPath device_path) throws BlueZError

@@ -1,7 +1,6 @@
 [Unit]
 Description=Brick Manager
 After=multi-user.target
-Requires=connman.service
 
 [Install]
 WantedBy=multi-user.target

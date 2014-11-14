@@ -25,6 +25,8 @@ using Gee;
 
 namespace ConnMan {
     public class Manager : Object {
+        public const string SERVICE_NAME = "net.connman";
+
         net.connman.Manager dbus_proxy;
 
         public ManagerState state {
@@ -51,8 +53,8 @@ namespace ConnMan {
         public static async Manager new_async () throws IOError {
             var manager = new Manager ();
             weak Manager weak_manager = manager;
-            manager.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
-                net.connman.SERVICE_NAME, net.connman.Manager.OBJECT_PATH);
+            manager.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM, SERVICE_NAME,
+                net.connman.Manager.OBJECT_PATH);
             manager.dbus_proxy.property_changed.connect (weak_manager.on_property_changed);
             var properties = yield manager.dbus_proxy.get_properties ();
             properties.foreach ((k, v) =>
@@ -167,8 +169,6 @@ namespace ConnMan {
 }
 
 namespace net.connman {
-    public const string SERVICE_NAME = "net.connman";
-
     [DBus (name = "net.connman.Manager")]
     public interface Manager : Object {
         public const string OBJECT_PATH = "/";
