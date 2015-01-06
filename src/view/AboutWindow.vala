@@ -42,35 +42,28 @@ namespace BrickManager {
             title = "About";
             content_vbox.add (new Label ("%s v%s".printf (EXEC_NAME, VERSION)));
             content_vbox.add (new Label ("The ev3dev Brick Manager"));
-            content_vbox.add (new Label ("(C) 2014 David Lechner"));
+            content_vbox.add (new Label ("(C) 2014-2015 ev3dev team"));
             content_vbox.add (new Label ("System Info") {
                 border_bottom = 1,
                 padding_bottom = 3,
                 margin_top = 6
             });
-            var system_info_grid = new Grid (2, 2);
-            content_vbox.add (system_info_grid);
-            system_info_grid.add (new Label ("Kernel:") {
-                horizontal_align = WidgetAlign.END,
+            content_vbox.add (new Label ("Kernel:") {
                 font = small_font,
-                margin_right = 3
+                margin_bottom = -3
             });
             kernel_label = new Label ("???") {
-                horizontal_align = WidgetAlign.START,
                 font = small_font
             };
-            system_info_grid.add (kernel_label);
-            system_info_grid.add (new Label ("EEPROM:") {
-                horizontal_align = WidgetAlign.END,
+            content_vbox.add (kernel_label);
+            content_vbox.add (new Label ("EEPROM:") {
                 font = small_font,
-                margin_right = 3
+                margin_bottom = -3
             });
             eeprom_label = new Label ("???") {
-                horizontal_align = WidgetAlign.START,
                 font = small_font
             };
-            system_info_grid.add (eeprom_label);
-            content_vbox.add (new Spacer ());
+            content_vbox.add (eeprom_label);
         }
     }
 }
