@@ -331,6 +331,214 @@
     </data>
   </object>
   <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
+  <object class="GtkListStore" id="dc_motors_liststore"/>
+  <object class="GtkListStore" id="leds_liststore"/>
+  <object class="GtkListStore" id="ports_liststore">
+    <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
+      <!-- column-name DEVICE_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name PORT_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name DRIVER_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name MODE -->
+      <column type="gchararray"/>
+      <!-- column-name MODES -->
+      <column type="gchararray"/>
+      <!-- column-name STATUS -->
+      <column type="gchararray"/>
+      <!-- column-name CAN_SET_DEVICE -->
+      <column type="gboolean"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port0</col>
+        <col id="2" translatable="yes">in1</col>
+        <col id="3" translatable="yes">legoev3-input-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto nxt-analog nxt-color nxt-i2c ev3-analog ev3-uart other-uart raw</col>
+        <col id="6" translatable="yes">ev3-uart</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port1</col>
+        <col id="2" translatable="yes">in2</col>
+        <col id="3" translatable="yes">legoev3-input-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto nxt-analog nxt-color nxt-i2c ev3-analog ev3-uart other-uart raw</col>
+        <col id="6" translatable="yes">ev3-uart</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port2</col>
+        <col id="2" translatable="yes">in3</col>
+        <col id="3" translatable="yes">legoev3-input-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto nxt-analog nxt-color nxt-i2c ev3-analog ev3-uart other-uart raw</col>
+        <col id="6" translatable="yes">ev3-uart</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port3</col>
+        <col id="2" translatable="yes">in4</col>
+        <col id="3" translatable="yes">legoev3-input-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto nxt-analog nxt-color nxt-i2c ev3-analog ev3-uart other-uart raw</col>
+        <col id="6" translatable="yes">no-sensor</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port4</col>
+        <col id="2" translatable="yes">outA</col>
+        <col id="3" translatable="yes">legoev3-output-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto ev3-tacho-motor rcx-motor rcx-led raw</col>
+        <col id="6" translatable="yes">ev3-tacho-motor</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port5</col>
+        <col id="2" translatable="yes">outB</col>
+        <col id="3" translatable="yes">legoev3-output-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto ev3-tacho-motor rcx-motor rcx-led raw</col>
+        <col id="6" translatable="yes">ev3-tacho-motor</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port6</col>
+        <col id="2" translatable="yes">outC</col>
+        <col id="3" translatable="yes">legoev3-output-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto ev3-tacho-motor rcx-motor rcx-led raw</col>
+        <col id="6" translatable="yes">ev3-tacho-motor</col>
+        <col id="7">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">port7</col>
+        <col id="2" translatable="yes">outD</col>
+        <col id="3" translatable="yes">legoev3-output-port</col>
+        <col id="4" translatable="yes">auto</col>
+        <col id="5" translatable="yes">auto ev3-tacho-motor rcx-motor rcx-led raw</col>
+        <col id="6" translatable="yes">no-motor</col>
+        <col id="7">False</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="power_supplies_liststore"/>
+  <object class="GtkAction" id="quit_application_action">
+    <property name="label" translatable="yes">_Quit</property>
+    <property name="tooltip" translatable="yes">Quit application.</property>
+    <property name="stock_id">gtk-quit</property>
+  </object>
+  <object class="GtkListStore" id="sensors_liststore">
+    <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
+      <!-- column-name DEVICE_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name DRIVER_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name PORT_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name FW_VERSION -->
+      <column type="gchararray"/>
+      <!-- column-name ADDRESS -->
+      <column type="gchararray"/>
+      <!-- column-name POLL_MS -->
+      <column type="gchararray"/>
+      <!-- column-name MODES -->
+      <column type="gchararray"/>
+      <!-- column-name MODE -->
+      <column type="gchararray"/>
+      <!-- column-name NUM_VALES -->
+      <column type="gchararray"/>
+      <!-- column-name DECIMALS -->
+      <column type="gchararray"/>
+      <!-- column-name UNITS -->
+      <column type="gchararray"/>
+      <!-- column-name COMMANDS -->
+      <column type="gchararray"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">sensor0</col>
+        <col id="2" translatable="yes">lego-ev3-uart-29</col>
+        <col id="3" translatable="yes">in1</col>
+        <col id="4" translatable="yes">n/a</col>
+        <col id="5" translatable="yes">n/a</col>
+        <col id="6" translatable="yes">n/a</col>
+        <col id="7" translatable="yes">COL-REFLECT COL-AMBIENT COL-COLOR REF-RAW RGB-RAW COL-CAL</col>
+        <col id="8" translatable="yes">COL-COLOR</col>
+        <col id="9" translatable="yes">1</col>
+        <col id="10" translatable="yes">0</col>
+        <col id="11" translatable="yes">col</col>
+        <col id="12" translatable="yes">n/a</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">sensor1</col>
+        <col id="2" translatable="yes">lego-ev3-uart-30</col>
+        <col id="3" translatable="yes">in2</col>
+        <col id="4" translatable="yes">n/a</col>
+        <col id="5" translatable="yes">n/a</col>
+        <col id="6" translatable="yes">n/a</col>
+        <col id="7" translatable="yes">US-DIST-CM US-DIST-IN US-LISTEN US-SI-CM US-SI-IN US-DC-CM US-DC-IN</col>
+        <col id="8" translatable="yes">US-DIST-CM</col>
+        <col id="9" translatable="yes">1</col>
+        <col id="10" translatable="yes">1</col>
+        <col id="11" translatable="yes">cm</col>
+        <col id="12" translatable="yes">n/a</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">sensor2</col>
+        <col id="2" translatable="yes">lego-nxt-us</col>
+        <col id="3" translatable="yes">in3</col>
+        <col id="4" translatable="yes">v1.0</col>
+        <col id="5" translatable="yes">0x01</col>
+        <col id="6" translatable="yes">100</col>
+        <col id="7" translatable="yes">US-DIST-CM US-DIST-IN US-SI-CM US-SI-IN US-LISTEN</col>
+        <col id="8" translatable="yes">DIST-CM</col>
+        <col id="9" translatable="yes">1</col>
+        <col id="10" translatable="yes">0</col>
+        <col id="11" translatable="yes">cm</col>
+        <col id="12" translatable="yes">n/a</col>
+      </row>
+      <row>
+        <col id="0">False</col>
+        <col id="1" translatable="yes">sensor3</col>
+        <col id="2" translatable="yes">n/a</col>
+        <col id="3" translatable="yes">in4</col>
+        <col id="4" translatable="yes">n/a</col>
+        <col id="5" translatable="yes">n/a</col>
+        <col id="6" translatable="yes">n/a</col>
+        <col id="7" translatable="yes">n/a</col>
+        <col id="8" translatable="yes">n/a</col>
+        <col id="9" translatable="yes">1</col>
+        <col id="10" translatable="yes">0</col>
+        <col id="11" translatable="yes">n/a</col>
+        <col id="12" translatable="yes">n/a</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="servo_motors_liststore"/>
+  <object class="GtkListStore" id="tacho_motors_liststore"/>
   <object class="GtkWindow" id="control_panel_window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Brick Manager Control Panel</property>
@@ -354,6 +562,691 @@
             <property name="margin_right">6</property>
             <property name="margin_top">6</property>
             <property name="margin_bottom">6</property>
+            <child>
+              <object class="GtkGrid" id="device_browser_grid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">6</property>
+                <property name="row_homogeneous">True</property>
+                <property name="column_homogeneous">True</property>
+                <child>
+                  <object class="GtkBox" id="box5">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="ports_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="ports_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">ports_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection7"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_present_treeviewcolumn">
+                                <property name="min_width">25</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="ports_present_cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn">
+                                <property name="title" translatable="yes">Device</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="ports_device_name_cellrenderertext"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_port_name_treeviewcolumn">
+                                <property name="title" translatable="yes">Port</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="ports_port_name_cellrenderertext"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_driver_name_treeviewcolumn">
+                                <property name="title" translatable="yes">Driver</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="ports_driver_name_cellrenderertext"/>
+                                  <attributes>
+                                    <attribute name="text">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_mode_treeviewcolumn">
+                                <property name="title" translatable="yes">Mode</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="ports_mode_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">4</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_modes_treeviewcolumn">
+                                <property name="title" translatable="yes">Modes</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="ports_modes_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">5</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_status_treeviewcolumn">
+                                <property name="title" translatable="yes">Status</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="ports_status_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">6</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_can_set_device_treeviewcolumn">
+                                <property name="title" translatable="yes">Set Dev?</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="ports_can_set_device_cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">7</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label16">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Ports</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box6">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="sensors_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="sensors_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">sensors_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection9"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_present_treeviewcolumn">
+                                <property name="min_width">25</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="sensors_present_cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_device_name_treeviewcolumn1">
+                                <property name="title" translatable="yes">Device</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_device_name_cellrenderertext1">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_driver_name_treeviewcolumn">
+                                <property name="title" translatable="yes">Driver</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_driver_name_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_port_name_treeviewcolumn">
+                                <property name="title" translatable="yes">Port</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_port_name_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_fw_version_treeviewcolumn">
+                                <property name="title" translatable="yes">Firmware</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_fw_version_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">4</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_address_treeviewcolumn">
+                                <property name="title" translatable="yes">Addr</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_address_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">5</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_poll_ms_treeviewcolumn">
+                                <property name="title" translatable="yes">Poll</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_poll_ms_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">6</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_modes_treeviewcolumn">
+                                <property name="title" translatable="yes">Modes</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_modes_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">7</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_mode_treeviewcolumn">
+                                <property name="title" translatable="yes">Mode</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_mode_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">8</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_num_values_treeviewcolumn">
+                                <property name="title" translatable="yes">#Values</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_num_values_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">9</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_decimals_treeviewcolumn">
+                                <property name="title" translatable="yes">Dec.</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_decimals_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">10</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_units_treeviewcolumn">
+                                <property name="title" translatable="yes">Units</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_units_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">11</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="sensors_commands_treeviewcolumn">
+                                <property name="title" translatable="yes">Commands</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="sensors_commands_cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">12</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label17">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Sensors</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box7">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="leds_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="leds_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">leds_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection10"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn2">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="port_name_cellrenderertext2"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label18">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">LEDs</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box9">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="tacho_motors_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="tacho_motors_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">tacho_motors_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection11"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn3">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="port_name_cellrenderertext3"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label19">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Tacho Motors</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box10">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="dc_motors_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="dc_motors_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">dc_motors_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection12"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn4">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="port_name_cellrenderertext4"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label20">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">DC Motors</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box11">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="servo_motors_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="servo_motors_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">servo_motors_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection13"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn5">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="port_name_cellrenderertext5"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label21">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Servo Motors</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box12">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="power_supplies_scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="power_supplies_treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">power_supplies_liststore</property>
+                            <property name="search_column">0</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection14"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn6">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="port_name_cellrenderertext6"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label22">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Power Supplies</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="device_browser_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Device Browser</property>
+              </object>
+              <packing>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkBox" id="network-box">
                 <property name="visible">True</property>
@@ -901,6 +1794,9 @@
                   </packing>
                 </child>
               </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="network-label">
@@ -909,6 +1805,7 @@
                 <property name="label" translatable="yes">Network</property>
               </object>
               <packing>
+                <property name="position">1</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -1518,7 +2415,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child type="tab">
@@ -1528,7 +2425,7 @@
                 <property name="label" translatable="yes">Bluetooth</property>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -1725,7 +2622,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child type="tab">
@@ -1735,7 +2632,7 @@
                 <property name="label" translatable="yes">USB</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -1923,7 +2820,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child type="tab">
@@ -1933,7 +2830,7 @@
                 <property name="label" translatable="yes">Battery</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -1976,10 +2873,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAction" id="quit_application_action">
-    <property name="label" translatable="yes">_Quit</property>
-    <property name="tooltip" translatable="yes">Quit application.</property>
-    <property name="stock_id">gtk-quit</property>
   </object>
 </interface>

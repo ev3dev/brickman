@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ namespace BrickManager {
         const string CONTROL_PANEL_GLADE_FILE = "ControlPanel.glade";
 
         public Gtk.Window window;
+        public FakeDeviceBrowserController device_browser_controller;
         public FakeNetworkController network_controller;
         public FakeBluetoothController bluetooth_controller;
         public FakeUSBController usb_controller;
@@ -38,10 +39,42 @@ namespace BrickManager {
         public FakeAboutController about_controller;
 
         enum Tab {
+            DEVICE_BROWSER,
             NETWORK,
             BLUETOOTH,
             USB,
             BATTERY
+        }
+
+        enum PortsColumn {
+            PRESENT,
+            DEVICE_NAME,
+            PORT_NAME,
+            DRIVER_NAME,
+            MODE,
+            MODES,
+            STATUS,
+            CAN_SET_DEVICE,
+            USER_DATA,
+            COLUMN_COUNT;
+        }
+
+        enum SensorsColumn {
+            PRESENT,
+            DEVICE_NAME,
+            DRIVER_NAME,
+            PORT_NAME,
+            FW_VERSION,
+            ADDRESS,
+            POLL_MS,
+            MODES,
+            MODE,
+            NUM_VALUES,
+            DECIMALS,
+            UNITS,
+            COMMANDS,
+            USER_DATA,
+            COLUMN_COUNT;
         }
 
         enum NetworkTechnologyColumn {
@@ -123,6 +156,7 @@ namespace BrickManager {
                 builder.add_from_file (CONTROL_PANEL_GLADE_FILE);
                 window = builder.get_object ("control_panel_window") as Gtk.Window;
 
+                device_browser_controller = new FakeDeviceBrowserController (builder);
                 network_controller = new FakeNetworkController (builder);
                 bluetooth_controller = new FakeBluetoothController (builder);
                 usb_controller = new FakeUSBController (builder);

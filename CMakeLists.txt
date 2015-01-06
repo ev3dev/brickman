@@ -24,6 +24,7 @@ if (BRICKMAN_TEST)
         test/controller/FakeAboutController.vala
         test/controller/FakeBatteryController.vala
         test/controller/FakeBluetoothController.vala
+        test/controller/FakeDeviceBrowserController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
         lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
@@ -44,6 +45,7 @@ else (BRICKMAN_TEST)
         src/controller/AboutController.vala
         src/controller/BatteryController.vala
         src/controller/BluetoothController.vala
+        src/controller/DeviceBrowserController.vala
         src/controller/NetworkController.vala
         src/controller/USBController.vala
         src/main.vala
@@ -51,6 +53,15 @@ else (BRICKMAN_TEST)
 endif (BRICKMAN_TEST)
 
 set (BRICKMAN_COMMON_SOURCE_FILES
+    lib/ev3dev-lang-glib/src/DCMotor.vala
+    lib/ev3dev-lang-glib/src/Device.vala
+    lib/ev3dev-lang-glib/src/DeviceManager.vala
+    lib/ev3dev-lang-glib/src/LED.vala
+    lib/ev3dev-lang-glib/src/Port.vala
+    lib/ev3dev-lang-glib/src/PowerSupply.vala
+    lib/ev3dev-lang-glib/src/Sensor.vala
+    lib/ev3dev-lang-glib/src/ServoMotor.vala
+    lib/ev3dev-lang-glib/src/TachoMotor.vala
     lib/ev3devKit/src/Align.vala
     lib/ev3devKit/src/Box.vala
     lib/ev3devKit/src/Button.vala
@@ -94,12 +105,19 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/BluetoothWindow.vala
     src/view/BrickManagerWindow.vala
     src/view/ConnManAgentInputDialog.vala
+    src/view/DeviceBrowserWindow.vala
     src/view/HomeWindow.vala
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
     src/view/NetworkPropertiesWindow.vala
     src/view/NetworkStatusBarItem.vala
     src/view/NetworkStatusWindow.vala
+    src/view/PortBrowserWindow.vala
+    src/view/PortInfoWindow.vala
+    src/view/SelectFromListDialog.vala
+    src/view/SensorBrowserWindow.vala
+    src/view/SensorInfoWindow.vala
+    src/view/SensorValueDialog.vala
     src/view/ShutdownDialog.vala
     src/view/USBWindow.vala
 )
@@ -118,7 +136,7 @@ pkg_check_modules(DEPS REQUIRED
     ${BRICKMAN_TEST_MODULES}
 )
 add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES} grx20 jpeg png)
+link_libraries(${DEPS_LIBRARIES} grx20 jpeg png m)
 link_directories(${DEPS_LIBRARY_DIRS})
 
 find_package(Vala REQUIRED)
@@ -180,4 +198,3 @@ add_custom_target(run
 )
 
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)
-

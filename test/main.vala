@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ namespace BrickManager {
         DesktopTestApp.main_window.move (x, y - height);
 
         var home_window = new HomeWindow ();
+        home_window.add_controller (control_panel.device_browser_controller);
         home_window.add_controller (control_panel.network_controller);
         home_window.add_controller (control_panel.bluetooth_controller);
         home_window.add_controller (control_panel.usb_controller);

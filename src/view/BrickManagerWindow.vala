@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,16 @@ using EV3devKit;
  namespace BrickManager {
     public abstract class BrickManagerWindow : Window {
         static GRX.Font _small_font;
-        public static weak GRX.Font small_font;
+        static GRX.Font _big_font;
+
+        public static unowned GRX.Font small_font;
+        public static unowned GRX.Font big_font;
 
         static construct {
             _small_font = GRX.Font.load ("helv11");
             small_font = _small_font ?? GRX.Font.default;
+            _big_font = GRX.Font.load ("xm9x15b");
+            big_font = _big_font ?? GRX.Font.default;
         }
 
         Box window_vbox;
