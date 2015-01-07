@@ -1,3 +1,13 @@
+brickman (0.3.0) testing; urgency=medium
+
+  * Have BlueZ5.Manager hang on to object instances that it creates
+    (ev3dev/ev3dev#201)
+  * Add Device Browser with support for browsing ports and sensors
+    (ev3dev/ev3dev#169)
+  * Rearrange About window to fit long kernel version strings
+
+ -- David Lechner <david@lechnology.com>  Tue, 06 Jan 2015 22:25:38 -0600
+
 brickman (0.2.0) testing; urgency=medium
 
   * Add support for Bluetooth management. Can can now scan, pair and connect
