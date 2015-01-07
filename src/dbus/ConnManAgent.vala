@@ -40,12 +40,9 @@ namespace BrickManager {
         const string ALTERNATES_KEY             = "Alternates";
         const string VALUE_KEY                  = "Value";
 
-        Screen screen;
-
         signal void canceled ();
 
-        public ConnManAgent (Screen screen) {
-            this.screen = screen;
+        public ConnManAgent () {
         }
 
         public async void release () {
@@ -57,7 +54,7 @@ namespace BrickManager {
         {
             //var service = Service.from_path_sync (service_path);
             var dialog = new MessageDialog ("Error", error);
-            screen.show_window (dialog);
+            dialog.show ();
             // TODO: get user feedback for retry
             //throw new ConnManAgentError.RETRY ("User requested retry.");
         }
@@ -67,7 +64,7 @@ namespace BrickManager {
         {
             //var peer = Peer.from_path_sync (peer_path);
             var dialog = new MessageDialog ("Error", error);
-            screen.show_window (dialog);
+            dialog.show ();
             // TODO: get user feedback for retry
             //throw new ConnManAgentError.RETRY ("User requested retry.");
         }
@@ -112,11 +109,11 @@ namespace BrickManager {
                     });
                     var handler_id = canceled.connect (() => {
                         dialog.responded (false);
-                        screen.close_window (dialog);
+                        dialog.close ();
                         var message_dialog = new MessageDialog ("Info", "Request was canceled.");
-                        screen.show_window (message_dialog);
+                        message_dialog.show ();
                     });
-                    screen.show_window (dialog);
+                    dialog.show ();
                     yield;
                     SignalHandler.disconnect (this, handler_id);
                     if (dialog_canceled)

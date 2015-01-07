@@ -48,10 +48,9 @@ namespace BrickManager {
 
         public NetworkController () {
             status_window = new NetworkStatusWindow ();
-            weak NetworkStatusWindow weak_status_window = status_window;
             connections_window = new NetworkConnectionsWindow ();
             status_window.manage_connections_selected.connect (() =>
-                weak_status_window.screen.show_window (connections_window));
+                connections_window.show ());
             connections_window.scan_wifi_selected.connect (() =>
                 on_connections_window_scan_wifi_selected.begin ());
             connections_window.connection_selected.connect (
@@ -59,7 +58,7 @@ namespace BrickManager {
             network_status_bar_item = new NetworkStatusBarItem();
 
             try {
-                agent = new ConnManAgent (ConsoleApp.screen);
+                agent = new ConnManAgent ();
                 var bus = Bus.get_sync (BusType.SYSTEM);
                 agent_object_path = new ObjectPath ("/org/ev3dev/brickman/connman_agent");
                 bus.register_object<ConnManAgent> (agent_object_path, agent);
@@ -280,7 +279,7 @@ namespace BrickManager {
                     critical ("Failed to convert method '%s' to IPv4Info", method);
                 }
             });
-            connections_window.screen.show_window (properties_window);
+            properties_window.show ();
         }
 
         async void on_properties_window_connect_requested (
@@ -292,7 +291,7 @@ namespace BrickManager {
                     yield service.disconnect_service ();
                 } catch (IOError err) {
                     var dialog = new MessageDialog ("Error", err.message);
-                    ConsoleApp.screen.show_window (dialog);
+                    dialog.show ();
                     properties_window.is_connect_busy = false;
                 }
             } else {
@@ -302,7 +301,7 @@ namespace BrickManager {
                     yield service.connect_service (service.service_type == "wifi");
                 } catch (IOError err) {
                     var dialog = new MessageDialog ("Error", err.message);
-                    ConsoleApp.screen.show_window (dialog);
+                    dialog.show ();
                     properties_window.is_connect_busy = false;
                 }
             }

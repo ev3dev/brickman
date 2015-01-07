@@ -27,13 +27,11 @@ using BlueZ5;
 namespace BrickManager {
     [DBus (name = "org.bluez.Agent1")]
     public class BlueZ5Agent : Object {
-        Screen screen;
         MessageDialog? display_passkey_dialog;
 
         signal void canceled ();
 
-        public BlueZ5Agent (Screen screen) {
-            this.screen = screen;
+        public BlueZ5Agent () {
         }
 
         public void release () {
@@ -47,7 +45,7 @@ namespace BrickManager {
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
-                screen.close_window (dialog);
+                dialog.close ();
             });
             dialog.closed.connect (() => {
                 SignalHandler.disconnect (this, canceled_handler_id);
@@ -84,17 +82,17 @@ namespace BrickManager {
             var reject_button = new Button.with_label ("Reject");
             reject_button.pressed.connect (() => {
                 result = ConfirmationDialogResult.REJECTED;
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_hbox.add (reject_button);
             var accept_button = new Button.with_label ("Accept");
             accept_button.pressed.connect (() => {
                 result = ConfirmationDialogResult.ACCEPTED;
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_hbox.add (accept_button);
             text_entry.next_focus_widget_down = accept_button;
-            screen.show_window (dialog);
+            dialog.show ();
             yield;
             if (result == ConfirmationDialogResult.REJECTED)
                 throw new BlueZError.REJECTED ("Rejected.");
@@ -109,14 +107,14 @@ namespace BrickManager {
                 "PIN code for %s:\n\n%s".printf (device.alias, pincode));
             weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
-                screen.close_window (dialog);
+                dialog.close ();
             });
             ulong closed_handler_id = 0;
             closed_handler_id = dialog.closed.connect (() => {
                 SignalHandler.disconnect (this, canceled_handler_id);
                 SignalHandler.disconnect (weak_dialog, closed_handler_id);
             });
-            screen.show_window (dialog);
+            dialog.show ();
         }
 
         public async uint32 request_passkey (ObjectPath device_path) throws BlueZError {
@@ -125,7 +123,7 @@ namespace BrickManager {
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
-                screen.close_window (dialog);
+                dialog.close ();
             });
             dialog.closed.connect (() => {
                 SignalHandler.disconnect (this, canceled_handler_id);
@@ -161,17 +159,17 @@ namespace BrickManager {
             var reject_button = new Button.with_label ("Reject");
             reject_button.pressed.connect (() => {
                 result = ConfirmationDialogResult.REJECTED;
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_hbox.add (reject_button);
             var accept_button = new Button.with_label ("Accept");
             accept_button.pressed.connect (() => {
                 result = ConfirmationDialogResult.ACCEPTED;
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_hbox.add (accept_button);
             text_entry.next_focus_widget_down = accept_button;
-            screen.show_window (dialog);
+            dialog.show ();
             yield;
             if (result == ConfirmationDialogResult.REJECTED)
                 throw new BlueZError.REJECTED ("Rejected.");
@@ -187,12 +185,12 @@ namespace BrickManager {
             // dialog is still displayed, so, if this happens, we remove the old
             // dialog and display a new one.
             if (display_passkey_dialog != null)
-                screen.close_window (display_passkey_dialog);
+                display_passkey_dialog.close ();
             display_passkey_dialog = new MessageDialog ("Bluetooth",
                 "Passkey for %s is: \n\n%s".printf (device.alias, "%06u".printf (passkey)));
             weak Dialog weak_dialog = display_passkey_dialog;
             var canceled_handler_id = canceled.connect(() => {
-                screen.close_window (display_passkey_dialog);
+                display_passkey_dialog.close ();
             });
             ulong closed_handler_id = 0;
             closed_handler_id = display_passkey_dialog.closed.connect (() => {
@@ -201,7 +199,7 @@ namespace BrickManager {
                 // have to call as function to prevent reference cycle.
                 dispose_display_passkey_dialog ();
             });
-            screen.show_window (display_passkey_dialog);
+            display_passkey_dialog.show ();
         }
 
         void dispose_display_passkey_dialog () {
@@ -237,7 +235,7 @@ namespace BrickManager {
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
-                screen.close_window (dialog);
+                dialog.close ();
             });
             dialog.closed.connect (() => {
                 SignalHandler.disconnect (this, canceled_handler_id);
@@ -266,16 +264,16 @@ namespace BrickManager {
             var reject_button = new Button.with_label ("Reject");
             reject_button.pressed.connect (() => {
                 result = ConfirmationDialogResult.REJECTED;
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_hbox.add (reject_button);
             var accept_button = new Button.with_label ("Accept");
             accept_button.pressed.connect (() => {
                 result = ConfirmationDialogResult.ACCEPTED;
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_hbox.add (accept_button);
-            screen.show_window (dialog);
+            dialog.show ();
             accept_button.focus ();
             yield;
             if (result == ConfirmationDialogResult.REJECTED)

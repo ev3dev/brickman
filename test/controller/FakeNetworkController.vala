@@ -108,7 +108,7 @@ namespace BrickManager {
                 });
             });
             network_status_window.manage_connections_selected.connect (() =>
-                network_status_window.screen.show_window (network_connections_window));
+                network_connections_window.show ());
 
             networking_loading_checkbutton.bind_property ("active", network_connections_window, "loading", BindingFlags.SYNC_CREATE);
             var connman_service_liststore = builder.get_object ("connman_service_liststore") as Gtk.ListStore;
@@ -260,7 +260,7 @@ namespace BrickManager {
                 enet_info.bind_property ("mtu", network_properties_window, "enet-mtu", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
 
                 networking_loading_checkbutton.bind_property ("active", network_properties_window, "loading", BindingFlags.SYNC_CREATE);
-                network_status_window.screen.show_window (network_properties_window);
+                network_properties_window.show ();
                 weak NetworkPropertiesWindow weak_network_properties_window = network_properties_window;
                 network_properties_window.notify["auto-connect"].connect (() => connman_service_liststore.set (
                     service.iter, ControlPanel.NetworkServiceColumn.AUTO_CONNECT,
@@ -304,7 +304,7 @@ namespace BrickManager {
             });
 
             /* Agent */
-            agent = new ConnManAgent (DesktopTestApp.screen);
+            agent = new ConnManAgent ();
             // (builder.get_object ("connman_agent_release_button") as Gtk.Button)
             //     .clicked.connect (() => agent.release ());
             (builder.get_object ("connman_agent_report_error_button") as Gtk.Button)

@@ -48,10 +48,10 @@ namespace BrickManager {
             /* device_browser_window setup */
 
             device_browser_window.ports_menu_item_selected.connect (() => {
-                device_browser_window.screen.show_window (port_browser_window);
+                port_browser_window.show ();
             });
             device_browser_window.sensors_menu_item_selected.connect (() => {
-                device_browser_window.screen.show_window (sensor_browser_window);
+                sensor_browser_window.show ();
             });
 
             /* Ports */
@@ -77,10 +77,10 @@ namespace BrickManager {
                         Value present;
                         ports_liststore.get_value (iter, ControlPanel.PortsColumn.PRESENT, out present);
                         if (!present.get_boolean ()) {
-                            port_browser_window.screen.close_window (window);
+                            window.close ();
                             var dialog = new MessageDialog ("Port Removed",
                                 "Port %s is no longer connected.".printf (port_name.get_string ()));
-                            port_browser_window.screen.show_window (dialog);
+                            dialog.show ();
                             return;
                         }
                         Value mode;
@@ -108,7 +108,7 @@ namespace BrickManager {
                             Value present;
                             ports_liststore.get_value (iter, ControlPanel.PortsColumn.PRESENT, out present);
                             if (!present.get_boolean ())
-                                port_browser_window.screen.close_window (dialog);
+                                dialog.close ();
                         });
                         ulong dialog_closed_handler_id = 0;
                         dialog_closed_handler_id = dialog.closed.connect (() => {
@@ -116,7 +116,7 @@ namespace BrickManager {
                             ports_liststore.disconnect (row_changed_handler_id2);
                             dialog.disconnect (dialog_closed_handler_id);
                         });
-                        port_browser_window.screen.show_window (dialog);
+                        dialog.show ();
                     });
                     var set_device_button_pressed_handler_id = window.set_device_button_pressed.connect (() => {
                         // TODO: Make this list come from the Gtk UI
@@ -129,7 +129,7 @@ namespace BrickManager {
                             Value present;
                             ports_liststore.get_value (iter, ControlPanel.PortsColumn.PRESENT, out present);
                             if (!present.get_boolean ())
-                                port_browser_window.screen.close_window (dialog);
+                                dialog.close ();
                         });
                         ulong dialog_closed_handler_id = 0;
                         dialog_closed_handler_id = dialog.closed.connect (() => {
@@ -137,7 +137,7 @@ namespace BrickManager {
                             ports_liststore.disconnect (row_changed_handler_id2);
                             dialog.disconnect (dialog_closed_handler_id);
                         });
-                        port_browser_window.screen.show_window (dialog);
+                        dialog.show ();
                     });
                     ulong closed_handler_id = 0;
                     closed_handler_id = window.closed.connect (() => {
@@ -147,7 +147,7 @@ namespace BrickManager {
                         window.disconnect (closed_handler_id);
                     });
                     ports_liststore.row_changed (path, iter);
-                    port_browser_window.screen.show_window (window);
+                    window.show ();
                 });
                 return false;
             });
@@ -206,11 +206,11 @@ namespace BrickManager {
                     var row_changed_handler_id = sensors_liststore.row_changed.connect ((path, iter) => {
                         sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PRESENT, out present);
                         if (!present.get_boolean ()) {
-                            sensor_browser_window.screen.close_window (window);
+                            window.close ();
                             var dialog = new MessageDialog ("Sensor Removed",
                                 "Sensor %s on %s is no longer connected.".printf (driver_name.get_string(),
                                     port_name.get_string ()));
-                            sensor_browser_window.screen.show_window (dialog);
+                            dialog.show ();
                             return;
                         }
                         Value address;
@@ -233,7 +233,7 @@ namespace BrickManager {
                             return Source.CONTINUE;
                         });
                         dialog.closed.connect (() => Source.remove (timeout_id));
-                        sensor_browser_window.screen.show_window (dialog);
+                        dialog.show ();
                     });
                     var set_mode_handler_id = window.set_mode_selected.connect (() => {
                         Value modes;
@@ -242,14 +242,14 @@ namespace BrickManager {
                         dialog.item_selected.connect ((mode) => {
                             sensors_liststore.set (iter, ControlPanel.SensorsColumn.MODE, mode);
                         });
-                        sensor_browser_window.screen.show_window (dialog);
+                        dialog.show ();
                     });
                     var send_command_handler_id = window.send_command_selected.connect (() => {
                         var dialog = new SelectFromListDialog (commands.get_string ().split (" "));
                         dialog.item_selected.connect ((command) => {
                             message ("Sent command: %s", command);
                         });
-                        sensor_browser_window.screen.show_window (dialog);
+                        dialog.show ();
                     });
                     ulong closed_handler_id = 0;
                     closed_handler_id = window.closed.connect (() => {
@@ -260,7 +260,7 @@ namespace BrickManager {
                         window.disconnect (closed_handler_id);
                     });
                     sensors_liststore.row_changed (path, iter);
-                    sensor_browser_window.screen.show_window (window);
+                    window.show ();
                 });
                 return false;
             });

@@ -151,7 +151,7 @@ namespace BrickManager {
                     });
                     info_window.remove_selected.connect (() => {
                         bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.PRESENT, false);
-                        bluetooth_window.screen.close_window (weak_info_window);
+                        weak_info_window.close ();
                     });
                     var handler_id = bluetooth_devices_liststore.row_changed.connect ((path, iter) => {
                         bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.ADDRESS, out address);
@@ -168,7 +168,7 @@ namespace BrickManager {
                             weak_info_window.connected = connected.get_boolean ();
                     });
                     info_window.weak_ref (() => SignalHandler.disconnect (bluetooth_devices_liststore, handler_id));
-                    bluetooth_window.screen.show_window (info_window);
+                    info_window.show ();
                 });
                 if (present.get_boolean ())
                     bluetooth_window.menu.add_menu_item (menu_item);
@@ -240,7 +240,7 @@ namespace BrickManager {
 
             /* Agent */
 
-            var agent = new BlueZ5Agent (DesktopTestApp.screen);
+            var agent = new BlueZ5Agent ();
             (builder.get_object ("bluetooth-agent-request-pin-code-button") as Gtk.Button)
                 .clicked.connect(() => {
                     var path = new ObjectPath ("My Device");

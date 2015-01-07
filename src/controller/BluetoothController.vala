@@ -62,7 +62,7 @@ namespace BrickManager {
             }
 
             try {
-                agent = new BlueZ5Agent (ConsoleApp.screen);
+                agent = new BlueZ5Agent ();
                 var bus = Bus.get_sync (BusType.SYSTEM);
                 agent_object_path = new ObjectPath ("/org/ev3dev/brickman/bluez5_agent");
                 bus.register_object<BlueZ5Agent> (agent_object_path, agent);
@@ -212,10 +212,10 @@ namespace BrickManager {
                 device_window.remove_selected.connect (() =>
                     remove_device.begin (device));
                 var handler_id = manager.device_removed.connect (() =>
-                    main_window.screen.close_window (weak_device_window));
+                    weak_device_window.close ());
                 device_window.weak_ref (() =>
                     SignalHandler.disconnect (manager, handler_id));
-                main_window.screen.show_window (device_window);
+                device_window.show ();
             });
             main_window.menu.add_menu_item (menu_item);
         }
@@ -233,7 +233,7 @@ namespace BrickManager {
                 yield device.adapter.remove_device (device);
             } catch (IOError err) {
                 var dialog = new MessageDialog ("Error", err.message);
-                main_window.screen.show_window (dialog);
+                dialog.show ();
             }
         }
 
@@ -243,7 +243,7 @@ namespace BrickManager {
                 device.trusted = true;
             } catch (IOError err) {
                 var dialog = new MessageDialog ("Error", err.message);
-                main_window.screen.show_window (dialog);
+                dialog.show ();
             }
         }
 
@@ -252,7 +252,7 @@ namespace BrickManager {
                 yield device.disconnect_device ();
             } catch (IOError err) {
                 var dialog = new MessageDialog ("Error", err.message);
-                main_window.screen.show_window (dialog);
+                dialog.show ();
             }
         }
 
@@ -261,7 +261,7 @@ namespace BrickManager {
                 yield device.connect_device ();
             } catch (IOError err) {
                 var dialog = new MessageDialog ("Error", err.message);
-                main_window.screen.show_window (dialog);
+                dialog.show ();
             }
         }
     }

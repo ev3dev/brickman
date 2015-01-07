@@ -34,14 +34,14 @@ namespace BrickManager {
         home_window.add_controller (device_browser_controller);
         var network_controller = new NetworkController ();
         home_window.add_controller (network_controller);
-        ConsoleApp.screen.status_bar.add_left (network_controller.network_status_bar_item);
+        Screen.active_screen.status_bar.add_left (network_controller.network_status_bar_item);
         var bluetooth_controller = new BluetoothController ();
         home_window.add_controller (bluetooth_controller);
         var usb_controller = new USBController ();
         home_window.add_controller (usb_controller);
         var battery_controller = new BatteryController ();
         home_window.add_controller (battery_controller);
-        ConsoleApp.screen.status_bar.add_right (battery_controller.battery_status_bar_item);
+        Screen.active_screen.status_bar.add_right (battery_controller.battery_status_bar_item);
         var about_controller = new AboutController ();
         home_window.add_controller (about_controller);
 
@@ -73,7 +73,7 @@ namespace BrickManager {
                 critical (err.message); // TODO show error message on brick
             }
         });
-        ConsoleApp.screen.show_window (home_window);
+        home_window.show ();
 
         ConsoleApp.run ();
 
