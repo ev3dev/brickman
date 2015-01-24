@@ -22,12 +22,109 @@
 /* main.vala - main function */
 
 using EV3devKit;
+using Linux.VirtualTerminal;
+using Posix;
 
 namespace BrickManager {
 
-    public static int main (string[] args) {
+    /**
+     * Opens the next free virtual terminal and makes it the active console.
+     *
+     * @param vtfd The file descriptor for the new console.
+     * @param new_vt The number of the new virtual terminal.
+     * @param old_vt The number of the active virtual terminal.
+     * @throws IOError if we failed to open or activate a new console.
+     */
+    public void open_and_activate_new_vt (out int vtfd, out int new_vt, out int old_vt) throws IOError {
+        // The compiler complains about unassigned variables if we don't initialize
+        vtfd = 0;
+        new_vt = 0;
+        old_vt = 0;
 
-        ConsoleApp.init ();
+        var tty0_fd = open ("/dev/tty0", O_RDWR, 0);
+        if (tty0_fd < 0) {
+            throw (IOError) new Error (IOError.quark (), io_error_from_errno (-tty0_fd),
+                "Failed to open /dev/tty0: %s", GLib.strerror (-tty0_fd));
+        }
+        try {
+            Linux.VirtualTerminal.Stat vtstat;
+            var err = ioctl (tty0_fd, VT_GETSTATE, out vtstat);
+            if (err < 0) {
+                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
+                    "Could not get state for /dev/tty0: %s", GLib.strerror (-err));
+            }
+            old_vt = vtstat.v_active;
+            err = ioctl (tty0_fd, VT_OPENQRY, out new_vt);
+            if (err < 0) {
+                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
+                    "Failed to get new VT: %s", GLib.strerror (-err));
+            }
+            var device = "/dev/tty" + new_vt.to_string ();
+            err = access (device, (W_OK | R_OK));
+            if (err < 0) {
+                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
+                    "Insufficient permission for %s: %s", device, GLib.strerror (-err));
+            }
+            vtfd = open (device, O_RDWR, 0);
+            if (vtfd < 0) {
+                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-vtfd),
+                    "Could not open %s: %s", device, GLib.strerror (-vtfd));
+            }
+            try {
+                err = ioctl (vtfd, VT_ACTIVATE, new_vt);
+                if (err < 0) {
+                    throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
+                        "Failed to activate VT %d: %s", new_vt, GLib.strerror (-err));
+                }
+                err = ioctl (vtfd, VT_WAITACTIVE, new_vt);
+                if (err < 0) {
+                    throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
+                        "Waiting for VT %d to activate failed: %s", new_vt, GLib.strerror (-err));
+                }
+            } catch (IOError err) {
+                close (vtfd);
+                throw err;
+            }
+        } finally {
+            close (tty0_fd);
+        }
+    }
+
+    /**
+     * Close a virtual terminal that was opened with open_and_activate_new_vt().
+     *
+     * If the new virtual terminal is the active console, then the previous
+     * console will be activated.
+     *
+     * @param fd The file descriptor of the new virtual terminal.
+     * @param new_vt The number of the new virtual terminal.
+     * @param old_vt The state of the previous active console.
+     */
+    public void close_vt (int fd, int new_vt, int old_vt) {
+        Linux.VirtualTerminal.Stat vtstat;
+        if (ioctl (fd, VT_GETSTATE, out vtstat) == 0) {
+            if (vtstat.v_active == new_vt) {
+                ioctl (fd, VT_ACTIVATE, old_vt);
+                ioctl (fd, VT_WAITACTIVE, old_vt);
+            }
+        }
+        ioctl (fd, VT_DISALLOCATE, new_vt);
+        close (fd);
+    }
+
+    public static int main (string[] args) {
+        int vtfd, new_vtnum, old_vtnum;
+        try {
+            open_and_activate_new_vt (out vtfd, out new_vtnum, out old_vtnum);
+            ConsoleApp.init (vtfd);
+        } catch (IOError err) {
+            critical ("%s", err.message);
+            Process.exit (err.code);
+        } catch (ConsoleApp.ConsoleError err) {
+            critical ("%s", err.message);
+            close_vt (vtfd, new_vtnum, old_vtnum);
+            Process.exit (err.code);
+        }
 
         var home_window = new HomeWindow ();
         var device_browser_controller = new DeviceBrowserController ();
@@ -77,6 +174,7 @@ namespace BrickManager {
 
         ConsoleApp.run ();
 
+        close_vt (vtfd, new_vtnum, old_vtnum);
         return 0;
     }
 }

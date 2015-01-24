@@ -84,7 +84,8 @@ namespace BrickManager {
                     main_window.loading = true;
                     var devices = manager.get_devices ();
                     foreach (var device in devices) {
-                        var menu_item = main_window.menu.get_menu_item (device);
+                        var menu_item = main_window.menu.find_menu_item<Device> (device, (mi, d) =>
+                            d == mi.represented_object);
                         main_window.menu.remove_menu_item (menu_item);
                     }
                     set_selected_adapter (null);
@@ -221,7 +222,8 @@ namespace BrickManager {
         }
 
         void on_device_removed (Device device) {
-            var menu_item = main_window.menu.get_menu_item (device);
+            var menu_item = main_window.menu.find_menu_item<Device> (device, (mi, d) =>
+                d == mi.represented_object);
             main_window.menu.remove_menu_item (menu_item);
         }
 

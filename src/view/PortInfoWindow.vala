@@ -51,9 +51,6 @@ namespace BrickManager {
                 if (value && set_device_button.parent == null) {
                     scroll_vbox.insert_before (set_device_button, set_mode_button);
                     if (set_mode_button.has_focus) {
-                        // have to call do_layout () so that scroll_to_child ()
-                        // works properly
-                        scroll_vbox.do_layout ();
                         vscroll.scroll_to_child (set_mode_button);
                     }
                 } else if (!value) {
