@@ -35,7 +35,7 @@ namespace BrickManager {
         public Window start_window { get { return device_browser_window; } }
 
         public DeviceBrowserController () {
-            manager = new DeviceManager ();
+            manager = global_manager.device_manager;
             device_browser_window = new DeviceBrowserWindow () {
                 loading = false
             };

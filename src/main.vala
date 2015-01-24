@@ -27,6 +27,9 @@ using Posix;
 
 namespace BrickManager {
 
+    // The global_manager is shared by all of the controller objects
+    GlobalManager global_manager;
+
     /**
      * Opens the next free virtual terminal and makes it the active console.
      *
@@ -126,6 +129,9 @@ namespace BrickManager {
             Process.exit (err.code);
         }
 
+        global_manager = new GlobalManager ();
+        global_manager.set_leds (LEDState.NORMAL);
+
         var home_window = new HomeWindow ();
         var device_browser_controller = new DeviceBrowserController ();
         home_window.add_controller (device_browser_controller);
@@ -150,9 +156,11 @@ namespace BrickManager {
                     logind_manager.power_off.begin (false, (obj, res) => {
                         try {
                             logind_manager.power_off.end (res);
+                            global_manager.set_leds (LEDState.BUSY);
                             ConsoleApp.quit ();
                         } catch (IOError err) {
-                            critical (err.message); // TODO show error message on brick
+                            var dialog = new MessageDialog ("Error", err.message);
+                            dialog.show ();
                         }
                     });
                 });
@@ -160,14 +168,17 @@ namespace BrickManager {
                     logind_manager.reboot.begin (false, (obj, res) => {
                         try {
                             logind_manager.reboot.end (res);
+                            global_manager.set_leds (LEDState.BUSY);
                             ConsoleApp.quit ();
                         } catch (IOError err) {
-                            critical (err.message); // TODO show error message on brick
+                            var dialog = new MessageDialog ("Error", err.message);
+                            dialog.show ();
                         }
                     });
                 });
             } catch (IOError err) {
-                critical (err.message); // TODO show error message on brick
+                var dialog = new MessageDialog ("Error", err.message);
+                dialog.show ();
             }
         });
         home_window.show ();

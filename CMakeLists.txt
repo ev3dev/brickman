@@ -48,6 +48,7 @@ else (BRICKMAN_TEST)
         src/controller/DeviceBrowserController.vala
         src/controller/NetworkController.vala
         src/controller/USBController.vala
+        src/GlobalManager.vala
         src/main.vala
     )
 endif (BRICKMAN_TEST)
