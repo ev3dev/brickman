@@ -1,3 +1,9 @@
+brickman (0.4.0) testing; urgency=medium
+
+  * Add File Browser.
+
+ -- David Lechner <david@lechnology.com>  Sun, 25 Jan 2015 19:36:25 -0600
+
 brickman (0.3.0) testing; urgency=medium
 
   * Have BlueZ5.Manager hang on to object instances that it creates
