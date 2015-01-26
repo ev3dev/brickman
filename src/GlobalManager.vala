@@ -21,6 +21,8 @@
 
 /* FileBrowserController.vala - File Browser controller */
 
+using Linux.Input;
+
 namespace BrickManager {
 
     public enum LEDState {
@@ -38,10 +40,22 @@ namespace BrickManager {
         USER
     }
 
+    public enum EV3Button {
+        UP = KEY_UP,
+        DOWN = KEY_DOWN,
+        LEFT = KEY_LEFT,
+        RIGHT = KEY_RIGHT,
+        ENTER = KEY_ENTER,
+        BACK = KEY_BACKSPACE
+    }
+
     /**
      * Object for hosting global instances of various managers used in brickman
      */
     public class GlobalManager : Object {
+        const string EV3_BUTTONS_INPUT_EVENT_PATH =
+            "/dev/input/by-path/platform-gpio-keys.0-event";
+
         bool have_ev3_leds = false;
         EV3DevLang.LED ev3_green_left_led;
         EV3DevLang.LED ev3_green_right_led;
@@ -53,7 +67,46 @@ namespace BrickManager {
          */
         public EV3DevLang.DeviceManager device_manager { get; construct set; }
 
+        /**
+         * Emitted when a button on the EV3 is pressed.
+         *
+         * @param button The button that was pressed.
+         */
+        public signal void ev3_button_down (EV3Button button);
+
+        /**
+         * Emitted when a button on the EV3 is released.
+         *
+         * @param code The button that was pressed.
+         */
+        public signal void ev3_button_up (EV3Button button);
+
         public GlobalManager () {
+            try {
+                var channel = new IOChannel.file (EV3_BUTTONS_INPUT_EVENT_PATH, "r");
+                channel.set_encoding (null);
+                channel.set_close_on_unref (false);
+                channel.add_watch (IOCondition.IN, (source, condition) => {
+                    try {
+                        var chars = new char[sizeof(Event)];
+                        size_t bytes_read;
+                        source.read_chars (chars, out bytes_read);
+                        var event = (Event*)chars;
+                        if (event.type == EV_KEY) {
+                            if (event.value == 0)
+                                ev3_button_down ((EV3Button)event.code);
+                            else
+                                ev3_button_up ((EV3Button)event.code);
+                        }
+                    } catch (Error err) {
+                        critical ("%s", err.message);
+                        return false;
+                    }
+                    return true;
+                });
+            } catch (Error err) {
+                critical ("%s", err.message);
+            }
             device_manager = new EV3DevLang.DeviceManager ();
             try {
                 ev3_green_left_led = device_manager.get_led (EV3DevLang.LED.EV3_GREEN_LEFT);

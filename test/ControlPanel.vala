@@ -31,6 +31,7 @@ namespace BrickManager {
         const string CONTROL_PANEL_GLADE_FILE = "ControlPanel.glade";
 
         public Gtk.Window window;
+        public FakeFileBrowserController file_browser_controller;
         public FakeDeviceBrowserController device_browser_controller;
         public FakeNetworkController network_controller;
         public FakeBluetoothController bluetooth_controller;
@@ -156,6 +157,7 @@ namespace BrickManager {
                 builder.add_from_file (CONTROL_PANEL_GLADE_FILE);
                 window = builder.get_object ("control_panel_window") as Gtk.Window;
 
+                file_browser_controller = new FakeFileBrowserController (builder);
                 device_browser_controller = new FakeDeviceBrowserController (builder);
                 network_controller = new FakeNetworkController (builder);
                 bluetooth_controller = new FakeBluetoothController (builder);

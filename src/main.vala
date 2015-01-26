@@ -133,6 +133,8 @@ namespace BrickManager {
         global_manager.set_leds (LEDState.NORMAL);
 
         var home_window = new HomeWindow ();
+        var file_browser_controller = new FileBrowserController ();
+        home_window.add_controller (file_browser_controller);
         var device_browser_controller = new DeviceBrowserController ();
         home_window.add_controller (device_browser_controller);
         var network_controller = new NetworkController ();

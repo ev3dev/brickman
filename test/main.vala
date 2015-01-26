@@ -43,6 +43,7 @@ namespace BrickManager {
         DesktopTestApp.main_window.move (x, y - height);
 
         var home_window = new HomeWindow ();
+        home_window.add_controller (control_panel.file_browser_controller);
         home_window.add_controller (control_panel.device_browser_controller);
         home_window.add_controller (control_panel.network_controller);
         home_window.add_controller (control_panel.bluetooth_controller);

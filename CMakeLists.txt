@@ -25,6 +25,7 @@ if (BRICKMAN_TEST)
         test/controller/FakeBatteryController.vala
         test/controller/FakeBluetoothController.vala
         test/controller/FakeDeviceBrowserController.vala
+        test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
         lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
@@ -46,6 +47,7 @@ else (BRICKMAN_TEST)
         src/controller/BatteryController.vala
         src/controller/BluetoothController.vala
         src/controller/DeviceBrowserController.vala
+        src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
         src/controller/USBController.vala
         src/GlobalManager.vala
@@ -107,6 +109,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/BrickManagerWindow.vala
     src/view/ConnManAgentInputDialog.vala
     src/view/DeviceBrowserWindow.vala
+    src/view/FileBrowserWindow.vala
     src/view/HomeWindow.vala
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
