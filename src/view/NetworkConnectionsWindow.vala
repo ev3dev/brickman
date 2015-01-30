@@ -25,10 +25,11 @@
 
 using Gee;
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     class NetworkConnectionsWindow : BrickManagerWindow {
-        internal EV3devKit.Menu menu;
+        internal UI.Menu menu;
         Button scan_wifi_button;
 
         public bool has_wifi { get; set; }
@@ -63,7 +64,7 @@ namespace BrickManager {
                 else
                     ((Label)scan_wifi_button.child).text = "Scan WiFi";
             });
-            menu = new EV3devKit.Menu () {
+            menu = new UI.Menu () {
                 spacing = 2
             };
             content_vbox.add (menu);

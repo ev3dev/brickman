@@ -22,20 +22,21 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class SelectFromListDialog : Dialog {
         public signal void item_selected (string list_item);
 
         public SelectFromListDialog (string[] list_items) {
-            var menu = new EV3devKit.Menu () {
+            var menu = new UI.Menu () {
                 border = 0,
                 margin = 6,
                 spacing = 2
             };
             add (menu);
             foreach (var list_item in list_items) {
-                var menu_item = new EV3devKit.MenuItem (list_item);
+                var menu_item = new UI.MenuItem (list_item);
                 menu_item.button.border = 1;
                 menu_item.button.border_radius = 3;
                 var handler_id = menu_item.button.pressed.connect (() => {

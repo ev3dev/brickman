@@ -21,7 +21,7 @@
 
 /* FakeAboutController.vala - Fake About controller for testing */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class FakeAboutController : Object, IBrickManagerModule {

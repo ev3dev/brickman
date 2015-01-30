@@ -21,8 +21,6 @@
 
 /* USBController.vala - Controller for USB Gadget stuff */
 
-using EV3devKit;
-
 namespace BrickManager {
     public class USBController : Object, IBrickManagerModule {
         const Systemd.UnitActiveState active_states[] = {

@@ -21,7 +21,7 @@
 
 /* FakeUSBController.vala - Fake Network (ConnMan) controller for testing */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class FakeUSBController : Object, IBrickManagerModule {

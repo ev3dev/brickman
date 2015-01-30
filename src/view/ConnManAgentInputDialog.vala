@@ -25,7 +25,7 @@
 
 // TODO: Move this class to EV3devKit.
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class ConnManAgentInputDialog : Dialog {

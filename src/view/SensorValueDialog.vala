@@ -21,7 +21,7 @@
  * SensorValueDialog.vala: Main Device Browser Menu
  */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class SensorValueDialog : Dialog {

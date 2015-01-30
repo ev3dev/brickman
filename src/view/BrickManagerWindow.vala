@@ -23,7 +23,7 @@
  * Common base class for windows in Brick Manager (so they all look kind of the same)
  */
 
-using EV3devKit;
+using EV3devKit.UI;
 
  namespace BrickManager {
     public abstract class BrickManagerWindow : Window {

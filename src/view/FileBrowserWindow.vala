@@ -22,14 +22,15 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class FileBrowserWindow : BrickManagerWindow {
         Label current_directory_label;
-        EV3devKit.Menu file_menu;
+        UI.Menu file_menu;
         string? last_focused_text;
 
-        public unowned CompareDataFunc<EV3devKit.MenuItem>? sort_files_func;
+        public unowned CompareDataFunc<UI.MenuItem>? sort_files_func;
 
         public string current_directory {
             get { return current_directory_label.text; }
@@ -45,12 +46,12 @@ namespace BrickManager {
                 vertical_align = WidgetAlign.START
             };
             content_vbox.add (current_directory_label);
-            file_menu = new EV3devKit.Menu ();
+            file_menu = new UI.Menu ();
             content_vbox.add (file_menu);
         }
 
         public void add_file (string file_name, Object represented_object) {
-            var menu_item = new EV3devKit.MenuItem (file_name) {
+            var menu_item = new UI.MenuItem (file_name) {
                 represented_object = represented_object
             };
             menu_item.label.horizontal_align = WidgetAlign.START;

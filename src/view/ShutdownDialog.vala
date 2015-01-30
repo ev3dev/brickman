@@ -23,7 +23,7 @@
  * Dialog for shutting down/restarting the brick
  */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class ShutdownDialog : Dialog {

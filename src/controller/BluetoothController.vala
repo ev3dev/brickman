@@ -22,7 +22,6 @@
 /* BluetoothController.vala - Controller for Bluetooth (BlueZ) */
 
 using BlueZ5;
-using EV3devKit;
 
 namespace BrickManager {
     public class BluetoothController : Object, IBrickManagerModule {

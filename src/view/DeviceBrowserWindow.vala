@@ -22,25 +22,26 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class DeviceBrowserWindow : BrickManagerWindow {
-        internal EV3devKit.Menu menu;
+        internal UI.Menu menu;
 
         public signal void ports_menu_item_selected ();
         public signal void sensors_menu_item_selected ();
 
         public DeviceBrowserWindow () {
             title ="Device Browser";
-            menu = new EV3devKit.Menu () {
+            menu = new UI.Menu () {
                 max_preferred_height = 50
             };
             content_vbox.add (menu);
-            var ports_menu_item = new EV3devKit.MenuItem ("Ports");
+            var ports_menu_item = new UI.MenuItem ("Ports");
             ports_menu_item.button.pressed.connect (() =>
                 ports_menu_item_selected ());
             menu.add_menu_item (ports_menu_item);
-            var sensors_menu_item = new EV3devKit.MenuItem ("Sensors");
+            var sensors_menu_item = new UI.MenuItem ("Sensors");
             sensors_menu_item.button.pressed.connect (() =>
                 sensors_menu_item_selected ());
             menu.add_menu_item (sensors_menu_item);

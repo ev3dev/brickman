@@ -21,7 +21,7 @@
  * BatteryInfoWindow.vala - displays infomation about the battery
  */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class BatteryInfoWindow : BrickManagerWindow {

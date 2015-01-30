@@ -21,8 +21,6 @@
 
 /* FileBrowserController.vala - File Browser controller */
 
-using EV3devKit;
-
 namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
         const string PARENT_DIRECTORY_TEXT = "../";
@@ -211,7 +209,7 @@ namespace BrickManager {
             file_browser_window.loading = false;
         }
 
-        static int sort_files (EV3devKit.MenuItem a, EV3devKit.MenuItem b) {
+        static int sort_files (UI.MenuItem a, UI.MenuItem b) {
             var a_text = a.label.text;
             var b_text = b.label.text;
 

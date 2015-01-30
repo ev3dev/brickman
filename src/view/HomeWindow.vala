@@ -24,23 +24,24 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
 
     class HomeWindow : Window {
         internal ShutdownDialog shutdown_dialog;
-        EV3devKit.Menu menu;
+        UI.Menu menu;
 
         public HomeWindow () {
             shutdown_dialog = new ShutdownDialog ();
-            menu = new EV3devKit.Menu () {
+            menu = new UI.Menu () {
                 border = 0
             };
             add (menu);
         }
 
         public void add_controller (IBrickManagerModule controller) {
-            var menu_item = new EV3devKit.MenuItem (controller.menu_item_text) {
+            var menu_item = new UI.MenuItem (controller.menu_item_text) {
                 represented_object = controller
             };
             menu_item.button.pressed.connect (() =>

@@ -21,7 +21,7 @@
 
 /* BlueZ5Agent.vala - BlueZ 5 Agent implementation */
 
-using EV3devKit;
+using EV3devKit.UI;
 using BlueZ5;
 
 namespace BrickManager {

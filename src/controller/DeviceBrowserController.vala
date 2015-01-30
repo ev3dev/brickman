@@ -21,7 +21,6 @@
 
 /* DeviceBrowserController.vala - Controller for Browsing Devices (sensors, motors, etc.) */
 
-using EV3devKit;
 using EV3DevLang;
 
 namespace BrickManager {
@@ -63,7 +62,7 @@ namespace BrickManager {
         }
 
         void on_port_added (Port port) {
-            var menu_item = new EV3devKit.MenuItem (port.port_name);
+            var menu_item = new EV3devKit.UI.MenuItem (port.port_name);
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new PortInfoWindow (port.port_name, port.device_name,
                     port.driver_name)
@@ -176,7 +175,7 @@ namespace BrickManager {
         }
 
         void on_sensor_added (Sensor sensor) {
-            var menu_item = new EV3devKit.MenuItem ("%s on %s".printf (sensor.driver_name,
+            var menu_item = new EV3devKit.UI.MenuItem ("%s on %s".printf (sensor.driver_name,
                 sensor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new SensorInfoWindow (sensor.driver_name, sensor.device_name,

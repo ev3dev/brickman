@@ -24,6 +24,7 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public enum USBDevicePortService {
@@ -40,7 +41,7 @@ namespace BrickManager {
         const string device_port_service_cdc_label_text = "CDC (%s)";
 
         Label device_port_tip_label;
-        EV3devKit.Menu device_port_service_menu;
+        UI.Menu device_port_service_menu;
         CheckButtonGroup device_port_service_radio_group;
         RadioMenuItem device_port_service_none_menu_item;
         RadioMenuItem device_port_service_rndis_menu_item;
@@ -89,13 +90,13 @@ namespace BrickManager {
 
         public USBWindow () {
             title ="USB";
-            device_port_service_menu = new EV3devKit.Menu () {
+            device_port_service_menu = new UI.Menu () {
                 border = 0,
                 spacing = 2
             };
             content_vbox.add (device_port_service_menu);
             device_port_service_radio_group = new CheckButtonGroup ();
-            device_port_service_none_menu_item = new EV3devKit.RadioMenuItem (
+            device_port_service_none_menu_item = new RadioMenuItem (
                 "Off", device_port_service_radio_group);
             device_port_service_none_menu_item.button.border = 1;
             device_port_service_none_menu_item.radio.weak_represented_object =
@@ -103,7 +104,7 @@ namespace BrickManager {
             device_port_service_none_menu_item.button.notify["has-focus"].connect (() =>
                 device_port_tip_label.text = device_port_service_none_tip_text);
             device_port_service_menu.add_menu_item (device_port_service_none_menu_item);
-            device_port_service_rndis_menu_item = new EV3devKit.RadioMenuItem (
+            device_port_service_rndis_menu_item = new RadioMenuItem (
                 device_port_service_rndis_label_text.printf ("???"),
                 device_port_service_radio_group);
             device_port_service_rndis_menu_item.button.border = 1;
@@ -112,7 +113,7 @@ namespace BrickManager {
             device_port_service_rndis_menu_item.button.notify["has-focus"].connect (() =>
                 device_port_tip_label.text = device_port_service_rndis_tip_text);
             device_port_service_menu.add_menu_item (device_port_service_rndis_menu_item);
-            device_port_service_cdc_menu_item = new EV3devKit.RadioMenuItem (
+            device_port_service_cdc_menu_item = new RadioMenuItem (
                 device_port_service_cdc_label_text.printf ("???"),
                 device_port_service_radio_group);
             device_port_service_cdc_menu_item.button.border = 1;

@@ -21,7 +21,7 @@
 
 /* IBrickManagerModule.vala - Interface for controller objects that is used for displaying them on the main menu */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public interface IBrickManagerModule : Object {

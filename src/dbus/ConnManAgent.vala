@@ -21,7 +21,7 @@
 
 /* ConnManAgent.vala - ConnMan Agent implementation */
 
-using EV3devKit;
+using EV3devKit.UI;
 using ConnMan;
 
 namespace BrickManager {

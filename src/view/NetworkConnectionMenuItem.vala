@@ -22,9 +22,10 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
-    public class NetworkConnectionMenuItem : EV3devKit.MenuItem {
+    public class NetworkConnectionMenuItem : UI.MenuItem {
         const string PERCENT = "%";
 
         Label signal_strength_label;

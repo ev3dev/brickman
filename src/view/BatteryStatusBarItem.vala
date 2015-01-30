@@ -23,7 +23,7 @@
  * Indicates battery status
  */
 
-using EV3devKit;
+using EV3devKit.UI;
 using GRX;
 
 namespace BrickManager {

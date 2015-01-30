@@ -22,7 +22,7 @@
 /* FakeBluetoothController.vala - Fake Bluetooth (BlueZ 5) controller for testing */
 
 using BlueZ5;
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class FakeBluetoothController : Object, IBrickManagerModule {

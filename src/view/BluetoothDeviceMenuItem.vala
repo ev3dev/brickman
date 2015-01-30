@@ -22,9 +22,10 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
-    public class BluetoothDeviceMenuItem : EV3devKit.MenuItem {
+    public class BluetoothDeviceMenuItem : UI.MenuItem {
         const string PERCENT = "%";
 
         CheckButton connected_checkbox;

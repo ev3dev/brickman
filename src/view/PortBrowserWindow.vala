@@ -22,14 +22,15 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class PortBrowserWindow : BrickManagerWindow {
-        internal EV3devKit.Menu menu;
+        internal UI.Menu menu;
 
         public PortBrowserWindow () {
             title ="Ports";
-            menu = new EV3devKit.Menu () {
+            menu = new UI.Menu () {
                 max_preferred_height = 50
             };
             content_vbox.add (menu);

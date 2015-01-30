@@ -20,10 +20,9 @@
 /*
  * ControlPanel.vala:
  *
- * Control Panel for driving FakeEV3LCDDevice
+ * Control Panel for driving GtkFramebuffer
  */
 
-using EV3devKit;
 using Gtk;
 
 namespace BrickManager {
@@ -174,7 +173,7 @@ namespace BrickManager {
 
         [CCode (instance_pos = -1)]
         public void on_quit_button_clicked (Gtk.Button button) {
-            EV3devKit.DesktopTestApp.quit ();
+            EV3devKit.Desktop.GtkApp.quit ();
         }
 
         internal static void update_listview_toggle_item (ListStore store,

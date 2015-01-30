@@ -22,12 +22,13 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class BluetoothWindow : BrickManagerWindow {
-        internal EV3devKit.Menu menu;
+        internal UI.Menu menu;
         CheckboxMenuItem visible_menu_item;
-        EV3devKit.MenuItem scan_menu_item;
+        UI.MenuItem scan_menu_item;
 
         public bool bt_visible {
             get { return visible_menu_item.checkbox.checked; }
@@ -47,7 +48,7 @@ namespace BrickManager {
 
         public BluetoothWindow () {
             title ="Bluetooth";
-            menu = new EV3devKit.Menu () {
+            menu = new UI.Menu () {
                 max_preferred_height = 50
             };
             content_vbox.add (menu);
@@ -55,11 +56,11 @@ namespace BrickManager {
             visible_menu_item.checkbox.notify["checked"].connect (() =>
                 notify_property ("bt-visible"));
             menu.add_menu_item (visible_menu_item);
-            scan_menu_item = new EV3devKit.MenuItem ("???");
+            scan_menu_item = new UI.MenuItem ("???");
             scan_menu_item.label.horizontal_align = WidgetAlign.START;
             scan_menu_item.button.pressed.connect (() => scan_selected ());
             menu.add_menu_item (scan_menu_item);
-            var devices_label_menu_item = new EV3devKit.MenuItem ("Devices");
+            var devices_label_menu_item = new UI.MenuItem ("Devices");
             devices_label_menu_item.button.border_bottom = 1;
             devices_label_menu_item.button.margin_bottom = 2;
             devices_label_menu_item.button.can_focus = false;

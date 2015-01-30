@@ -24,15 +24,16 @@
  */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class NetworkStatusWindow : BrickManagerWindow {
         Box state_hbox;
         Label state_label;
         Label state_value_label;
-        internal EV3devKit.Menu menu;
-        EV3devKit.MenuItem manage_connections_menu_item;
-        EV3devKit.CheckboxMenuItem offline_mode_menu_item;
+        internal UI.Menu menu;
+        UI.MenuItem manage_connections_menu_item;
+        CheckboxMenuItem offline_mode_menu_item;
 
         public string state {
             get { return state_value_label.text; }
@@ -57,15 +58,15 @@ namespace BrickManager {
             state_hbox.add (state_label);
             state_value_label = new Label ("???");
             state_hbox.add (state_value_label);
-            menu = new EV3devKit.Menu () {
+            menu = new UI.Menu () {
                 max_preferred_height = 83
             };
             content_vbox.add (menu);
-            manage_connections_menu_item = new EV3devKit.MenuItem ("Manage connections...");
+            manage_connections_menu_item = new UI.MenuItem ("Manage connections...");
             manage_connections_menu_item.button.pressed.connect (() => manage_connections_selected ());
             manage_connections_menu_item.label.text_horizontal_align = GRX.TextHorizAlign.LEFT;
             menu.add_menu_item (manage_connections_menu_item);
-            offline_mode_menu_item = new EV3devKit.CheckboxMenuItem ("Offline Mode");
+            offline_mode_menu_item = new CheckboxMenuItem ("Offline Mode");
             offline_mode_menu_item.checkbox.notify["checked"].connect ((s, p) => {
                 notify_property ("offline-mode");
             });

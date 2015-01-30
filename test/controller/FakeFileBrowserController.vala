@@ -22,6 +22,7 @@
 /* FakeFileBrowserController.vala - File Browser controller for testing */
 
 using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class FakeFileBrowserController : Object, IBrickManagerModule {
@@ -141,7 +142,7 @@ namespace BrickManager {
             file_browser_window.loading = false;
         }
 
-        static int sort_files (EV3devKit.MenuItem a, EV3devKit.MenuItem b) {
+        static int sort_files (UI.MenuItem a, UI.MenuItem b) {
             var a_text = a.label.text;
             var b_text = b.label.text;
 

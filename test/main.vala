@@ -23,24 +23,25 @@
  * Version of Brick Manager that runs in GTK for testing.
  */
 
-using EV3devKit;
+using EV3devKit.Desktop;
+using EV3devKit.UI;
 
 namespace BrickManager {
     static int main (string[] args)
     {
-        DesktopTestApp.init (args);
-        DesktopTestApp.main_window.title = "brickman test";
+        GtkApp.init (args);
+        GtkApp.main_window.title = "brickman test";
         var control_panel = new ControlPanel ();
 
         // position the windows nicely. main_window is centered on screen by default.
         int x;
         int y;
-        DesktopTestApp.main_window.get_position (out x, out y);
+        GtkApp.main_window.get_position (out x, out y);
         int width;
         int height;
-        DesktopTestApp.main_window.get_size (out width, out height);
+        GtkApp.main_window.get_size (out width, out height);
         control_panel.window.move (x, y + 20);
-        DesktopTestApp.main_window.move (x, y - height);
+        GtkApp.main_window.move (x, y - height);
 
         var home_window = new HomeWindow ();
         home_window.add_controller (control_panel.file_browser_controller);
@@ -55,7 +56,7 @@ namespace BrickManager {
         Screen.active_screen.status_bar.add_left (
             control_panel.network_controller.network_status_bar_item);
         home_window.shutdown_dialog.power_off_button_pressed.connect (() =>
-            DesktopTestApp.quit ());
+            GtkApp.quit ());
         home_window.shutdown_dialog.reboot_button_pressed.connect (() => {
             var dialog = new Dialog () {
                 padding = 10
@@ -66,7 +67,7 @@ namespace BrickManager {
         });
         home_window.show ();
         
-        DesktopTestApp.run ();
+        GtkApp.run ();
 
         return 0;
     }

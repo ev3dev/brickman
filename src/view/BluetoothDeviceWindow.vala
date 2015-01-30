@@ -21,7 +21,7 @@
  * BluetoothDeviceWindow.vala:
  */
 
-using EV3devKit;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class BluetoothDeviceWindow : BrickManagerWindow {
