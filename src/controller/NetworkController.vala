@@ -22,6 +22,7 @@
 /* NetworkController.vala - Controller for network connections (ConnMan) */
 
 using ConnMan;
+using EV3devKit.UI;
 
 namespace BrickManager {
     public class NetworkController : Object, IBrickManagerModule {

@@ -21,6 +21,8 @@
 
 /* AboutController.vala - Controller for about window */
 
+using EV3devKit.UI;
+
 namespace BrickManager {
     public class AboutController : Object, IBrickManagerModule {
         AboutWindow about_window;

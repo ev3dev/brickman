@@ -22,6 +22,7 @@
 /* main.vala - main function */
 
 using EV3devKit;
+using EV3devKit.UI;
 using Linux.VirtualTerminal;
 using Posix;
 

@@ -21,6 +21,9 @@
 
 /* FileBrowserController.vala - File Browser controller */
 
+using EV3devKit;
+using EV3devKit.UI;
+
 namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
         const string PARENT_DIRECTORY_TEXT = "../";
