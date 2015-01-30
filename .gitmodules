@@ -1,9 +1,6 @@
 [submodule "lib/ev3devKit"]
 	path = lib/ev3devKit
 	url = git://github.com/ev3dev/ev3devKit
-[submodule "lib/ev3dev-lang-glib"]
-	path = lib/ev3dev-lang-glib
-	url = git://github.com/dlech/ev3dev-lang-glib
 [submodule "cmake"]
 	path = cmake
 	url = git://github.com/dlech/vala-cmake-modules
