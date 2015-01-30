@@ -1,4 +1,17 @@
-project (brickman)
+project ("brickman")
+
+# Currently, ev3devKit is a submodule and we are staticly linking it
+set (EV3DEVKIT_LIBRARIES ev3devKit)
+set (EV3DEVKIT_VAPI ${ev3devKit_BINARY_DIR}/ev3devKit.vapi)
+if (BRICKMAN_TEST)
+    set (EV3DEVKIT_DESKTOP 1)
+    list (APPEND EV3DEVKIT_LIBRARIES ev3devKit-desktop)
+    list (APPEND EV3DEVKIT_VAPI ${ev3devKit_BINARY_DIR}/ev3devKit-desktop.vapi)
+endif (BRICKMAN_TEST)
+set (EV3DEVKIT_NO_DEMO 1)
+add_subdirectory (${CMAKE_SOURCE_DIR}/lib/ev3devKit)
+include_directories (${ev3devKit_BINARY_DIR})
+link_libraries (${EV3DEVKIT_LIBRARIES})
 
 cmake_minimum_required (VERSION 2.6)
 
@@ -28,9 +41,6 @@ if (BRICKMAN_TEST)
         test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeUSBController.vala
-        lib/ev3devKit/src/desktop/FakeEV3LCDDevice.vala
-        lib/ev3devKit/src/desktop/DesktopScreen.vala
-        lib/ev3devKit/src/desktop/DesktopTestApp.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -42,7 +52,6 @@ else (BRICKMAN_TEST)
         lib/connman/Peer.vala
         lib/connman/Service.vala
         lib/connman/Technology.vala
-        lib/ev3devKit/src/ConsoleApp.vala
         src/controller/AboutController.vala
         src/controller/BatteryController.vala
         src/controller/BluetoothController.vala
@@ -65,32 +74,6 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/ev3dev-lang-glib/src/Sensor.vala
     lib/ev3dev-lang-glib/src/ServoMotor.vala
     lib/ev3dev-lang-glib/src/TachoMotor.vala
-    lib/ev3devKit/src/Align.vala
-    lib/ev3devKit/src/Box.vala
-    lib/ev3devKit/src/Button.vala
-    lib/ev3devKit/src/CheckboxMenuItem.vala
-    lib/ev3devKit/src/CheckButton.vala
-    lib/ev3devKit/src/Container.vala
-    lib/ev3devKit/src/Dialog.vala
-    lib/ev3devKit/src/Grid.vala
-    lib/ev3devKit/src/Label.vala
-    lib/ev3devKit/src/Menu.vala
-    lib/ev3devKit/src/MenuItem.vala
-    lib/ev3devKit/src/MessageDialog.vala
-    lib/ev3devKit/src/Notebook.vala
-    lib/ev3devKit/src/NotebookTab.vala
-    lib/ev3devKit/src/OnScreenKeyboard.vala
-    lib/ev3devKit/src/RadioMenuItem.vala
-    lib/ev3devKit/src/Rectangle.vala
-    lib/ev3devKit/src/Screen.vala
-    lib/ev3devKit/src/Scroll.vala
-    lib/ev3devKit/src/Spacer.vala
-    lib/ev3devKit/src/StatusBar.vala
-    lib/ev3devKit/src/StatusBarItem.vala
-    lib/ev3devKit/src/TabButton.vala
-    lib/ev3devKit/src/TextEntry.vala
-    lib/ev3devKit/src/Widget.vala
-    lib/ev3devKit/src/Window.vala
     lib/bluez5/Error.vala
     lib/dbus/Properties.vala
     lib/systemd/Logind.vala
@@ -172,6 +155,7 @@ PACKAGES
     ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
     lib/ev3devKit/bindings/*.vapi
+    ${EV3DEVKIT_VAPI}
     bindings/*.vapi
 OPTIONS
     --target-glib=2.40
@@ -182,7 +166,7 @@ add_executable(${EXEC_NAME} ${VALA_C})
 
 if (BRICKMAN_TEST)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/ev3devKit/src/desktop/main_window.glade
+    ${ev3devKit_SOURCE_DIR}/src/desktop/main_window.glade
     ${CMAKE_CURRENT_BINARY_DIR}/main_window.glade COPYONLY )
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
@@ -195,10 +179,10 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/ConnManAgentRequestInputDialog.glade COPYONLY )
 endif (BRICKMAN_TEST)
 
+install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)
+
 add_custom_target(run
     COMMAND ${EXEC_NAME}
     DEPENDS ${EXEC_NAME}
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 )
-
-install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)

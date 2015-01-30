@@ -123,7 +123,7 @@ namespace BrickManager {
         } catch (IOError err) {
             critical ("%s", err.message);
             Process.exit (err.code);
-        } catch (ConsoleApp.ConsoleError err) {
+        } catch (ConsoleApp.ConsoleAppError err) {
             critical ("%s", err.message);
             close_vt (vtfd, new_vtnum, old_vtnum);
             Process.exit (err.code);

@@ -40,7 +40,7 @@ namespace BrickManager {
                 menu_item.button.border_radius = 3;
                 var handler_id = menu_item.button.pressed.connect (() => {
                     item_selected (list_item);
-                    screen.close_window (this);
+                    close ();
                 });
                 unref ();
                 weak_ref (() => {

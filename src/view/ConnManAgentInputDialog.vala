@@ -65,14 +65,17 @@ namespace BrickManager {
 
         void on_accept_button_pressed () {
             responded (true);
-            screen.close_window (this);
+            close ();
         }
 
         void on_cancel_button_pressed () {
             responded (false);
-            screen.close_window (this);
+            close ();
         }
 
+        /**
+         * Default handler for the key_pressed signal.
+         */
         protected override bool key_pressed (uint key_code) {
             if (key_code == Curses.Key.BACKSPACE) {
                 Signal.stop_emission_by_name (this, "key-pressed");

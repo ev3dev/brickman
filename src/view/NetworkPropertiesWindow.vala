@@ -409,7 +409,7 @@ namespace BrickManager {
             windows_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "192.168.137.3", "255.255.255.0", "192.168.137.1");
                 dns_change_requested ({ "192.168.137.1" });
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_vbox.add (windows_button);
             var mac_button = new Button.with_label ("Load Mac defaults", small_font) {
@@ -418,7 +418,7 @@ namespace BrickManager {
             mac_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "192.168.2.3", "255.255.255.0", "192.168.2.1");
                 dns_change_requested ({ "192.168.2.1" });
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_vbox.add (mac_button);
             var linux_button = new Button.with_label ("Load Linux defaults", small_font) {
@@ -427,14 +427,14 @@ namespace BrickManager {
             linux_button.pressed.connect (() => {
                 ipv4_change_requested ("manual", "10.42.0.3", "255.255.255.0", "10.42.0.1");
                 dns_change_requested ({ "10.42.0.1" });
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_vbox.add (linux_button);
             var custom_button = new Button.with_label ("Enter custom values", small_font) {
                 padding_top = -1
             };
             custom_button.pressed.connect (() => {
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
                 on_ipv4_change_custom_button_pressed ();
             });
             button_vbox.add (custom_button);
@@ -444,10 +444,10 @@ namespace BrickManager {
             dchp_button.pressed.connect (() => {
                 ipv4_change_requested ("dhcp", null, null, null);
                 dns_change_requested ({ });
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             button_vbox.add (dchp_button);
-            screen.show_window (dialog);
+            dialog.show ();
         }
 
         void on_ipv4_change_custom_button_pressed () {
@@ -491,7 +491,7 @@ namespace BrickManager {
                 // TODO: validate entries and make gateway to be null instead of empty string
                 ipv4_change_requested ("manual", address_entry.text,
                     netmask_entry.text, gateway_entry.text);
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             dialog_vbox.add (accept_button);
             dialog.weak_ref ((obj) => {
@@ -500,7 +500,7 @@ namespace BrickManager {
                 SignalHandler.disconnect (accept_button,
                     accept_button_notify_has_focus_handler_id);
             });
-            screen.show_window (dialog);
+            dialog.show ();
         }
 
         void on_dns_add_button_pressed () {
@@ -525,10 +525,10 @@ namespace BrickManager {
                 new_list.add_all_array (dns_addresses);
                 new_list.add (text_entry.text);
                 dns_change_requested (new_list.to_array ());
-                screen.close_window (weak_dialog);
+                weak_dialog.close ();
             });
             dialog_vbox.add (add_button);
-            screen.show_window (dialog);
+            dialog.show ();
         }
 
         void on_dns_remove_button_pressed () {

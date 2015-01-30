@@ -44,13 +44,16 @@ namespace BrickManager {
                 represented_object = controller
             };
             menu_item.button.pressed.connect (() =>
-                screen.show_window (controller.start_window));
+                controller.start_window.show ());
             menu.add_menu_item (menu_item);
         }
 
-        public override bool key_pressed (uint key_code) {
+        /**
+         * Default handler for the key_pressed signal.
+         */
+        protected override bool key_pressed (uint key_code) {
             if (key_code == Curses.Key.BACKSPACE) {
-                screen.show_window (shutdown_dialog);
+                shutdown_dialog.show ();
                 Signal.stop_emission_by_name (this, "key-pressed");
                 return true;
             }
