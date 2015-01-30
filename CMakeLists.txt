@@ -65,15 +65,6 @@ else (BRICKMAN_TEST)
 endif (BRICKMAN_TEST)
 
 set (BRICKMAN_COMMON_SOURCE_FILES
-    lib/ev3dev-lang-glib/src/DCMotor.vala
-    lib/ev3dev-lang-glib/src/Device.vala
-    lib/ev3dev-lang-glib/src/DeviceManager.vala
-    lib/ev3dev-lang-glib/src/LED.vala
-    lib/ev3dev-lang-glib/src/Port.vala
-    lib/ev3dev-lang-glib/src/PowerSupply.vala
-    lib/ev3dev-lang-glib/src/Sensor.vala
-    lib/ev3dev-lang-glib/src/ServoMotor.vala
-    lib/ev3dev-lang-glib/src/TachoMotor.vala
     lib/bluez5/Error.vala
     lib/dbus/Properties.vala
     lib/systemd/Logind.vala

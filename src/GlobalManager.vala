@@ -57,15 +57,15 @@ namespace BrickManager {
             "/dev/input/by-path/platform-gpio-keys.0-event";
 
         bool have_ev3_leds = false;
-        EV3DevLang.LED ev3_green_left_led;
-        EV3DevLang.LED ev3_green_right_led;
-        EV3DevLang.LED ev3_red_left_led;
-        EV3DevLang.LED ev3_red_right_led;
+        EV3devKit.Devices.LED ev3_green_left_led;
+        EV3devKit.Devices.LED ev3_green_right_led;
+        EV3devKit.Devices.LED ev3_red_left_led;
+        EV3devKit.Devices.LED ev3_red_right_led;
 
         /**
          * The device manager for interacting with hardware devices.
          */
-        public EV3DevLang.DeviceManager device_manager { get; construct set; }
+        public EV3devKit.Devices.DeviceManager device_manager { get; construct set; }
 
         /**
          * Emitted when a button on the EV3 is pressed.
@@ -107,12 +107,12 @@ namespace BrickManager {
             } catch (Error err) {
                 critical ("%s", err.message);
             }
-            device_manager = new EV3DevLang.DeviceManager ();
+            device_manager = new EV3devKit.Devices.DeviceManager ();
             try {
-                ev3_green_left_led = device_manager.get_led (EV3DevLang.LED.EV3_GREEN_LEFT);
-                ev3_green_right_led = device_manager.get_led (EV3DevLang.LED.EV3_GREEN_RIGHT);
-                ev3_red_left_led = device_manager.get_led (EV3DevLang.LED.EV3_RED_LEFT);
-                ev3_red_right_led = device_manager.get_led (EV3DevLang.LED.EV3_RED_RIGHT);
+                ev3_green_left_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_GREEN_LEFT);
+                ev3_green_right_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_GREEN_RIGHT);
+                ev3_red_left_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_RED_LEFT);
+                ev3_red_right_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_RED_RIGHT);
                 have_ev3_leds = true;
             } catch (Error err) {
                 critical ("%s", err.message);

@@ -21,7 +21,7 @@
 
 /* DeviceBrowserController.vala - Controller for Browsing Devices (sensors, motors, etc.) */
 
-using EV3DevLang;
+using EV3devKit.Devices;
 using EV3devKit.UI;
 
 namespace BrickManager {

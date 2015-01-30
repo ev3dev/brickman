@@ -39,7 +39,7 @@
 				},
 				{
 					"name": "Clean",
-					"cmd": [ "make", "-C", "clean" ]
+					"cmd": [ "make", "-C", "~/build-area/brickman-desktop-test", "clean" ]
 				}
 			]
 		}
