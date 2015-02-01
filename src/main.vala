@@ -133,6 +133,8 @@ namespace BrickManager {
         global_manager = new GlobalManager ();
         global_manager.set_leds (LEDState.NORMAL);
 
+        Screen.get_active_screen ().status_bar.visible = true;
+
         var home_window = new HomeWindow ();
         var file_browser_controller = new FileBrowserController ();
         home_window.add_controller (file_browser_controller);

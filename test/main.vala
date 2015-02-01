@@ -51,6 +51,7 @@ namespace BrickManager {
         home_window.add_controller (control_panel.usb_controller);
         home_window.add_controller (control_panel.battery_controller);
         home_window.add_controller (control_panel.about_controller);
+        Screen.get_active_screen ().status_bar.visible = true;
         Screen.get_active_screen ().status_bar.add_right (
             control_panel.battery_controller.battery_status_bar_item);
         Screen.get_active_screen ().status_bar.add_left (
