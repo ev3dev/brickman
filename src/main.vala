@@ -153,6 +153,9 @@ namespace BrickManager {
         var about_controller = new AboutController ();
         home_window.add_controller (about_controller);
 
+        global_manager.back_button_long_pressed.connect_after (() =>
+            home_window.shutdown_dialog.show ());
+
         Systemd.Logind.Manager logind_manager = null;
         Systemd.Logind.Manager.get_system_manager.begin ((obj, res) => {
             try {

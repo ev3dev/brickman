@@ -95,31 +95,20 @@ namespace BrickManager {
                             var tty = int.parse (line[line.last_index_of_char ('y') + 1:line.length]);
                             // If user presses the back button, kill all processes
                             // running on the new VT.
-                            uint timeout_id = 0;
-                            var button_down_handler_id = global_manager.ev3_button_down.connect ((button) => {
-                                if (button == EV3Button.BACK) {
-                                    timeout_id = Timeout.add (1000, () => {
-                                        // Use pkill to find all processes on the tty opened
-                                        // by openvt and send them SIGTERM.
-                                        try {
-                                            string[] args2 = {
-                                                "pkill",
-                                                "--terminal",
-                                                "tty%d".printf (tty)
-                                            };
-                                            new Subprocess.newv (args2, SubprocessFlags.NONE);
-                                        } catch (Error err) {
-                                            critical ("%s", err.message);
-                                        }
-                                        timeout_id = 0;
-                                        return Source.REMOVE;
-                                    });
+                            var handler_id = global_manager.back_button_long_pressed.connect (() => {
+                                // Use pkill to find all processes on the tty opened
+                                // by openvt and send them SIGTERM.
+                                try {
+                                    string[] args2 = {
+                                        "pkill",
+                                        "--terminal",
+                                        "tty%d".printf (tty)
+                                    };
+                                    new Subprocess.newv (args2, SubprocessFlags.NONE);
+                                } catch (Error err) {
+                                    critical ("%s", err.message);
                                 }
-                            });
-                            var button_up_handler_id = global_manager.ev3_button_up.connect ((button) => {
-                                if (button == EV3Button.BACK && timeout_id != 0) {
-                                    Source.remove (timeout_id);
-                                }
+                                Signal.stop_emission_by_name (global_manager, "back-button-long-pressed");
                             });
                             // Wait for the openvt process to end, then clean up
                             // output devices in case the use program didn't
@@ -129,8 +118,7 @@ namespace BrickManager {
                                 } catch (Error err) {
                                     // shouldn't happen since it is not cancellable
                                 }
-                                global_manager.disconnect (button_down_handler_id);
-                                global_manager.disconnect (button_up_handler_id);
+                                global_manager.disconnect (handler_id);
                                 global_manager.set_leds (LEDState.NORMAL);
                                 global_manager.stop_all_motors ();
                             });

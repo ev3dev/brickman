@@ -40,73 +40,28 @@ namespace BrickManager {
         USER
     }
 
-    public enum EV3Button {
-        UP = KEY_UP,
-        DOWN = KEY_DOWN,
-        LEFT = KEY_LEFT,
-        RIGHT = KEY_RIGHT,
-        ENTER = KEY_ENTER,
-        BACK = KEY_BACKSPACE
-    }
-
     /**
      * Object for hosting global instances of various managers used in brickman
      */
     public class GlobalManager : Object {
-        const string EV3_BUTTONS_INPUT_EVENT_PATH =
-            "/dev/input/by-path/platform-gpio-keys.0-event";
-
         bool have_ev3_leds = false;
         EV3devKit.Devices.LED ev3_green_left_led;
         EV3devKit.Devices.LED ev3_green_right_led;
         EV3devKit.Devices.LED ev3_red_left_led;
         EV3devKit.Devices.LED ev3_red_right_led;
+        EV3devKit.Devices.Input ev3_buttons;
 
         /**
          * The device manager for interacting with hardware devices.
          */
-        public EV3devKit.Devices.DeviceManager device_manager { get; construct set; }
+        public EV3devKit.Devices.DeviceManager device_manager { get; private set; }
 
         /**
-         * Emitted when a button on the EV3 is pressed.
-         *
-         * @param button The button that was pressed.
+         * Emitted when the back button is held down for one second.
          */
-        public signal void ev3_button_down (EV3Button button);
-
-        /**
-         * Emitted when a button on the EV3 is released.
-         *
-         * @param code The button that was pressed.
-         */
-        public signal void ev3_button_up (EV3Button button);
+        public signal void back_button_long_pressed ();
 
         public GlobalManager () {
-            try {
-                var channel = new IOChannel.file (EV3_BUTTONS_INPUT_EVENT_PATH, "r");
-                channel.set_encoding (null);
-                channel.set_close_on_unref (false);
-                channel.add_watch (IOCondition.IN, (source, condition) => {
-                    try {
-                        var chars = new char[sizeof(Event)];
-                        size_t bytes_read;
-                        source.read_chars (chars, out bytes_read);
-                        var event = (Event*)chars;
-                        if (event.type == EV_KEY) {
-                            if (event.value == 0)
-                                ev3_button_down ((EV3Button)event.code);
-                            else
-                                ev3_button_up ((EV3Button)event.code);
-                        }
-                    } catch (Error err) {
-                        critical ("%s", err.message);
-                        return false;
-                    }
-                    return true;
-                });
-            } catch (Error err) {
-                critical ("%s", err.message);
-            }
             device_manager = new EV3devKit.Devices.DeviceManager ();
             try {
                 ev3_green_left_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_GREEN_LEFT);
@@ -114,6 +69,31 @@ namespace BrickManager {
                 ev3_red_left_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_RED_LEFT);
                 ev3_red_right_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_RED_RIGHT);
                 have_ev3_leds = true;
+            } catch (Error err) {
+                critical ("%s", err.message);
+            }
+            try {
+                ev3_buttons = device_manager.get_input_device (EV3devKit.Devices.Input.EV3_BUTTONS_NAME);
+                uint timeout_id = 0;
+                var button_down_handler_id = ev3_buttons.key_down.connect ((key_code) => {
+                    if (key_code == KEY_BACKSPACE) {
+                        timeout_id = Timeout.add (1000, () => {
+                            back_button_long_pressed ();
+                            EV3devKit.ConsoleApp.ignore_next_key_press ();
+                            timeout_id = 0;
+                            return Source.REMOVE;
+                        });
+                    }
+                });
+                var button_up_handler_id = ev3_buttons.key_up.connect ((key_code) => {
+                    if (key_code == KEY_BACKSPACE && timeout_id != 0) {
+                        Source.remove (timeout_id);
+                    }
+                });
+                weak_ref (() => {
+                    ev3_buttons.disconnect (button_down_handler_id);
+                    ev3_buttons.disconnect (button_up_handler_id);
+                });
             } catch (Error err) {
                 critical ("%s", err.message);
             }
