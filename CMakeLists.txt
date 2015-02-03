@@ -1,5 +1,21 @@
 project ("brickman")
 
+cmake_minimum_required (VERSION 2.6)
+
+list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
+
+set (PKGDATADIR "${DATADIR}/${CMAKE_PROJECT_NAME}")
+set (EXEC_NAME "brickman")
+set (RELEASE_NAME "Brick Manager")
+set (VERSION "0.4.0")
+
+# Comment this out to enable C compiler warnings
+add_definitions (-w)
+
+add_subdirectory (data)
+
 # Currently, ev3devKit is a submodule and we are staticly linking it
 set (EV3DEVKIT_LIBRARIES ev3devKit)
 set (EV3DEVKIT_VAPI ${ev3devKit_BINARY_DIR}/ev3devKit.vapi)
@@ -9,20 +25,9 @@ if (BRICKMAN_TEST)
     list (APPEND EV3DEVKIT_VAPI ${ev3devKit_BINARY_DIR}/ev3devKit-desktop.vapi)
 endif (BRICKMAN_TEST)
 set (EV3DEVKIT_NO_DEMO 1)
-add_subdirectory (${CMAKE_SOURCE_DIR}/lib/ev3devKit)
+add_subdirectory (lib/ev3devKit)
 include_directories (${ev3devKit_BINARY_DIR})
 link_libraries (${EV3DEVKIT_LIBRARIES})
-
-cmake_minimum_required (VERSION 2.6)
-
-list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
-set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
-
-set (PKGDATADIR "${DATADIR}/brickman")
-set (EXEC_NAME "brickman")
-set (RELEASE_NAME "Brick Manager")
-set (VERSION "0.4.0")
 
 configure_file (src/Version.vala.in Version.vala)
 

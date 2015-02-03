@@ -27,6 +27,7 @@ using Linux.VirtualTerminal;
 using Posix;
 
 namespace BrickManager {
+    const string SPLASH_PNG = "splash.png";
 
     // The global_manager is shared by all of the controller objects
     GlobalManager global_manager;
@@ -128,6 +129,24 @@ namespace BrickManager {
             critical ("%s", err.message);
             close_vt (vtfd, new_vtnum, old_vtnum);
             Process.exit (err.code);
+        }
+        // Get something up on the screen ASAP.
+        string splash_path = SPLASH_PNG;
+        if (!FileUtils.test (splash_path, FileTest.EXISTS)) {
+            splash_path = null;
+            foreach (var file in Environment.get_system_data_dirs ()) {
+                file = Path.build_filename (file, PROJECT_NAME, SPLASH_PNG);
+                if (FileUtils.test (file, FileTest.EXISTS)) {
+                    splash_path = file;
+                    break;
+                }
+            }
+        }
+        if (splash_path == null) {
+            critical ("Could not find %s", SPLASH_PNG);
+        } else {
+            if (GRX.Context.screen.load_from_png (splash_path) != 0)
+                critical ("%s", "Could not load splash image.");
         }
 
         global_manager = new GlobalManager ();

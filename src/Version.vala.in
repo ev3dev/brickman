@@ -22,6 +22,7 @@
 /* Version.vala - Version info from CMakeLists.txt (automatically generated) */
 
 namespace BrickManager {
+    const string PROJECT_NAME = "@PROJECT_NAME@";
     const string EXEC_NAME = "@EXEC_NAME@";
     const string RELEASE_NAME = "@RELEASE_NAME@";
     const string VERSION = "@VERSION@";
