@@ -46,7 +46,7 @@ namespace BrickManager {
             set {
                 _text = value;
                 redraw();
-	    }
+            }
         }
 
         public NetworkStatusBarItem () {

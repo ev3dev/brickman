@@ -72,6 +72,7 @@ namespace BrickManager {
 
             Bus.watch_name (BusType.SYSTEM, Manager.SERVICE_NAME,
                 BusNameWatcherFlags.AUTO_START, () => {
+                    // Called when the bluez service is registered.
                     init_async.begin ((obj, res) => {
                         try {
                             init_async.end (res);
@@ -81,11 +82,12 @@ namespace BrickManager {
                         }
                     });
                 }, () => {
+                    // Called when the bluez service is disappears (shutdown or crashed).
                     main_window.loading = true;
                     var devices = manager.get_devices ();
                     foreach (var device in devices) {
-                        var menu_item = main_window.menu.find_menu_item<Device> (device, (mi, d) =>
-                            d == mi.represented_object);
+                        var menu_item = main_window.menu.find_menu_item<Device> (device,
+                            (mi, d) => d == mi.represented_object);
                         main_window.menu.remove_menu_item (menu_item);
                     }
                     set_selected_adapter (null);
@@ -176,7 +178,7 @@ namespace BrickManager {
                         break;
                     }
                 }
-                // If the built-in adapter is the only adapter availible, then use it.
+                // If the built-in adapter is the only adapter available, then use it.
                 if (selected_adapter == null && adapter_list.size > 0)
                     set_selected_adapter (adapter_list[0]);
             }

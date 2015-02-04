@@ -25,15 +25,23 @@ using Linux.Input;
 
 namespace BrickManager {
 
+    /**
+     * Program-defined LED states.
+     *
+     * Brickman uses the LEDs on the EV3 to provide feedback to the user using
+     * these states.
+     */
     public enum LEDState {
         /**
          * Indicates that brickman is running normally (ready for input).
          */
         NORMAL,
+
         /**
          * Indicates that brickman is busy and will not respond to input.
          */
         BUSY,
+
         /**
          * Indicates that user program is running.
          */
@@ -52,7 +60,7 @@ namespace BrickManager {
         EV3devKit.Devices.Input ev3_buttons;
 
         /**
-         * The device manager for interacting with hardware devices.
+         * Gets the device manager for interacting with hardware devices.
          */
         public EV3devKit.Devices.DeviceManager device_manager { get; private set; }
 
