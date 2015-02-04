@@ -25,7 +25,6 @@ using EV3devKit.UI;
 
 namespace BrickManager {
     public interface IBrickManagerModule : Object {
-        public abstract string menu_item_text { get; }
-        public abstract Window start_window { get; }
+        public abstract BrickManagerWindow start_window { get; }
     }
 }

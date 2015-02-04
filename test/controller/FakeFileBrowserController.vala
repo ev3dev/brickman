@@ -37,8 +37,7 @@ namespace BrickManager {
         FileMonitor? monitor;
         File initial_directory;
 
-        public string menu_item_text { get { return "File Browser"; } }
-        public Window start_window { get { return file_browser_window; } }
+        public BrickManagerWindow start_window { get { return file_browser_window; } }
 
         public FakeFileBrowserController (Gtk.Builder builder) {
             file_browser_window = new FileBrowserWindow () {

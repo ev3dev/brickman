@@ -48,7 +48,7 @@ namespace BrickManager {
         public signal void manage_connections_selected ();
 
         public NetworkStatusWindow () {
-            title ="Networking";
+            title = "Wireless and Networks";
             state_hbox = new Box.horizontal () {
                 horizontal_align = WidgetAlign.CENTER,
                 vertical_align = WidgetAlign.CENTER

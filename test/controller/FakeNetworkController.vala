@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@ namespace BrickManager {
         const string CONNMAN_SERVICE_IPV4_DIALOG_GLADE_FILE = "ConnManServiceIPv4Dialog.glade";
         const string CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE = "ConnManAgentRequestInputDialog.glade";
 
-        public string menu_item_text { get { return "Networking"; } }
         NetworkStatusWindow network_status_window;
-        public Window start_window { get { return network_status_window; } }
         NetworkConnectionsWindow network_connections_window;
         public NetworkStatusBarItem network_status_bar_item;
         ConnManAgent agent;
         Gtk.Dialog? agent_request_input_dialog;
+
+        public BrickManagerWindow start_window { get { return network_status_window; } }
 
         protected bool has_wifi { get; set; default = true; }
 

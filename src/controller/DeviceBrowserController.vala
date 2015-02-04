@@ -31,8 +31,7 @@ namespace BrickManager {
         PortBrowserWindow? port_browser_window;
         SensorBrowserWindow? sensor_browser_window;
 
-        public string menu_item_text { get { return "Device Browser"; } }
-        public Window start_window { get { return device_browser_window; } }
+        public BrickManagerWindow start_window { get { return device_browser_window; } }
 
         public DeviceBrowserController () {
             manager = global_manager.device_manager;

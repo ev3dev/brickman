@@ -36,8 +36,7 @@ namespace BrickManager {
         Binding? selected_adapter_visible_binding;
         Binding? selected_adapter_scanning_binding;
 
-        public string menu_item_text { get { return "Bluetooth"; } }
-        public Window start_window { get { return main_window; } }
+        public BrickManagerWindow start_window { get { return main_window; } }
 
         public BluetoothController () {
             adapter_list = new Gee.LinkedList<Adapter> ();

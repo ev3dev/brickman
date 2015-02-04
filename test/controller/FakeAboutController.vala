@@ -27,8 +27,7 @@ namespace BrickManager {
     public class FakeAboutController : Object, IBrickManagerModule {
         AboutWindow about_window;
 
-        public string menu_item_text { get { return "About"; } }
-        public Window start_window { get { return about_window; } }
+        public BrickManagerWindow start_window { get { return about_window; } }
 
         public FakeAboutController (Gtk.Builder builder) {
             about_window = new AboutWindow () {

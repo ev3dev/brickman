@@ -29,8 +29,7 @@ namespace BrickManager {
         internal BatteryStatusBarItem battery_status_bar_item;
         GUdev.Client power_supply_client;
 
-        public string menu_item_text { get { return "Battery"; } }
-        public Window start_window { get { return battery_window; } }
+        public BrickManagerWindow start_window { get { return battery_window; } }
 
         public BatteryController () {
             battery_window = new BatteryInfoWindow ();

@@ -43,8 +43,7 @@ namespace BrickManager {
         Manager? manager;
         Technology? wifi_technology;
 
-        public string menu_item_text { get { return "Network"; } }
-        public Window start_window { get { return status_window; } }
+        public BrickManagerWindow start_window { get { return status_window; } }
 
         public NetworkController () {
             status_window = new NetworkStatusWindow ();

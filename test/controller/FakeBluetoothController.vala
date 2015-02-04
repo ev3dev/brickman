@@ -28,8 +28,7 @@ namespace BrickManager {
     public class FakeBluetoothController : Object, IBrickManagerModule {
         BluetoothWindow bluetooth_window;
 
-        public string menu_item_text { get { return "Bluetooth"; } }
-        public Window start_window { get { return bluetooth_window; } }
+        public BrickManagerWindow start_window { get { return bluetooth_window; } }
 
         public FakeBluetoothController (Gtk.Builder builder) {
             bluetooth_window = new BluetoothWindow ();

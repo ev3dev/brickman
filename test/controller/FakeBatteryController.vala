@@ -28,8 +28,7 @@ namespace BrickManager {
         BatteryInfoWindow battery_window;
         internal BatteryStatusBarItem battery_status_bar_item;
 
-        public string menu_item_text { get { return "Battery"; } }
-        public Window start_window { get { return battery_window; } }
+        public BrickManagerWindow start_window { get { return battery_window; } }
 
         public FakeBatteryController (Gtk.Builder builder) {
             battery_window = new BatteryInfoWindow ();

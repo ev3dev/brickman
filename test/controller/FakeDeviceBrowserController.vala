@@ -28,8 +28,7 @@ namespace BrickManager {
     public class FakeDeviceBrowserController : Object, IBrickManagerModule {
         DeviceBrowserWindow device_browser_window;
 
-        public string menu_item_text { get { return "Device Browser"; } }
-        public Window start_window { get { return device_browser_window; } }
+        public BrickManagerWindow start_window { get { return device_browser_window; } }
 
         public FakeDeviceBrowserController (Gtk.Builder builder) {
             device_browser_window = new DeviceBrowserWindow () {

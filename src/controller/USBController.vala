@@ -40,8 +40,7 @@ namespace BrickManager {
         Systemd.Unit rndis_service;
         Systemd.Unit cdc_service;
 
-        public string menu_item_text { get { return "USB"; } }
-        public Window start_window { get { return usb_window; } }
+        public BrickManagerWindow start_window { get { return usb_window; } }
 
         public USBController () {
             usb_window = new USBWindow ();
