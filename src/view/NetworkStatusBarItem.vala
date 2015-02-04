@@ -1,5 +1,5 @@
 /*
- * brickman -- Brick Manager for LEGO Mindstorms EV3/ev3dev
+ * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
  * Copyright (C) 2014 WasabiFan <wasabifan@outlook.com>
  *
