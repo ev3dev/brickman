@@ -27,6 +27,7 @@ namespace ConnMan {
     public class Manager : Object {
         public const string SERVICE_NAME = "net.connman";
 
+        HashMap<ObjectPath, Technology> technology_map;
         net.connman.Manager dbus_proxy;
 
         public ManagerState state {
@@ -49,6 +50,10 @@ namespace ConnMan {
         public signal void technology_added (Technology technology);
         public signal void services_changed (GenericArray<Service> changed, ObjectPath[] removed);
 
+        construct {
+            technology_map = new HashMap<ObjectPath, Technology>();
+        }
+
         public static async Manager new_async () throws IOError {
             var manager = new Manager ();
             weak Manager weak_manager = manager;
@@ -68,8 +73,13 @@ namespace ConnMan {
             var technologies = yield dbus_proxy.get_technologies ();
             var result = new ArrayList<Technology> ();
             foreach (var item in technologies) {
-                var tech = yield Technology.from_path (item.path);
-                result.add (tech);
+                if (technology_map.has_key (item.path)) {
+                    result.add (technology_map[item.path]);
+                } else {
+                    var tech = yield Technology.new_async (item.path);
+                    technology_map[item.path] = tech;
+                    result.add (tech);
+                }
             }
             return result;
         }
@@ -107,9 +117,12 @@ namespace ConnMan {
         }
 
         void on_technology_added (ObjectPath path, HashTable<string, Variant> properties) {
-            Technology.from_path.begin (path, (obj, res) => {
+            if (technology_map.has_key (path))
+                critical ("technology '%s' already exists.", path);
+            Technology.new_async.begin (path, (obj, res) => {
                 try {
-                    var tech = Technology.from_path.end (res);
+                    var tech = Technology.new_async.end (res);
+                    technology_map[path] = tech;
                     technology_added (tech);
                 } catch (IOError err) {
                     critical ("%s", err.message);
@@ -118,7 +131,10 @@ namespace ConnMan {
         }
 
         void on_technology_removed (ObjectPath path) {
-            Technology.remove (path);
+            if (technology_map.has_key (path)) {
+                technology_map[path].removed ();
+                technology_map.unset (path);
+            }
         }
 
         void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {

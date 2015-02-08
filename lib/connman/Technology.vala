@@ -25,12 +25,6 @@ using Gee;
 
 namespace ConnMan {
     public class Technology : Object {
-        static HashMap<ObjectPath, weak Technology> object_map;
-
-        static construct {
-            object_map = new HashMap<ObjectPath, weak Technology>();
-        }
-
         internal net.connman.Technology dbus_proxy;
 
         public ObjectPath object_path { get; private set; }
@@ -89,9 +83,7 @@ namespace ConnMan {
 
         public signal void removed ();
 
-        internal static async Technology from_path (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
-                return object_map[path];
+        internal static async Technology new_async (ObjectPath path) throws IOError {
             var technology = new Technology ();
             technology.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 Manager.SERVICE_NAME, path);
@@ -102,18 +94,7 @@ namespace ConnMan {
             // sent before the signal handler is connected.
             var properties = yield technology.dbus_proxy.get_properties ();
             properties.foreach ((k, v) => technology.on_property_changed (k, v));
-            object_map[path] = technology;
             return technology;
-        }
-
-        internal static void remove (ObjectPath path) {
-            if (object_map != null && object_map.has_key (path)) {
-                object_map[path].removed ();
-            }
-        }
-
-        ~Technology() {
-            object_map.unset(object_path);
         }
 
         public async void scan() throws IOError {
