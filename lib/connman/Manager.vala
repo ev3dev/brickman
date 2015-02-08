@@ -29,6 +29,7 @@ namespace ConnMan {
 
         HashMap<ObjectPath, Technology> technology_map;
         HashMap<ObjectPath, Service> service_map;
+        HashMap<ObjectPath, Peer> peer_map;
         net.connman.Manager dbus_proxy;
 
         public ManagerState state {
@@ -50,10 +51,12 @@ namespace ConnMan {
 
         public signal void technology_added (Technology technology);
         public signal void services_changed (GenericArray<Service> changed);
+        public signal void peers_changed (GenericArray<Peer> changed);
 
         construct {
             technology_map = new HashMap<ObjectPath, Technology>();
             service_map = new HashMap<ObjectPath, Service>();
+            peer_map = new HashMap<ObjectPath, Peer>();
         }
 
         public static async Manager new_async () throws IOError {
@@ -68,6 +71,7 @@ namespace ConnMan {
             manager.dbus_proxy.technology_added.connect (weak_manager.on_technology_added);
             manager.dbus_proxy.technology_removed.connect (weak_manager.on_technology_removed);
             manager.dbus_proxy.services_changed.connect (weak_manager.on_services_changed);
+            manager.dbus_proxy.peers_changed.connect (weak_manager.on_peers_changed);
             return manager;
         }
 
@@ -109,10 +113,13 @@ namespace ConnMan {
             var peers = yield dbus_proxy.get_peers ();
             var result = new ArrayList<Peer> ();
             foreach (var item in peers) {
-                var peer = yield Peer.from_path (item.path);
-                item.properties.foreach ((k, v) =>
-                    ((DBusProxy)peer.dbus_proxy).set_cached_property (k, v));
-                result.add (peer);
+                if (peer_map.has_key (item.path)) {
+                    result.add (peer_map[item.path]);
+                } else {
+                    var peer = yield Peer.new_async (item.path);
+                    peer_map[item.path] = peer;
+                    result.add (peer);
+                }
             }
             return result;
         }
@@ -168,6 +175,33 @@ namespace ConnMan {
                     }
                 }
                 services_changed (services);
+            } catch (IOError err) {
+                critical ("%s", err.message);
+            }
+        }
+
+        void on_peers_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
+            foreach (var path in removed) {
+                if (peer_map.has_key (path)) {
+                    peer_map[path].removed ();
+                    peer_map.unset (path);
+                }
+            }
+            on_peers_changed_async.begin (changed);
+        }
+
+        async void on_peers_changed_async (net.connman.ManagerObject[] changed) {
+            try {
+                var peers = new GenericArray<Peer>();
+                foreach (var item in changed) {
+                    if (peer_map.has_key (item.path)) {
+                        peers.add (peer_map[item.path]);
+                    } else {
+                        var peer = yield Peer.new_async (item.path);
+                        peers.add (peer);
+                    }
+                }
+                peers_changed (peers);
             } catch (IOError err) {
                 critical ("%s", err.message);
             }

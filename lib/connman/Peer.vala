@@ -1,7 +1,7 @@
 /*
  * connman -- DBus bindings for ConnMan <https://01.org/connman>
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,6 @@ using Gee;
 
 namespace ConnMan {
     public class Peer : Object {
-        static HashMap<ObjectPath, weak Peer> object_map;
-
-        static construct {
-            object_map = new HashMap<ObjectPath, weak Peer>();
-        }
-
         const string IPV4_ADDRESS_KEY = "Address";
         const string IPV4_NETMASK_KEY = "Netmask";
 
@@ -44,52 +38,52 @@ namespace ConnMan {
             owned get {
                 if (dbus_proxy.ipv4[IPV4_ADDRESS_KEY] == null)
                     return null;
-                return dbus_proxy.ipv4[IPV4_ADDRESS_KEY].dup_string();
+                return dbus_proxy.ipv4[IPV4_ADDRESS_KEY].dup_string ();
             }
         }
         public string? ipv4_netmask {
             owned get {
                 if (dbus_proxy.ipv4[IPV4_NETMASK_KEY] == null)
                     return null;
-                return dbus_proxy.ipv4[IPV4_NETMASK_KEY].dup_string();
+                return dbus_proxy.ipv4[IPV4_NETMASK_KEY].dup_string ();
             }
         }
 
-        internal static async Peer from_path(ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key(path))
-                return object_map[path];
+        public signal void removed ();
+
+        internal static async Peer new_async (ObjectPath path) throws IOError {
             var peer = new Peer();
-            peer.dbus_proxy = yield Bus.get_proxy(BusType.SYSTEM,
+            peer.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 Manager.SERVICE_NAME, path);
             peer.object_path = path;
-            peer.dbus_proxy.property_changed.connect(peer.on_property_changed);
-            object_map[path] = peer;
+            peer.dbus_proxy.property_changed.connect (peer.on_property_changed);
+            // we are calling the deprecated get_properties_sync method because
+            // of a possible race condition where a property_changed signal is
+            // sent before the signal handler is connected.
+            var properties = yield peer.dbus_proxy.get_properties ();
+            properties.foreach ((k, v) => peer.on_property_changed (k, v));
             return peer;
         }
 
-        ~Peer() {
-            object_map.unset(object_path);
-        }
-
         public async void connect_peer() throws IOError {
-            yield dbus_proxy.connect();
+            yield dbus_proxy.connect ();
         }
 
         public async void disconnect_peer() throws IOError {
-            yield dbus_proxy.disconnect();
+            yield dbus_proxy.disconnect ();
         }
 
         void on_property_changed(string name, Variant? value) {
-            ((DBusProxy)dbus_proxy).set_cached_property(name, value);
+            ((DBusProxy)dbus_proxy).set_cached_property (name, value);
             switch (name) {
             case "State":
-                notify_property("state");
+                notify_property ("state");
                 break;
             case "Name":
-                notify_property("name");
+                notify_property ("name");
                 break;
             case "IPv4":
-                notify_property("ipv4");
+                notify_property ("ipv4");
                 break;
             default:
                 critical ("Unknown dbus property '%s'", name);
@@ -118,12 +112,12 @@ namespace ConnMan {
 namespace net.connman {
     [DBus (name = "net.connman.Peer")]
     public interface Peer : Object {
-        // deprecated
-        //public abstract async HashTable<string, Variant> get_properties() throws IOError;
-        public abstract async void connect() throws IOError;
-        public abstract async void disconnect() throws IOError;
+        [Deprecated]
+        public abstract async HashTable<string, Variant> get_properties () throws IOError;
+        public abstract async void connect () throws IOError;
+        public abstract async void disconnect () throws IOError;
 
-        public signal void property_changed(string name, Variant? value);
+        public signal void property_changed (string name, Variant? value);
 
         public abstract ConnMan.PeerState state { get; }
         public abstract string name { owned get; }
