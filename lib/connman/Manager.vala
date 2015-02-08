@@ -69,8 +69,6 @@ namespace ConnMan {
             var result = new ArrayList<Technology> ();
             foreach (var item in technologies) {
                 var tech = yield Technology.from_path (item.path);
-                item.properties.foreach ((k, v) =>
-                    ((DBusProxy)tech.dbus_proxy).set_cached_property(k, v));
                 result.add (tech);
             }
             return result;
@@ -109,14 +107,14 @@ namespace ConnMan {
         }
 
         void on_technology_added (ObjectPath path, HashTable<string, Variant> properties) {
-            try {
-                var tech = Technology.from_path_sync (path);
-                properties.foreach ((k, v) =>
-                    ((DBusProxy)tech.dbus_proxy).set_cached_property (k, v));
-                technology_added (tech);
-            } catch (IOError err) {
-                critical ("%s", err.message);
-            }
+            Technology.from_path.begin (path, (obj, res) => {
+                try {
+                    var tech = Technology.from_path.end (res);
+                    technology_added (tech);
+                } catch (IOError err) {
+                    critical ("%s", err.message);
+                }
+            });
         }
 
         void on_technology_removed (ObjectPath path) {

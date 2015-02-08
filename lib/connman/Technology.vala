@@ -97,18 +97,11 @@ namespace ConnMan {
                 Manager.SERVICE_NAME, path);
             technology.object_path = path;
             technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
-            object_map[path] = technology;
-            return technology;
-        }
-
-        internal static Technology from_path_sync (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
-                return object_map[path];
-            var technology = new Technology ();
-            technology.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
-                Manager.SERVICE_NAME, path);
-            technology.object_path = path;
-            technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
+            // we are calling the deprecated get_properties_sync method because
+            // of a possible race condition where a property_changed signal is
+            // sent before the signal handler is connected.
+            var properties = yield technology.dbus_proxy.get_properties ();
+            properties.foreach ((k, v) => technology.on_property_changed (k, v));
             object_map[path] = technology;
             return technology;
         }
@@ -162,14 +155,17 @@ namespace ConnMan {
 namespace net.connman {
     [DBus (name = "net.connman.Technology")]
     public interface Technology : Object {
-        // deprecated
-        //public abstract async HashTable<string, Variant> get_properties() throws IOError;
-        public abstract async void set_property(string name, Variant? value) throws IOError;
+        [Deprecated]
+        public abstract async HashTable<string, Variant> get_properties () throws IOError;
+        [DBus (name = "GetProperties")]
+        [Deprecated]
+        public abstract HashTable<string, Variant> get_properties_sync () throws IOError;
+        public abstract async void set_property (string name, Variant? value) throws IOError;
         [DBus (name = "SetProperty")]
-        public abstract void set_property_sync(string name, Variant? value) throws IOError;
-        public abstract async void scan() throws IOError;
+        public abstract void set_property_sync (string name, Variant? value) throws IOError;
+        public abstract async void scan () throws IOError;
 
-        public signal void property_changed(string name, Variant? value);
+        public signal void property_changed (string name, Variant? value);
 
         public abstract bool powered { get; }
         public abstract bool connected { get; }
