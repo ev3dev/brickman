@@ -47,7 +47,6 @@ namespace ConnMan {
         }
 
         public signal void technology_added (Technology technology);
-        public signal void technology_removed (ObjectPath path);
         public signal void services_changed (GenericArray<Service> changed, ObjectPath[] removed);
 
         public static async Manager new_async () throws IOError {
@@ -121,7 +120,7 @@ namespace ConnMan {
         }
 
         void on_technology_removed (ObjectPath path) {
-            technology_removed (path);
+            Technology.remove (path);
         }
 
         void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {

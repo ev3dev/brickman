@@ -87,6 +87,8 @@ namespace ConnMan {
             }
         }
 
+        public signal void removed ();
+
         internal static async Technology from_path (ObjectPath path) throws IOError {
             if (object_map != null && object_map.has_key (path))
                 return object_map[path];
@@ -109,6 +111,12 @@ namespace ConnMan {
             technology.dbus_proxy.property_changed.connect (technology.on_property_changed);
             object_map[path] = technology;
             return technology;
+        }
+
+        internal static void remove (ObjectPath path) {
+            if (object_map != null && object_map.has_key (path)) {
+                object_map[path].removed ();
+            }
         }
 
         ~Technology() {
