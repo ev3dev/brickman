@@ -22,6 +22,12 @@
 /* FakeConnMan.vala - Fake implementation of ConnMan dbus stuff for testing */
 
 namespace ConnMan {
+    public class Manager {
+        public Service get_service (ObjectPath path) {
+            return new Service (path);
+        }
+    }
+
     public class Service {
         public ObjectPath path { get; private set; }
         public string name { get { return path; } }

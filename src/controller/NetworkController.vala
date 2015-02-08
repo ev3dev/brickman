@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,16 +80,13 @@ namespace BrickManager {
                     status_window.loading = true;
                     connections_window.loading = true;
                     var service_keys = service_map.keys.to_array ();
-                    var service_paths = new ObjectPath[service_keys.length];
-                    int i = 0;
                     foreach (var key in service_keys) {
-                        service_paths[i] = key.object_path;
-                        i++;
+                        key.removed ();
                     }
-                    on_services_changed (new GenericArray<Service> (), service_paths);
                     var technology_keys = technology_map.keys.to_array ();
-                    foreach (var key in technology_keys)
-                        on_technology_removed (key.object_path);
+                    foreach (var key in technology_keys) {
+                        key.removed ();
+                    }
                     manager = null;
                 });
         }
@@ -100,13 +97,13 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE, transform_manager_state_to_string);
             manager.bind_property ("offline-mode", status_window, "offline-mode",
                 BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            agent.manager = manager;
             yield manager.register_agent (agent_object_path);
             manager.technology_added.connect (on_technology_added);
-            manager.technology_removed.connect (on_technology_removed);
             foreach (var technology in yield manager.get_technologies ())
                 on_technology_added (technology);
             manager.services_changed.connect (on_services_changed);
-            on_services_changed (yield manager.get_services (), { });
+            on_services_changed (yield manager.get_services ());
         }
 
         bool transform_manager_state_to_string (Binding binding,
@@ -144,40 +141,17 @@ namespace BrickManager {
                 technology.bind_property ("powered", connections_window,
                     "has-wifi", BindingFlags.SYNC_CREATE);
                 wifi_technology = technology;
+                technology.removed.connect (() => {
+                    connections_window.has_wifi = false;
+                    wifi_technology = null;
+                });
             }
         }
 
-        void on_technology_removed (ObjectPath path) {
-            var iter = technology_map.map_iterator ();
-            iter.foreach ((technology, menu_item) => {
-                if (technology.object_path == path) {
-                    iter.unset ();
-                    if (technology.technology_type == "wifi") {
-                        connections_window.has_wifi = false;
-                        wifi_technology = null;
-                    }
-                    status_window.menu.remove_menu_item (menu_item);
-                    return false; // break
-                }
-                return true;
-            });
-        }
-
-        void on_services_changed (GenericArray<Service> changed, ObjectPath[] removed) {
+        void on_services_changed (GenericArray<Service> changed) {
             if (status_bar_item_binding != null) {
                 status_bar_item_binding.unbind ();
                 status_bar_item_binding = null;
-            }
-
-            if (removed.length > 0) {
-                var iter = service_map.map_iterator ();
-                iter.foreach ((service, menu_item) => {
-                    if (service.object_path in removed) {
-                        iter.unset ();
-                        connections_window.menu.remove_menu_item (menu_item);
-                    }
-                    return true;
-                });
             }
 
             changed.foreach ((service) => {
@@ -192,6 +166,10 @@ namespace BrickManager {
                         BindingFlags.SYNC_CREATE);
                     service.bind_property ("strength", menu_item, "signal-strength",
                         BindingFlags.SYNC_CREATE);
+                    service.removed.connect (() => {
+                        connections_window.menu.remove_menu_item (menu_item);
+                        service_map.unset (service);
+                    });
                     service_map[service] = menu_item;
                 }
                 connections_window.menu.add_menu_item (menu_item);

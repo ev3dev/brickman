@@ -1,7 +1,7 @@
 /*
  * connman -- DBus bindings for ConnMan <https://01.org/connman>
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -305,6 +305,7 @@ namespace BrickManager {
 
             /* Agent */
             agent = new ConnManAgent ();
+            agent.manager = new ConnMan.Manager ();
             // (builder.get_object ("connman_agent_release_button") as Gtk.Button)
             //     .clicked.connect (() => agent.release ());
             (builder.get_object ("connman_agent_report_error_button") as Gtk.Button)

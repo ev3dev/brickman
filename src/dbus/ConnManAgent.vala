@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,9 @@ namespace BrickManager {
         const string ALTERNATES_KEY             = "Alternates";
         const string VALUE_KEY                  = "Value";
 
+        [DBus (visible = false)]
+        public Manager? manager { get; set; }
+
         signal void canceled ();
 
         public ConnManAgent () {
@@ -52,7 +55,6 @@ namespace BrickManager {
         public async void report_error (ObjectPath service_path, string error)
             throws ConnManAgentError
         {
-            //var service = Service.from_path_sync (service_path);
             var dialog = new MessageDialog ("Error", error);
             dialog.show ();
             // TODO: get user feedback for retry
@@ -62,7 +64,6 @@ namespace BrickManager {
         public async void report_peer_error (ObjectPath peer_path, string error)
             throws ConnManAgentError
         {
-            //var peer = Peer.from_path_sync (peer_path);
             var dialog = new MessageDialog ("Error", error);
             dialog.show ();
             // TODO: get user feedback for retry
@@ -72,58 +73,52 @@ namespace BrickManager {
         public async void request_browser (ObjectPath service_path, string url)
             throws ConnManAgentError
         {
-            //var service = Service.from_path_sync (service_path);
-           throw new ConnManAgentError.CANCELED ("Web browser not implemented.");
+            throw new ConnManAgentError.CANCELED ("Web browser not implemented.");
         }
 
         public async HashTable<string, Variant> request_input (ObjectPath service_path,
             HashTable<string, Variant> fields) throws ConnManAgentError
         {
-            try {
-                var service = Service.from_path_sync (service_path);
-                var required_field_names = new Gee.ArrayList<string> ();
-                string? previous_passphrase = null;
-                fields.foreach ((k, v) => {
-                    //debug ("%s %s", k, v.print (true));
-                    var requirement = v.lookup_value (REQUIREMENT_KEY, VariantType.STRING);
-                    if (requirement != null && requirement.get_string () == "mandatory")
-                        required_field_names.add (k);
-                    if (k == PREVIOUS_PASSPHRASE_KEY) {
-                        var previous_passphrase_value = v.lookup_value (VALUE_KEY, VariantType.STRING);
-                        if (previous_passphrase_value != null)
-                            previous_passphrase = previous_passphrase_value.dup_string ();
-                    }
-                });
-                var result = new HashTable<string, Variant> (null, null);
-                foreach (var required_field_name in required_field_names) {
-                    var dialog = new ConnManAgentInputDialog (
-                        "Please enter %s for %s.".printf (field_to_string (required_field_name),
-                            service.name),
-                        previous_passphrase ?? "");
-                    bool dialog_canceled = true;
-                    weak ConnManAgentInputDialog weak_dialog = dialog;
-                    dialog.responded.connect ((accepted) => {
-                        dialog_canceled = !accepted;
-                        result[required_field_name] = weak_dialog.text_value;
-                        request_input.callback ();
-                    });
-                    var handler_id = canceled.connect (() => {
-                        dialog.responded (false);
-                        dialog.close ();
-                        var message_dialog = new MessageDialog ("Info", "Request was canceled.");
-                        message_dialog.show ();
-                    });
-                    dialog.show ();
-                    yield;
-                    SignalHandler.disconnect (this, handler_id);
-                    if (dialog_canceled)
-                        throw new ConnManAgentError.CANCELED ("Canceled by the user.");
+            var service = manager.get_service (service_path);
+            var required_field_names = new Gee.ArrayList<string> ();
+            string? previous_passphrase = null;
+            fields.foreach ((k, v) => {
+                //debug ("%s %s", k, v.print (true));
+                var requirement = v.lookup_value (REQUIREMENT_KEY, VariantType.STRING);
+                if (requirement != null && requirement.get_string () == "mandatory")
+                    required_field_names.add (k);
+                if (k == PREVIOUS_PASSPHRASE_KEY) {
+                    var previous_passphrase_value = v.lookup_value (VALUE_KEY, VariantType.STRING);
+                    if (previous_passphrase_value != null)
+                        previous_passphrase = previous_passphrase_value.dup_string ();
                 }
-                return result;
-            } catch (IOError err) {
-                critical ("%s", err.message);
-                throw new ConnManAgentError.CANCELED (err.message);
+            });
+            var result = new HashTable<string, Variant> (null, null);
+            foreach (var required_field_name in required_field_names) {
+                var dialog = new ConnManAgentInputDialog (
+                    "Please enter %s for %s.".printf (field_to_string (required_field_name),
+                        service.name),
+                    previous_passphrase ?? "");
+                bool dialog_canceled = true;
+                weak ConnManAgentInputDialog weak_dialog = dialog;
+                dialog.responded.connect ((accepted) => {
+                    dialog_canceled = !accepted;
+                    result[required_field_name] = weak_dialog.text_value;
+                    request_input.callback ();
+                });
+                var handler_id = canceled.connect (() => {
+                    dialog.responded (false);
+                    dialog.close ();
+                    var message_dialog = new MessageDialog ("Info", "Request was canceled.");
+                    message_dialog.show ();
+                });
+                dialog.show ();
+                yield;
+                SignalHandler.disconnect (this, handler_id);
+                if (dialog_canceled)
+                    throw new ConnManAgentError.CANCELED ("Canceled by the user.");
             }
+            return result;
         }
 
         public async HashTable<string, Variant> request_peer_authorization (ObjectPath peer_path,

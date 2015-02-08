@@ -1,7 +1,7 @@
 /*
  * connman -- DBus bindings for ConnMan <https://01.org/connman>
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,6 @@ using Gee;
 
 namespace ConnMan {
     public class Service : Object {
-        static HashMap<ObjectPath, weak Service> object_map;
-
-        static construct {
-            object_map = new HashMap<ObjectPath, weak Service>();
-        }
-
         const string IPV4_METHOD_KEY = "Method";
         const string IPV4_ADDRESS_KEY = "Address";
         const string IPV4_NETMASK_KEY = "Netmask";
@@ -358,34 +352,21 @@ namespace ConnMan {
             }
         }
 
-        internal static async Service from_path (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
-                return object_map[path];
+        public signal void removed ();
+
+        internal static async Service new_async (ObjectPath path) throws IOError {
             var service = new Service ();
             service.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 Manager.SERVICE_NAME, path);
             service.object_path = path;
             weak Service weak_service = service;
             service.dbus_proxy.property_changed.connect (weak_service.on_property_changed);
-            object_map[path] = service;
+            // we are calling the deprecated get_properties_sync method because
+            // of a possible race condition where a property_changed signal is
+            // sent before the signal handler is connected.
+            var properties = yield service.dbus_proxy.get_properties ();
+            properties.foreach ((k, v) => service.on_property_changed (k, v));
             return service;
-        }
-
-        internal static Service from_path_sync (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
-                return object_map[path];
-            var service = new Service ();
-            service.dbus_proxy = Bus.get_proxy_sync (BusType.SYSTEM,
-                Manager.SERVICE_NAME, path);
-            service.object_path = path;
-            weak Service weak_service = service;
-            service.dbus_proxy.property_changed.connect (weak_service.on_property_changed);
-            object_map[path] = service;
-            return service;
-        }
-
-        ~Service () {
-            object_map.unset (object_path);
         }
 
         public async void connect_service (bool long_timeout = false) throws IOError {
@@ -686,8 +667,8 @@ namespace ConnMan {
 namespace net.connman {
     [DBus (name = "net.connman.Service")]
     public interface Service : Object {
-        // deprecated
-        //public abstract async HashTable<string, Variant> get_properties() throws IOError;
+        [Deprecated]
+        public abstract async HashTable<string, Variant> get_properties() throws IOError;
         public abstract async void set_property(string name, Variant? value) throws IOError;
         [DBus (name = "SetProperty")]
         public abstract void set_property_sync(string name, Variant? value) throws IOError;

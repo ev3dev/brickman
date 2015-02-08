@@ -1,7 +1,7 @@
 /*
  * connman -- DBus bindings for ConnMan <https://01.org/connman>
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ namespace ConnMan {
         public const string SERVICE_NAME = "net.connman";
 
         HashMap<ObjectPath, Technology> technology_map;
+        HashMap<ObjectPath, Service> service_map;
         net.connman.Manager dbus_proxy;
 
         public ManagerState state {
@@ -48,10 +49,11 @@ namespace ConnMan {
         }
 
         public signal void technology_added (Technology technology);
-        public signal void services_changed (GenericArray<Service> changed, ObjectPath[] removed);
+        public signal void services_changed (GenericArray<Service> changed);
 
         construct {
             technology_map = new HashMap<ObjectPath, Technology>();
+            service_map = new HashMap<ObjectPath, Service>();
         }
 
         public static async Manager new_async () throws IOError {
@@ -88,12 +90,19 @@ namespace ConnMan {
             var services = yield dbus_proxy.get_services ();
             var result = new GenericArray<Service> ();
             foreach (var item in services) {
-                var serv = yield Service.from_path (item.path);
-                item.properties.foreach ((k, v) =>
-                    ((DBusProxy)serv.dbus_proxy).set_cached_property (k, v));
-                result.add (serv);
+                if (service_map.has_key (item.path)) {
+                    result.add (service_map[item.path]);
+                } else {
+                    var serv = yield Service.new_async (item.path);
+                    service_map[item.path] = serv;
+                    result.add (serv);
+                }
             }
             return result;
+        }
+
+        public Service? get_service (ObjectPath path) {
+            return service_map[path];
         }
 
         public async Gee.List<Peer> get_peers () throws IOError {
@@ -138,15 +147,27 @@ namespace ConnMan {
         }
 
         void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
+            foreach (var path in removed) {
+                if (service_map.has_key (path)) {
+                    service_map[path].removed ();
+                    service_map.unset (path);
+                }
+            }
+            on_services_changed_async.begin (changed);
+        }
+
+        async void on_services_changed_async (net.connman.ManagerObject[] changed) {
             try {
                 var services = new GenericArray<Service>();
                 foreach (var item in changed) {
-                    var service = Service.from_path_sync (item.path);
-                    item.properties.foreach ((k, v) =>
-                        service.on_property_changed (k, v));
-                    services.add (service);
+                    if (service_map.has_key (item.path)) {
+                        services.add (service_map[item.path]);
+                    } else {
+                        var service = yield Service.new_async (item.path);
+                        services.add (service);
+                    }
                 }
-                services_changed (services, removed);
+                services_changed (services);
             } catch (IOError err) {
                 critical ("%s", err.message);
             }
