@@ -100,10 +100,10 @@ namespace BrickManager {
             agent.manager = manager;
             yield manager.register_agent (agent_object_path);
             manager.technology_added.connect (on_technology_added);
-            foreach (var technology in yield manager.get_technologies ())
+            foreach (var technology in manager.get_technologies ())
                 on_technology_added (technology);
             manager.services_changed.connect (on_services_changed);
-            on_services_changed (yield manager.get_services ());
+            on_services_changed (manager.get_services ());
         }
 
         bool transform_manager_state_to_string (Binding binding,
@@ -148,13 +148,13 @@ namespace BrickManager {
             }
         }
 
-        void on_services_changed (GenericArray<Service> changed) {
+        void on_services_changed (Gee.Collection<Service> changed) {
             if (status_bar_item_binding != null) {
                 status_bar_item_binding.unbind ();
                 status_bar_item_binding = null;
             }
 
-            changed.foreach ((service) => {
+            foreach (var service in changed) {
                 NetworkConnectionMenuItem menu_item;
                 if (service_map.has_key (service)) {
                     menu_item = service_map[service];
@@ -181,7 +181,7 @@ namespace BrickManager {
                         "ipv4", network_status_bar_item, "text",
                         BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
                 }
-            });
+            }
         }
 
         async void on_connections_window_scan_wifi_selected ()

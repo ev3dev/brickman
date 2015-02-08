@@ -50,8 +50,8 @@ namespace ConnMan {
         }
 
         public signal void technology_added (Technology technology);
-        public signal void services_changed (GenericArray<Service> changed);
-        public signal void peers_changed (GenericArray<Peer> changed);
+        public signal void services_changed (Gee.Collection<Service> changed);
+        public signal void peers_changed (Gee.Collection<Peer> changed);
 
         construct {
             technology_map = new HashMap<ObjectPath, Technology>();
@@ -70,58 +70,32 @@ namespace ConnMan {
                 ((DBusProxy)manager.dbus_proxy).set_cached_property (k, v));
             manager.dbus_proxy.technology_added.connect (weak_manager.on_technology_added);
             manager.dbus_proxy.technology_removed.connect (weak_manager.on_technology_removed);
+            var technologies = yield manager.dbus_proxy.get_technologies ();
+            foreach (var tech in technologies)
+                yield manager.on_technology_added_async (tech.path);
             manager.dbus_proxy.services_changed.connect (weak_manager.on_services_changed);
+            var services = yield manager.dbus_proxy.get_services ();
+            yield manager.on_services_changed_async (services);
             manager.dbus_proxy.peers_changed.connect (weak_manager.on_peers_changed);
+            var peers = yield manager.dbus_proxy.get_peers ();
+            yield manager.on_peers_changed_async (peers);
             return manager;
         }
 
-        public async Gee.List<Technology> get_technologies () throws IOError {
-            var technologies = yield dbus_proxy.get_technologies ();
-            var result = new ArrayList<Technology> ();
-            foreach (var item in technologies) {
-                if (technology_map.has_key (item.path)) {
-                    result.add (technology_map[item.path]);
-                } else {
-                    var tech = yield Technology.new_async (item.path);
-                    technology_map[item.path] = tech;
-                    result.add (tech);
-                }
-            }
-            return result;
+        public Gee.Collection<Technology> get_technologies () {
+            return technology_map.values;
         }
 
-        public async GenericArray<Service> get_services () throws IOError {
-            var services = yield dbus_proxy.get_services ();
-            var result = new GenericArray<Service> ();
-            foreach (var item in services) {
-                if (service_map.has_key (item.path)) {
-                    result.add (service_map[item.path]);
-                } else {
-                    var serv = yield Service.new_async (item.path);
-                    service_map[item.path] = serv;
-                    result.add (serv);
-                }
-            }
-            return result;
+        public Collection<Service> get_services () {
+            return service_map.values;
         }
 
         public Service? get_service (ObjectPath path) {
             return service_map[path];
         }
 
-        public async Gee.List<Peer> get_peers () throws IOError {
-            var peers = yield dbus_proxy.get_peers ();
-            var result = new ArrayList<Peer> ();
-            foreach (var item in peers) {
-                if (peer_map.has_key (item.path)) {
-                    result.add (peer_map[item.path]);
-                } else {
-                    var peer = yield Peer.new_async (item.path);
-                    peer_map[item.path] = peer;
-                    result.add (peer);
-                }
-            }
-            return result;
+        public Gee.Collection<Peer> get_peers () {
+            return peer_map.values;
         }
 
         public async void register_agent (ObjectPath path) throws IOError {
@@ -135,15 +109,17 @@ namespace ConnMan {
         void on_technology_added (ObjectPath path, HashTable<string, Variant> properties) {
             if (technology_map.has_key (path))
                 critical ("technology '%s' already exists.", path);
-            Technology.new_async.begin (path, (obj, res) => {
-                try {
-                    var tech = Technology.new_async.end (res);
-                    technology_map[path] = tech;
-                    technology_added (tech);
-                } catch (IOError err) {
-                    critical ("%s", err.message);
-                }
-            });
+            on_technology_added_async.begin (path);
+        }
+
+        async void on_technology_added_async (ObjectPath path) {
+            try {
+                var tech = yield Technology.new_async (path);
+                technology_map[path] = tech;
+                technology_added (tech);
+            } catch (IOError err) {
+                critical ("%s", err.message);
+            }
         }
 
         void on_technology_removed (ObjectPath path) {
@@ -165,12 +141,13 @@ namespace ConnMan {
 
         async void on_services_changed_async (net.connman.ManagerObject[] changed) {
             try {
-                var services = new GenericArray<Service>();
+                var services = new Gee.ArrayList<Service>();
                 foreach (var item in changed) {
                     if (service_map.has_key (item.path)) {
                         services.add (service_map[item.path]);
                     } else {
                         var service = yield Service.new_async (item.path);
+                        service_map[item.path] = service;
                         services.add (service);
                     }
                 }
@@ -192,12 +169,13 @@ namespace ConnMan {
 
         async void on_peers_changed_async (net.connman.ManagerObject[] changed) {
             try {
-                var peers = new GenericArray<Peer>();
+                var peers = new Gee.ArrayList<Peer>();
                 foreach (var item in changed) {
                     if (peer_map.has_key (item.path)) {
                         peers.add (peer_map[item.path]);
                     } else {
                         var peer = yield Peer.new_async (item.path);
+                        peer_map[item.path] = peer;
                         peers.add (peer);
                     }
                 }
