@@ -47,7 +47,7 @@ namespace ConnMan {
         public bool tethering {
             get { return dbus_proxy.tethering; }
             set {
-                if (value = tethering)
+                if (value == tethering)
                     return;
                 try {
                     dbus_proxy.set_property_sync ("Tethering", value);
