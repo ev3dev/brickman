@@ -31,6 +31,8 @@ namespace ConnMan {
         HashMap<ObjectPath, Service> service_map;
         HashMap<ObjectPath, Peer> peer_map;
         net.connman.Manager dbus_proxy;
+        weak Cancellable? on_services_changed_cancellable;
+        weak Cancellable? on_peers_changed_cancellable;
 
         public ManagerState state {
             get { return dbus_proxy.state; }
@@ -140,13 +142,35 @@ namespace ConnMan {
         }
 
         async void on_services_changed_async (net.connman.ManagerObject[] changed) {
+            // We have to make this method reentrant since it is async and
+            // services can change rapidly. If this method is called a 2nd time
+            // before the first has completed, we forget about the current list
+            // of signal objects and exit the method before emitting the
+            // services-changed signal.
+            if (on_services_changed_cancellable != null)
+                on_services_changed_cancellable.cancel ();
+            var my_cancellable = new Cancellable ();
+            on_services_changed_cancellable = my_cancellable;
+
+            // It is possible that the changed parameter comes from a DBus signal
+            // handler. Since this is an async method we need to make our own copy
+            // because the DBus signal handler will return and free the array if
+            // we yield.
+            var changed_copy = new net.connman.ManagerObject[changed.length];
+            int i = 0;
+            foreach (var c in changed) {
+                changed_copy[i++] = c;
+            }
             try {
                 var services = new Gee.ArrayList<Service>();
-                foreach (var item in changed) {
+                foreach (var item in changed_copy) {
                     if (service_map.has_key (item.path)) {
                         services.add (service_map[item.path]);
                     } else {
                         var service = yield Service.new_async (item.path);
+                        if (my_cancellable.is_cancelled ()) {
+                            return;
+                        }
                         service_map[item.path] = service;
                         services.add (service);
                     }
@@ -155,6 +179,8 @@ namespace ConnMan {
             } catch (IOError err) {
                 critical ("%s", err.message);
             }
+            if (on_services_changed_cancellable == my_cancellable)
+                on_services_changed_cancellable = null;
         }
 
         void on_peers_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
@@ -168,13 +194,28 @@ namespace ConnMan {
         }
 
         async void on_peers_changed_async (net.connman.ManagerObject[] changed) {
+            // See notes in on_services_changed_async about reentrancy and ownership
+            // of ``changed`` parameter.
+            if (on_peers_changed_cancellable != null)
+                on_peers_changed_cancellable.cancel ();
+            var my_cancellable = new Cancellable ();
+            on_peers_changed_cancellable = my_cancellable;
+
+            var changed_copy = new net.connman.ManagerObject[changed.length];
+            int i = 0;
+            foreach (var c in changed) {
+                changed_copy[i++] = c;
+            }
             try {
                 var peers = new Gee.ArrayList<Peer>();
-                foreach (var item in changed) {
+                foreach (var item in changed_copy) {
                     if (peer_map.has_key (item.path)) {
                         peers.add (peer_map[item.path]);
                     } else {
                         var peer = yield Peer.new_async (item.path);
+                        if (my_cancellable.is_cancelled ()) {
+                            return;
+                        }
                         peer_map[item.path] = peer;
                         peers.add (peer);
                     }
@@ -183,6 +224,8 @@ namespace ConnMan {
             } catch (IOError err) {
                 critical ("%s", err.message);
             }
+            if (on_peers_changed_cancellable == my_cancellable)
+                on_peers_changed_cancellable = null;
         }
 
         void on_property_changed (string name, Variant? value) {
