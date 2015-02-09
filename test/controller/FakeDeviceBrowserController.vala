@@ -31,19 +31,13 @@ namespace BrickManager {
         public BrickManagerWindow start_window { get { return device_browser_window; } }
 
         public FakeDeviceBrowserController (Gtk.Builder builder) {
-            device_browser_window = new DeviceBrowserWindow () {
-                loading = false
-            };
+            device_browser_window = new DeviceBrowserWindow ();
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             device_browser_window.shown.connect (() =>
                 control_panel_notebook.page = (int)ControlPanel.Tab.DEVICE_BROWSER);
 
-            var port_browser_window = new PortBrowserWindow () {
-                loading = false
-            };
-            var sensor_browser_window = new SensorBrowserWindow () {
-                loading = false
-            };
+            var port_browser_window = new PortBrowserWindow ();
+            var sensor_browser_window = new SensorBrowserWindow ();
 
             /* device_browser_window setup */
 
@@ -64,15 +58,13 @@ namespace BrickManager {
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.PORT_NAME, out port_name);
                 Value driver_name;
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.DRIVER_NAME, out driver_name);
-                var menu_item = new UI.MenuItem (port_name.dup_string ());
+                var menu_item = new UI.MenuItem.with_right_arrow (port_name.dup_string ());
                 port_browser_window.menu.add_menu_item (menu_item);
                 //liststore USER_DATA is gpointer, so it does not take a ref
                 ports_liststore.set (iter, ControlPanel.PortsColumn.USER_DATA, menu_item.ref ());
                 menu_item.button.pressed.connect (() => {
                     var window = new PortInfoWindow (port_name.dup_string (), device_name.dup_string (),
-                        driver_name.dup_string ()) {
-                        loading = false
-                    };
+                        driver_name.dup_string ());
                     var row_changed_handler_id = ports_liststore.row_changed.connect ((path, iter) => {
                         Value present;
                         ports_liststore.get_value (iter, ControlPanel.PortsColumn.PRESENT, out present);
@@ -190,7 +182,7 @@ namespace BrickManager {
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.DRIVER_NAME, out driver_name);
                 Value port_name;
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PORT_NAME, out port_name);
-                var menu_item = new UI.MenuItem ("%s on %s".printf (driver_name.get_string (),
+                var menu_item = new UI.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
                     port_name.get_string ()));
                 if (present.get_boolean ())
                     sensor_browser_window.menu.add_menu_item (menu_item);
@@ -200,15 +192,13 @@ namespace BrickManager {
                     Value commands;
                     sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.COMMANDS, out commands);
                     var window = new SensorInfoWindow (driver_name.dup_string (), device_name.dup_string (),
-                        port_name.dup_string (), commands.get_string () != "n/a") {
-                        loading = false
-                    };
+                        port_name.dup_string (), commands.get_string () != "n/a");
                     var row_changed_handler_id = sensors_liststore.row_changed.connect ((path, iter) => {
                         sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PRESENT, out present);
                         if (!present.get_boolean ()) {
                             window.close ();
                             var dialog = new MessageDialog ("Sensor Removed",
-                                "Sensor %s on %s is no longer connected.".printf (driver_name.get_string(),
+                                "Sensor %s on %s is no longer connected.".printf (driver_name.get_string (),
                                     port_name.get_string ()));
                             dialog.show ();
                             return;

@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,9 @@ namespace BrickManager {
         public BrickManagerWindow start_window { get { return usb_window; } }
 
         public USBController () {
-            usb_window = new USBWindow ();
+            usb_window = new USBWindow () {
+                loading = true
+            };
             init.begin ();
         }
 
@@ -59,6 +61,7 @@ namespace BrickManager {
                 usb_window.loading = false;
             } catch (IOError err) {
                 critical (err.message);
+                usb_window.available = false;
             }
         }
 

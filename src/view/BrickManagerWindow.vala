@@ -43,26 +43,52 @@ using EV3devKit.UI;
         Box window_vbox;
         Label title_label;
         Label loading_label;
+        Label not_available_label;
 
         public string title {
             get { return title_label.text; }
             set { title_label.text = value; }
         }
 
+        bool _loading = false;
         public bool loading {
-            get { return window_vbox._children.contains (loading_label); }
+            get { return _loading; }
             set {
-                if (value == loading)
+                if (value == _loading)
+                    return;
+                _loading = value;
+                if (!_available)
                     return;
                 if (value) {
-                    window_vbox.remove (_content_vbox);
+                    window_vbox.remove (content_vbox);
                     window_vbox.add (loading_label);
 
                 } else {
                     window_vbox.remove (loading_label);
-                    window_vbox.add (_content_vbox);
+                    window_vbox.add (content_vbox);
                     if (!_content_vbox.descendant_has_focus)
                         _content_vbox.focus_first ();
+                }
+            }
+        }
+
+        bool _available = true;
+        public bool available {
+            get { return _available; }
+            set {
+                if (value == _available)
+                    return;
+                _available = value;
+                if (value) {
+                    window_vbox.remove (not_available_label);
+                    if (loading)
+                        window_vbox.add (loading_label);
+                    else
+                        window_vbox.add (content_vbox);
+                } else {
+                    window_vbox.remove (content_vbox);
+                    window_vbox.remove (loading_label);
+                    window_vbox.add (not_available_label);
                 }
             }
         }
@@ -71,19 +97,21 @@ using EV3devKit.UI;
 
         protected BrickManagerWindow () {
             window_vbox = new Box.vertical ();
+            add (window_vbox);
             title_label = new Label () {
                 vertical_align = WidgetAlign.START,
                 padding = 3,
-                border_bottom = 1,
-                margin_bottom = 3
+                border_bottom = 1
             };
             window_vbox.add (title_label);
             loading_label = new Label ("Loading...") {
                 margin_bottom = 30
             };
-            window_vbox.add (loading_label);
-            _content_vbox = new Box.vertical ();
-            add (window_vbox);
+            not_available_label = new Label ("Not available") {
+                margin_bottom = 30
+            };
+            content_vbox = new Box.vertical ();
+            window_vbox.add (content_vbox);
         }
     }
  }

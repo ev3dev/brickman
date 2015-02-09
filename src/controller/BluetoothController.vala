@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,9 @@ namespace BrickManager {
 
         public BluetoothController () {
             adapter_list = new Gee.LinkedList<Adapter> ();
-            main_window = new BluetoothWindow ();
+            main_window = new BluetoothWindow () {
+                loading = true
+            };
             main_window.scan_selected.connect (on_scan_selected);
             main_window.closed.connect (() => {
                 if (selected_adapter != null && selected_adapter.discovering)

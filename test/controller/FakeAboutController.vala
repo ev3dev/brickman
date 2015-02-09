@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ namespace BrickManager {
 
         public FakeAboutController (Gtk.Builder builder) {
             about_window = new AboutWindow () {
-                loading = false,
                 eeprom_version = "V0.00"
             };
             var utsname = Posix.UTSName ();

@@ -35,9 +35,7 @@ namespace BrickManager {
 
         public DeviceBrowserController () {
             manager = global_manager.device_manager;
-            device_browser_window = new DeviceBrowserWindow () {
-                loading = false
-            };
+            device_browser_window = new DeviceBrowserWindow ();
             device_browser_window.ports_menu_item_selected.connect (
                 on_ports_menu_item_selected);
             device_browser_window.sensors_menu_item_selected.connect (
@@ -45,9 +43,7 @@ namespace BrickManager {
         }
 
         void on_ports_menu_item_selected () {
-            port_browser_window = new PortBrowserWindow () {
-                loading = false
-            };
+            port_browser_window = new PortBrowserWindow ();
             var port_added_handler_id = manager.port_added.connect (on_port_added);
             manager.get_ports ().foreach (on_port_added);
             // connect_after ensures that this signal handler is called after
@@ -62,13 +58,10 @@ namespace BrickManager {
         }
 
         void on_port_added (Port port) {
-            var menu_item = new EV3devKit.UI.MenuItem (port.port_name);
+            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow (port.port_name);
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new PortInfoWindow (port.port_name, port.device_name,
-                    port.driver_name)
-                {
-                    loading = false
-                };
+                    port.driver_name);
                 port.bind_property ("mode", window, "mode", BindingFlags.SYNC_CREATE);
                 port.bind_property ("status", window, "status", BindingFlags.SYNC_CREATE);
                 port.bind_property ("status", window, "can-set-device", BindingFlags.SYNC_CREATE,
@@ -158,9 +151,7 @@ namespace BrickManager {
         }
 
         void on_sensors_menu_item_selected () {
-            sensor_browser_window = new SensorBrowserWindow () {
-                loading = false
-            };
+            sensor_browser_window = new SensorBrowserWindow ();
             var sensor_added_handler_id = manager.sensor_added.connect (on_sensor_added);
             manager.get_sensors ().foreach (on_sensor_added);
             // connect_after ensures that this signal handler is called after
@@ -175,13 +166,12 @@ namespace BrickManager {
         }
 
         void on_sensor_added (Sensor sensor) {
-            var menu_item = new EV3devKit.UI.MenuItem ("%s on %s".printf (sensor.driver_name,
+            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (sensor.driver_name,
                 sensor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new SensorInfoWindow (sensor.driver_name, sensor.device_name,
                     sensor.port_name, sensor.commands != null)
                 {
-                    loading = false,
                     address = sensor.address
                 };
                 sensor.bind_property ("mode", window, "mode", BindingFlags.SYNC_CREATE);

@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,7 @@ namespace BrickManager {
         public BrickManagerWindow start_window { get { return about_window; } }
 
         public AboutController () {
-            about_window = new AboutWindow () {
-                loading = false
-            };
+            about_window = new AboutWindow ();
             var i2c_client = new GUdev.Client ({ "i2c"});
             var ev3_eeprom = i2c_client.query_by_subsystem_and_name ("i2c", "1-0050");
             if (ev3_eeprom == null)

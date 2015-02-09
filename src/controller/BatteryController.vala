@@ -36,13 +36,13 @@ namespace BrickManager {
             battery_status_bar_item = new BatteryStatusBarItem ();
             power_supply_client = new GUdev.Client ({ "power_supply"});
             var ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
-            if (ev3_battery == null)
+            if (ev3_battery == null) {
                 critical ("Could not get legoev3-battery device");
-            else {
+                battery_window.available = false;
+            } else {
                 battery_window.technology = ev3_battery.get_sysfs_attr ("technology") ?? "Error";
                 update_battery_info ();
                 Timeout.add_seconds (5, update_battery_info);
-                battery_window.loading = false;
             }
         }
 
