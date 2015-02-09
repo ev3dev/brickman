@@ -44,6 +44,7 @@ namespace BrickManager {
         Manager? manager;
         Technology? wifi_technology;
         GUdev.Client udev_client;
+        BluetoothController bluetooth_controller;
 
         public BrickManagerWindow start_window { get { return status_window; } }
 
@@ -137,6 +138,22 @@ namespace BrickManager {
 
         public void add_controller (IBrickManagerModule controller) {
             status_window.add_controller (controller);
+            if (controller is BluetoothController) {
+                bluetooth_controller = (BluetoothController)controller;
+                if (manager != null) {
+                    var bt_tech = manager.get_technology_by_type ("bluetooth");
+                    if (bt_tech != null)
+                        bind_bluetooth_technology (bt_tech);
+                }
+                bluetooth_controller.show_network_requested.connect ((name) => {
+                    var service = manager.get_service_by_name_and_type (name, "bluetooth");
+                    if (service == null) {
+                        critical ("Could not find ConnMan service '%s'", name);
+                        return;
+                    }
+                    on_connections_window_connection_selected (service);
+                });
+            }
         }
 
         async void init_async () throws IOError {
@@ -155,7 +172,7 @@ namespace BrickManager {
         }
 
         void on_technology_added (Technology technology) {
-            // gadget is not powered by defualt, but we want it to always be powered.
+            // gadget is not powered by default, but we want it to always be powered.
             if (technology.technology_type == "gadget" && !technology.powered) {
                 technology.powered = true;
             }
@@ -169,6 +186,9 @@ namespace BrickManager {
                     wifi_technology = null;
                 });
             }
+
+            if (technology.technology_type == "bluetooth")
+                bind_bluetooth_technology (technology);
 
             add_tethering_technology (technology);
         }
@@ -220,6 +240,12 @@ namespace BrickManager {
                 status_bar_item_binding = null;
                 status_bar_item_binding_is_tether = false;
             }
+        }
+
+        void bind_bluetooth_technology (Technology technology) {
+            if (bluetooth_controller == null)
+                return;
+            bluetooth_controller.bind_powered (technology, "powered");
         }
 
         void bind_tether_address_to_status_bar () {

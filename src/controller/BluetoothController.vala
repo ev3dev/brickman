@@ -38,6 +38,8 @@ namespace BrickManager {
 
         public BrickManagerWindow start_window { get { return main_window; } }
 
+        public signal void show_network_requested (string mac_address);
+
         public BluetoothController () {
             adapter_list = new Gee.LinkedList<Adapter> ();
             main_window = new BluetoothWindow () {
@@ -94,6 +96,11 @@ namespace BrickManager {
                     set_selected_adapter (null);
                     manager = null;
                 });
+        }
+
+        public void bind_powered (Object obj, string property) {
+            obj.bind_property (property, main_window, "powered",
+                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
         }
 
         async void init_async () throws Error {
@@ -205,6 +212,8 @@ namespace BrickManager {
                     BindingFlags.SYNC_CREATE);
                 device.bind_property ("connected", device_window, "connected",
                     BindingFlags.SYNC_CREATE);
+                device.bind_property ("uuids", device_window, "has_network",
+                    BindingFlags.SYNC_CREATE, transform_uuids_to_has_network);
                 device_window.connect_selected.connect (() => {
                     if (!device.paired)
                         pair_device.begin (device);
@@ -215,6 +224,8 @@ namespace BrickManager {
                 });
                 device_window.remove_selected.connect (() =>
                     remove_device.begin (device));
+                device_window.network_selected.connect (() =>
+                    show_network_requested (device.alias));
                 var handler_id = manager.device_removed.connect (() =>
                     weak_device_window.close ());
                 device_window.weak_ref (() =>
@@ -268,6 +279,18 @@ namespace BrickManager {
                 var dialog = new MessageDialog ("Error", err.message);
                 dialog.show ();
             }
+        }
+
+        bool transform_uuids_to_has_network (Binding binding, Value source, ref Value target) {
+            target = false;
+            var uuids = (string[])source;
+            foreach (var uuid in uuids) {
+                if (uuid == UUID.NAP || uuid == UUID.GN || uuid == UUID.PANU) {
+                    target = true;
+                    break;
+                }
+            }
+            return true;
         }
     }
 }

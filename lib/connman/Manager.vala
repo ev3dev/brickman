@@ -88,12 +88,32 @@ namespace ConnMan {
             return technology_map.values;
         }
 
+        public Technology? get_technology (ObjectPath path) {
+            return technology_map[path];
+        }
+
+        public Technology? get_technology_by_type (string type) {
+            foreach (var technology in technology_map.values) {
+                if (technology.technology_type == type)
+                    return technology;
+            }
+            return null;
+        }
+
         public Collection<Service> get_services () {
             return service_map.values;
         }
 
         public Service? get_service (ObjectPath path) {
             return service_map[path];
+        }
+
+        public Service? get_service_by_name_and_type (string name, string type) {
+            foreach (var service in service_map.values) {
+                if (service.name == name && service.service_type == type)
+                    return service;
+            }
+            return null;
         }
 
         public Gee.Collection<Peer> get_peers () {
