@@ -230,7 +230,7 @@ namespace BrickManager {
                 .clicked.connect (() => {
                     var path = new ObjectPath ("My Device");
                     // TODO: add UI to change these values.
-                    agent.authorize_service.begin (path, "My Service", (obj, res) => {
+                    agent.authorize_service.begin (path, UUID.SerialPort, (obj, res) => {
                         try {
                             agent.authorize_service.end (res);
                             show_message ("Accepted.");

@@ -47,7 +47,7 @@ namespace BlueZ5 {
 
         public uint16 appearance { get { return dbus_proxy.appearance; } }
 
-        public string[] uuids { owned get { return dbus_proxy.uuids; } }
+        public UUID[] uuids { owned get { return dbus_proxy.uuids; } }
 
         public bool paired { get { return dbus_proxy.paired; } }
 
@@ -159,11 +159,11 @@ namespace BlueZ5 {
             yield dbus_proxy.disconnect ();
         }
 
-        public async void connect_profile (string uuid) throws IOError {
+        public async void connect_profile (UUID uuid) throws IOError {
             yield dbus_proxy.connect_profile (uuid);
         }
 
-        public async void disconnect_profile (string uuid) throws IOError {
+        public async void disconnect_profile (UUID uuid) throws IOError {
             yield dbus_proxy.disconnect_profile (uuid);
         }
 
@@ -182,8 +182,8 @@ namespace org.bluez {
     public interface Device1 : Object {
         public abstract async void connect () throws IOError;
         public abstract async void disconnect () throws IOError;
-        public abstract async void connect_profile (string uuid) throws IOError;
-        public abstract async void disconnect_profile (string uuid) throws IOError;
+        public abstract async void connect_profile (BlueZ5.UUID uuid) throws IOError;
+        public abstract async void disconnect_profile (BlueZ5.UUID uuid) throws IOError;
         public abstract async void pair () throws IOError;
         public abstract async void cancel_pairing () throws IOError;
 
@@ -193,7 +193,7 @@ namespace org.bluez {
         public abstract uint32 class { get; }
         public abstract uint16 appearance { get; }
         [DBus (name = "UUIDs")]
-        public abstract string[] uuids { owned get; }
+        public abstract BlueZ5.UUID[] uuids { owned get; }
         public abstract bool paired { get; }
         public abstract bool connected { get; }
         public abstract bool trusted { get; set; }

@@ -71,6 +71,7 @@ endif (BRICKMAN_TEST)
 
 set (BRICKMAN_COMMON_SOURCE_FILES
     lib/bluez5/Error.vala
+    lib/bluez5/UUID.vala
     lib/dbus/Properties.vala
     lib/systemd/Logind.vala
     lib/systemd/Systemd.vala

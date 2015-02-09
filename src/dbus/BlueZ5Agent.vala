@@ -221,13 +221,12 @@ namespace BrickManager {
             yield display_confirmation_dialog ("Authorize %s.".printf (device.alias));
         }
 
-        public async void authorize_service (ObjectPath device_path, string uuid)
+        public async void authorize_service (ObjectPath device_path, UUID uuid)
             throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
-            // TODO: translate uuid to service name. May not be needed if we "trust" every device.
-            yield display_confirmation_dialog ("Authorize service %s:\n\n%s".printf (
-                device.alias, uuid));
+            yield display_confirmation_dialog ("Authorize service for %s:\n\n%s".printf (
+                device.alias, uuid.to_short_profile ()));
         }
 
         async void display_confirmation_dialog (string message) throws BlueZError {

@@ -69,7 +69,7 @@ namespace BlueZ5 {
 
         public bool discovering { get { return dbus_proxy.discovering; } }
 
-        public string[] uuids { owned get { return dbus_proxy.uuids; } }
+        public UUID[] uuids { owned get { return dbus_proxy.uuids; } }
 
         public string modalias { owned get { return  dbus_proxy.modalias; } }
 
@@ -167,7 +167,7 @@ namespace org.bluez {
         public abstract uint32 discoverable_timeout { get; set; }
         public abstract bool discovering { get; }
         [DBus (name = "UUIDs")]
-        public abstract string[] uuids { owned get; }
+        public abstract BlueZ5.UUID[] uuids { owned get; }
         public abstract string modalias { owned get; }
     }
 }
