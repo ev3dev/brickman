@@ -102,6 +102,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/SensorInfoWindow.vala
     src/view/SensorValueDialog.vala
     src/view/ShutdownDialog.vala
+    src/view/TetheringInfoWindow.vala
+    src/view/TetheringWindow.vala
     src/view/USBWindow.vala
 )
 

@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,10 @@ namespace BrickManager {
 
         public NetworkConnectionsWindow () {
             title = "Network Connections";
-            scan_wifi_button = new Button.with_label ("Scan WiFi", small_font) {
+            scan_wifi_button = new Button.with_label ("Scan Wi-Fi", small_font) {
                 horizontal_align = WidgetAlign.START,
                 vertical_align = WidgetAlign.START,
-                margin_top = -4,
+                margin_top = -1,
                 margin_bottom = -1,
                 margin_left = 3,
                 padding_top = -2

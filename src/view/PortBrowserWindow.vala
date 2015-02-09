@@ -31,7 +31,8 @@ namespace BrickManager {
         public PortBrowserWindow () {
             title ="Ports";
             menu = new UI.Menu () {
-                max_preferred_height = 50
+                border = 0,
+                margin_top = -3
             };
             content_vbox.add (menu);
         }

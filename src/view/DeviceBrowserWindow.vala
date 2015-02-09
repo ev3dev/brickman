@@ -34,14 +34,14 @@ namespace BrickManager {
         public DeviceBrowserWindow () {
             title ="Device Browser";
             menu = new UI.Menu () {
-                max_preferred_height = 50
+                border = 0
             };
             content_vbox.add (menu);
-            var ports_menu_item = new UI.MenuItem ("Ports");
+            var ports_menu_item = new UI.MenuItem.with_right_arrow ("Ports");
             ports_menu_item.button.pressed.connect (() =>
                 ports_menu_item_selected ());
             menu.add_menu_item (ports_menu_item);
-            var sensors_menu_item = new UI.MenuItem ("Sensors");
+            var sensors_menu_item = new UI.MenuItem.with_right_arrow ("Sensors");
             sensors_menu_item.button.pressed.connect (() =>
                 sensors_menu_item_selected ());
             menu.add_menu_item (sensors_menu_item);

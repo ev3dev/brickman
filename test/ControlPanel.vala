@@ -46,6 +46,14 @@ namespace BrickManager {
             BATTERY
         }
 
+        enum NetworkNotebookTab {
+            MAIN,
+            CONNECTIONS,
+            CONNECTION_INFO,
+            TETHERING,
+            BATTERY
+        }
+
         enum PortsColumn {
             PRESENT,
             DEVICE_NAME,
@@ -77,75 +85,32 @@ namespace BrickManager {
             COLUMN_COUNT;
         }
 
-        enum NetworkTechnologyColumn {
+        enum NetworkConnectionsColumn {
             PRESENT,
-            POWERED,
-            CONNECTED,
             NAME,
-            TYPE,
-            USER_DATA,
-            COLUMN_COUNT;
-        }
-
-        enum NetworkServiceColumn {
-            PRESENT,
-            STATE,
-            ERROR,
-            NAME,
-            TYPE,
-            SECURITY,
             STRENGTH,
-            FAVORITE,
-            IMMUTABLE,
-            AUTO_CONNECT,
-            ROAMING,
-            NAMESERVERS,
-            NAMESERVERS_CONFIG,
-            TIMESERVERS,
-            TIMESERVERS_CONFIG,
-            DOMAINS,
-            DOMAINS_CONFIG,
             USER_DATA,
-            IPV4_DATA,
-            ENET_DATA,
             COLUMN_COUNT;
         }
 
-        enum BluetoothAdapterColumn {
-            PRESENT,
+        enum NetworkConnectionInfoDnsColumn {
             ADDRESS,
+            COLUMN_COUNT;
+        }
+
+        enum NetworkTetherColumn {
+            PRESENT,
             NAME,
-            ALIAS,
-            CLASS,
-            POWERED,
-            DISCOVERABLE,
-            PAIRABLE,
-            PAIRABLE_TIMEOUT,
-            DISCOVERABLE_TIMEOUT,
-            UUIDS,
-            DISCOVERING,
-            MODALIAS,
+            ENABLED,
             USER_DATA,
             COLUMN_COUNT;
         }
 
         enum BluetoothDeviceColumn {
             PRESENT,
-            ADDRESS,
             NAME,
-            ICON,
-            CLASS,
-            APPEARANCE,
-            UUIDS,
-            PAIRED,
-            CONNECTED,
-            TRUSTED,
-            BLOCKED,
-            ALIAS,
             ADAPTER,
-            LEGACY_PAIRING,
-            MODALIAS,
-            RSSI,
+            CONNECTED,
             USER_DATA,
             COLUMN_COUNT;
         }

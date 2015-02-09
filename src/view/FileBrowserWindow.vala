@@ -54,7 +54,6 @@ namespace BrickManager {
             var menu_item = new UI.MenuItem (file_name) {
                 represented_object = represented_object
             };
-            menu_item.label.horizontal_align = WidgetAlign.START;
             menu_item.button.pressed.connect (() =>
                 file_selected (represented_object));
             file_menu.add_menu_item (menu_item);

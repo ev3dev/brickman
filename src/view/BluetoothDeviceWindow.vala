@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ using EV3devKit.UI;
 namespace BrickManager {
     public class BluetoothDeviceWindow : BrickManagerWindow {
         Label address_label;
+        Button network_button;
         Button connect_button;
         Button remove_button;
 
@@ -52,6 +53,12 @@ namespace BrickManager {
             }
         }
 
+        public bool has_network {
+            get { return network_button.visible; }
+            set { network_button.visible = value; }
+        }
+
+        public signal void network_selected ();
         public signal void connect_selected ();
         public signal void remove_selected ();
 
@@ -59,8 +66,16 @@ namespace BrickManager {
             address_label = new Label ();
             content_vbox.add (address_label);
             content_vbox.add (new Spacer ());
+            network_button = new Button.with_label ("Network Connection") {
+                visible = false,
+                margin_left = 6,
+                margin_right = 6
+            };
+            network_button.pressed.connect (() => network_selected ());
+            content_vbox.add (network_button);
             var button_hbox = new Box.horizontal () {
-                margin = 6
+                margin = 6,
+                margin_top = 1
             };
             content_vbox.add (button_hbox);
             connect_button = new Button.with_label ("???");

@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,22 @@ namespace BrickManager {
     public class BluetoothDeviceMenuItem : UI.MenuItem {
         const string PERCENT = "%";
 
+        Label adapter_label;
         CheckButton connected_checkbox;
 
         public string name {
             get { return label.text; }
             set { label.text = value; }
+        }
+
+        public string adapter {
+            owned get { return adapter_label.text[1:adapter_label.text.length - 1]; }
+            set { adapter_label.text = "(%s)".printf (value); }
+        }
+
+        public bool show_adapter {
+            get { return adapter_label.visible; }
+            set { adapter_label.visible = value; }
         }
 
         public bool connected {
@@ -45,6 +56,10 @@ namespace BrickManager {
             var hbox = new Box.horizontal ();
             button.add (hbox);
             hbox.add (label);
+            adapter_label = new Label ("(???)") {
+                visible = false
+            };
+            hbox.add (adapter_label);
             hbox.add (new Spacer ());
             connected_checkbox = new CheckButton.checkbox () {
                 can_focus = false

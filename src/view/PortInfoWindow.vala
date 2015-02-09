@@ -69,7 +69,7 @@ namespace BrickManager {
         public PortInfoWindow (string port_name, string device_name, string driver_name) {
             title = port_name;
             vscroll = new Scroll.vertical () {
-                margin_top = -6,
+                margin_top = -3,
                 border = 0,
                 can_focus = false
             };

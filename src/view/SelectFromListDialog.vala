@@ -34,9 +34,10 @@ namespace BrickManager {
                 margin = 6,
                 spacing = 2
             };
+            menu.border = 0;
             add (menu);
             foreach (var list_item in list_items) {
-                var menu_item = new UI.MenuItem (list_item);
+                var menu_item = new UI.MenuItem.with_right_arrow (list_item);
                 menu_item.button.border = 1;
                 menu_item.button.border_radius = 3;
                 var handler_id = menu_item.button.pressed.connect (() => {

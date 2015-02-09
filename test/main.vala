@@ -47,8 +47,10 @@ namespace BrickManager {
         home_window.add_controller (control_panel.file_browser_controller);
         home_window.add_controller (control_panel.device_browser_controller);
         home_window.add_controller (control_panel.network_controller);
-        home_window.add_controller (control_panel.bluetooth_controller);
-        home_window.add_controller (control_panel.usb_controller);
+        control_panel.network_controller.add_controller (control_panel.usb_controller);
+        control_panel.network_controller.add_controller (control_panel.bluetooth_controller);
+        control_panel.bluetooth_controller.show_network_connection_requested.connect ((name) =>
+            control_panel.network_controller.show_connection (name));
         home_window.add_controller (control_panel.battery_controller);
         home_window.add_controller (control_panel.about_controller);
         Screen.get_active_screen ().status_bar.visible = true;
@@ -67,7 +69,7 @@ namespace BrickManager {
             dialog.show ();
         });
         home_window.show ();
-        
+
         GtkApp.run ();
 
         return 0;

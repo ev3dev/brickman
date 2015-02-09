@@ -13,108 +13,25 @@
     <property name="step_increment">0.25</property>
     <property name="page_increment">1</property>
   </object>
-  <object class="GtkListStore" id="bluetooth-adapters-liststore">
-    <columns>
-      <!-- column-name PRESENT -->
-      <column type="gboolean"/>
-      <!-- column-name ADDRESS -->
-      <column type="gchararray"/>
-      <!-- column-name NAME -->
-      <column type="gchararray"/>
-      <!-- column-name ALIAS -->
-      <column type="gchararray"/>
-      <!-- column-name CLASS -->
-      <column type="guint"/>
-      <!-- column-name POWERED -->
-      <column type="gboolean"/>
-      <!-- column-name DISCOVERABLE -->
-      <column type="gboolean"/>
-      <!-- column-name PAIRABLE -->
-      <column type="gboolean"/>
-      <!-- column-name PAIRABLE_TIMEOUT -->
-      <column type="guint"/>
-      <!-- column-name DISCOVERABLE_TIMEOUT -->
-      <column type="guint"/>
-      <!-- column-name UUIDS -->
-      <column type="gpointer"/>
-      <!-- column-name DISCOVERING -->
-      <column type="gboolean"/>
-      <!-- column-name MODALIAS -->
-      <column type="gchararray"/>
-      <!-- column-name USER_DATA -->
-      <column type="gpointer"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">True</col>
-        <col id="1" translatable="yes">00:00:00:00:00:00</col>
-        <col id="2" translatable="yes">ev3dev</col>
-        <col id="3" translatable="yes">ev3dev</col>
-        <col id="4">0</col>
-        <col id="5">True</col>
-        <col id="6">False</col>
-        <col id="7">True</col>
-        <col id="8">0</col>
-        <col id="9">120</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes">usb:v1D6Bp0246d0517</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="bluetooth-devices-liststore">
     <columns>
       <!-- column-name PRESENT -->
       <column type="gboolean"/>
-      <!-- column-name ADDRESS -->
-      <column type="gchararray"/>
       <!-- column-name NAME -->
-      <column type="gchararray"/>
-      <!-- column-name ICON -->
-      <column type="gchararray"/>
-      <!-- column-name CLASS -->
-      <column type="gchararray"/>
-      <!-- column-name APPEARANCE -->
-      <column type="gchararray"/>
-      <!-- column-name UUIDS -->
-      <column type="gpointer"/>
-      <!-- column-name PAIRED -->
-      <column type="gboolean"/>
-      <!-- column-name CONNECTED -->
-      <column type="gboolean"/>
-      <!-- column-name TRUSTED -->
-      <column type="gboolean"/>
-      <!-- column-name BLOCKED -->
-      <column type="gboolean"/>
-      <!-- column-name ALIAS -->
       <column type="gchararray"/>
       <!-- column-name ADAPTER -->
       <column type="gchararray"/>
-      <!-- column-name LEGACY_PAIRING -->
+      <!-- column-name CONNECTED -->
       <column type="gboolean"/>
-      <!-- column-name MODALIAS -->
-      <column type="gchararray"/>
-      <!-- column-name RSSI -->
-      <column type="gchararray"/>
       <!-- column-name USER_DATA -->
       <column type="gpointer"/>
     </columns>
     <data>
       <row>
         <col id="0">True</col>
-        <col id="1" translatable="yes">23:45:56:76:34:54</col>
-        <col id="2" translatable="yes">Computer</col>
-        <col id="3" translatable="yes">computer</col>
-        <col id="4" translatable="yes">0x000100</col>
-        <col id="5" translatable="yes">0x0000</col>
-        <col id="7">True</col>
-        <col id="8">False</col>
-        <col id="9">True</col>
-        <col id="10">False</col>
-        <col id="11" translatable="yes">Computer</col>
-        <col id="12" translatable="yes">ev3dev</col>
-        <col id="13">False</col>
-        <col id="14" translatable="yes">usb:ABC123</col>
-        <col id="15" translatable="yes">-50</col>
+        <col id="1" translatable="yes">Computer</col>
+        <col id="2" translatable="yes">ev3dev</col>
+        <col id="3">False</col>
       </row>
     </data>
   </object>
@@ -152,104 +69,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="connman_service_liststore">
-    <columns>
-      <!-- column-name PRESENT -->
-      <column type="gboolean"/>
-      <!-- column-name STATE -->
-      <column type="gchararray"/>
-      <!-- column-name ERROR -->
-      <column type="gchararray"/>
-      <!-- column-name NAME -->
-      <column type="gchararray"/>
-      <!-- column-name TYPE -->
-      <column type="gchararray"/>
-      <!-- column-name SECURITY -->
-      <column type="gchararray"/>
-      <!-- column-name STRENGTH -->
-      <column type="gchararray"/>
-      <!-- column-name FAVORITE -->
-      <column type="gboolean"/>
-      <!-- column-name IMMUTABLE -->
-      <column type="gboolean"/>
-      <!-- column-name AUTO_CONNECT -->
-      <column type="gboolean"/>
-      <!-- column-name ROAMING -->
-      <column type="gboolean"/>
-      <!-- column-name NAMESERVERS -->
-      <column type="gpointer"/>
-      <!-- column-name NAMESERVERS_CONFIG -->
-      <column type="gpointer"/>
-      <!-- column-name TIMESERVERS -->
-      <column type="gpointer"/>
-      <!-- column-name TIMESERVERS_CONFIG -->
-      <column type="gpointer"/>
-      <!-- column-name DOMAINS -->
-      <column type="gpointer"/>
-      <!-- column-name DOMAINS_CONFIG -->
-      <column type="gpointer"/>
-      <!-- column-name USER_DATA -->
-      <column type="gpointer"/>
-      <!-- column-name IPV4_DATA -->
-      <column type="gpointer"/>
-      <!-- column-name ENET_DATA -->
-      <column type="gpointer"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">online</col>
-        <col id="2" translatable="yes">&lt;none&gt;</col>
-        <col id="3" translatable="yes">Wired</col>
-        <col id="4" translatable="yes">ethernet</col>
-        <col id="5" translatable="yes">none</col>
-        <col id="6" translatable="yes">0</col>
-        <col id="7">False</col>
-        <col id="8">False</col>
-        <col id="9">False</col>
-        <col id="10">False</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">online</col>
-        <col id="2" translatable="yes">&lt;none&gt;</col>
-        <col id="3" translatable="yes">Wireless</col>
-        <col id="4" translatable="yes">wifi</col>
-        <col id="5" translatable="yes">psk</col>
-        <col id="6" translatable="yes">97</col>
-        <col id="7">False</col>
-        <col id="8">False</col>
-        <col id="9">False</col>
-        <col id="10">False</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">offline</col>
-        <col id="2" translatable="yes">&lt;none&gt;</col>
-        <col id="3" translatable="yes">Wired</col>
-        <col id="4" translatable="yes">gadget</col>
-        <col id="5" translatable="yes">none</col>
-        <col id="6" translatable="yes">0</col>
-        <col id="7">False</col>
-        <col id="8">False</col>
-        <col id="9">False</col>
-        <col id="10">False</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">offline</col>
-        <col id="2" translatable="yes">&lt;none&gt;</col>
-        <col id="3" translatable="yes">Bluetooth</col>
-        <col id="4" translatable="yes">bluetooth</col>
-        <col id="5" translatable="yes">none</col>
-        <col id="6" translatable="yes">0</col>
-        <col id="7">False</col>
-        <col id="8">False</col>
-        <col id="9">False</col>
-        <col id="10">False</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="connman_service_state_liststore">
     <columns>
       <!-- column-name STATE -->
@@ -279,60 +98,118 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="connman_service_strength_adjustment">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+  <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
+  <object class="GtkListStore" id="dc_motors_liststore"/>
+  <object class="GtkListStore" id="leds_liststore"/>
+  <object class="GtkListStore" id="network-connection-info-dns-liststore">
+    <columns>
+      <!-- column-name ADDRESS -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">192.168.138.1</col>
+      </row>
+    </data>
   </object>
-  <object class="GtkListStore" id="connman_technology_liststore">
+  <object class="GtkTextBuffer" id="network-connection-info-dns-textbuffer">
+    <property name="text" translatable="yes">192.168.137.1</property>
+  </object>
+  <object class="GtkListStore" id="network-connections-liststore">
     <columns>
       <!-- column-name PRESENT -->
       <column type="gboolean"/>
-      <!-- column-name POWERED -->
-      <column type="gboolean"/>
-      <!-- column-name CONNECTED -->
-      <column type="gboolean"/>
       <!-- column-name NAME -->
       <column type="gchararray"/>
-      <!-- column-name TYPE -->
+      <!-- column-name STRENGTH -->
       <column type="gchararray"/>
       <!-- column-name USER_DATA -->
       <column type="gpointer"/>
     </columns>
     <data>
       <row>
-        <col id="0">False</col>
-        <col id="1">False</col>
-        <col id="2">False</col>
-        <col id="3" translatable="yes">Gadget</col>
-        <col id="4" translatable="yes">ethernet</col>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">Wired</col>
+        <col id="2" translatable="yes">0</col>
       </row>
       <row>
-        <col id="0">False</col>
-        <col id="1">False</col>
-        <col id="2">False</col>
-        <col id="3" translatable="yes">Bluetooth</col>
-        <col id="4" translatable="yes">bluetooth</col>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">my wlan</col>
+        <col id="2" translatable="yes">97</col>
       </row>
       <row>
-        <col id="0">False</col>
-        <col id="1">False</col>
-        <col id="2">False</col>
-        <col id="3" translatable="yes">WiFi</col>
-        <col id="4" translatable="yes">wifi</col>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1">False</col>
-        <col id="2">False</col>
-        <col id="3" translatable="yes">Wired</col>
-        <col id="4" translatable="yes">ethernet</col>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">Computer</col>
+        <col id="2" translatable="yes">0</col>
       </row>
     </data>
   </object>
-  <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
-  <object class="GtkListStore" id="dc_motors_liststore"/>
-  <object class="GtkListStore" id="leds_liststore"/>
+  <object class="GtkAdjustment" id="network-mtu-adjustment">
+    <property name="upper">9999</property>
+    <property name="value">1500</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkListStore" id="network-status-liststore">
+    <columns>
+      <!-- column-name ID -->
+      <column type="gchararray"/>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">offline</col>
+        <col id="1" translatable="yes">Offline</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">idle</col>
+        <col id="1" translatable="yes">Idle</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ready</col>
+        <col id="1" translatable="yes">Ready</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">online</col>
+        <col id="1" translatable="yes">Online</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="network-strength-adjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="network-tether-liststore">
+    <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+      <!-- column-name ENABLED -->
+      <column type="gboolean"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">USB</col>
+        <col id="2">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">Bluetooth</col>
+        <col id="2">False</col>
+      </row>
+      <row>
+        <col id="0">False</col>
+        <col id="1" translatable="yes">Wi-Fi</col>
+        <col id="2">False</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ports_liststore">
     <columns>
       <!-- column-name PRESENT -->
@@ -545,7 +422,6 @@
     <property name="resizable">False</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="deletable">False</property>
-    <property name="has_resize_grip">False</property>
     <accel-groups>
       <group name="control_panel_accelgroup"/>
     </accel-groups>
@@ -1258,7 +1134,7 @@
                 <property name="orientation">vertical</property>
                 <property name="spacing">10</property>
                 <child>
-                  <object class="GtkFrame" id="networking_screens_frame">
+                  <object class="GtkFrame" id="network-all-windows-frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
@@ -1272,12 +1148,12 @@
                         <property name="left_padding">12</property>
                         <property name="right_padding">12</property>
                         <child>
-                          <object class="GtkGrid" id="grid3">
+                          <object class="GtkBox" id="box14">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="column_spacing">10</property>
+                            <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="networking_loading_checkbutton">
+                              <object class="GtkCheckButton" id="networking-loading-checkbutton">
                                 <property name="label" translatable="yes">Loading</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -1286,8 +1162,49 @@
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="networking-available-checkbutton">
+                                <property name="label" translatable="yes">Available</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Status Bar Text:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-status-bar-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">192.168.137.3</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                           </object>
@@ -1298,7 +1215,7 @@
                       <object class="GtkLabel" id="label6">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Networking Screens</property>
+                        <property name="label" translatable="yes">All Windows</property>
                         <property name="lines">0</property>
                       </object>
                     </child>
@@ -1310,154 +1227,68 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame" id="comman_manager_frame">
+                  <object class="GtkFrame" id="network-window-frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkAlignment" id="alignment2">
+                      <object class="GtkNotebook" id="network-notebook">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="top_padding">6</property>
-                        <property name="bottom_padding">6</property>
-                        <property name="left_padding">12</property>
-                        <property name="right_padding">12</property>
+                        <property name="can_focus">True</property>
                         <child>
-                          <object class="GtkGrid" id="grid1">
+                          <object class="GtkBox" id="box13">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="column_spacing">10</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="spacing">6</property>
                             <child>
-                              <object class="GtkScrolledWindow" id="scrolledwindow2">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="hscrollbar_policy">never</property>
-                                <property name="vscrollbar_policy">never</property>
-                                <property name="shadow_type">in</property>
-                                <child>
-                                  <object class="GtkTreeView" id="connman_technology_treeview">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="hscroll_policy">natural</property>
-                                    <property name="model">connman_technology_liststore</property>
-                                    <property name="search_column">3</property>
-                                    <child internal-child="selection">
-                                      <object class="GtkTreeSelection" id="treeview-selection1"/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_technology_present_treeviewcolumn">
-                                        <property name="title" translatable="yes">Present</property>
-                                        <child>
-                                          <object class="GtkCellRendererToggle" id="connman_technology_present_cellrenderertoggle"/>
-                                          <attributes>
-                                            <attribute name="active">0</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_technology_powered_column">
-                                        <property name="title" translatable="yes">Powered</property>
-                                        <child>
-                                          <object class="GtkCellRendererToggle" id="connman_technology_powered_cellrenderertoggle"/>
-                                          <attributes>
-                                            <attribute name="active">1</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_technology_connected_column">
-                                        <property name="title" translatable="yes">Connected</property>
-                                        <child>
-                                          <object class="GtkCellRendererToggle" id="connman_technology_connected_cellrenderertoggle"/>
-                                          <attributes>
-                                            <attribute name="active">2</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_technoloy_name_column">
-                                        <property name="title" translatable="yes">Name</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="connman_technology_name_cellrenderertext"/>
-                                          <attributes>
-                                            <attribute name="text">3</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_technoloy_type_column">
-                                        <property name="title" translatable="yes">Type</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="connman_technology_type_cellrenderertext"/>
-                                          <attributes>
-                                            <attribute name="text">4</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                                <property name="height">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButtonBox" id="buttonbox1">
+                              <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="layout_style">start</property>
-                                <child>
-                                  <object class="GtkLabel" id="label3">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">State</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBoxText" id="connman_state_comboboxtext">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="active">0</property>
-                                    <property name="active_id">offline</property>
-                                    <items>
-                                      <item id="Offline" translatable="yes">offline</item>
-                                      <item id="Idle" translatable="yes">idle</item>
-                                      <item id="Ready" translatable="yes">ready</item>
-                                      <item id="Online" translatable="yes">online</item>
-                                    </items>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
+                                <property name="label" translatable="yes">Status:</property>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="connman_offline_mode_checkbutton">
+                              <object class="GtkComboBoxText" id="connman-state-comboboxtext">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="button_sensitivity">on</property>
+                                <property name="has_entry">True</property>
+                                <property name="active_id">Offline</property>
+                                <items>
+                                  <item id="Offline" translatable="yes">Offline</item>
+                                  <item id="Idle" translatable="yes">Idle</item>
+                                  <item id="Ready" translatable="yes">Ready</item>
+                                  <item id="Online" translatable="yes">Online</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry" id="comboboxtext-entry">
+                                    <property name="can_focus">True</property>
+                                    <property name="text" translatable="yes">Online</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="connman-offline-mode-checkbutton">
                                 <property name="label" translatable="yes">Offline Mode</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -1466,26 +1297,689 @@
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="label31">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Main</property>
+                          </object>
+                          <packing>
+                            <property name="tab_fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkGrid" id="grid2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="row_spacing">3</property>
+                            <property name="column_spacing">10</property>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scrolledwindow1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="hscrollbar_policy">never</property>
+                                <property name="vscrollbar_policy">never</property>
+                                <property name="shadow_type">in</property>
+                                <child>
+                                  <object class="GtkTreeView" id="network-connections-treeview">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="hscroll_policy">natural</property>
+                                    <property name="model">network-connections-liststore</property>
+                                    <property name="show_expanders">False</property>
+                                    <property name="enable_grid_lines">horizontal</property>
+                                    <child internal-child="selection">
+                                      <object class="GtkTreeSelection" id="treeview-selection3"/>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="network-connections-present-column">
+                                        <property name="title" translatable="yes">Present</property>
+                                        <child>
+                                          <object class="GtkCellRendererToggle" id="network-connections-present-cellrenderertoggle"/>
+                                          <attributes>
+                                            <attribute name="active">0</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="network-connections-name-column">
+                                        <property name="title" translatable="yes">Name</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="network-connections-name-cellrenderertext">
+                                            <property name="editable">True</property>
+                                          </object>
+                                          <attributes>
+                                            <attribute name="text">1</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="network-connections-strength-treeviewcolumn">
+                                        <property name="min_width">90</property>
+                                        <property name="title" translatable="yes">Strength</property>
+                                        <child>
+                                          <object class="GtkCellRendererSpin" id="network-connections-strength-cellrendererspin">
+                                            <property name="editable">True</property>
+                                            <property name="adjustment">network-strength-adjustment</property>
+                                          </object>
+                                          <attributes>
+                                            <attribute name="text">2</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="network-connections-has-wifi-checkbutton">
+                                <property name="label" translatable="yes">Has Wi-Fi</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="network-connections-add-button">
+                                <property name="label" translatable="yes">Add</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="network-connections-remove-button">
+                                <property name="label" translatable="yes">Remove</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEventBox" id="eventbox1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="label32">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Connections</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                            <property name="tab_fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkGrid" id="grid1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel" id="label5">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">State:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="network-connection-info-state-comboboxtext">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="active">2</property>
+                                <property name="has_entry">True</property>
+                                <property name="active_id">Online</property>
+                                <items>
+                                  <item translatable="yes">Idle</item>
+                                  <item translatable="yes">Ready</item>
+                                  <item translatable="yes">Online</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry" id="network-connection-info-state-entry">
+                                    <property name="can_focus">True</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label35">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Security:</property>
+                              </object>
+                              <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkComboBoxText" id="network-connection-info-security-comboboxtext">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="active">0</property>
+                                <property name="has_entry">True</property>
+                                <property name="active_id">N/A</property>
+                                <items>
+                                  <item translatable="yes">N/A</item>
+                                  <item translatable="yes">None</item>
+                                  <item translatable="yes">WEP</item>
+                                  <item translatable="yes">WPA</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry" id="network-connection-info-security-entry">
+                                    <property name="can_focus">True</property>
+                                    <property name="text" translatable="yes">WEP</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel" id="label36">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Strength:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="network-connection-info-strength-spinbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="input_purpose">alpha</property>
+                                <property name="adjustment">network-strength-adjustment</property>
+                                <property name="numeric">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label37">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Auto-connect:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="network-connection-info-auto-connect-checkbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label38">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Method:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label39">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Address:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label40">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Netmask:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label41">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Gateway:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-method-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">DHCP</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-address-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">192.168.137.3</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-netmask-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">255.255.255.0</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-gateway-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">192.168.137.1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label43">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Method:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label44">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Interface:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label45">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">MAC:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label46">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">MTU:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-enet-method-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">Automatic</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-enet-iface-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">usb0</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-connection-info-enet-mac-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">00:00:00:00:00:00</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="network-connection-info-enet-mtu-spinbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">0</property>
+                                <property name="input_purpose">alpha</property>
+                                <property name="adjustment">network-mtu-adjustment</property>
+                                <property name="numeric">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label42">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">DNS:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scrolledwindow2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="shadow_type">in</property>
+                                <property name="min_content_width">120</property>
+                                <child>
+                                  <object class="GtkTextView" id="network-connection-info-dns-textview">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="buffer">network-connection-info-dns-textbuffer</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">1</property>
+                                <property name="height">3</property>
+                              </packing>
                             </child>
                           </object>
+                          <packing>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="label33">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Connection Info</property>
+                          </object>
+                          <packing>
+                            <property name="position">2</property>
+                            <property name="tab_fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkGrid" id="grid5">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel" id="label25">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Iface:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-tether-enet-iface-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">tether</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label26">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">MAC:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-tether-enet-mac-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">02:16:53:00:00:00</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label23">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">IP addr:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-tether-ipv4-address-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">192.168.2.1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label24">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Mask:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="network-tether-ipv4-netmask-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">255.255.255.0</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkTreeView" id="network-tether-technology-treeview">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="model">network-tether-liststore</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection15"/>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn" id="network-tether-present-treeviewcolumn">
+                                    <property name="title" translatable="yes">Present</property>
+                                    <child>
+                                      <object class="GtkCellRendererToggle" id="network-tether-present-cellrenderertoggle"/>
+                                      <attributes>
+                                        <attribute name="active">0</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn" id="network-tether-name-treeviewcolumn">
+                                    <property name="title" translatable="yes">Name</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="network-tether-name-cellrenderertext"/>
+                                      <attributes>
+                                        <attribute name="text">1</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn" id="network-tether-enabled-treeviewcolumn">
+                                    <property name="title" translatable="yes">Enabled</property>
+                                    <child>
+                                      <object class="GtkCellRendererToggle" id="network-tether-enabled-cellrenderertoggle"/>
+                                      <attributes>
+                                        <attribute name="active">2</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">3</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="label34">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Tethering</property>
+                          </object>
+                          <packing>
+                            <property name="position">3</property>
+                            <property name="tab_fill">False</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
                     <child type="label">
-                      <object class="GtkLabel" id="label2">
+                      <object class="GtkLabel" id="label30">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Connman Manager</property>
-                        <property name="lines">0</property>
+                        <property name="label" translatable="yes">Windows</property>
                       </object>
                     </child>
                   </object>
@@ -1496,190 +1990,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame" id="connman_service_frame">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
-                    <property name="shadow_type">in</property>
-                    <child>
-                      <object class="GtkAlignment" id="alignment3">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="top_padding">6</property>
-                        <property name="bottom_padding">6</property>
-                        <property name="left_padding">12</property>
-                        <property name="right_padding">12</property>
-                        <child>
-                          <object class="GtkGrid" id="grid2">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="column_spacing">10</property>
-                            <child>
-                              <object class="GtkScrolledWindow" id="scrolledwindow1">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="hscrollbar_policy">never</property>
-                                <property name="vscrollbar_policy">never</property>
-                                <property name="shadow_type">in</property>
-                                <child>
-                                  <object class="GtkTreeView" id="connman_services_treeview">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="hscroll_policy">natural</property>
-                                    <property name="model">connman_service_liststore</property>
-                                    <property name="show_expanders">False</property>
-                                    <property name="enable_grid_lines">horizontal</property>
-                                    <child internal-child="selection">
-                                      <object class="GtkTreeSelection" id="treeview-selection3"/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_present_column">
-                                        <property name="title" translatable="yes">Present</property>
-                                        <child>
-                                          <object class="GtkCellRendererToggle" id="connman_service_present_cellrenderertoggle"/>
-                                          <attributes>
-                                            <attribute name="active">0</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_state_column">
-                                        <property name="min_width">125</property>
-                                        <property name="title" translatable="yes">State</property>
-                                        <child>
-                                          <object class="GtkCellRendererCombo" id="connman_service_state_cellrenderercombo">
-                                            <property name="editable">True</property>
-                                            <property name="has_entry">False</property>
-                                            <property name="model">connman_service_state_liststore</property>
-                                            <property name="text_column">0</property>
-                                          </object>
-                                          <attributes>
-                                            <attribute name="text">1</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_error_column">
-                                        <property name="title" translatable="yes">Error</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="connman_service_error_cellrenderertext"/>
-                                          <attributes>
-                                            <attribute name="text">2</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_name_column">
-                                        <property name="title" translatable="yes">Name</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="connman_service_name_cellrenderertext"/>
-                                          <attributes>
-                                            <attribute name="text">3</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_type_column">
-                                        <property name="title" translatable="yes">Type</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="connman_service_type_cellrenderertext"/>
-                                          <attributes>
-                                            <attribute name="text">4</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_auto_connect_treeviewcolumn">
-                                        <property name="title" translatable="yes">AutoConnect</property>
-                                        <child>
-                                          <object class="GtkCellRendererToggle" id="connman_service_auto_connect_cellrenderertoggle"/>
-                                          <attributes>
-                                            <attribute name="active">10</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_security_treeviewcolumn">
-                                        <property name="title" translatable="yes">Security</property>
-                                        <child>
-                                          <object class="GtkCellRendererCombo" id="connman_service_security_cellrenderercombo">
-                                            <property name="editable">True</property>
-                                            <property name="has_entry">False</property>
-                                            <property name="model">connman_security_liststore</property>
-                                            <property name="text_column">0</property>
-                                          </object>
-                                          <attributes>
-                                            <attribute name="text">5</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_strength_treeviewcolumn">
-                                        <property name="min_width">90</property>
-                                        <property name="title" translatable="yes">Strength</property>
-                                        <child>
-                                          <object class="GtkCellRendererSpin" id="connman_service_strength_cellrendererspin">
-                                            <property name="editable">True</property>
-                                            <property name="adjustment">connman_service_strength_adjustment</property>
-                                          </object>
-                                          <attributes>
-                                            <attribute name="text">6</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="connman_service_ipv4_treeviewcolumn">
-                                        <property name="title" translatable="yes">IPv4</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="connman_service_ipv4_cellrenderertext">
-                                            <property name="text">...</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                                <property name="height">4</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child type="label">
-                      <object class="GtkLabel" id="label5">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Connman Services</property>
-                        <property name="lines">0</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkFrame" id="frame3">
+                  <object class="GtkFrame" id="network-agent-frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
@@ -1790,7 +2101,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -1834,13 +2145,44 @@
                         <property name="left_padding">12</property>
                         <property name="right_padding">12</property>
                         <child>
-                          <object class="GtkCheckButton" id="bluetooth-loading-checkbutton">
-                            <property name="label" translatable="yes">Loading</property>
+                          <object class="GtkBox" id="box2">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="xalign">0</property>
-                            <property name="draw_indicator">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkCheckButton" id="bluetooth-loading-checkbutton">
+                                <property name="label" translatable="yes">Loading</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="bluetooth-available-checkbutton">
+                                <property name="label" translatable="yes">Available</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -1849,7 +2191,7 @@
                       <object class="GtkLabel" id="label14">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Bluetooth Screens</property>
+                        <property name="label" translatable="yes">Bluetooth Windows</property>
                       </object>
                     </child>
                   </object>
@@ -1874,146 +2216,183 @@
                         <property name="left_padding">12</property>
                         <property name="right_padding">12</property>
                         <child>
-                          <object class="GtkTreeView" id="bluetooth-adapters-treeview">
+                          <object class="GtkGrid" id="grid8">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="model">bluetooth-adapters-liststore</property>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="treeview-selection4"/>
-                            </child>
+                            <property name="can_focus">False</property>
+                            <property name="row_spacing">3</property>
+                            <property name="column_spacing">6</property>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-present-treeviewcolumn">
-                                <property name="title" translatable="yes">Present</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-present-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">0</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkCheckButton" id="bluetooth-powered-checkbutton">
+                                <property name="label" translatable="yes">Powered</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-address-treeviewcolumn">
-                                <property name="title" translatable="yes">Address</property>
+                              <object class="GtkCheckButton" id="bluetooth-visible-checkbutton">
+                                <property name="label" translatable="yes">Visible</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="bluetooth-scanning-checkbutton">
+                                <property name="label" translatable="yes">Scanning</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="bluetooth-show-adapter-checkbutton">
+                                <property name="label" translatable="yes">Show Adapter</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkTreeView" id="bluetooth-devices-treeview">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="model">bluetooth-devices-liststore</property>
+                                <property name="search_column">0</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection"/>
+                                </child>
                                 <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-adapters-address-cellrenderertext">
-                                    <property name="editable">True</property>
+                                  <object class="GtkTreeViewColumn" id="bluetooth-devices-present-treeviewcolumn">
+                                    <property name="title" translatable="yes">Present</property>
+                                    <child>
+                                      <object class="GtkCellRendererToggle" id="bluetooth-devices-present-cellrenderertoggle"/>
+                                      <attributes>
+                                        <attribute name="active">0</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">1</attribute>
-                                  </attributes>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-name-treeviewcolumn">
-                                <property name="title" translatable="yes">Name</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-adapters-name-cellrenderertext">
-                                    <property name="editable">True</property>
+                                  <object class="GtkTreeViewColumn" id="bluetooth-devices-name-treeviewcolumn">
+                                    <property name="title" translatable="yes">Name</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="bluetooth-devices-name-cellrenderertext">
+                                        <property name="editable">True</property>
+                                      </object>
+                                      <attributes>
+                                        <attribute name="text">1</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">2</attribute>
-                                  </attributes>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-alias-treeviewcolumn">
-                                <property name="title" translatable="yes">Alias</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-adapters-alias-cellrenderertext">
-                                    <property name="editable">True</property>
+                                  <object class="GtkTreeViewColumn" id="bluetooth-devices-adapter-treeviewcolumn">
+                                    <property name="title" translatable="yes">Adapter</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="bluetooth-devices-adapter-cellrenderertext">
+                                        <property name="editable">True</property>
+                                      </object>
+                                      <attributes>
+                                        <attribute name="text">2</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">3</attribute>
-                                  </attributes>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-class-treeviewcolumn">
-                                <property name="title" translatable="yes">Class</property>
                                 <child>
-                                  <object class="GtkCellRendererSpin" id="bluetooth-adapters-class-cellrendererspin">
-                                    <property name="editable">True</property>
+                                  <object class="GtkTreeViewColumn" id="bluetooth-devices-connected-treeviewcolumn">
+                                    <property name="title" translatable="yes">Connected</property>
+                                    <child>
+                                      <object class="GtkCellRendererToggle" id="bluetooth-devices-connected-cellrenderertoggle"/>
+                                      <attributes>
+                                        <attribute name="active">3</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
-                                  <attributes>
-                                    <attribute name="markup">4</attribute>
-                                  </attributes>
                                 </child>
                               </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                                <property name="height">3</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-powered-treeviewcolumn">
-                                <property name="title" translatable="yes">Powered</property>
+                              <object class="GtkBox" id="box4">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="spacing">3</property>
                                 <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-powered-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">5</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-discoverable-treeviewcolumn">
-                                <property name="title" translatable="yes">Discoverable</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-discoverable-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">6</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-pairable-treeviewcolumn">
-                                <property name="title" translatable="yes">Pairable</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-pairable-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">7</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-pairable-timeout-treeviewcolumn">
-                                <property name="title" translatable="yes">Pair TO</property>
-                                <child>
-                                  <object class="GtkCellRendererSpin" id="bluetooth-adapters-pairable-timeout-cellrendererspin">
-                                    <property name="editable">True</property>
+                                  <object class="GtkLabel" id="label27">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Devices:</property>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">8</attribute>
-                                  </attributes>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-discoverable-timeout-treeviewcolumn">
-                                <property name="title" translatable="yes">Disc. TO</property>
                                 <child>
-                                  <object class="GtkCellRendererSpin" id="bluetooth-adapters-discoverable-timeout-cellrendererspin">
-                                    <property name="editable">True</property>
-                                    <property name="adjustment">bluetooth-discoverable-adjustment</property>
+                                  <object class="GtkButton" id="bluetooth-devices-remove-button">
+                                    <property name="label" translatable="yes">Remove</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">9</attribute>
-                                  </attributes>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="pack_type">end</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-discovering-treeviewcolumn">
-                                <property name="title" translatable="yes">Discovering</property>
                                 <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-adapters-discovering-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">11</attribute>
-                                  </attributes>
+                                  <object class="GtkButton" id="bluetooth-devices-add-button">
+                                    <property name="label" translatable="yes">Add</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="pack_type">end</property>
+                                    <property name="position">2</property>
+                                  </packing>
                                 </child>
                               </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -2023,7 +2402,7 @@
                       <object class="GtkLabel" id="label12">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Adapters</property>
+                        <property name="label" translatable="yes">Main Window</property>
                       </object>
                     </child>
                   </object>
@@ -2048,184 +2427,100 @@
                         <property name="left_padding">12</property>
                         <property name="right_padding">12</property>
                         <child>
-                          <object class="GtkTreeView" id="bluetooth-devices-treeview">
+                          <object class="GtkGrid" id="grid9">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="model">bluetooth-devices-liststore</property>
-                            <property name="search_column">0</property>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="treeview-selection6"/>
+                            <property name="can_focus">False</property>
+                            <property name="row_spacing">3</property>
+                            <property name="column_spacing">3</property>
+                            <child>
+                              <object class="GtkLabel" id="label28">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Title:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-present-treeviewcolumn">
-                                <property name="title" translatable="yes">Present</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-devices-present-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">0</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkLabel" id="label29">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Address:</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-address-treeviewcolumn">
-                                <property name="title" translatable="yes">Address</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-address-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">1</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkEntry" id="bluetooth-device-info-title-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">Computer</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-name-treeviewcolumn">
-                                <property name="title" translatable="yes">Name</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-name-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">2</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkCheckButton" id="bluetooth-device-info-paired-checkbutton">
+                                <property name="label" translatable="yes">Paired</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-alias-treeviewcolumn">
-                                <property name="title" translatable="yes">Alias</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-alias-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">11</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkCheckButton" id="bluetooth-device-info-connected-checkbutton">
+                                <property name="label" translatable="yes">Connected</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-icon-treeviewcolumn">
-                                <property name="title" translatable="yes">Icon</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-icon-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">3</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkCheckButton" id="bluetooth-device-info-has-network-checkbutton">
+                                <property name="label" translatable="yes">Has network</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-adapters-class-treeviewcolumn1">
-                                <property name="title" translatable="yes">Class</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-class-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">4</attribute>
-                                  </attributes>
-                                </child>
+                              <object class="GtkEntry" id="bluetooth-device-info-address-entry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">00:AA:33:BB:55:CC</property>
                               </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-appearance-treeviewcolumn">
-                                <property name="title" translatable="yes">Appearance</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-appearance-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">5</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-paired-treeviewcolumn">
-                                <property name="title" translatable="yes">Paired</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-devices-paired-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">7</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-connected-treeviewcolumn">
-                                <property name="title" translatable="yes">Connected</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-devices-connected-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">8</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-trusted-treeviewcolumn">
-                                <property name="title" translatable="yes">Trusted</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-devices-trusted-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">9</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-blocked-treeviewcolumn">
-                                <property name="title" translatable="yes">Blocked</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-devices-blocked-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">10</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-adapter-treeviewcolumn">
-                                <property name="title" translatable="yes">Adapter</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="bluetooth-devices-adapter-cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">12</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-legacy-pairing-treeviewcolumn">
-                                <property name="title" translatable="yes">Legacy Pair</property>
-                                <child>
-                                  <object class="GtkCellRendererToggle" id="bluetooth-devices-legacy-pairing-cellrenderertoggle"/>
-                                  <attributes>
-                                    <attribute name="active">13</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="bluetooth-devices-rssi-treeviewcolumn">
-                                <property name="title" translatable="yes">RSSI</property>
-                                <child>
-                                  <object class="GtkCellRendererSpin" id="bluetooth-devices-rssi-cellrendererspin">
-                                    <property name="editable">True</property>
-                                    <property name="adjustment">bluetooth-devices-rssi-adjustment</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">15</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -2235,7 +2530,7 @@
                       <object class="GtkLabel" id="label13">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Devices</property>
+                        <property name="label" translatable="yes">Device Info</property>
                       </object>
                     </child>
                   </object>

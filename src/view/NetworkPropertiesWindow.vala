@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ namespace BrickManager {
         Label ipv4_gateway_label;
         Button ipv4_change_button;
         NotebookTab dns_tab;
-        Scroll dns_scroll;
+        Box dns_scroll_vbox;
         NotebookTab enet_tab;
         Label enet_method_label;
         Label enet_interface_label;
@@ -132,15 +132,15 @@ namespace BrickManager {
         public string[] dns_addresses {
             owned get {
                 var list = new Gee.ArrayList<string> ();
-                foreach (var child in dns_scroll.children)
+                foreach (var child in dns_scroll_vbox.children)
                     list.add (((Label)child).text);
                 return list.to_array ();
             }
             set {
-                foreach (var child in dns_scroll.children)
-                    dns_scroll.remove (child);
+                while (dns_scroll_vbox.children.size > 0)
+                    dns_scroll_vbox.remove (dns_scroll_vbox.children[0]);
                 foreach (var address in value)
-                    dns_scroll.add (new Label (address));
+                    dns_scroll_vbox.add (new Label (address));
             }
         }
 
@@ -315,12 +315,14 @@ namespace BrickManager {
                 vertical_align = WidgetAlign.CENTER
             };
             dns_vbox.add (dns_addresses_label);
-            dns_scroll = new Scroll.vertical () {
+            var dns_scroll = new Scroll.vertical () {
                 can_focus = false,
                 margin_left = 3,
                 margin_right = 3
             };
             dns_vbox.add (dns_scroll);
+            dns_scroll_vbox = new Box.vertical ();
+            dns_scroll.add (dns_scroll_vbox);
             var dns_button_hbox = new Box.horizontal () {
                 horizontal_align = WidgetAlign.CENTER,
                 vertical_align = WidgetAlign.CENTER,

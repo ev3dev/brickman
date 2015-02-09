@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,27 @@ using EV3devKit.UI;
 namespace BrickManager {
     public class BluetoothWindow : BrickManagerWindow {
         internal UI.Menu menu;
+        CheckboxMenuItem powered_menu_item;
         CheckboxMenuItem visible_menu_item;
         UI.MenuItem scan_menu_item;
+
+        bool _powered;
+        public bool powered {
+            get { return _powered; }
+            set {
+                if (value == _powered)
+                    return;
+                _powered = value;
+                powered_menu_item.checkbox.checked = value;
+                if (value) {
+                    content_vbox.add (menu);
+                    menu.insert_menu_item (powered_menu_item, visible_menu_item);
+                } else {
+                    content_vbox.remove (menu);
+                    content_vbox.add (powered_menu_item.button);
+                }
+            }
+        }
 
         public bool bt_visible {
             get { return visible_menu_item.checkbox.checked; }
@@ -48,19 +67,27 @@ namespace BrickManager {
 
         public BluetoothWindow () {
             title ="Bluetooth";
+            content_vbox.spacing = 0;
+            powered_menu_item = new CheckboxMenuItem ("Powered");
+            powered_menu_item.button.vertical_align = WidgetAlign.START;
+            weak UI.MenuItem weak_powered_menu_item = powered_menu_item;
+            powered_menu_item.button.pressed.connect (() => {
+                powered = !powered;
+                weak_powered_menu_item.button.focus ();
+            });
+            content_vbox.add (powered_menu_item.button);
             menu = new UI.Menu () {
-                max_preferred_height = 50
+                border = 0
             };
-            content_vbox.add (menu);
             visible_menu_item = new CheckboxMenuItem ("Visible");
             visible_menu_item.checkbox.notify["checked"].connect (() =>
                 notify_property ("bt-visible"));
             menu.add_menu_item (visible_menu_item);
             scan_menu_item = new UI.MenuItem ("???");
-            scan_menu_item.label.horizontal_align = WidgetAlign.START;
             scan_menu_item.button.pressed.connect (() => scan_selected ());
             menu.add_menu_item (scan_menu_item);
             var devices_label_menu_item = new UI.MenuItem ("Devices");
+            devices_label_menu_item.label.horizontal_align = WidgetAlign.CENTER;
             devices_label_menu_item.button.border_bottom = 1;
             devices_label_menu_item.button.margin_bottom = 2;
             devices_label_menu_item.button.can_focus = false;

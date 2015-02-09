@@ -26,35 +26,70 @@ using EV3devKit.UI;
 
 namespace BrickManager {
     public class NetworkController : Object, IBrickManagerModule {
-        static Gee.Map<weak Technology, weak CheckboxMenuItem> technology_map;
-        static Gee.Map<weak Service, weak NetworkConnectionMenuItem> service_map;
+        const string[] TETHRING_TECHNOLOGIES = { "bluetooth", "gadget" };
+        const string NET_SUBSYSTEM = "net";
+        const string TETHER_DEVICE_NAME = "tether";
 
-        static construct {
-            technology_map = new Gee.HashMap<weak Technology, weak CheckboxMenuItem> ();
-            service_map = new Gee.HashMap<weak Service, weak NetworkConnectionMenuItem> ();
-        }
-
+        Gee.Map<weak Technology, weak CheckboxMenuItem> technology_map;
+        Gee.Map<weak Service, weak NetworkConnectionMenuItem> service_map;
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
+        TetheringWindow? tethering_window;
+        TetheringInfoWindow? tethering_info_window;
         internal NetworkStatusBarItem network_status_bar_item;
         Binding? status_bar_item_binding;
+        bool status_bar_item_binding_is_tether;
         ConnManAgent agent;
         ObjectPath agent_object_path;
         Manager? manager;
         Technology? wifi_technology;
+        GUdev.Client udev_client;
 
         public BrickManagerWindow start_window { get { return status_window; } }
 
+        public bool has_tether { get; set; }
+        public string tether_address { get; set; }
+        public string tether_netmask { get; set; }
+        public string tether_interface { get; set; }
+        public string tether_mac { get; set; }
+
         public NetworkController () {
-            status_window = new NetworkStatusWindow ();
+            technology_map = new Gee.HashMap<weak Technology, weak CheckboxMenuItem> ();
+            service_map = new Gee.HashMap<weak Service, weak NetworkConnectionMenuItem> ();
+            status_window = new NetworkStatusWindow () {
+                loading = true
+            };
             connections_window = new NetworkConnectionsWindow ();
-            status_window.manage_connections_selected.connect (() =>
+            status_window.network_connections_selected.connect (() =>
                 connections_window.show ());
             connections_window.scan_wifi_selected.connect (() =>
                 on_connections_window_scan_wifi_selected.begin ());
             connections_window.connection_selected.connect (
                 on_connections_window_connection_selected);
-            network_status_bar_item = new NetworkStatusBarItem();
+            network_status_bar_item = new NetworkStatusBarItem ();
+
+            status_window.tethering_selected.connect (() => {
+                tethering_window = new TetheringWindow ();
+                foreach (var tech in manager.get_technologies ()) {
+                    add_tethering_technology (tech);
+                }
+                tethering_window.tethering_info_selected.connect (() => {
+                    tethering_info_window = new TetheringInfoWindow ();
+                    bind_property ("has-tether", tethering_info_window, "available",
+                        BindingFlags.SYNC_CREATE);
+                    bind_property ("tether-address", tethering_info_window, "ipv4-address",
+                        BindingFlags.SYNC_CREATE);
+                    bind_property ("tether-netmask", tethering_info_window, "ipv4-netmask",
+                        BindingFlags.SYNC_CREATE);
+                    bind_property ("tether-interface", tethering_info_window, "enet-iface",
+                        BindingFlags.SYNC_CREATE);
+                    bind_property ("tether-mac", tethering_info_window, "enet-mac",
+                        BindingFlags.SYNC_CREATE);
+                    tethering_info_window.show ();
+                });
+                tethering_window.closed.connect (() => tethering_window = null);
+                tethering_window.show ();
+            });
 
             try {
                 agent = new ConnManAgent ();
@@ -89,6 +124,19 @@ namespace BrickManager {
                     }
                     manager = null;
                 });
+
+            // ConnMan does not have a way to get tethering info via DBus, so
+            // we have to get it ourselves. ConnMan creates a bridge device
+            // named "tether", so we use udev to watch for it.
+            udev_client = new GUdev.Client ({ NET_SUBSYSTEM });
+            udev_client.uevent.connect (on_udev_event);
+            var tether_device = udev_client.query_by_subsystem_and_name (NET_SUBSYSTEM, TETHER_DEVICE_NAME);
+            if (tether_device != null)
+                on_udev_event ("add", tether_device);
+        }
+
+        public void add_controller (IBrickManagerModule controller) {
+            status_window.add_controller (controller);
         }
 
         async void init_async () throws IOError {
@@ -106,36 +154,11 @@ namespace BrickManager {
             on_services_changed (manager.get_services ());
         }
 
-        bool transform_manager_state_to_string (Binding binding,
-            Value source_value, ref Value target_value)
-        {
-            switch (source_value.get_enum ()) {
-            case ManagerState.OFFLINE:
-                target_value.set_string ("Offline");
-                break;
-            case ManagerState.IDLE:
-                target_value.set_string ("No connections");
-                break;
-            case ManagerState.READY:
-                target_value.set_string ("Connected");
-                break;
-            case ManagerState.ONLINE:
-                target_value.set_string ("Online");
-                break;
-            default:
-                return false;
-            }
-            return true;
-        }
-
         void on_technology_added (Technology technology) {
-            var menu_item = new CheckboxMenuItem (technology.name) {
-                represented_object = technology
-            };
-            technology.bind_property ("powered", menu_item.checkbox, "checked",
-                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
-            status_window.menu.add_menu_item (menu_item);
-            technology_map[technology] = menu_item;
+            // gadget is not powered by defualt, but we want it to always be powered.
+            if (technology.technology_type == "gadget" && !technology.powered) {
+                technology.powered = true;
+            }
 
             if (technology.technology_type == "wifi") {
                 technology.bind_property ("powered", connections_window,
@@ -146,13 +169,12 @@ namespace BrickManager {
                     wifi_technology = null;
                 });
             }
+
+            add_tethering_technology (technology);
         }
 
         void on_services_changed (Gee.Collection<Service> changed) {
-            if (status_bar_item_binding != null) {
-                status_bar_item_binding.unbind ();
-                status_bar_item_binding = null;
-            }
+            unbind_status_bar ();
 
             foreach (var service in changed) {
                 NetworkConnectionMenuItem menu_item;
@@ -176,12 +198,34 @@ namespace BrickManager {
 
                 // Show the IP address of the primary service in the status bar
                 // The list is ordered, so the first one is the one we want
-                if (status_bar_item_binding == null) {
+                if (status_bar_item_binding == null
+                    && (service.state == ServiceState.READY || service.state == ServiceState.ONLINE))
+                {
                     status_bar_item_binding = service.bind_property (
                         "ipv4", network_status_bar_item, "text",
                         BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
                 }
             }
+
+            // If there were no connected services, then we will display the
+            // tether bridge address in the status bar if there is one.
+            if (status_bar_item_binding == null && has_tether) {
+                bind_tether_address_to_status_bar ();
+            }
+        }
+
+        void unbind_status_bar () {
+            if (status_bar_item_binding != null) {
+                status_bar_item_binding.unbind ();
+                status_bar_item_binding = null;
+                status_bar_item_binding_is_tether = false;
+            }
+        }
+
+        void bind_tether_address_to_status_bar () {
+            status_bar_item_binding = bind_property ("tether-address",
+                network_status_bar_item, "text", BindingFlags.SYNC_CREATE);
+            status_bar_item_binding_is_tether = true;
         }
 
         async void on_connections_window_scan_wifi_selected ()
@@ -200,9 +244,7 @@ namespace BrickManager {
 
         void on_connections_window_connection_selected (Object user_data) {
             var service = (Service)user_data;
-            var properties_window = new NetworkPropertiesWindow (service.name ?? "<hidden>") {
-                loading = false
-            };
+            var properties_window = new NetworkPropertiesWindow (service.name ?? "<hidden>");
             service.bind_property ("auto-connect", properties_window, "auto-connect",
                 BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
             service.bind_property ("state", properties_window, "state",
@@ -284,6 +326,99 @@ namespace BrickManager {
             }
         }
 
+        void add_tethering_technology (Technology technology) {
+            if (tethering_window == null)
+                return;
+            if (technology.technology_type in TETHRING_TECHNOLOGIES) {
+                var menu_item = tethering_window.add_menu_item (technology.name);
+                technology.bind_property ("tethering", menu_item.checkbox, "checked",
+                    BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+                var handler_id = technology.removed.connect (() =>
+                    tethering_window.remove_menu_item (menu_item));
+                tethering_window.closed.connect (() =>
+                    technology.disconnect (handler_id));
+            }
+        }
+
+        /**
+         * Handle add/remove of "tether" network bridge device.
+         *
+         * Some info (MAC address) is available via sysfs, but we have to use
+         * getifaddrs to get the IP address info.
+         */
+        void on_udev_event (string action, GUdev.Device device) {
+            if (device.get_name () != TETHER_DEVICE_NAME)
+                return;
+            switch (action) {
+            case "add":
+            case "change":
+                Linux.Network.IfAddrs if_addrs;
+                unowned Linux.Network.IfAddrs current;
+                if (Linux.Network.getifaddrs (out if_addrs) == 0) {
+                    current = if_addrs;
+                    while (current != null) {
+                        if (current.ifa_name == TETHER_DEVICE_NAME && current.ifa_addr != null) {
+                            // Get the IPv4 address/netmask
+                            if (current.ifa_addr.sa_family == Posix.AF_INET) {
+                                has_tether = true;
+                                // the first 2 bytes of sa_data are the port, so we are skipping them.
+                                tether_address = "%d.%d.%d.%d".printf (
+                                    current.ifa_addr.sa_data[2],
+                                    current.ifa_addr.sa_data[3],
+                                    current.ifa_addr.sa_data[4],
+                                    current.ifa_addr.sa_data[5]);
+                                if (current.ifa_netmask != null && current.ifa_addr.sa_family == Posix.AF_INET) {
+                                    tether_netmask = "%d.%d.%d.%d".printf (
+                                        current.ifa_netmask.sa_data[2],
+                                        current.ifa_netmask.sa_data[3],
+                                        current.ifa_netmask.sa_data[4],
+                                        current.ifa_netmask.sa_data[5]);
+                                } else {
+                                    tether_netmask = "<unknown>";
+                                }
+                                tether_interface = device.get_name ();
+                                tether_mac = device.get_sysfs_attr ("address");
+                                if (status_bar_item_binding == null) {
+                                    bind_tether_address_to_status_bar ();
+                                }
+                                break;
+                            }
+                        }
+                        current = current.ifa_next;
+                    }
+                } else {
+                    critical ("getifaddrs failed.");
+                }
+                break;
+            case "remove":
+                has_tether = false;
+                if (status_bar_item_binding_is_tether)
+                    unbind_status_bar ();
+                break;
+            }
+        }
+
+        bool transform_manager_state_to_string (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            switch (source_value.get_enum ()) {
+            case ManagerState.OFFLINE:
+                target_value.set_string ("Offline");
+                break;
+            case ManagerState.IDLE:
+                target_value.set_string ("No connections");
+                break;
+            case ManagerState.READY:
+                target_value.set_string ("Connected");
+                break;
+            case ManagerState.ONLINE:
+                target_value.set_string ("Online");
+                break;
+            default:
+                return false;
+            }
+            return true;
+        }
 
         bool transform_service_state_to_string (Binding binding,
             Value source_value, ref Value target_value)
