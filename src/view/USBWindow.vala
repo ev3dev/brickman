@@ -91,7 +91,6 @@ namespace BrickManager {
         public USBWindow () {
             title ="USB";
             device_port_service_menu = new UI.Menu () {
-                border = 0,
                 spacing = 2
             };
             content_vbox.add (device_port_service_menu);

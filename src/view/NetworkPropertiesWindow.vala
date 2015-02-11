@@ -457,8 +457,7 @@ namespace BrickManager {
             weak Dialog weak_dialog = dialog;
             var dialog_vscroll = new Scroll.vertical () {
                 can_focus = false,
-                margin = 3,
-                border = 0
+                margin = 3
             };
             dialog.add (dialog_vscroll);
             var dialog_vbox = new Box.vertical ();

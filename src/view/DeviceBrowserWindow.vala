@@ -33,9 +33,7 @@ namespace BrickManager {
 
         public DeviceBrowserWindow () {
             title ="Device Browser";
-            menu = new UI.Menu () {
-                border = 0
-            };
+            menu = new UI.Menu ();
             content_vbox.add (menu);
             var ports_menu_item = new UI.MenuItem.with_right_arrow ("Ports");
             ports_menu_item.button.pressed.connect (() =>

@@ -30,11 +30,9 @@ namespace BrickManager {
 
         public SelectFromListDialog (string[] list_items) {
             var menu = new UI.Menu () {
-                border = 0,
                 margin = 6,
                 spacing = 2
             };
-            menu.border = 0;
             add (menu);
             foreach (var list_item in list_items) {
                 var menu_item = new UI.MenuItem.with_right_arrow (list_item);

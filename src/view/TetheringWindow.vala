@@ -36,7 +36,6 @@ namespace BrickManager {
         public TetheringWindow () {
             title = "Tethering";
             menu = new UI.Menu () {
-                border = 0,
                 margin_top = -3
             };
             content_vbox.add (menu);

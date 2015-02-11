@@ -49,8 +49,7 @@ namespace BrickManager {
             title = name;
             var vscroll = new Scroll.vertical () {
                 can_focus = false,
-                margin_top = -3,
-                border = 0
+                margin_top = -3
             };
             content_vbox.add (vscroll);
             var vbox = new Box.vertical ();

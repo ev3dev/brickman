@@ -76,9 +76,7 @@ namespace BrickManager {
                 weak_powered_menu_item.button.focus ();
             });
             content_vbox.add (powered_menu_item.button);
-            menu = new UI.Menu () {
-                border = 0
-            };
+            menu = new UI.Menu ();
             visible_menu_item = new CheckboxMenuItem ("Visible");
             visible_menu_item.checkbox.notify["checked"].connect (() =>
                 notify_property ("bt-visible"));

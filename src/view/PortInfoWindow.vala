@@ -70,7 +70,6 @@ namespace BrickManager {
             title = port_name;
             vscroll = new Scroll.vertical () {
                 margin_top = -3,
-                border = 0,
                 can_focus = false
             };
             content_vbox.add (vscroll);

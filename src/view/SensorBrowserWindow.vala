@@ -31,7 +31,6 @@ namespace BrickManager {
         public SensorBrowserWindow () {
             title ="Sensors";
             menu = new UI.Menu () {
-                border = 0,
                 margin_top = -3
             };
             content_vbox.add (menu);

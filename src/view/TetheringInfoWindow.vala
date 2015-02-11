@@ -56,7 +56,6 @@ namespace BrickManager {
         public TetheringInfoWindow () {
             title = "Tethering Network Info";
             var vscroll = new Scroll.vertical () {
-                border = 0,
                 margin_top = -3
             };
             content_vbox.add (vscroll);

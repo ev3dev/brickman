@@ -34,9 +34,7 @@ namespace BrickManager {
 
         public HomeWindow () {
             shutdown_dialog = new ShutdownDialog ();
-            menu = new UI.Menu () {
-                border = 0
-            };
+            menu = new UI.Menu ();
             add (menu);
         }
 
