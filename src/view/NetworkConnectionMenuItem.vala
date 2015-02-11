@@ -47,10 +47,20 @@ namespace BrickManager {
             }
         }
 
-        public NetworkConnectionMenuItem () {
+        public NetworkConnectionMenuItem (string png_file) {
             base.with_button (new Button (), new Label ());
             button.pressed.connect (on_button_pressed);
             var hbox = new Box.horizontal ();
+            try {
+                var icon = new EV3devKit.UI.Icon.from_png (png_file);
+                hbox.add (icon);
+            } catch (Error err) {
+                critical ("%s", err.message);
+                var fake_icon = new Label () {
+                    margin = 5
+                };
+                hbox.add (fake_icon);
+            }
             button.add (hbox);
             hbox.add (label);
             hbox.add (new Spacer ());

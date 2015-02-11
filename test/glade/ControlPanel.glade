@@ -115,11 +115,33 @@
   <object class="GtkTextBuffer" id="network-connection-info-dns-textbuffer">
     <property name="text" translatable="yes">192.168.137.1</property>
   </object>
+  <object class="GtkListStore" id="network-connection-type-liststore">
+    <columns>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">bluetooth</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ethernet</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">gadget</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">wifi</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="network-connections-liststore">
     <columns>
       <!-- column-name PRESENT -->
       <column type="gboolean"/>
       <!-- column-name NAME -->
+      <column type="gchararray"/>
+      <!-- column-name TYPE -->
       <column type="gchararray"/>
       <!-- column-name STRENGTH -->
       <column type="gchararray"/>
@@ -130,17 +152,20 @@
       <row>
         <col id="0">True</col>
         <col id="1" translatable="yes">Wired</col>
-        <col id="2" translatable="yes">0</col>
+        <col id="2" translatable="yes">gadget</col>
+        <col id="3" translatable="yes">0</col>
       </row>
       <row>
         <col id="0">True</col>
         <col id="1" translatable="yes">my wlan</col>
-        <col id="2" translatable="yes">97</col>
+        <col id="2" translatable="yes">wifi</col>
+        <col id="3" translatable="yes">97</col>
       </row>
       <row>
         <col id="0">True</col>
         <col id="1" translatable="yes">Computer</col>
-        <col id="2" translatable="yes">0</col>
+        <col id="2" translatable="yes">bluetooth</col>
+        <col id="3" translatable="yes">0</col>
       </row>
     </data>
   </object>
@@ -1244,16 +1269,69 @@
                           <object class="GtkBox" id="box13">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">12</property>
-                            <property name="margin_right">12</property>
-                            <property name="margin_top">12</property>
-                            <property name="margin_bottom">12</property>
-                            <property name="spacing">6</property>
+                            <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="label3">
+                              <object class="GtkBox" id="box15">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Status:</property>
+                                <property name="margin_left">12</property>
+                                <property name="margin_right">12</property>
+                                <property name="margin_top">12</property>
+                                <property name="margin_bottom">12</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel" id="label3">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Status:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="connman-state-comboboxtext">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="button_sensitivity">on</property>
+                                    <property name="has_entry">True</property>
+                                    <property name="active_id">Offline</property>
+                                    <items>
+                                      <item id="Offline" translatable="yes">Offline</item>
+                                      <item id="Idle" translatable="yes">Idle</item>
+                                      <item id="Ready" translatable="yes">Ready</item>
+                                      <item id="Online" translatable="yes">Online</item>
+                                    </items>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxtext-entry">
+                                        <property name="can_focus">True</property>
+                                        <property name="text" translatable="yes">Online</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="connman-offline-mode-checkbutton">
+                                    <property name="label" translatable="yes">Offline Mode</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -1262,45 +1340,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="connman-state-comboboxtext">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="button_sensitivity">on</property>
-                                <property name="has_entry">True</property>
-                                <property name="active_id">Offline</property>
-                                <items>
-                                  <item id="Offline" translatable="yes">Offline</item>
-                                  <item id="Idle" translatable="yes">Idle</item>
-                                  <item id="Ready" translatable="yes">Ready</item>
-                                  <item id="Online" translatable="yes">Online</item>
-                                </items>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry" id="comboboxtext-entry">
-                                    <property name="can_focus">True</property>
-                                    <property name="text" translatable="yes">Online</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="connman-offline-mode-checkbutton">
-                                <property name="label" translatable="yes">Offline Mode</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">0</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">3</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -1367,6 +1407,22 @@
                                       </object>
                                     </child>
                                     <child>
+                                      <object class="GtkTreeViewColumn" id="network-connections-type-treeviewcolumn">
+                                        <property name="title" translatable="yes">Type</property>
+                                        <child>
+                                          <object class="GtkCellRendererCombo" id="network-connections-type-cellrenderercombo">
+                                            <property name="editable">True</property>
+                                            <property name="has_entry">False</property>
+                                            <property name="model">network-connection-type-liststore</property>
+                                            <property name="text_column">0</property>
+                                          </object>
+                                          <attributes>
+                                            <attribute name="text">2</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
                                       <object class="GtkTreeViewColumn" id="network-connections-strength-treeviewcolumn">
                                         <property name="min_width">90</property>
                                         <property name="title" translatable="yes">Strength</property>
@@ -1376,7 +1432,7 @@
                                             <property name="adjustment">network-strength-adjustment</property>
                                           </object>
                                           <attributes>
-                                            <attribute name="text">2</attribute>
+                                            <attribute name="text">3</attribute>
                                           </attributes>
                                         </child>
                                       </object>

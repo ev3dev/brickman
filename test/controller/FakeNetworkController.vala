@@ -96,13 +96,16 @@ namespace BrickManager {
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.PRESENT, out present);
                 Value name;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.NAME, out name);
+                Value type;
+                network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.TYPE, out type);
                 Value strength;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.STRENGTH, out strength);
                 Value user_data;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.USER_DATA, out user_data);
                 var menu_item = (NetworkConnectionMenuItem?)user_data.get_pointer ();
                 if (present.get_boolean () && menu_item == null) {
-                    menu_item = new NetworkConnectionMenuItem ();
+                    var icon_file = (type.get_string () ?? "wifi").replace ("gadget", "usb") + ".png";
+                    menu_item = new NetworkConnectionMenuItem (icon_file);
                     menu_item.button.pressed.connect (() => {
 
                         /* NetworkPropertiesWindow */
@@ -167,6 +170,7 @@ namespace BrickManager {
                 network_connections_liststore.append (out iter);
                 network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.PRESENT, true);
                 network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.NAME, "New Connection");
+                network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.TYPE, "wifi");
                 network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.STRENGTH, "0");
                 network_connections_liststore.row_changed (network_connections_liststore.get_path (iter), iter);
             });
@@ -195,6 +199,9 @@ namespace BrickManager {
             (builder.get_object ("network-connections-name-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.NAME));
+            (builder.get_object ("network-connections-type-cellrenderercombo") as Gtk.CellRendererCombo)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.TYPE));
             (builder.get_object ("network-connections-strength-cellrendererspin") as Gtk.CellRendererSpin)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.STRENGTH));
