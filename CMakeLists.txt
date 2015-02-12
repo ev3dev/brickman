@@ -85,6 +85,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/BatteryStatusBarItem.vala
     src/view/BluetoothDeviceMenuItem.vala
     src/view/BluetoothDeviceWindow.vala
+    src/view/BluetoothStatusBarItem.vala
     src/view/BluetoothWindow.vala
     src/view/BrickManagerWindow.vala
     src/view/ConnManAgentInputDialog.vala
@@ -106,6 +107,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/TetheringInfoWindow.vala
     src/view/TetheringWindow.vala
     src/view/USBWindow.vala
+    src/view/WifiStatusBarItem.vala
 )
 
 find_package(PkgConfig REQUIRED)

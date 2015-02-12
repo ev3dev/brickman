@@ -31,6 +31,7 @@ namespace BrickManager {
         NetworkStatusWindow network_status_window;
         NetworkConnectionsWindow network_connections_window;
         public NetworkStatusBarItem network_status_bar_item;
+        public WifiStatusBarItem wifi_status_bar_item;
         ConnManAgent agent;
         Gtk.Dialog? agent_request_input_dialog;
         Gtk.ListStore network_connections_liststore;
@@ -282,6 +283,14 @@ namespace BrickManager {
             (builder.get_object ("network-tether-enabled-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     network_tether_liststore, toggle, path, ControlPanel.NetworkTetherColumn.ENABLED));
+
+            /* WifiStatusBarItem */
+
+            wifi_status_bar_item = new WifiStatusBarItem ();
+            (builder.get_object ("network-wifi-powered-checkbutton") as Gtk.CheckButton)
+                .bind_property("active", wifi_status_bar_item, "visible", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("network-wifi-connected-checkbutton") as Gtk.CheckButton)
+                .bind_property("active", wifi_status_bar_item, "connected", BindingFlags.SYNC_CREATE);
 
             /* Agent */
 

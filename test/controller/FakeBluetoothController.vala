@@ -27,6 +27,7 @@ using EV3devKit.UI;
 namespace BrickManager {
     public class FakeBluetoothController : Object, IBrickManagerModule {
         BluetoothWindow bluetooth_window;
+        public BluetoothStatusBarItem bluetooth_status_bar_item;
 
         public BrickManagerWindow start_window { get { return bluetooth_window; } }
 
@@ -160,6 +161,15 @@ namespace BrickManager {
                 bluetooth_devices_remove_button.sensitive = bluetooth_devices_treeview_selection.count_selected_rows () > 0;
             });
             bluetooth_devices_treeview_selection.changed ();
+
+
+            /* BluetoothStatusBarItem */
+
+            bluetooth_status_bar_item = new BluetoothStatusBarItem ();
+            (builder.get_object ("bluetooth-status-powered-checkbutton") as Gtk.CheckButton)
+                .bind_property("active", bluetooth_status_bar_item, "visible", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("bluetooth-status-connected-checkbutton") as Gtk.CheckButton)
+                .bind_property("active", bluetooth_status_bar_item, "connected", BindingFlags.SYNC_CREATE);
 
             /* Agent */
 

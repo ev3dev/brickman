@@ -161,16 +161,20 @@ namespace BrickManager {
         home_window.add_controller (device_browser_controller);
         var network_controller = new NetworkController ();
         home_window.add_controller (network_controller);
-        Screen.get_active_screen ().status_bar.add_left (network_controller.network_status_bar_item);
         var bluetooth_controller = new BluetoothController ();
         network_controller.add_controller (bluetooth_controller);
         var usb_controller = new USBController ();
         network_controller.add_controller (usb_controller);
         var battery_controller = new BatteryController ();
         home_window.add_controller (battery_controller);
-        Screen.get_active_screen ().status_bar.add_right (battery_controller.battery_status_bar_item);
         var about_controller = new AboutController ();
         home_window.add_controller (about_controller);
+
+        Screen.get_active_screen ().status_bar.add_left (network_controller.network_status_bar_item);
+
+        Screen.get_active_screen ().status_bar.add_right (battery_controller.battery_status_bar_item);
+        Screen.get_active_screen ().status_bar.add_right (network_controller.wifi_status_bar_item);
+        Screen.get_active_screen ().status_bar.add_right (bluetooth_controller.status_bar_item);
 
         global_manager.back_button_long_pressed.connect_after (() =>
             home_window.shutdown_dialog.show ());

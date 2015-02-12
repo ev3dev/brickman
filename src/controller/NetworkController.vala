@@ -37,6 +37,7 @@ namespace BrickManager {
         TetheringWindow? tethering_window;
         TetheringInfoWindow? tethering_info_window;
         internal NetworkStatusBarItem network_status_bar_item;
+        internal WifiStatusBarItem wifi_status_bar_item;
         Binding? status_bar_item_binding;
         bool status_bar_item_binding_is_tether;
         ConnManAgent agent;
@@ -68,6 +69,7 @@ namespace BrickManager {
             connections_window.connection_selected.connect (
                 on_connections_window_connection_selected);
             network_status_bar_item = new NetworkStatusBarItem ();
+            wifi_status_bar_item = new WifiStatusBarItem ();
 
             status_window.tethering_selected.connect (() => {
                 tethering_window = new TetheringWindow ();
@@ -180,6 +182,10 @@ namespace BrickManager {
             if (technology.technology_type == "wifi") {
                 technology.bind_property ("powered", connections_window,
                     "has-wifi", BindingFlags.SYNC_CREATE);
+                technology.bind_property ("powered", wifi_status_bar_item,
+                    "visible", BindingFlags.SYNC_CREATE);
+                technology.bind_property ("connected", wifi_status_bar_item,
+                    "connected", BindingFlags.SYNC_CREATE);
                 wifi_technology = technology;
                 technology.removed.connect (() => {
                     connections_window.has_wifi = false;

@@ -27,6 +27,7 @@ using EV3devKit.UI;
 namespace BrickManager {
     public class BluetoothController : Object, IBrickManagerModule {
         BluetoothWindow main_window;
+        internal BluetoothStatusBarItem status_bar_item;
         Manager manager;
         BlueZ5Agent? agent;
         ObjectPath agent_object_path;
@@ -35,8 +36,11 @@ namespace BrickManager {
         Adapter? selected_adapter;
         Binding? selected_adapter_visible_binding;
         Binding? selected_adapter_scanning_binding;
+        uint connection_count = 0;
 
         public BrickManagerWindow start_window { get { return main_window; } }
+
+        public bool connected { get { return connection_count > 0; } }
 
         public signal void show_network_requested (string mac_address);
 
@@ -50,6 +54,9 @@ namespace BrickManager {
                 if (selected_adapter != null && selected_adapter.discovering)
                     selected_adapter.stop_discovery.begin ();
             });
+
+            status_bar_item = new BluetoothStatusBarItem ();
+            bind_property ("connected", status_bar_item, "connected");
 
             /* Use udev to find the address of the built-in Bluetooth adapter */
             var udev_client = new GUdev.Client (null);
@@ -100,6 +107,8 @@ namespace BrickManager {
 
         public void bind_powered (Object obj, string property) {
             obj.bind_property (property, main_window, "powered",
+                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            obj.bind_property (property, status_bar_item, "visible",
                 BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
         }
 
@@ -233,12 +242,33 @@ namespace BrickManager {
                 device_window.show ();
             });
             main_window.menu.add_menu_item (menu_item);
+
+            // Bluez DBus API does not have a global "connected" property so we
+            // have to keep track of all of the connections ourselves in order
+            // to make the Bluetooth status bar icon work.
+            weak Device weak_device = device;
+            device.notify["connected"].connect (() => {
+                if (weak_device.connected)
+                    connection_count++;
+                else
+                    connection_count--;
+                notify_property ("connected");
+            });
+            if (device.connected) {
+                connection_count++;
+                notify_property ("connected");
+            }
         }
 
         void on_device_removed (Device device) {
             var menu_item = main_window.menu.find_menu_item<Device> (device, (mi, d) =>
                 d == mi.represented_object);
             main_window.menu.remove_menu_item (menu_item);
+
+            if (device.connected) {
+                connection_count--;
+                notify_property ("connected");
+            }
         }
 
         // TODO: some kind of "spinner" to indicate that we are busy would be

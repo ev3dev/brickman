@@ -53,11 +53,13 @@ namespace BrickManager {
             control_panel.network_controller.show_connection (name));
         home_window.add_controller (control_panel.battery_controller);
         home_window.add_controller (control_panel.about_controller);
+
         Screen.get_active_screen ().status_bar.visible = true;
-        Screen.get_active_screen ().status_bar.add_right (
-            control_panel.battery_controller.battery_status_bar_item);
-        Screen.get_active_screen ().status_bar.add_left (
-            control_panel.network_controller.network_status_bar_item);
+        Screen.get_active_screen ().status_bar.add_left (control_panel.network_controller.network_status_bar_item);
+        Screen.get_active_screen ().status_bar.add_right (control_panel.battery_controller.battery_status_bar_item);
+        Screen.get_active_screen ().status_bar.add_right (control_panel.network_controller.wifi_status_bar_item);
+        Screen.get_active_screen ().status_bar.add_right (control_panel.bluetooth_controller.bluetooth_status_bar_item);
+
         home_window.shutdown_dialog.power_off_button_pressed.connect (() =>
             GtkApp.quit ());
         home_window.shutdown_dialog.reboot_button_pressed.connect (() => {
