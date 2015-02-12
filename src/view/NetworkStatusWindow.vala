@@ -59,7 +59,9 @@ namespace BrickManager {
             state_hbox.add (state_label);
             state_value_label = new Label ("???");
             state_hbox.add (state_value_label);
-            menu = new UI.Menu ();
+            menu = new UI.Menu () {
+                border_top = 1
+            };
             content_vbox.add (menu);
             var network_connections_menu_item = new UI.MenuItem.with_right_arrow ("Network connections");
             network_connections_menu_item.button.pressed.connect (() => network_connections_selected ());

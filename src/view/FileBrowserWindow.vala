@@ -42,8 +42,10 @@ namespace BrickManager {
         public FileBrowserWindow () {
             title = "File Browser";
             current_directory_label = new Label ("???") {
-                horizontal_align = WidgetAlign.START,
-                vertical_align = WidgetAlign.START
+                text_horizontal_align = GRX.TextHorizAlign.LEFT,
+                vertical_align = WidgetAlign.START,
+                padding_bottom = 2,
+                border_bottom = 1
             };
             content_vbox.add (current_directory_label);
             file_menu = new UI.Menu ();
