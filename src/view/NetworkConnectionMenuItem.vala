@@ -48,7 +48,10 @@ namespace BrickManager {
         }
 
         public NetworkConnectionMenuItem (string png_file) {
-            base.with_button (new Button (), new Label ());
+            base.with_button (new Button () {
+                padding_top = 1,
+                padding_bottom = 1
+            }, new Label ());
             button.pressed.connect (on_button_pressed);
             var hbox = new Box.horizontal ();
             try {

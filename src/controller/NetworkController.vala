@@ -202,7 +202,7 @@ namespace BrickManager {
                     menu_item = service_map[service];
                     connections_window.menu.remove_menu_item (menu_item);
                 } else {
-                    var icon_file = service.service_type.replace ("gadget", "usb") + ".png";
+                    var icon_file = service.service_type.replace ("gadget", "usb") + "12x12.png";
                     menu_item = new NetworkConnectionMenuItem (icon_file);
                     menu_item.represented_object = service;
                     service.bind_property ("name", menu_item, "connection-name",

@@ -104,7 +104,7 @@ namespace BrickManager {
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.USER_DATA, out user_data);
                 var menu_item = (NetworkConnectionMenuItem?)user_data.get_pointer ();
                 if (present.get_boolean () && menu_item == null) {
-                    var icon_file = (type.get_string () ?? "wifi").replace ("gadget", "usb") + ".png";
+                    var icon_file = (type.get_string () ?? "wifi").replace ("gadget", "usb") + "12x12.png";
                     menu_item = new NetworkConnectionMenuItem (icon_file);
                     menu_item.button.pressed.connect (() => {
 
