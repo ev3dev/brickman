@@ -118,6 +118,7 @@ namespace BrickManager {
                                     // shouldn't happen since it is not cancellable
                                 }
                                 global_manager.disconnect (handler_id);
+                                global_manager.stop_all_sound ();
                                 global_manager.set_leds (LEDState.NORMAL);
                                 global_manager.stop_all_motors ();
                             });

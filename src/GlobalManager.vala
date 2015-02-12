@@ -153,5 +153,20 @@ namespace BrickManager {
             device_manager.get_servo_motors ().foreach ((motor) =>
                 motor.command = "float");
         }
+
+        /**
+         * Stop all sound devices.
+         *
+         * Note: This just stops sound input devices (beep). It does not stop
+         * ALSA playback.
+         */
+        public void stop_all_sound () {
+            device_manager.get_input_devices ().foreach ((input) => {
+                if (input.has_sound_capability (EV3devKit.Devices.SoundCapability.BELL))
+                    input.do_bell (false);
+                if (input.has_sound_capability (EV3devKit.Devices.SoundCapability.TONE))
+                    input.do_tone (0);
+            });
+        }
     }
 }
