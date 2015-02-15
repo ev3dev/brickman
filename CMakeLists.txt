@@ -18,15 +18,18 @@ add_subdirectory (data)
 
 # Currently, ev3devKit is a submodule and we are staticly linking it
 set (EV3DEVKIT_LIBRARIES ev3devKit)
-set (EV3DEVKIT_VAPI ${ev3devKit_BINARY_DIR}/ev3devKit.vapi)
+set (EV3DEVKIT_DIR lib/ev3devKit)
 if (BRICKMAN_TEST)
-    set (EV3DEVKIT_DESKTOP 1)
+    set (EV3DEVKIT_DESKTOP bool:Yes)
     list (APPEND EV3DEVKIT_LIBRARIES ev3devKit-desktop)
-    list (APPEND EV3DEVKIT_VAPI ${ev3devKit_BINARY_DIR}/ev3devKit-desktop.vapi)
 endif (BRICKMAN_TEST)
-set (EV3DEVKIT_NO_DEMO 1)
+set (EV3DEVKIT_NO_DEMO bool:Yes)
 add_subdirectory (lib/ev3devKit)
-include_directories (${ev3devKit_BINARY_DIR})
+include_directories (${ev3devkit_BINARY_DIR})
+set (EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/ev3devKit.vapi)
+if (BRICKMAN_TEST)
+    list (APPEND EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/ev3devKit-desktop.vapi)
+endif (BRICKMAN_TEST)
 link_libraries (${EV3DEVKIT_LIBRARIES})
 
 configure_file (src/Version.vala.in Version.vala)
@@ -165,9 +168,6 @@ OPTIONS
 add_executable(${EXEC_NAME} ${VALA_C})
 
 if (BRICKMAN_TEST)
-configure_file(
-    ${ev3devKit_SOURCE_DIR}/src/desktop/main_window.glade
-    ${CMAKE_CURRENT_BINARY_DIR}/main_window.glade COPYONLY )
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )

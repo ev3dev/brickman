@@ -22,7 +22,7 @@
 			[
 				{
 					"name": "CMake",
-					"cmd": [ "cmake", "$project_path", "-DCMAKE_BUILD_TYPE=Debug", "-DBRICKMAN_TEST=1"],
+					"cmd": [ "cmake", "$project_path", "-DCMAKE_BUILD_TYPE=string:Debug", "-DBRICKMAN_TEST=bool:Yes"],
 					"working_dir": "~/build-area/brickman-desktop-test"
 				},
 				{

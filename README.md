@@ -11,31 +11,38 @@ Please report issues or feature requests at https://github.com/ev3dev/ev3dev/iss
 Hacking
 -------
 
-Things you need:
+Get the code:
+
 * Clone of the brickman repo.
-* Install the build-deps in `debian/control`.
-* For building the desktop test you also need to install `libgtk-3-dev`.
+
+        git clone git://github.com/ev3dev/brickman
+        cd brickman
+        git submodule update --init --recursive
 
 To build for the EV3:
+
 * [Setup brickstrap]
 * In `brickstrap shell`:
 
         sudo apt-get build-dep brickman
         mkdir -p /host-rootfs/<some-path-like-home/user/build-brickman>
         cd /host-rootfs/<some-path-like-home/user/build-brickman>
-        cmake /host-rootfs/<path-to-brickman-repo> -DCMAKE_BUILD_TYPE=Debug
+        cmake /host-rootfs/<path-to-brickman-repo> -DCMAKE_BUILD_TYPE=string:Debug
         make
 
 * On your host computer (not in `brickstrap shell`), use NFS or sshfs to share
 <some-path-like-home/user/build-brickman> with your EV3.
 * On your EV3, connect the share and run `./brickman`
 
-To build the desktop test (makes UI development much faster):
-* Make sure you have installed the build-deps above, then...
+To build the desktop test (makes UI development much faster), in a regular terminal,
+not in brickstrap shell:
+
+* Install the build-deps listed in `debian/control` and also the package `libgtk-3-dev`.
+* Then...
 
         mkdir -p <some-build-dir>
         cd <some-build-dir>
-        cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=Debug -DBRICKMAN_TEST=1
+        cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=string:Debug -DBRICKMAN_TEST=bool:Yes
         make
         make run
 
