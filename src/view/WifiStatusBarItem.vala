@@ -51,8 +51,9 @@ namespace BrickManager {
             if (icon != null) {
                 bit_blt (Context.current, x - icon.x_max, 1, icon, 0, 0,
                     icon.x_max, icon.y_max, Color.white.to_image_mode ());
+                return icon.x_max;
             }
-            return icon.x_max;
+            return -2;
         }
     }
 }
