@@ -2,6 +2,8 @@ project ("brickman")
 
 cmake_minimum_required (VERSION 2.6)
 
+option (BRICKMAN_TEST "Build the desktop test version.")
+
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
@@ -26,16 +28,16 @@ endif (BRICKMAN_TEST)
 set (EV3DEVKIT_NO_DEMO Yes)
 add_subdirectory (lib/ev3devKit)
 include_directories (${ev3devkit_BINARY_DIR})
-set (EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/ev3devKit.vapi)
+mark_as_advanced (EV3DEVKIT_DESKTOP EV3DEVKIT_NO_DEMO)
+set (EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/${ev3devkit_VAPI})
 if (BRICKMAN_TEST)
-    list (APPEND EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/ev3devKit-desktop.vapi)
+    list (APPEND EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/${ev3devkit_DESKTOP_VAPI})
 endif (BRICKMAN_TEST)
 link_libraries (${EV3DEVKIT_LIBRARIES})
 
 configure_file (src/Version.vala.in Version.vala)
 
 if (BRICKMAN_TEST)
-    set (BRICKMAN_TEST_MODULES gtk+-3.0)
     set (BRICKMAN_TEST_PACKAGES gtk+-3.0)
     set (BRICKMAN_SOURCE_FILES
         test/main.vala
@@ -123,11 +125,19 @@ pkg_check_modules(DEPS REQUIRED
     gee-0.8
     gudev-1.0
     ncurses
-    ${BRICKMAN_TEST_MODULES}
 )
 add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES} grx20 m)
+link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
+
+if (BRICKMAN_TEST)
+    pkg_check_modules(BRICKMAN_TEST_DEPS gtk+-3.0)
+    add_definitions(${BRICKMAN_TEST_DEPS_CFLAGS})
+    link_libraries(${BRICKMAN_TEST_DEPS_LIBRARIES})
+    link_directories(${BRICKMAN_TEST_DEPS_LIBRARY_DIRS})
+endif (BRICKMAN_TEST)
+
+link_libraries(grx20 m)
 
 find_package(Vala REQUIRED)
 include(ValaVersion)
