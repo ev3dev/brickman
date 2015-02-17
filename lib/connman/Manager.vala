@@ -29,6 +29,7 @@ namespace ConnMan {
 
         HashMap<ObjectPath, Technology> technology_map;
         HashMap<ObjectPath, Service> service_map;
+        ArrayList<Service> sorted_service_list;
         HashMap<ObjectPath, Peer> peer_map;
         net.connman.Manager dbus_proxy;
         weak Cancellable? on_services_changed_cancellable;
@@ -56,9 +57,10 @@ namespace ConnMan {
         public signal void peers_changed (Gee.Collection<Peer> changed);
 
         construct {
-            technology_map = new HashMap<ObjectPath, Technology>();
-            service_map = new HashMap<ObjectPath, Service>();
-            peer_map = new HashMap<ObjectPath, Peer>();
+            technology_map = new HashMap<ObjectPath, Technology> ();
+            service_map = new HashMap<ObjectPath, Service> ();
+            sorted_service_list = new ArrayList<Service> ();
+            peer_map = new HashMap<ObjectPath, Peer> ();
         }
 
         public static async Manager new_async () throws IOError {
@@ -101,7 +103,7 @@ namespace ConnMan {
         }
 
         public Collection<Service> get_services () {
-            return service_map.values;
+            return sorted_service_list.read_only_view;
         }
 
         public Service? get_service (ObjectPath path) {
@@ -195,6 +197,7 @@ namespace ConnMan {
                         services.add (service);
                     }
                 }
+                sorted_service_list = services;
                 services_changed (services);
             } catch (IOError err) {
                 critical ("%s", err.message);
