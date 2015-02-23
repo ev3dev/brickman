@@ -68,7 +68,7 @@ namespace BrickManager {
                 bluetooth_devices_liststore.get_value (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, out user_data);
                 var menu_item = (BluetoothDeviceMenuItem?)user_data.get_pointer ();
                 if (!present.get_boolean () && menu_item != null) {
-                    bluetooth_window.menu.remove_menu_item (menu_item);
+                    bluetooth_window.remove_menu_item (menu_item);
                     bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, (void*)null);
                 }
                 if (present.get_boolean () && menu_item == null) {
@@ -105,7 +105,7 @@ namespace BrickManager {
                         info_window.show ();
                     });
 
-                    bluetooth_window.menu.add_menu_item (menu_item);
+                    bluetooth_window.add_menu_item (menu_item);
                     bluetooth_devices_liststore.set (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, (void*)menu_item);
                 }
                 if (menu_item == null)
@@ -153,7 +153,7 @@ namespace BrickManager {
                     model.get_value (iter, ControlPanel.BluetoothDeviceColumn.USER_DATA, out user_data);
                     var menu_item = (BluetoothDeviceMenuItem?)user_data.get_pointer ();
                     if (menu_item != null)
-                        bluetooth_window.menu.remove_menu_item (menu_item);
+                        bluetooth_window.remove_menu_item (menu_item);
                     bluetooth_devices_liststore.remove (iter);
                 }
             });

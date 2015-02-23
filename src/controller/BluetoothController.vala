@@ -96,9 +96,8 @@ namespace BrickManager {
                     main_window.loading = true;
                     var devices = manager.get_devices ();
                     foreach (var device in devices) {
-                        var menu_item = main_window.menu.find_menu_item<Device> (device,
-                            (mi, d) => d == mi.represented_object);
-                        main_window.menu.remove_menu_item (menu_item);
+                        var menu_item = main_window.find_menu_item (device);
+                        main_window.remove_menu_item (menu_item);
                     }
                     set_selected_adapter (null);
                     manager = null;
@@ -241,7 +240,7 @@ namespace BrickManager {
                     SignalHandler.disconnect (manager, handler_id));
                 device_window.show ();
             });
-            main_window.menu.add_menu_item (menu_item);
+            main_window.add_menu_item (menu_item);
 
             // Bluez DBus API does not have a global "connected" property so we
             // have to keep track of all of the connections ourselves in order
@@ -261,9 +260,8 @@ namespace BrickManager {
         }
 
         void on_device_removed (Device device) {
-            var menu_item = main_window.menu.find_menu_item<Device> (device, (mi, d) =>
-                d == mi.represented_object);
-            main_window.menu.remove_menu_item (menu_item);
+            var menu_item = main_window.find_menu_item (device);
+            main_window.remove_menu_item (menu_item);
 
             if (device.connected) {
                 connection_count--;
