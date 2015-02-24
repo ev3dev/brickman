@@ -131,19 +131,15 @@ namespace BrickManager {
             Process.exit (err.code);
         }
         // Get something up on the screen ASAP.
-        string splash_path = SPLASH_PNG;
+        var splash_path_found = true;
+        var splash_path = Path.build_filename (Environment.get_current_dir (), SPLASH_PNG);
         if (!FileUtils.test (splash_path, FileTest.EXISTS)) {
-            splash_path = null;
-            foreach (var file in Environment.get_system_data_dirs ()) {
-                file = Path.build_filename (file, PROJECT_NAME, SPLASH_PNG);
-                if (FileUtils.test (file, FileTest.EXISTS)) {
-                    splash_path = file;
-                    break;
-                }
-            }
+            splash_path = Path.build_filename (PKGDATADIR, SPLASH_PNG);;
+            if (!FileUtils.test (splash_path, FileTest.EXISTS))
+                splash_path_found = false;
         }
-        if (splash_path == null) {
-            critical ("Could not find %s", SPLASH_PNG);
+        if (!splash_path_found) {
+            critical ("Could not find %s", splash_path);
         } else {
             if (GRX.Context.screen.load_from_png (splash_path) != 0)
                 critical ("%s", "Could not load splash image.");
