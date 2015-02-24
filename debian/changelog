@@ -1,3 +1,18 @@
+brickman (0.5.0) testing; urgency=medium
+
+  * Added splash screen.
+  * Fixed race condition that sometimes caused Wi-Fi to show incorrect powered
+    state.
+  * Added UI for enabling tethering via USB or Bluetooth.
+  * Redesigned "Wireless and Networks" menu. Bluetooth and USB are moved under
+    this menu. There is also a new separate menu for Wi-Fi.
+  * Added Wi-Fi and Bluetooth status indicators in the status bar.
+  * Fixed user program sound output (beep only) not stopped when program is
+    killed.
+  * Fixed network connection display order issue.
+
+ -- David Lechner <david@lechnology.com>  Tue, 24 Feb 2015 14:54:16 -0600
+
 brickman (0.4.0) testing; urgency=medium
 
   * Add File Browser.
