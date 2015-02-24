@@ -32,7 +32,7 @@ namespace BrickManager {
         Label state_label;
         Label state_value_label;
         UI.Menu menu;
-        UI.MenuItem tethering_menu_item;
+        UI.MenuItem network_connections_menu_item;
         CheckboxMenuItem offline_mode_menu_item;
 
         public string state {
@@ -63,10 +63,10 @@ namespace BrickManager {
                 border_top = 1
             };
             content_vbox.add (menu);
-            var network_connections_menu_item = new UI.MenuItem.with_right_arrow ("Network connections");
+            network_connections_menu_item = new UI.MenuItem.with_right_arrow ("All Network Connections");
             network_connections_menu_item.button.pressed.connect (() => network_connections_selected ());
             menu.add_menu_item (network_connections_menu_item);
-            tethering_menu_item = new UI.MenuItem.with_right_arrow ("Tethering");
+            var tethering_menu_item = new UI.MenuItem.with_right_arrow ("Tethering");
             tethering_menu_item.button.pressed.connect (() => tethering_selected ());
             menu.add_menu_item (tethering_menu_item);
             offline_mode_menu_item = new CheckboxMenuItem ("Offline Mode");
@@ -81,7 +81,7 @@ namespace BrickManager {
                 represented_object = window
             };
             menu_item.button.pressed.connect (() => window.show ());
-            menu.insert_menu_item (menu_item, tethering_menu_item);
+            menu.insert_menu_item (menu_item, network_connections_menu_item);
         }
     }
 }

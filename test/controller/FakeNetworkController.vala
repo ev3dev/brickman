@@ -87,26 +87,16 @@ namespace BrickManager {
                 network_notebook.page = (int)ControlPanel.NetworkNotebookTab.CONNECTIONS;
             });
 
-            (builder.get_object ("network-connections-has-wifi-checkbutton") as Gtk.CheckButton)
-                .bind_property ("active", network_connections_window, "has-wifi", BindingFlags.SYNC_CREATE);
-            network_connections_window.scan_wifi_selected.connect (() => {
-                network_connections_window.scan_wifi_busy = true;
-                Timeout.add_seconds (3, () => {
-                    network_connections_window.scan_wifi_busy = false;
-                    return false;
-                });
-            });
-
             network_connections_liststore = builder.get_object ("network-connections-liststore") as Gtk.ListStore;
             network_connections_liststore.row_changed.connect ((path, iter) => {
                 Value present;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.PRESENT, out present);
+                Value connected;
+                network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.CONNECTED, out connected);
                 Value name;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.NAME, out name);
                 Value type;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.TYPE, out type);
-                Value strength;
-                network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.STRENGTH, out strength);
                 Value user_data;
                 network_connections_liststore.get_value (iter, ControlPanel.NetworkConnectionsColumn.USER_DATA, out user_data);
                 var menu_item = (NetworkConnectionMenuItem?)user_data.get_pointer ();
@@ -162,10 +152,10 @@ namespace BrickManager {
                 }
                 if (menu_item == null)
                     return;
+                if (menu_item.connected != connected.get_boolean ())
+                    menu_item.connected = connected.get_boolean ();
                 if (menu_item.connection_name != name.get_string ())
                     menu_item.connection_name = name.dup_string ();
-                if (menu_item.signal_strength != int.parse (strength.get_string () ?? "0"))
-                    menu_item.signal_strength = int.parse (strength.get_string () ?? "0");
             });
             network_connections_liststore.foreach ((model, path, iter) => {
                 model.row_changed (path, iter);
@@ -176,9 +166,9 @@ namespace BrickManager {
                 Gtk.TreeIter iter;
                 network_connections_liststore.append (out iter);
                 network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.PRESENT, true);
+                network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.CONNECTED, false);
                 network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.NAME, "New Connection");
                 network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.TYPE, "wifi");
-                network_connections_liststore.set_value (iter, ControlPanel.NetworkConnectionsColumn.STRENGTH, "0");
                 network_connections_liststore.row_changed (network_connections_liststore.get_path (iter), iter);
             });
             var network_connections_remove_button = builder.get_object ("network-connections-remove-button") as Gtk.Button;
@@ -203,15 +193,15 @@ namespace BrickManager {
             (builder.get_object ("network-connections-present-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     network_connections_liststore, toggle, path, ControlPanel.NetworkConnectionsColumn.PRESENT));
+            (builder.get_object ("network-connections-connected-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    network_connections_liststore, toggle, path, ControlPanel.NetworkConnectionsColumn.CONNECTED));
             (builder.get_object ("network-connections-name-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.NAME));
             (builder.get_object ("network-connections-type-cellrenderercombo") as Gtk.CellRendererCombo)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.TYPE));
-            (builder.get_object ("network-connections-strength-cellrendererspin") as Gtk.CellRendererSpin)
-                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
-                    network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.STRENGTH));
 
             /* WifiWindow */
 

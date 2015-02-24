@@ -156,11 +156,11 @@
     <columns>
       <!-- column-name PRESENT -->
       <column type="gboolean"/>
+      <!-- column-name CONNECTED -->
+      <column type="gboolean"/>
       <!-- column-name NAME -->
       <column type="gchararray"/>
       <!-- column-name TYPE -->
-      <column type="gchararray"/>
-      <!-- column-name STRENGTH -->
       <column type="gchararray"/>
       <!-- column-name USER_DATA -->
       <column type="gpointer"/>
@@ -168,21 +168,21 @@
     <data>
       <row>
         <col id="0">True</col>
-        <col id="1" translatable="yes">Wired</col>
-        <col id="2" translatable="yes">gadget</col>
-        <col id="3" translatable="yes">0</col>
+        <col id="1">True</col>
+        <col id="2" translatable="yes">Wired</col>
+        <col id="3" translatable="yes">gadget</col>
       </row>
       <row>
         <col id="0">True</col>
-        <col id="1" translatable="yes">my wlan</col>
-        <col id="2" translatable="yes">wifi</col>
-        <col id="3" translatable="yes">97</col>
+        <col id="1">False</col>
+        <col id="2" translatable="yes">my wlan</col>
+        <col id="3" translatable="yes">wifi</col>
       </row>
       <row>
         <col id="0">True</col>
-        <col id="1" translatable="yes">Computer</col>
-        <col id="2" translatable="yes">bluetooth</col>
-        <col id="3" translatable="yes">0</col>
+        <col id="1">False</col>
+        <col id="2" translatable="yes">Computer</col>
+        <col id="3" translatable="yes">bluetooth</col>
       </row>
     </data>
   </object>
@@ -1492,15 +1492,14 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkGrid" id="grid2">
+                          <object class="GtkBox" id="box18">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">12</property>
                             <property name="margin_right">12</property>
                             <property name="margin_top">12</property>
                             <property name="margin_bottom">12</property>
-                            <property name="row_spacing">3</property>
-                            <property name="column_spacing">10</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkScrolledWindow" id="scrolledwindow1">
                                 <property name="visible">True</property>
@@ -1531,6 +1530,17 @@
                                       </object>
                                     </child>
                                     <child>
+                                      <object class="GtkTreeViewColumn" id="network-connections-connected-treeviewcolumn">
+                                        <property name="title" translatable="yes">Connected</property>
+                                        <child>
+                                          <object class="GtkCellRendererToggle" id="network-connections-connected-cellrenderertoggle"/>
+                                          <attributes>
+                                            <attribute name="active">1</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
                                       <object class="GtkTreeViewColumn" id="network-connections-name-column">
                                         <property name="title" translatable="yes">Name</property>
                                         <child>
@@ -1538,7 +1548,7 @@
                                             <property name="editable">True</property>
                                           </object>
                                           <attributes>
-                                            <attribute name="text">1</attribute>
+                                            <attribute name="text">2</attribute>
                                           </attributes>
                                         </child>
                                       </object>
@@ -1554,21 +1564,6 @@
                                             <property name="text_column">0</property>
                                           </object>
                                           <attributes>
-                                            <attribute name="text">2</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="network-connections-strength-treeviewcolumn">
-                                        <property name="min_width">90</property>
-                                        <property name="title" translatable="yes">Strength</property>
-                                        <child>
-                                          <object class="GtkCellRendererSpin" id="network-connections-strength-cellrendererspin">
-                                            <property name="editable">True</property>
-                                            <property name="adjustment">network-strength-adjustment</property>
-                                          </object>
-                                          <attributes>
                                             <attribute name="text">3</attribute>
                                           </attributes>
                                         </child>
@@ -1578,61 +1573,50 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                                <property name="height">4</property>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="network-connections-has-wifi-checkbutton">
-                                <property name="label" translatable="yes">Has Wi-Fi</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">0</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="network-connections-add-button">
-                                <property name="label" translatable="yes">Add</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="network-connections-remove-button">
-                                <property name="label" translatable="yes">Remove</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEventBox" id="eventbox1">
+                              <object class="GtkBox" id="box19">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">6</property>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkButton" id="network-connections-remove-button">
+                                    <property name="label" translatable="yes">Remove</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="pack_type">end</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="network-connections-add-button">
+                                    <property name="label" translatable="yes">Add</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="pack_type">end</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
                               </packing>
                             </child>
                           </object>

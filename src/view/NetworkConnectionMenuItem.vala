@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,49 +26,43 @@ using EV3devKit.UI;
 
 namespace BrickManager {
     public class NetworkConnectionMenuItem : UI.MenuItem {
-        const string PERCENT = "%";
+        Label connected_label;
 
-        Label signal_strength_label;
+        public bool connected {
+            get { return connected_label.visible; }
+            set { connected_label.visible = value; }
+        }
 
         public string connection_name {
             get { return label.text; }
             set { label.text = value; }
         }
 
-        int _signal_strength;
-        public int signal_strength {
-            get { return _signal_strength; }
-            set {
-                _signal_strength = value;
-                if (value == 0)
-                    signal_strength_label.text = null;
-                else
-                    signal_strength_label.text = "%d%s".printf (value, PERCENT);
-            }
-        }
-
         public NetworkConnectionMenuItem (string png_file) {
             base.with_button (new Button () {
                 padding_top = 1,
                 padding_bottom = 1
-            }, new Label ());
+            }, new Label () {
+                text_horizontal_align = GRX.TextHorizAlign.LEFT
+            });
             button.pressed.connect (on_button_pressed);
             var hbox = new Box.horizontal ();
+            button.add (hbox);
+            connected_label = new Label ("*") {
+                horizontal_align = WidgetAlign.START,
+                visible = false
+            };
+            hbox.add (connected_label);
+            hbox.add (label);
             try {
-                var icon = new EV3devKit.UI.Icon.from_png (png_file);
+                var icon = new EV3devKit.UI.Icon.from_png (png_file) {
+                    horizontal_align = WidgetAlign.END,
+                    vertical_align = WidgetAlign.CENTER
+                };
                 hbox.add (icon);
             } catch (Error err) {
                 critical ("%s", err.message);
-                var fake_icon = new Label () {
-                    margin = 5
-                };
-                hbox.add (fake_icon);
             }
-            button.add (hbox);
-            hbox.add (label);
-            hbox.add (new Spacer ());
-            signal_strength_label = new Label ();
-            hbox.add (signal_strength_label);
         }
 
         void on_button_pressed () {

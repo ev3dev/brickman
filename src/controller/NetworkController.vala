@@ -81,8 +81,6 @@ namespace BrickManager {
             };
             status_window.network_connections_selected.connect (() =>
                 connections_window.show ());
-            connections_window.scan_wifi_selected.connect (() =>
-                on_connections_window_scan_wifi_selected.begin ());
             connections_window.connection_selected.connect (
                 on_connections_window_connection_selected);
             network_status_bar_item = new NetworkStatusBarItem ();
@@ -206,15 +204,12 @@ namespace BrickManager {
             }
 
             if (technology.technology_type == "wifi") {
-                technology.bind_property ("powered", connections_window,
-                    "has-wifi", BindingFlags.SYNC_CREATE);
                 technology.bind_property ("powered", wifi_status_bar_item,
                     "visible", BindingFlags.SYNC_CREATE);
                 technology.bind_property ("connected", wifi_status_bar_item,
                     "connected", BindingFlags.SYNC_CREATE);
                 wifi_technology = technology;
                 technology.removed.connect (() => {
-                    connections_window.has_wifi = false;
                     wifi_technology = null;
                 });
             }
@@ -239,9 +234,9 @@ namespace BrickManager {
                     var icon_file = service.service_type.replace ("gadget", "usb") + "12x12.png";
                     menu_item = new NetworkConnectionMenuItem (icon_file);
                     menu_item.represented_object = service;
+                    service.bind_property ("state", menu_item, "connected",
+                        BindingFlags.SYNC_CREATE, transform_service_state_to_connected_bool);
                     service.bind_property ("name", menu_item, "connection-name",
-                        BindingFlags.SYNC_CREATE);
-                    service.bind_property ("strength", menu_item, "signal-strength",
                         BindingFlags.SYNC_CREATE);
                     service.removed.connect (() => {
                         connections_window.menu.remove_menu_item (menu_item);
@@ -334,20 +329,6 @@ namespace BrickManager {
             status_bar_item_binding = bind_property ("tether-address",
                 network_status_bar_item, "text", BindingFlags.SYNC_CREATE);
             status_bar_item_binding_is_tether = true;
-        }
-
-        async void on_connections_window_scan_wifi_selected ()
-            requires (wifi_technology != null && wifi_technology.powered)
-        {
-            connections_window.scan_wifi_busy = true;
-            try {
-                yield wifi_technology.scan ();
-            } catch (IOError err) {
-                // TODO: Show error message in UI
-                critical ("%s", err.message);
-            } finally {
-                connections_window.scan_wifi_busy = false;
-            }
         }
 
         void on_connections_window_connection_selected (Object user_data) {

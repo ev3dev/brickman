@@ -89,7 +89,6 @@ namespace BrickManager {
             };
             hbox.add (connected_label);
             hbox.add (label);
-            hbox.add (new Spacer ());
             try {
                 secure_icon = new UI.Icon.from_stock (StockIcon.LOCK_7X9) {
                     horizontal_align = WidgetAlign.END,

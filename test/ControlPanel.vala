@@ -88,9 +88,9 @@ namespace BrickManager {
 
         enum NetworkConnectionsColumn {
             PRESENT,
+            CONNECTED,
             NAME,
             TYPE,
-            STRENGTH,
             USER_DATA,
             COLUMN_COUNT;
         }
