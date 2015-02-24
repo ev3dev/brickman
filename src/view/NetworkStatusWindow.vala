@@ -76,11 +76,11 @@ namespace BrickManager {
             menu.add_menu_item (offline_mode_menu_item);
         }
 
-        public void add_controller (IBrickManagerModule controller) {
-            var menu_item = new UI.MenuItem.with_right_arrow (controller.start_window.title) {
-                represented_object = controller
+        public void add_technology_window (BrickManagerWindow window) {
+            var menu_item = new UI.MenuItem.with_right_arrow (window.title) {
+                represented_object = window
             };
-            menu_item.button.pressed.connect (() => controller.start_window.show ());
+            menu_item.button.pressed.connect (() => window.show ());
             menu.insert_menu_item (menu_item, tethering_menu_item);
         }
     }

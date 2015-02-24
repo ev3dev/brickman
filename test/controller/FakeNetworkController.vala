@@ -32,9 +32,16 @@ namespace BrickManager {
         NetworkConnectionsWindow network_connections_window;
         public NetworkStatusBarItem network_status_bar_item;
         public WifiStatusBarItem wifi_status_bar_item;
+        public WifiController wifi_controller;
         ConnManAgent agent;
         Gtk.Dialog? agent_request_input_dialog;
         Gtk.ListStore network_connections_liststore;
+
+        public class WifiController : Object, IBrickManagerModule {
+            public WifiWindow wifi_window;
+
+            public BrickManagerWindow start_window { get { return wifi_window; } }
+        }
 
         public BrickManagerWindow start_window { get { return network_status_window; } }
 
@@ -90,7 +97,6 @@ namespace BrickManager {
                 });
             });
 
-            networking_loading_checkbutton.bind_property ("active", network_connections_window, "loading", BindingFlags.SYNC_CREATE);
             network_connections_liststore = builder.get_object ("network-connections-liststore") as Gtk.ListStore;
             network_connections_liststore.row_changed.connect ((path, iter) => {
                 Value present;
@@ -207,6 +213,152 @@ namespace BrickManager {
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     network_connections_liststore, path, new_text, ControlPanel.NetworkConnectionsColumn.STRENGTH));
 
+            /* WifiWindow */
+
+            var wifi_window = new WifiWindow ();
+
+            networking_loading_checkbutton.bind_property ("active", wifi_window, "loading", BindingFlags.SYNC_CREATE);
+            networking_available_checkbutton.bind_property ("active", wifi_window, "available", BindingFlags.SYNC_CREATE);
+
+            wifi_controller = new WifiController ();
+            wifi_controller.wifi_window = wifi_window;
+
+            wifi_window.shown.connect (() => {
+                control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK;
+                network_notebook.page = (int)ControlPanel.NetworkNotebookTab.WIFI;
+            });
+
+            (builder.get_object ("network-wifi-powered-checkbutton") as Gtk.CheckButton)
+                .bind_property ("active", wifi_window, "powered", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            (builder.get_object ("network-wifi-scanning-checkbutton") as Gtk.CheckButton)
+                .bind_property ("active", wifi_window, "scanning", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            wifi_window.scan_selected.connect (() => wifi_window.scanning = !wifi_window.scanning);
+
+            var wifi_liststore = builder.get_object ("network-wifi-liststore") as Gtk.ListStore;
+            wifi_liststore.row_changed.connect ((path, iter) => {
+                Value present;
+                wifi_liststore.get_value (iter, ControlPanel.NetworkWifiColumn.PRESENT, out present);
+                Value connected;
+                wifi_liststore.get_value (iter, ControlPanel.NetworkWifiColumn.CONNECTED, out connected);
+                Value name;
+                wifi_liststore.get_value (iter, ControlPanel.NetworkWifiColumn.NAME, out name);
+                Value security;
+                wifi_liststore.get_value (iter, ControlPanel.NetworkWifiColumn.SECURITY, out security);
+                Value strength;
+                wifi_liststore.get_value (iter, ControlPanel.NetworkWifiColumn.STRENGTH, out strength);
+                Value user_data;
+                wifi_liststore.get_value (iter, ControlPanel.NetworkWifiColumn.USER_DATA, out user_data);
+                var menu_item = (WifiMenuItem?)user_data.get_pointer ();
+                if (present.get_boolean () && menu_item == null) {
+                    menu_item = new WifiMenuItem ();
+                    menu_item.button.pressed.connect (() => {
+
+                        /* WifiInfoWindow */
+
+                        var wifi_info_window = new WifiInfoWindow (name.dup_string ());
+                        wifi_info_window.shown.connect (() => {
+                            control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK;
+                            network_notebook.page = (int)ControlPanel.NetworkNotebookTab.WIFI_INFO;
+                        });
+
+                        ((builder.get_object ("network-wifi-info-status-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
+                            .bind_property ("text", wifi_info_window, "status", BindingFlags.SYNC_CREATE);
+                        ((builder.get_object ("network-wifi-info-security-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
+                            .bind_property ("text", wifi_info_window, "security", BindingFlags.SYNC_CREATE);
+                        var signal_spinbutton = builder.get_object ("network-wifi-info-signal-spinbutton") as Gtk.SpinButton;
+                        signal_spinbutton.text = strength.dup_string ();
+                        signal_spinbutton.bind_property ("text", wifi_info_window, "signal-strength", BindingFlags.SYNC_CREATE);
+                        (builder.get_object ("network-wifi-info-address-entry") as Gtk.Entry)
+                            .bind_property ("text", wifi_info_window, "address", BindingFlags.SYNC_CREATE);
+                        ((builder.get_object ("network-wifi-info-action-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
+                            .bind_property ("text", wifi_info_window, "action", BindingFlags.SYNC_CREATE);
+                        var can_forget_checkbutton = builder.get_object ("network-wifi-info-can-forget-checkbutton") as Gtk.CheckButton;
+                        can_forget_checkbutton.active = connected.get_boolean ();
+                        can_forget_checkbutton.bind_property ("active", wifi_info_window, "can-forget", BindingFlags.SYNC_CREATE);
+
+                        wifi_info_window.action_selected.connect (() => message ("action selected"));
+                        wifi_info_window.forget_selected.connect (() => can_forget_checkbutton.active = false);
+                        wifi_info_window.network_connection_selected.connect (() => message ("network connection selected"));
+
+                        wifi_info_window.show ();
+                    });
+                    wifi_window.add_menu_item (menu_item);
+                    wifi_liststore.set_value (iter, ControlPanel.NetworkWifiColumn.USER_DATA, (void*)menu_item);
+                }
+                if (!present.get_boolean () && menu_item != null) {
+                    wifi_window.remove_menu_item (menu_item);
+                    wifi_liststore.set_value (iter, ControlPanel.NetworkWifiColumn.USER_DATA, (void*)null);
+                    menu_item = null;
+                }
+                if (menu_item == null)
+                    return;
+                if (menu_item.connected != connected.get_boolean ())
+                    menu_item.connected = connected.get_boolean ();
+                if (menu_item.connection_name != name.get_string ())
+                    menu_item.connection_name = name.dup_string ();
+                if (menu_item.security.to_string () != security.get_string ()) {
+                    var new_security = (WifiSecurity) 0;
+                    if (security.get_string () != null) {
+                        var enum_class = (EnumClass) typeof (WifiSecurity).class_ref ();
+                        var enum_value = enum_class.get_value_by_nick (security.get_string ());
+                        if (enum_value != null) {
+                            new_security = (WifiSecurity) enum_value.value;
+                        }
+                    }
+                    menu_item.security = new_security;
+                }
+                if (menu_item.signal_strength != int.parse (strength.get_string () ?? "0"))
+                    menu_item.signal_strength = int.parse (strength.get_string () ?? "0");
+            });
+            wifi_liststore.foreach ((model, path, iter) => {
+                model.row_changed (path, iter);
+                return false;
+            });
+
+            (builder.get_object ("network-wifi-add-button") as Gtk.Button).clicked.connect (() => {
+                Gtk.TreeIter iter;
+                wifi_liststore.append (out iter);
+                wifi_liststore.set_value (iter, ControlPanel.NetworkWifiColumn.PRESENT, true);
+                wifi_liststore.set_value (iter, ControlPanel.NetworkWifiColumn.NAME, "New Network");
+                wifi_liststore.set_value (iter, ControlPanel.NetworkWifiColumn.SECURITY, "secured");
+                wifi_liststore.set_value (iter, ControlPanel.NetworkWifiColumn.STRENGTH, "99");
+                wifi_liststore.row_changed (wifi_liststore.get_path (iter), iter);
+            });
+            var network_wifi_remove_button = builder.get_object ("network-wifi-remove-button") as Gtk.Button;
+            var network_wifi_treeview_selection = (builder.get_object ("network-wifi-treeview") as Gtk.TreeView).get_selection ();
+            network_wifi_remove_button.clicked.connect (() => {
+                Gtk.TreeModel model;
+                Gtk.TreeIter iter;
+                if (network_wifi_treeview_selection.get_selected (out model, out iter)) {
+                    Value user_data;
+                    model.get_value (iter, ControlPanel.NetworkWifiColumn.USER_DATA, out user_data);
+                    var menu_item = (NetworkConnectionMenuItem?)user_data.get_pointer ();
+                    if (menu_item != null)
+                        wifi_window.remove_menu_item (menu_item);
+                    wifi_liststore.remove (iter);
+                }
+            });
+            network_wifi_treeview_selection.changed.connect (() => {
+                network_wifi_remove_button.sensitive = network_wifi_treeview_selection.count_selected_rows () > 0;
+            });
+            network_wifi_treeview_selection.changed ();
+
+            (builder.get_object ("network-wifi-present-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    wifi_liststore, toggle, path, ControlPanel.NetworkWifiColumn.PRESENT));
+            (builder.get_object ("network-wifi-connected-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    wifi_liststore, toggle, path, ControlPanel.NetworkWifiColumn.CONNECTED));
+            (builder.get_object ("network-wifi-name-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    wifi_liststore, path, new_text, ControlPanel.NetworkWifiColumn.NAME));
+            (builder.get_object ("network-wifi-security-cellrenderercombo") as Gtk.CellRendererCombo)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    wifi_liststore, path, new_text, ControlPanel.NetworkWifiColumn.SECURITY));
+            (builder.get_object ("network-wifi-strength-cellrendererspin") as Gtk.CellRendererSpin)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    wifi_liststore, path, new_text, ControlPanel.NetworkWifiColumn.STRENGTH));
+
             /* TetheringWindow */
 
             var network_tether_liststore = builder.get_object ("network-tether-liststore") as Gtk.ListStore;
@@ -287,9 +439,9 @@ namespace BrickManager {
             /* WifiStatusBarItem */
 
             wifi_status_bar_item = new WifiStatusBarItem ();
-            (builder.get_object ("network-wifi-powered-checkbutton") as Gtk.CheckButton)
+            (builder.get_object ("network-status-bar-wifi-powered-checkbutton") as Gtk.CheckButton)
                 .bind_property("active", wifi_status_bar_item, "visible", BindingFlags.SYNC_CREATE);
-            (builder.get_object ("network-wifi-connected-checkbutton") as Gtk.CheckButton)
+            (builder.get_object ("network-status-bar-wifi-connected-checkbutton") as Gtk.CheckButton)
                 .bind_property("active", wifi_status_bar_item, "connected", BindingFlags.SYNC_CREATE);
 
             /* Agent */
@@ -353,7 +505,7 @@ namespace BrickManager {
         }
 
         public void add_controller (IBrickManagerModule controller) {
-            network_status_window.add_controller (controller);
+            network_status_window.add_technology_window (controller.start_window);
         }
 
         public void show_connection (string name) {

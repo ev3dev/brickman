@@ -32,8 +32,10 @@ namespace BrickManager {
 
         Gee.Map<weak Technology, weak CheckboxMenuItem> technology_map;
         Gee.Map<weak Service, weak NetworkConnectionMenuItem> service_map;
+        Gee.Map<weak Service, weak WifiMenuItem> wifi_service_map;
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
+        WifiWindow wifi_window;
         TetheringWindow? tethering_window;
         TetheringInfoWindow? tethering_info_window;
         internal NetworkStatusBarItem network_status_bar_item;
@@ -47,6 +49,18 @@ namespace BrickManager {
         GUdev.Client udev_client;
         BluetoothController bluetooth_controller;
 
+        public class WifiController : Object, IBrickManagerModule {
+            weak WifiWindow wifi_window;
+
+            public BrickManagerWindow start_window { get { return wifi_window; } }
+
+            public WifiController (WifiWindow wifi_window) {
+                this.wifi_window = wifi_window;
+            }
+        }
+
+        public WifiController wifi_controller;
+
         public BrickManagerWindow start_window { get { return status_window; } }
 
         public bool has_tether { get; set; }
@@ -58,10 +72,13 @@ namespace BrickManager {
         public NetworkController () {
             technology_map = new Gee.HashMap<weak Technology, weak CheckboxMenuItem> ();
             service_map = new Gee.HashMap<weak Service, weak NetworkConnectionMenuItem> ();
+            wifi_service_map = new Gee.HashMap<weak Service, weak WifiMenuItem> ();
             status_window = new NetworkStatusWindow () {
                 loading = true
             };
-            connections_window = new NetworkConnectionsWindow ();
+            connections_window = new NetworkConnectionsWindow () {
+                loading = true
+            };
             status_window.network_connections_selected.connect (() =>
                 connections_window.show ());
             connections_window.scan_wifi_selected.connect (() =>
@@ -70,6 +87,13 @@ namespace BrickManager {
                 on_connections_window_connection_selected);
             network_status_bar_item = new NetworkStatusBarItem ();
             wifi_status_bar_item = new WifiStatusBarItem ();
+
+            wifi_window = new WifiWindow () {
+                loading = true,
+                available = false
+            };
+            wifi_window.connection_selected.connect (on_wifi_connection_selected);
+            wifi_controller = new WifiController (wifi_window);
 
             status_window.tethering_selected.connect (() => {
                 tethering_window = new TetheringWindow ();
@@ -110,6 +134,7 @@ namespace BrickManager {
                             init_async.end (res);
                             status_window.loading = false;
                             connections_window.loading = false;
+                            wifi_window.loading = false;
                         } catch (IOError err) {
                             critical ("%s", err.message);
                         }
@@ -117,6 +142,7 @@ namespace BrickManager {
                 }, () => {
                     status_window.loading = true;
                     connections_window.loading = true;
+                    wifi_window.loading = true;
                     var service_keys = service_map.keys.to_array ();
                     foreach (var key in service_keys) {
                         key.removed ();
@@ -139,7 +165,7 @@ namespace BrickManager {
         }
 
         public void add_controller (IBrickManagerModule controller) {
-            status_window.add_controller (controller);
+            status_window.add_technology_window (controller.start_window);
             if (controller is BluetoothController) {
                 bluetooth_controller = (BluetoothController)controller;
                 if (manager != null) {
@@ -195,6 +221,8 @@ namespace BrickManager {
 
             if (technology.technology_type == "bluetooth")
                 bind_bluetooth_technology (technology);
+            if (technology.technology_type == "wifi")
+                bind_wifi_technology (technology);
 
             add_tethering_technology (technology);
         }
@@ -222,6 +250,31 @@ namespace BrickManager {
                     service_map[service] = menu_item;
                 }
                 connections_window.menu.add_menu_item (menu_item);
+
+                if (service.service_type == "wifi") {
+                    WifiMenuItem wifi_menu_item;
+                    if (wifi_service_map.has_key (service)) {
+                        wifi_menu_item = wifi_service_map[service];
+                        wifi_window.remove_menu_item (wifi_menu_item);
+                    } else {
+                        wifi_menu_item = new WifiMenuItem ();
+                        wifi_menu_item.represented_object = service;
+                        service.bind_property ("state", wifi_menu_item, "connected",
+                            BindingFlags.SYNC_CREATE, transform_service_state_to_connected_bool);
+                        service.bind_property ("name", wifi_menu_item, "connection-name",
+                            BindingFlags.SYNC_CREATE);
+                        service.bind_property ("security", wifi_menu_item, "security",
+                            BindingFlags.SYNC_CREATE, transform_service_security_array_to_enum);
+                        service.bind_property ("strength", wifi_menu_item, "signal-strength",
+                            BindingFlags.SYNC_CREATE);
+                        service.removed.connect (() => {
+                            wifi_window.remove_menu_item (wifi_menu_item);
+                            wifi_service_map.unset (service);
+                        });
+                        wifi_service_map[service] = wifi_menu_item;
+                    }
+                    wifi_window.add_menu_item (wifi_menu_item);
+                }
 
                 // Show the IP address of the primary service in the status bar
                 // The list is ordered, so the first one is the one we want
@@ -253,6 +306,28 @@ namespace BrickManager {
             if (bluetooth_controller == null)
                 return;
             bluetooth_controller.bind_powered (technology, "powered");
+        }
+
+        void bind_wifi_technology (Technology technology) {
+            wifi_window.available = true;
+            technology.bind_property ("powered", wifi_window, "powered",
+                BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            var handler_id = wifi_window.scan_selected.connect (() => {
+                wifi_window.scanning = true;
+                technology.scan.begin ((obj, res) => {
+                    try {
+                        technology.scan.end (res);
+                    } catch (Error err) {
+                        var dialog = new MessageDialog ("Error", err.message);
+                        dialog.show ();
+                    }
+                    wifi_window.scanning = false;
+                });
+            });
+            technology.removed.connect (() => {
+                wifi_window.available = false;
+                wifi_window.disconnect (handler_id);
+            });
         }
 
         void bind_tether_address_to_status_bar () {
@@ -332,6 +407,88 @@ namespace BrickManager {
                 }
             });
             properties_window.show ();
+        }
+
+        void on_wifi_connection_selected (Object represented_object) {
+            var service = (Service)represented_object;
+            var info_window = new WifiInfoWindow (service.name);
+            service.bind_property ("state", info_window, "status",
+                BindingFlags.SYNC_CREATE, transform_service_state_to_string);
+            service.bind_property ("strength", info_window, "signal-strength",
+                BindingFlags.SYNC_CREATE);
+            service.bind_property ("security", info_window, "security",
+                BindingFlags.SYNC_CREATE, transform_service_security_array_to_string);
+            service.bind_property ("ipv4", info_window, "address",
+                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
+            service.bind_property ("state", info_window, "action",
+                BindingFlags.SYNC_CREATE, transform_service_state_to_wifi_action);
+            service.bind_property ("favorite", info_window, "can-forget",
+                BindingFlags.SYNC_CREATE);
+            info_window.action_selected.connect (() => handle_wifi_action (service));
+            info_window.forget_selected.connect (() => {
+                service.remove.begin ((obj, res) => {
+                    try {
+                        service.remove.end (res);
+                    } catch (Error err) {
+                        var dialog = new MessageDialog ("Error", err.message);
+                        dialog.show ();
+                    }
+                });
+            });
+            info_window.network_connection_selected.connect (() =>
+                on_connections_window_connection_selected (service));
+
+            weak Window weak_info_window = info_window;
+            var handler_id = service.removed.connect (() => {
+                var dialog = new MessageDialog ("Wi-Fi",
+                    "%s is no longer available.".printf (service.name));
+                dialog.show ();
+                weak_info_window.close ();
+            });
+            info_window.closed.connect (() => {
+                service.disconnect (handler_id);
+            });
+
+            info_window.show ();
+        }
+
+        void handle_wifi_action (Service service) {
+            switch (service.state) {
+            case ServiceState.IDLE:
+                service.connect_service.begin (true, (obj, res) => {
+                    try {
+                        service.connect_service.end (res);
+                    } catch (Error err) {
+                        var dialog = new MessageDialog ("Error", err.message);
+                        dialog.show ();
+                    }
+                });
+                break;
+            case ServiceState.FAILURE:
+                service.remove.begin ((obj, res) => {
+                    try {
+                        service.remove.end (res);
+                    } catch (Error err) {
+                        var dialog = new MessageDialog ("Error", err.message);
+                        dialog.show ();
+                    }
+                });
+                break;
+            case ServiceState.ASSOCIATION:
+            case ServiceState.CONFIGURATION:
+            case ServiceState.READY:
+            case ServiceState.DISCONNECT:
+            case ServiceState.ONLINE:
+                service.disconnect_service.begin ((obj, res) => {
+                    try {
+                        service.disconnect_service.end (res);
+                    } catch (Error err) {
+                        var dialog = new MessageDialog ("Error", err.message);
+                        dialog.show ();
+                    }
+                });
+                break;
+            }
         }
 
         async void on_properties_window_connect_requested (
@@ -526,18 +683,43 @@ namespace BrickManager {
             return true;
         }
 
+        bool transform_service_state_to_wifi_action (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            switch (source_value.get_enum ()) {
+            case ServiceState.IDLE:
+                target_value.set_string ("Connect");
+                break;
+            case ServiceState.FAILURE:
+                target_value.set_string ("Reset");
+                break;
+            case ServiceState.READY:
+            case ServiceState.ONLINE:
+            case ServiceState.DISCONNECT:
+                target_value.set_string ("Disconnect");
+                break;
+            case ServiceState.ASSOCIATION:
+            case ServiceState.CONFIGURATION:
+                target_value.set_string ("Cancel");
+                break;
+            default:
+                return false;
+            }
+            return true;
+        }
+
         bool transform_service_security_array_to_string (Binding binding,
             Value source_value, ref Value target_value)
         {
-            var array = (GenericArray<ServiceSecurity> )source_value.get_boxed ();
+            var array = (GenericArray<ServiceSecurity>)source_value.get_boxed ();
             if (array.length == 0) {
                 target_value.set_string ("N/A");
                 return true;
             }
             var builder = new StringBuilder ();
             var error = false;
-            array.foreach ((value) => {
-                switch (value) {
+            array.foreach ((item) => {
+                switch (item) {
                 case ServiceSecurity.NONE:
                     builder.append ("None");
                     break;
@@ -548,7 +730,7 @@ namespace BrickManager {
                     builder.append ("WPA/2 PSK");
                     break;
                 case ServiceSecurity.IEEE8021X:
-                    builder.append ("WPA EAP");
+                    builder.append ("EAP");
                     break;
                 case ServiceSecurity.WPS:
                     builder.append ("WPS");
@@ -563,6 +745,41 @@ namespace BrickManager {
                 return false;
             builder.truncate (builder.len - 2);
             target_value.set_string (builder.str);
+            return true;
+        }
+
+        bool transform_service_security_array_to_enum (Binding binding,
+            Value source_value, ref Value target_value)
+        {
+            var array = (GenericArray<ServiceSecurity>)source_value.get_boxed ();
+            var has_none = false;
+            var has_secured = false;
+            var has_wps = false;
+            array.foreach ((item) => {
+                switch (item) {
+                case ServiceSecurity.NONE:
+                    has_none = true;
+                    break;
+                case ServiceSecurity.WEP:
+                case ServiceSecurity.PSK:
+                case ServiceSecurity.IEEE8021X:
+                    has_secured = true;
+                    break;
+                case ServiceSecurity.WPS:
+                    has_wps = true;
+                    break;
+                }
+            });
+            // Not sure if it is possible to get more than one of these values
+            // true at the same time or not, but in case it is, the order matters
+            if (has_wps)
+                target_value.set_enum (WifiSecurity.WPS);
+            else if (has_secured)
+                target_value.set_enum (WifiSecurity.SECURED);
+            else if (has_none)
+                target_value.set_enum (WifiSecurity.OPEN);
+            else
+                return false;
             return true;
         }
 

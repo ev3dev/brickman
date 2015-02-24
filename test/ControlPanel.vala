@@ -50,8 +50,9 @@ namespace BrickManager {
             MAIN,
             CONNECTIONS,
             CONNECTION_INFO,
-            TETHERING,
-            BATTERY
+            WIFI,
+            WIFI_INFO,
+            TETHERING
         }
 
         enum PortsColumn {
@@ -89,6 +90,16 @@ namespace BrickManager {
             PRESENT,
             NAME,
             TYPE,
+            STRENGTH,
+            USER_DATA,
+            COLUMN_COUNT;
+        }
+
+        enum NetworkWifiColumn {
+            PRESENT,
+            CONNECTED,
+            NAME,
+            SECURITY,
             STRENGTH,
             USER_DATA,
             COLUMN_COUNT;
