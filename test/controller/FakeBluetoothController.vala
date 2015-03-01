@@ -173,10 +173,12 @@ namespace BrickManager {
 
             /* Agent */
 
+            var bluetooth_agent_name_entry = builder.get_object ("bluetooth-agent-name-entry") as Gtk.Entry;
+            var bluetooth_agent_passkey_entry = builder.get_object ("bluetooth-agent-passkey-entry") as Gtk.Entry;
             var agent = new BlueZ5Agent ();
             (builder.get_object ("bluetooth-agent-request-pin-code-button") as Gtk.Button)
                 .clicked.connect (() => {
-                    var path = new ObjectPath ("My Device");
+                    var path = new ObjectPath (bluetooth_agent_name_entry.text);
                     agent.request_pin_code.begin (path, (obj, res) => {
                         try {
                             var pin_code = agent.request_pin_code.end (res);
@@ -189,12 +191,11 @@ namespace BrickManager {
             (builder.get_object ("bluetooth-agent-display-pin-code-button") as Gtk.Button)
                 .clicked.connect (() => {
                     var path = new ObjectPath ("My Device");
-                    // TODO: add UI to change this value.
-                    agent.display_pin_code (path, "000000");
+                    agent.display_pin_code (path, bluetooth_agent_passkey_entry.text);
                 });
             (builder.get_object ("bluetooth-agent-request-passkey-button") as Gtk.Button)
                 .clicked.connect (() => {
-                    var path = new ObjectPath ("My Device");
+                    var path = new ObjectPath (bluetooth_agent_name_entry.text);
                     agent.request_passkey.begin (path, (obj, res) => {
                         try {
                             var pin_code = agent.request_passkey.end (res);
@@ -206,15 +207,15 @@ namespace BrickManager {
                 });
             (builder.get_object ("bluetooth-agent-display-passkey-button") as Gtk.Button)
                 .clicked.connect (() => {
-                    var path = new ObjectPath ("My Device");
-                    // TODO: add UI to change these values.
-                    agent.display_passkey (path, 0, 0);
+                    var path = new ObjectPath (bluetooth_agent_name_entry.text);
+                    var passkey = int.parse (bluetooth_agent_passkey_entry.text);
+                    agent.display_passkey (path, passkey, 0);
                 });
             (builder.get_object ("bluetooth-agent-request-confirmation-button") as Gtk.Button)
                 .clicked.connect (() => {
-                    var path = new ObjectPath ("My Device");
-                    // TODO: add UI to change these values.
-                    agent.request_confirmation.begin (path, 0, (obj, res) => {
+                    var path = new ObjectPath (bluetooth_agent_name_entry.text);
+                    var passkey = int.parse (bluetooth_agent_passkey_entry.text);
+                    agent.request_confirmation.begin (path, passkey, (obj, res) => {
                         try {
                             agent.request_confirmation.end (res);
                             show_message ("Accepted.");
@@ -225,8 +226,7 @@ namespace BrickManager {
                 });
             (builder.get_object ("bluetooth-agent-request-authorization-button") as Gtk.Button)
                 .clicked.connect (() => {
-                    var path = new ObjectPath ("My Device");
-                    // TODO: add UI to change these values.
+                    var path = new ObjectPath (bluetooth_agent_name_entry.text);
                     agent.request_authorization.begin (path, (obj, res) => {
                         try {
                             agent.request_authorization.end (res);
@@ -238,8 +238,8 @@ namespace BrickManager {
                 });
             (builder.get_object ("bluetooth-agent-authorize-service-button") as Gtk.Button)
                 .clicked.connect (() => {
-                    var path = new ObjectPath ("My Device");
-                    // TODO: add UI to change these values.
+                    var path = new ObjectPath (bluetooth_agent_name_entry.text);
+                    // TODO: add UI to change UUID.
                     agent.authorize_service.begin (path, UUID.SerialPort, (obj, res) => {
                         try {
                             agent.authorize_service.end (res);
@@ -254,8 +254,8 @@ namespace BrickManager {
         }
 
         void show_message (string message) {
-            var dialog = new Gtk.MessageDialog (null, Gtk.DialogFlags.MODAL,
-                Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
+            var dialog = new Gtk.MessageDialog (EV3devKitDesktop.GtkApp.main_window,
+                Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
             dialog.response.connect ((id) => dialog.destroy ());
             dialog.show ();
         }
