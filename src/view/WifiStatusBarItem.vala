@@ -34,6 +34,7 @@ namespace BrickManager {
         public bool connected { get; set; }
 
         public WifiStatusBarItem () {
+            visible = false;
             string file;
             try {
                 file = "wifi12x9.png";

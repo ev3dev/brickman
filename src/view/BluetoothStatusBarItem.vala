@@ -34,6 +34,7 @@ namespace BrickManager {
         public bool connected { get; set; }
 
         public BluetoothStatusBarItem () {
+            visible = false;
             string file;
             try {
                 file = "bluetooth-connected7x9.png";
@@ -43,7 +44,6 @@ namespace BrickManager {
             } catch (Error err) {
                 critical ("Error loading icon '%s'.", file);
             }
-            notify["powered"].connect (redraw);
             notify["connected"].connect (redraw);
         }
 
