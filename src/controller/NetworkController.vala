@@ -538,7 +538,7 @@ namespace BrickManager {
                                     current.ifa_addr.sa_data[3],
                                     current.ifa_addr.sa_data[4],
                                     current.ifa_addr.sa_data[5]);
-                                if (current.ifa_netmask != null && current.ifa_addr.sa_family == Posix.AF_INET) {
+                                if (current.ifa_netmask != null && current.ifa_netmask.sa_family == Posix.AF_INET) {
                                     tether_netmask = "%d.%d.%d.%d".printf (
                                         current.ifa_netmask.sa_data[2],
                                         current.ifa_netmask.sa_data[3],
