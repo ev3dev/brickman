@@ -40,7 +40,7 @@ namespace BrickManager {
             get { return _paired; }
             set {
                  _paired = value;
-                 update_connect_button ();
+                 update_buttons ();
             }
         }
 
@@ -49,13 +49,17 @@ namespace BrickManager {
             get { return _connected; }
             set {
                  _connected = value;
-                 update_connect_button ();
+                 update_buttons ();
             }
         }
 
+        bool _has_network;
         public bool has_network {
-            get { return network_button.visible; }
-            set { network_button.visible = value; }
+            get { return _has_network; }
+            set {
+                _has_network = value;
+                 update_buttons ();
+            }
         }
 
         public signal void network_selected ();
@@ -92,9 +96,10 @@ namespace BrickManager {
             button_hbox.add (remove_button);
         }
 
-        void update_connect_button () {
+        void update_buttons () {
             ((Label)connect_button.child).text = _paired ?
                 (_connected ? "Disconnect" : "Connect") : "Pair";
+            network_button.visible = _paired && _has_network;
         }
 
         void focus_none () {
