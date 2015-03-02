@@ -273,9 +273,7 @@ namespace BrickManager {
 
                 // Show the IP address of the primary service in the status bar
                 // The list is ordered, so the first one is the one we want
-                if (status_bar_item_binding == null
-                    && (service.state == ServiceState.READY || service.state == ServiceState.ONLINE))
-                {
+                if (status_bar_item_binding == null) {
                     status_bar_item_binding = service.bind_property (
                         "ipv4", network_status_bar_item, "text",
                         BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
@@ -294,6 +292,7 @@ namespace BrickManager {
                 status_bar_item_binding.unbind ();
                 status_bar_item_binding = null;
                 status_bar_item_binding_is_tether = false;
+                network_status_bar_item.text = "";
             }
         }
 
