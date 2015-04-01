@@ -1,3 +1,13 @@
+brickman (0.5.1) testing; urgency=medium
+
+  * Add entries to control panel for setting values displayed by bluetooth agent dialogs.
+  * Make Wi-Fi and Bluetooth status bar indicators invisible by default.
+  * Fix potential issue with tether netmask.
+  * Don't check for connected status when binding network status bar text.
+  * Hide network connection button when bluetooth device is not paired.
+
+ -- David Lechner <david@lechnology.com>  Tue, 31 Mar 2015 20:06:28 -0500
+
 brickman (0.5.0) testing; urgency=medium
 
   * Added splash screen.
