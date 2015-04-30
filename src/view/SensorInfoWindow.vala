@@ -28,13 +28,6 @@ namespace BrickManager {
         const int SPACING = 4;
 
         Label mode_value_label;
-        Label address_value_label;
-
-        public string address {
-            // TODO: only show address if there is one.
-            get { return address_value_label.text; }
-            set { address_value_label.text = value; }
-        }
 
         public string mode {
             get { return mode_value_label.text; }
@@ -72,12 +65,6 @@ namespace BrickManager {
             vbox.add (port_name_label);
             var port_name_value_label = new Label (port_name);
             vbox.add (port_name_value_label);
-            var address_label = new Label ("Address:") {
-                margin_top = SPACING
-            };
-            vbox.add (address_label);
-            address_value_label = new Label ("???");
-            vbox.add (address_value_label);
             var mode_label = new Label ("Mode:") {
                 margin_top = SPACING
             };

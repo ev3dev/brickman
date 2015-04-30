@@ -203,12 +203,8 @@ namespace BrickManager {
                             dialog.show ();
                             return;
                         }
-                        Value address;
-                        sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.ADDRESS, out address);
                         Value mode;
                         sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.MODE, out mode);
-                        if (window.address != address.get_string ())
-                            window.address = address.dup_string ();
                         if (window.mode != mode.get_string ())
                             window.mode = mode.dup_string ();
                     });
@@ -268,9 +264,6 @@ namespace BrickManager {
             (builder.get_object ("sensors_present_cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     sensors_liststore, toggle, path, ControlPanel.SensorsColumn.PRESENT));
-            (builder.get_object ("sensors_address_cellrenderertext") as Gtk.CellRendererText)
-                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
-                    sensors_liststore, path, new_text, ControlPanel.SensorsColumn.ADDRESS));
             (builder.get_object ("sensors_modes_cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     sensors_liststore, path, new_text, ControlPanel.SensorsColumn.MODES));

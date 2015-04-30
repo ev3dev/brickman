@@ -413,8 +413,6 @@
       <column type="gchararray"/>
       <!-- column-name FW_VERSION -->
       <column type="gchararray"/>
-      <!-- column-name ADDRESS -->
-      <column type="gchararray"/>
       <!-- column-name POLL_MS -->
       <column type="gchararray"/>
       <!-- column-name MODES -->
@@ -440,13 +438,12 @@
         <col id="3" translatable="yes">in1</col>
         <col id="4" translatable="yes">n/a</col>
         <col id="5" translatable="yes">n/a</col>
-        <col id="6" translatable="yes">n/a</col>
-        <col id="7" translatable="yes">COL-REFLECT COL-AMBIENT COL-COLOR REF-RAW RGB-RAW COL-CAL</col>
-        <col id="8" translatable="yes">COL-COLOR</col>
-        <col id="9" translatable="yes">1</col>
-        <col id="10" translatable="yes">0</col>
-        <col id="11" translatable="yes">col</col>
-        <col id="12" translatable="yes">n/a</col>
+        <col id="6" translatable="yes">COL-REFLECT COL-AMBIENT COL-COLOR REF-RAW RGB-RAW COL-CAL</col>
+        <col id="7" translatable="yes">COL-COLOR</col>
+        <col id="8" translatable="yes">1</col>
+        <col id="9" translatable="yes">0</col>
+        <col id="10" translatable="yes">col</col>
+        <col id="11" translatable="yes">n/a</col>
       </row>
       <row>
         <col id="0">True</col>
@@ -455,13 +452,12 @@
         <col id="3" translatable="yes">in2</col>
         <col id="4" translatable="yes">n/a</col>
         <col id="5" translatable="yes">n/a</col>
-        <col id="6" translatable="yes">n/a</col>
-        <col id="7" translatable="yes">US-DIST-CM US-DIST-IN US-LISTEN US-SI-CM US-SI-IN US-DC-CM US-DC-IN</col>
-        <col id="8" translatable="yes">US-DIST-CM</col>
+        <col id="6" translatable="yes">US-DIST-CM US-DIST-IN US-LISTEN US-SI-CM US-SI-IN US-DC-CM US-DC-IN</col>
+        <col id="7" translatable="yes">US-DIST-CM</col>
+        <col id="8" translatable="yes">1</col>
         <col id="9" translatable="yes">1</col>
-        <col id="10" translatable="yes">1</col>
-        <col id="11" translatable="yes">cm</col>
-        <col id="12" translatable="yes">n/a</col>
+        <col id="10" translatable="yes">cm</col>
+        <col id="11" translatable="yes">n/a</col>
       </row>
       <row>
         <col id="0">True</col>
@@ -469,14 +465,13 @@
         <col id="2" translatable="yes">lego-nxt-us</col>
         <col id="3" translatable="yes">in3</col>
         <col id="4" translatable="yes">v1.0</col>
-        <col id="5" translatable="yes">0x01</col>
-        <col id="6" translatable="yes">100</col>
-        <col id="7" translatable="yes">US-DIST-CM US-DIST-IN US-SI-CM US-SI-IN US-LISTEN</col>
-        <col id="8" translatable="yes">DIST-CM</col>
-        <col id="9" translatable="yes">1</col>
-        <col id="10" translatable="yes">0</col>
-        <col id="11" translatable="yes">cm</col>
-        <col id="12" translatable="yes">n/a</col>
+        <col id="5" translatable="yes">100</col>
+        <col id="6" translatable="yes">US-DIST-CM US-DIST-IN US-SI-CM US-SI-IN US-LISTEN</col>
+        <col id="7" translatable="yes">DIST-CM</col>
+        <col id="8" translatable="yes">1</col>
+        <col id="9" translatable="yes">0</col>
+        <col id="10" translatable="yes">cm</col>
+        <col id="11" translatable="yes">n/a</col>
       </row>
       <row>
         <col id="0">False</col>
@@ -487,11 +482,10 @@
         <col id="5" translatable="yes">n/a</col>
         <col id="6" translatable="yes">n/a</col>
         <col id="7" translatable="yes">n/a</col>
-        <col id="8" translatable="yes">n/a</col>
-        <col id="9" translatable="yes">1</col>
-        <col id="10" translatable="yes">0</col>
+        <col id="8" translatable="yes">1</col>
+        <col id="9" translatable="yes">0</col>
+        <col id="10" translatable="yes">n/a</col>
         <col id="11" translatable="yes">n/a</col>
-        <col id="12" translatable="yes">n/a</col>
       </row>
     </data>
   </object>
@@ -753,19 +747,6 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="sensors_address_treeviewcolumn">
-                                <property name="title" translatable="yes">Addr</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="sensors_address_cellrenderertext">
-                                    <property name="editable">True</property>
-                                  </object>
-                                  <attributes>
-                                    <attribute name="text">5</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
                               <object class="GtkTreeViewColumn" id="sensors_poll_ms_treeviewcolumn">
                                 <property name="title" translatable="yes">Poll</property>
                                 <child>
@@ -773,7 +754,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">6</attribute>
+                                    <attribute name="text">5</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -786,7 +767,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">7</attribute>
+                                    <attribute name="text">6</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -799,7 +780,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">8</attribute>
+                                    <attribute name="text">7</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -812,7 +793,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">9</attribute>
+                                    <attribute name="text">8</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -825,7 +806,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">10</attribute>
+                                    <attribute name="text">9</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -838,7 +819,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">11</attribute>
+                                    <attribute name="text">10</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -851,7 +832,7 @@
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
-                                    <attribute name="text">12</attribute>
+                                    <attribute name="text">11</attribute>
                                   </attributes>
                                 </child>
                               </object>

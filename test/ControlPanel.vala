@@ -74,7 +74,6 @@ namespace BrickManager {
             DRIVER_NAME,
             PORT_NAME,
             FW_VERSION,
-            ADDRESS,
             POLL_MS,
             MODES,
             MODE,

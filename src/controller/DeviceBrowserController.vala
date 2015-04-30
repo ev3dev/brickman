@@ -170,10 +170,7 @@ namespace BrickManager {
                 sensor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new SensorInfoWindow (sensor.driver_name, sensor.device_name,
-                    sensor.port_name, sensor.commands != null)
-                {
-                    address = sensor.address
-                };
+                    sensor.port_name, sensor.commands != null);
                 sensor.bind_property ("mode", window, "mode", BindingFlags.SYNC_CREATE);
                 var watch_values_hander_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to support showing more than one value?

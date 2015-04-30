@@ -141,17 +141,35 @@ namespace BrickManager {
         }
 
         public void stop_all_motors () {
-            device_manager.get_tacho_motors ().foreach ((motor) =>
-                motor.run = 0);
-            device_manager.get_dc_motors ().foreach ((motor) => {
+            device_manager.get_tacho_motors ().foreach ((motor) => {
                 try {
-                    motor.send_command ("coast");
+                    var supported_commands = motor.commands;
+                    if ("reset" in supported_commands) {
+                        motor.send_command ("reset");
+                    } else if ("stop" in supported_commands) {
+                        // TODO: Might need to check if "coast" is supported
+                        motor.set_stop_command ("coast");
+                        motor.send_command ("stop");
+                    }
                 } catch (Error e) {
-                    critical (e.message);
+                    critical ("%s", e.message);
                 }
             });
-            device_manager.get_servo_motors ().foreach ((motor) =>
-                motor.command = "float");
+            device_manager.get_dc_motors ().foreach ((motor) => {
+                try {
+                    motor.set_stop_command ("coast");
+                    motor.send_command ("stop");
+                } catch (Error e) {
+                    critical ("%s", e.message);
+                }
+            });
+            device_manager.get_servo_motors ().foreach ((motor) => {
+                try {
+                    motor.send_command ("float");
+                } catch (Error e) {
+                    critical ("%s", e.message);
+                }
+            });
         }
 
         /**
