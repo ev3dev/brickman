@@ -44,6 +44,8 @@ namespace BrickManager {
 
         public signal void show_network_requested (string mac_address);
 
+        internal uint adapter_count { get; set; default = 0; }
+
         public BluetoothController () {
             adapter_list = new Gee.LinkedList<Adapter> ();
             main_window = new BluetoothWindow () {
@@ -176,6 +178,7 @@ namespace BrickManager {
 
         void on_adapter_added (Adapter adapter) {
             adapter_list.add (adapter);
+            adapter_count++;
             // make the new adapter the selected adapter unless it is the built-in adapter.
             if (selected_adapter == null
                     || selected_adapter.address == built_in_adapter_address)
@@ -186,6 +189,7 @@ namespace BrickManager {
             // if the selected adapter is removed, replace it with the first adapter
             // that is not the built-in adapter.
             adapter_list.remove (adapter);
+            adapter_count--;
             if (selected_adapter == adapter) {
                 set_selected_adapter (null);
                 foreach (var a in adapter_list) {
@@ -206,6 +210,10 @@ namespace BrickManager {
                 BindingFlags.SYNC_CREATE);
             device.bind_property ("connected", menu_item, "connected",
                 BindingFlags.SYNC_CREATE);
+            device.adapter.bind_property ("alias", menu_item, "adapter",
+                BindingFlags.SYNC_CREATE);
+            bind_property ("adapter-count", menu_item, "show-adapter",
+                BindingFlags.SYNC_CREATE, transform_adapter_count_to_show_adapter);
             menu_item.represented_object = device;
             menu_item.button.pressed.connect (() => {
                 var device_window = new BluetoothDeviceWindow () {
@@ -307,6 +315,11 @@ namespace BrickManager {
                 var dialog = new MessageDialog ("Error", err.message);
                 dialog.show ();
             }
+        }
+
+        bool transform_adapter_count_to_show_adapter (Binding binding, Value source, ref Value target) {
+            target = adapter_count > 1;
+            return true;
         }
 
         bool transform_uuids_to_has_network (Binding binding, Value source, ref Value target) {
