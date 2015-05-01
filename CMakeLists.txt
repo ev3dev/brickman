@@ -11,7 +11,7 @@ set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/${CMAKE_PROJECT_NAME}")
 set (EXEC_NAME "brickman")
 set (RELEASE_NAME "Brick Manager")
-set (VERSION "0.5.1")
+set (VERSION "0.6.0")
 
 # Comment this out to enable C compiler warnings
 add_definitions (-w)

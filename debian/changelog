@@ -1,3 +1,12 @@
+brickman (0.6.0) stable; urgency=medium
+
+  * Update for ev3dev kernel ABI 3 and 4 changes.
+  * Show adapter in Bluetooth device name when there is more than one adapter present.
+  * Fix memory leak caused by reference cycles with network service objects.
+  * Add Motor browser.
+
+ -- David Lechner <david@lechnology.com>  Fri, 01 May 2015 12:09:21 -0500
+
 brickman (0.5.1) testing; urgency=medium
 
   * Add entries to control panel for setting values displayed by bluetooth agent dialogs.
