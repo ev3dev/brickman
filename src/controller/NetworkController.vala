@@ -238,9 +238,13 @@ namespace BrickManager {
                         BindingFlags.SYNC_CREATE, transform_service_state_to_connected_bool);
                     service.bind_property ("name", menu_item, "connection-name",
                         BindingFlags.SYNC_CREATE);
+                    // menu_item has reference to service, so using weak ref
+                    // to break reference cycle.
+                    weak NetworkConnectionMenuItem weak_menu_item = menu_item;
+                    weak Service weak_service = service;
                     service.removed.connect (() => {
-                        connections_window.menu.remove_menu_item (menu_item);
-                        service_map.unset (service);
+                        connections_window.menu.remove_menu_item (weak_menu_item);
+                        service_map.unset (weak_service);
                     });
                     service_map[service] = menu_item;
                 }
@@ -262,9 +266,13 @@ namespace BrickManager {
                             BindingFlags.SYNC_CREATE, transform_service_security_array_to_enum);
                         service.bind_property ("strength", wifi_menu_item, "signal-strength",
                             BindingFlags.SYNC_CREATE);
+                        // wifi_menu_item has reference to service, so using
+                        // weak ref to break reference cycle
+                        weak WifiMenuItem weak_wifi_menu_item = wifi_menu_item;
+                        weak Service weak_service = service;
                         service.removed.connect (() => {
-                            wifi_window.remove_menu_item (wifi_menu_item);
-                            wifi_service_map.unset (service);
+                            wifi_window.remove_menu_item (weak_wifi_menu_item);
+                            wifi_service_map.unset (weak_service);
                         });
                         wifi_service_map[service] = wifi_menu_item;
                     }
