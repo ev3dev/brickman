@@ -30,6 +30,7 @@ namespace BrickManager {
         DeviceBrowserWindow device_browser_window;
         PortBrowserWindow? port_browser_window;
         SensorBrowserWindow? sensor_browser_window;
+        MotorBrowserWindow? motor_browser_window;
 
         public BrickManagerWindow start_window { get { return device_browser_window; } }
 
@@ -40,6 +41,8 @@ namespace BrickManager {
                 on_ports_menu_item_selected);
             device_browser_window.sensors_menu_item_selected.connect (
                 on_sensors_menu_item_selected);
+            device_browser_window.motors_menu_item_selected.connect (
+                on_motors_menu_item_selected);
         }
 
         void on_ports_menu_item_selected () {
@@ -150,6 +153,8 @@ namespace BrickManager {
             return true;
         }
 
+
+
         void on_sensors_menu_item_selected () {
             sensor_browser_window = new SensorBrowserWindow ();
             var sensor_added_handler_id = manager.sensor_added.connect (on_sensor_added);
@@ -247,8 +252,8 @@ namespace BrickManager {
                 ulong notify_connected_handler_id = 0;
                 ulong window_closed_handler_id = 0;
                 notify_connected_handler_id = sensor.notify["connected"].connect (() => {
-                    var dialog = new MessageDialog ("sensor Removed",
-                        "sensor %s on %s was disconnected.".printf (sensor.driver_name,
+                    var dialog = new MessageDialog ("Sensor Removed",
+                        "Sensor %s on %s was disconnected.".printf (sensor.driver_name,
                         sensor.port_name));
                     dialog.show ();
                     window.close ();
@@ -276,6 +281,161 @@ namespace BrickManager {
                 menu_item.button.disconnect (button_pressed_handler_id);
                 sensor.disconnect (notify_connected_handler_id);
                 sensor_browser_window.disconnect (window_closed_handler_id);
+            });
+        }
+
+        void on_motors_menu_item_selected () {
+            motor_browser_window = new MotorBrowserWindow ();
+            var tacho_motor_added_handler_id = manager.tacho_motor_added.connect (on_tacho_motor_added);
+            manager.get_tacho_motors ().foreach (on_tacho_motor_added);
+            var dc_motor_added_handler_id = manager.dc_motor_added.connect (on_dc_motor_added);
+            manager.get_dc_motors ().foreach (on_dc_motor_added);
+            var servo_motor_added_handler_id = manager.servo_motor_added.connect (on_servo_motor_added);
+            manager.get_servo_motors ().foreach (on_servo_motor_added);
+            // connect_after ensures that this signal handler is called after
+            // the others that are added in on_tacho_mootr_added (). This is important
+            // so that we don't set motor_browser_window = null before all of
+            // the other signal handlers have run.
+            motor_browser_window.closed.connect_after (() => {
+                manager.disconnect (tacho_motor_added_handler_id);
+                manager.disconnect (dc_motor_added_handler_id);
+                manager.disconnect (servo_motor_added_handler_id);
+                motor_browser_window = null;
+            });
+            motor_browser_window.show ();
+        }
+
+        void on_tacho_motor_added (TachoMotor motor) {
+            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
+                motor.port_name));
+            var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
+                var window = new MotorInfoWindow (motor.driver_name, "tacho-motor",
+                    motor.device_name, motor.port_name, true);
+                var watch_values_hander_id = window.watch_values_selected.connect (() => {
+                    // TODO: Do we want to also show speed?
+                    var value_dialog = new MotorValueDialog ();
+                    var value_timout_id = Timeout.add (250, () => {
+                        // TODO: Convert to degrees
+                        value_dialog.value_text = "%d".printf (motor.position);
+                        return Source.CONTINUE;
+                    });
+                    var notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                        value_dialog.close ();
+                    });
+                    ulong dialog_closed_handler_id = 0;
+                    dialog_closed_handler_id = value_dialog.closed.connect (() => {
+                        Source.remove (value_timout_id);
+                        motor.disconnect (notify_connected_handler_id);
+                        value_dialog.disconnect (dialog_closed_handler_id);
+                    });
+                    value_dialog.show ();
+                });
+                ulong notify_connected_handler_id = 0;
+                ulong window_closed_handler_id = 0;
+                notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                    var dialog = new MessageDialog ("Motor Removed",
+                        "Motor %s on %s was disconnected.".printf (motor.driver_name,
+                        motor.port_name));
+                    dialog.show ();
+                    window.close ();
+                });
+                window_closed_handler_id = window.closed.connect (() => {
+                    window.disconnect (watch_values_hander_id);
+                    motor.disconnect (notify_connected_handler_id);
+                    window.disconnect (window_closed_handler_id);
+                });
+                window.show ();
+            });
+            // TODO: figure out how to sort menu items
+            motor_browser_window.menu.add_menu_item (menu_item);
+            ulong notify_connected_handler_id = 0;
+            ulong window_closed_handler_id = 0;
+            notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                motor_browser_window.menu.remove_menu_item (menu_item);
+                menu_item.button.disconnect (button_pressed_handler_id);
+                motor.disconnect (notify_connected_handler_id);
+                motor_browser_window.disconnect (window_closed_handler_id);
+            });
+            window_closed_handler_id = motor_browser_window.closed.connect (() => {
+                menu_item.button.disconnect (button_pressed_handler_id);
+                motor.disconnect (notify_connected_handler_id);
+                motor_browser_window.disconnect (window_closed_handler_id);
+            });
+        }
+
+        void on_dc_motor_added (DCMotor motor) {
+            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
+                motor.port_name));
+            var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
+                var window = new MotorInfoWindow (motor.driver_name, "dc-motor",
+                    motor.device_name, motor.port_name, false);
+                ulong notify_connected_handler_id = 0;
+                ulong window_closed_handler_id = 0;
+                notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                    var dialog = new MessageDialog ("Motor Removed",
+                        "Motor %s on %s was disconnected.".printf (motor.driver_name,
+                        motor.port_name));
+                    dialog.show ();
+                    window.close ();
+                });
+                window_closed_handler_id = window.closed.connect (() => {
+                    motor.disconnect (notify_connected_handler_id);
+                    window.disconnect (window_closed_handler_id);
+                });
+                window.show ();
+            });
+            // TODO: figure out how to sort menu items
+            motor_browser_window.menu.add_menu_item (menu_item);
+            ulong notify_connected_handler_id = 0;
+            ulong window_closed_handler_id = 0;
+            notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                motor_browser_window.menu.remove_menu_item (menu_item);
+                menu_item.button.disconnect (button_pressed_handler_id);
+                motor.disconnect (notify_connected_handler_id);
+                motor_browser_window.disconnect (window_closed_handler_id);
+            });
+            window_closed_handler_id = motor_browser_window.closed.connect (() => {
+                menu_item.button.disconnect (button_pressed_handler_id);
+                motor.disconnect (notify_connected_handler_id);
+                motor_browser_window.disconnect (window_closed_handler_id);
+            });
+        }
+
+        void on_servo_motor_added (ServoMotor motor) {
+            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
+                motor.port_name));
+            var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
+                var window = new MotorInfoWindow (motor.driver_name, "servo-motor",
+                    motor.device_name, motor.port_name, false);
+                ulong notify_connected_handler_id = 0;
+                ulong window_closed_handler_id = 0;
+                notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                    var dialog = new MessageDialog ("Motor Removed",
+                        "Motor %s on %s was disconnected.".printf (motor.driver_name,
+                        motor.port_name));
+                    dialog.show ();
+                    window.close ();
+                });
+                window_closed_handler_id = window.closed.connect (() => {
+                    motor.disconnect (notify_connected_handler_id);
+                    window.disconnect (window_closed_handler_id);
+                });
+                window.show ();
+            });
+            // TODO: figure out how to sort menu items
+            motor_browser_window.menu.add_menu_item (menu_item);
+            ulong notify_connected_handler_id = 0;
+            ulong window_closed_handler_id = 0;
+            notify_connected_handler_id = motor.notify["connected"].connect (() => {
+                motor_browser_window.menu.remove_menu_item (menu_item);
+                menu_item.button.disconnect (button_pressed_handler_id);
+                motor.disconnect (notify_connected_handler_id);
+                motor_browser_window.disconnect (window_closed_handler_id);
+            });
+            window_closed_handler_id = motor_browser_window.closed.connect (() => {
+                menu_item.button.disconnect (button_pressed_handler_id);
+                motor.disconnect (notify_connected_handler_id);
+                motor_browser_window.disconnect (window_closed_handler_id);
             });
         }
     }

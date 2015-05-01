@@ -30,6 +30,7 @@ namespace BrickManager {
 
         public signal void ports_menu_item_selected ();
         public signal void sensors_menu_item_selected ();
+        public signal void motors_menu_item_selected ();
 
         public DeviceBrowserWindow () {
             title ="Device Browser";
@@ -43,6 +44,10 @@ namespace BrickManager {
             sensors_menu_item.button.pressed.connect (() =>
                 sensors_menu_item_selected ());
             menu.add_menu_item (sensors_menu_item);
+            var motors_menu_item = new UI.MenuItem.with_right_arrow ("Motors");
+            motors_menu_item.button.pressed.connect (() =>
+                motors_menu_item_selected ());
+            menu.add_menu_item (motors_menu_item);
         }
     }
 }

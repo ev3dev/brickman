@@ -85,6 +85,17 @@ namespace BrickManager {
             COLUMN_COUNT;
         }
 
+        enum TachoMotorsColumn {
+            PRESENT,
+            DEVICE_NAME,
+            PORT_NAME,
+            DRIVER_NAME,
+            POLARITY,
+            RUNNING,
+            USER_DATA,
+            COLUMN_COUNT;
+        }
+
         enum NetworkConnectionsColumn {
             PRESENT,
             CONNECTED,

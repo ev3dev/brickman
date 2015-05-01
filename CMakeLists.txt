@@ -97,6 +97,9 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/DeviceBrowserWindow.vala
     src/view/FileBrowserWindow.vala
     src/view/HomeWindow.vala
+    src/view/MotorBrowserWindow.vala
+    src/view/MotorInfoWindow.vala
+    src/view/MotorValueDialog.vala
     src/view/NetworkConnectionMenuItem.vala
     src/view/NetworkConnectionsWindow.vala
     src/view/NetworkPropertiesWindow.vala

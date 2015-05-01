@@ -38,6 +38,7 @@ namespace BrickManager {
 
             var port_browser_window = new PortBrowserWindow ();
             var sensor_browser_window = new SensorBrowserWindow ();
+            var motor_browser_window = new MotorBrowserWindow ();
 
             /* device_browser_window setup */
 
@@ -46,6 +47,9 @@ namespace BrickManager {
             });
             device_browser_window.sensors_menu_item_selected.connect (() => {
                 sensor_browser_window.show ();
+            });
+            device_browser_window.motors_menu_item_selected.connect (() => {
+                motor_browser_window.show ();
             });
 
             /* Ports */
@@ -273,6 +277,106 @@ namespace BrickManager {
             (builder.get_object ("sensors_commands_cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     sensors_liststore, path, new_text, ControlPanel.SensorsColumn.COMMANDS));
+
+            /* Motors */
+
+            var tacho_motors_liststore = builder.get_object ("tacho-motors-liststore") as Gtk.ListStore;
+            tacho_motors_liststore.foreach ((model, path, iter) => {
+                Value present;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PRESENT, out present);
+                Value device_name;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DEVICE_NAME, out device_name);
+                Value driver_name;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
+                Value port_name;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
+                var menu_item = new UI.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
+                    port_name.get_string ()));
+                if (present.get_boolean ())
+                    motor_browser_window.menu.add_menu_item (menu_item);
+                //liststore USER_DATA is gpointer, so it does not take a ref
+                tacho_motors_liststore.set (iter, ControlPanel.TachoMotorsColumn.USER_DATA, menu_item.ref ());
+                menu_item.button.pressed.connect (() => {
+                    tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DEVICE_NAME, out device_name);
+                    tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
+                    tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
+                    Value running;
+                    tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.RUNNING, out running);
+                    var window = new MotorInfoWindow (driver_name.dup_string (), "tacho-motor",
+                        device_name.dup_string (), port_name.dup_string (), true);
+                    window.running = running.get_boolean ();
+                    var row_changed_handler_id = tacho_motors_liststore.row_changed.connect ((path, iter) => {
+                        tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PRESENT, out present);
+                        tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.RUNNING, out running);
+                        if (!present.get_boolean ()) {
+                            window.close ();
+                            var dialog = new MessageDialog ("Motor Removed",
+                                "motor %s on %s is no longer connected.".printf (driver_name.get_string (),
+                                    port_name.get_string ()));
+                            dialog.show ();
+                            return;
+                        }
+                        if (window.running != running.get_boolean ()) {
+                            window.running = running.get_boolean ();
+                        }
+                    });
+                    var watch_values_handler_id = window.watch_values_selected.connect (() => {
+                        var dialog = new MotorValueDialog ();
+                        // TODO: make this value adjustable in UI instead of using Timeout
+                        var value = 0;
+                        var timeout_id = Timeout.add (500, () => {
+                            dialog.value_text = "%d deg".printf (value++);
+                            return Source.CONTINUE;
+                        });
+                        dialog.closed.connect (() => Source.remove (timeout_id));
+                        dialog.show ();
+                    });
+                    ulong closed_handler_id = 0;
+                    closed_handler_id = window.closed.connect (() => {
+                        tacho_motors_liststore.disconnect (row_changed_handler_id);
+                        window.disconnect (watch_values_handler_id);
+                        window.disconnect (closed_handler_id);
+                    });
+                    tacho_motors_liststore.row_changed (path, iter);
+                    window.show ();
+                });
+                return false;
+            });
+            tacho_motors_liststore.row_changed.connect ((path, iter) => {
+                Value present;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PRESENT, out present);
+                Value driver_name;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
+                Value port_name;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
+                Value user_data;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.USER_DATA, out user_data);
+                var menu_item = (UI.MenuItem)user_data.get_pointer ();
+                if (motor_browser_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
+                    motor_browser_window.menu.remove_menu_item (menu_item);
+                else if (!motor_browser_window.menu.has_menu_item (menu_item) && present.get_boolean ())
+                    motor_browser_window.menu.add_menu_item (menu_item);
+                menu_item.label.text = "%s on %s".printf (driver_name.get_string (),
+                    port_name.get_string ());
+            });
+            (builder.get_object ("tacho-motor-present-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    tacho_motors_liststore, toggle, path, ControlPanel.TachoMotorsColumn.PRESENT));
+            (builder.get_object ("tacho-motor-device-name-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.DEVICE_NAME));
+            (builder.get_object ("tacho-motor-port-name-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.PORT_NAME));
+            (builder.get_object ("tacho-motor-driver-name-cellrenderertext") as Gtk.CellRendererText)
+                .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
+                    tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.DRIVER_NAME));
+            (builder.get_object ("tacho-motor-polarity-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    tacho_motors_liststore, toggle, path, ControlPanel.TachoMotorsColumn.POLARITY));
+            (builder.get_object ("tacho-motor-running-cellrenderertoggle") as Gtk.CellRendererToggle)
+                .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
+                    tacho_motors_liststore, toggle, path, ControlPanel.TachoMotorsColumn.RUNNING));
         }
     }
 }

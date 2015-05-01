@@ -99,7 +99,7 @@
     </data>
   </object>
   <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
-  <object class="GtkListStore" id="dc_motors_liststore"/>
+  <object class="GtkListStore" id="dc-motors-liststore"/>
   <object class="GtkListStore" id="leds_liststore"/>
   <object class="GtkListStore" id="networ-wifi-security-liststore">
     <columns>
@@ -489,8 +489,51 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="servo_motors_liststore"/>
-  <object class="GtkListStore" id="tacho_motors_liststore"/>
+  <object class="GtkListStore" id="servo-motors-liststore"/>
+  <object class="GtkListStore" id="tacho-motors-liststore">
+    <columns>
+      <!-- column-name PRESENT -->
+      <column type="gboolean"/>
+      <!-- column-name DEVICE_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name PORT_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name DRIVER_NAME -->
+      <column type="gchararray"/>
+      <!-- column-name POLARITY -->
+      <column type="gboolean"/>
+      <!-- column-name RUNNING -->
+      <column type="gboolean"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">motor0</col>
+        <col id="2" translatable="yes">outA</col>
+        <col id="3" translatable="yes">lego-ev3-l-motor</col>
+        <col id="4">False</col>
+        <col id="5">False</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">motor1</col>
+        <col id="2" translatable="yes">outB</col>
+        <col id="3" translatable="yes">lego-ev3-m-motor</col>
+        <col id="4">False</col>
+        <col id="5">True</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">motor2</col>
+        <col id="2" translatable="yes">outD</col>
+        <col id="3" translatable="yes">lego-ev3-l-motor</col>
+        <col id="4">False</col>
+        <col id="5">False</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkWindow" id="control_panel_window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Brick Manager Control Panel</property>
@@ -938,21 +981,81 @@
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkTreeView" id="tacho_motors_treeview">
+                          <object class="GtkTreeView" id="tacho-motors-treeview">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="model">tacho_motors_liststore</property>
+                            <property name="model">tacho-motors-liststore</property>
                             <property name="search_column">0</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="treeview-selection11"/>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="ports_name_treeviewcolumn3">
-                                <property name="title" translatable="yes">Name</property>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-present-treeviewcolumn">
                                 <child>
-                                  <object class="GtkCellRendererText" id="port_name_cellrenderertext3"/>
+                                  <object class="GtkCellRendererToggle" id="tacho-motor-present-cellrenderertoggle"/>
                                   <attributes>
-                                    <attribute name="text">0</attribute>
+                                    <attribute name="active">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-device-name-treeviewcolumn">
+                                <property name="title" translatable="yes">Device</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="tacho-motor-device-name-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-port-name-treeviewcolumn">
+                                <property name="title" translatable="yes">Port</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="tacho-motor-port-name-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-driver-name-treeviewcolumn">
+                                <property name="title" translatable="yes">Driver</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="tacho-motor-driver-name-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-polarity-treeviewcolumn">
+                                <property name="title" translatable="yes">Inv</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="tacho-motor-polarity-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">4</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-running-treeviewcolumn">
+                                <property name="title" translatable="yes">Run</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="tacho-motor-running-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">5</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -1001,7 +1104,7 @@
                           <object class="GtkTreeView" id="dc_motors_treeview">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="model">dc_motors_liststore</property>
+                            <property name="model">dc-motors-liststore</property>
                             <property name="search_column">0</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="treeview-selection12"/>
@@ -1061,7 +1164,7 @@
                           <object class="GtkTreeView" id="servo_motors_treeview">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="model">servo_motors_liststore</property>
+                            <property name="model">servo-motors-liststore</property>
                             <property name="search_column">0</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="treeview-selection13"/>
