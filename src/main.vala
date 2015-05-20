@@ -33,38 +33,31 @@ namespace BrickManager {
     GlobalManager global_manager;
 
     /**
-     * Opens the next free virtual terminal and makes it the active console.
+     * Opens the current virtual terminal.
      *
      * @param vtfd The file descriptor for the new console.
-     * @param new_vt The number of the new virtual terminal.
-     * @param old_vt The number of the active virtual terminal.
+     * @param vtnum The number of the virtual terminal.
      * @throws IOError if we failed to open or activate a new console.
      */
-    public void open_and_activate_new_vt (out int vtfd, out int new_vt, out int old_vt) throws IOError {
+    public void open_vt (out int vtfd, out int vtnum) throws IOError {
         // The compiler complains about unassigned variables if we don't initialize
         vtfd = 0;
-        new_vt = 0;
-        old_vt = 0;
+        vtnum = 0;
 
-        var tty0_fd = open ("/dev/tty0", O_RDWR, 0);
-        if (tty0_fd < 0) {
-            throw (IOError) new Error (IOError.quark (), io_error_from_errno (-tty0_fd),
-                "Failed to open /dev/tty0: %s", GLib.strerror (-tty0_fd));
+        var tty_fd = open ("/dev/tty", O_RDWR, 0);
+        if (tty_fd < 0) {
+            throw (IOError) new Error (IOError.quark (), io_error_from_errno (-tty_fd),
+                "Failed to open /dev/tty: %s", GLib.strerror (-tty_fd));
         }
         try {
             Linux.VirtualTerminal.Stat vtstat;
-            var err = ioctl (tty0_fd, VT_GETSTATE, out vtstat);
+            var err = ioctl (tty_fd, VT_GETSTATE, out vtstat);
             if (err < 0) {
                 throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
-                    "Could not get state for /dev/tty0: %s", GLib.strerror (-err));
+                    "Could not get state for /dev/tty: %s", GLib.strerror (-err));
             }
-            old_vt = vtstat.v_active;
-            err = ioctl (tty0_fd, VT_OPENQRY, out new_vt);
-            if (err < 0) {
-                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
-                    "Failed to get new VT: %s", GLib.strerror (-err));
-            }
-            var device = "/dev/tty" + new_vt.to_string ();
+            vtnum = vtstat.v_active;
+            var device = "/dev/tty" + vtnum.to_string ();
             err = access (device, (W_OK | R_OK));
             if (err < 0) {
                 throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
@@ -75,59 +68,24 @@ namespace BrickManager {
                 throw (IOError) new Error (IOError.quark (), io_error_from_errno (-vtfd),
                     "Could not open %s: %s", device, GLib.strerror (-vtfd));
             }
-            try {
-                err = ioctl (vtfd, VT_ACTIVATE, new_vt);
-                if (err < 0) {
-                    throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
-                        "Failed to activate VT %d: %s", new_vt, GLib.strerror (-err));
-                }
-                err = ioctl (vtfd, VT_WAITACTIVE, new_vt);
-                if (err < 0) {
-                    throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
-                        "Waiting for VT %d to activate failed: %s", new_vt, GLib.strerror (-err));
-                }
-            } catch (IOError err) {
-                close (vtfd);
-                throw err;
-            }
         } finally {
-            close (tty0_fd);
+            close (tty_fd);
         }
-    }
-
-    /**
-     * Close a virtual terminal that was opened with open_and_activate_new_vt().
-     *
-     * If the new virtual terminal is the active console, then the previous
-     * console will be activated.
-     *
-     * @param fd The file descriptor of the new virtual terminal.
-     * @param new_vt The number of the new virtual terminal.
-     * @param old_vt The state of the previous active console.
-     */
-    public void close_vt (int fd, int new_vt, int old_vt) {
-        Linux.VirtualTerminal.Stat vtstat;
-        if (ioctl (fd, VT_GETSTATE, out vtstat) == 0) {
-            if (vtstat.v_active == new_vt) {
-                ioctl (fd, VT_ACTIVATE, old_vt);
-                ioctl (fd, VT_WAITACTIVE, old_vt);
-            }
-        }
-        ioctl (fd, VT_DISALLOCATE, new_vt);
-        close (fd);
     }
 
     public static int main (string[] args) {
-        int vtfd, new_vtnum, old_vtnum;
+        int vtfd, vtnum;
         try {
-            open_and_activate_new_vt (out vtfd, out new_vtnum, out old_vtnum);
-            ConsoleApp.init (vtfd);
-        } catch (IOError err) {
+            open_vt (out vtfd, out vtnum);
+        } catch (Error err) {
             critical ("%s", err.message);
             Process.exit (err.code);
-        } catch (ConsoleApp.ConsoleAppError err) {
+        }
+        try {
+            ConsoleApp.init (vtfd);
+        } catch (Error err) {
             critical ("%s", err.message);
-            close_vt (vtfd, new_vtnum, old_vtnum);
+            close (vtfd);
             Process.exit (err.code);
         }
         // Get something up on the screen ASAP.
@@ -146,7 +104,6 @@ namespace BrickManager {
         }
 
         global_manager = new GlobalManager ();
-        global_manager.set_leds (LEDState.NORMAL);
 
         Screen.get_active_screen ().status_bar.visible = true;
 
@@ -210,10 +167,11 @@ namespace BrickManager {
             }
         });
         home_window.show ();
+        global_manager.set_leds (LEDState.NORMAL);
 
         ConsoleApp.run ();
 
-        close_vt (vtfd, new_vtnum, old_vtnum);
+        close (vtfd);
         return 0;
     }
 }
