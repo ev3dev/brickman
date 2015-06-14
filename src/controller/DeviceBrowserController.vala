@@ -26,6 +26,8 @@ using EV3devKit.UI;
 
 namespace BrickManager {
     public class DeviceBrowserController : Object, IBrickManagerModule {
+        const int WATCH_MS = 500;
+
         DeviceManager manager;
         DeviceBrowserWindow device_browser_window;
         PortBrowserWindow? port_browser_window;
@@ -180,7 +182,7 @@ namespace BrickManager {
                 var watch_values_hander_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to support showing more than one value?
                     var value_dialog = new SensorValueDialog ();
-                    var value_timout_id = Timeout.add (250, () => {
+                    var value_timout_id = Timeout.add (WATCH_MS, () => {
                         try {
                             value_dialog.value_text = "%.*f".printf (sensor.decimals,
                                 sensor.get_float_value (0));
@@ -314,7 +316,7 @@ namespace BrickManager {
                 var watch_values_hander_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to also show speed?
                     var value_dialog = new MotorValueDialog ();
-                    var value_timout_id = Timeout.add (250, () => {
+                    var value_timout_id = Timeout.add (WATCH_MS, () => {
                         // TODO: Convert to degrees
                         value_dialog.value_text = "%d".printf (motor.position);
                         return Source.CONTINUE;
