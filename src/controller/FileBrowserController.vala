@@ -70,34 +70,34 @@ namespace BrickManager {
                             throw new IOError.PERMISSION_DENIED ("Cannot run files owned by system users.");
                         try {
                             var owner = file_info.get_attribute_string (FileAttribute.OWNER_USER);
+                            // openvt will unfortunately set the ownership of the new /dev/tty<num> to root:root
+                            // instead of root:tty. Even with root:tty the new application would fails to configure
+                            // the tty. We deal with that by changing the ownership of the new tty to belong to
+                            // the owner of the programm we launch.
+                            var ttyname_dir_template = "/tmp/brickman.XXXXXX".dup();
+                            var ttyname_dir = DirUtils.mkdtemp (ttyname_dir_template);
+                            var ttyname_path = ttyname_dir + "/tty";
                             string[] args = {
                                 "/bin/openvt",
-                                "--verbose",
                                 "--switch",
                                 "--wait",
                                 "--",
-                                "/usr/bin/sudo",
-                                "--login",
-                                "--set-home",
-                                "--non-interactive",
-                                "--user=%s".printf (owner),
-                                "--",
-                                file.get_path ()
+                                "/bin/bash",
+                                "-c",
+                                "/usr/bin/tty >%s;tty=$(/bin/cat %s);/bin/chown %s: \$tty;/usr/bin/sudo --login --set-home --non-interactive --user=%s -- %s"
+                                    .printf (ttyname_path, ttyname_path, owner, owner, file.get_path ()),
                             };
-                            var subproc = new Subprocess.newv (args, SubprocessFlags.STDERR_PIPE);
+                            var subproc = new Subprocess.newv (args, SubprocessFlags.INHERIT_FDS);
                             global_manager.set_leds (LEDState.USER);
-                            // openvt outputs something like "openvt: Using VT /dev/tty8"
-                            // on stderr when the --version option is used, so we use
-                            // that to get the tty that our user program is running on.
-                            var stderr = new DataInputStream (subproc.get_stderr_pipe ());
-                            var line = stderr.read_line ();
-                            var tty = int.parse (line[line.last_index_of_char ('y') + 1:line.length]);
                             // If user presses the back button, kill all processes
                             // running on the new VT.
                             var handler_id = global_manager.back_button_long_pressed.connect (() => {
                                 // Use pkill to find all processes on the tty opened
                                 // by openvt and send them SIGTERM.
                                 try {
+                                    var ttyname_is = new DataInputStream (File.new_for_path (ttyname_path).read ());
+                                    var line = ttyname_is.read_line ();
+                                    var tty = int.parse (line[line.last_index_of_char ('y') + 1:line.length]);
                                     string[] args2 = {
                                         "pkill",
                                         "--terminal",
@@ -117,6 +117,8 @@ namespace BrickManager {
                                 } catch (Error err) {
                                     // shouldn't happen since it is not cancellable
                                 }
+                                FileUtils.unlink (ttyname_path);
+                                DirUtils.remove (ttyname_dir);
                                 global_manager.disconnect (handler_id);
                                 global_manager.stop_all_sound ();
                                 global_manager.set_leds (LEDState.NORMAL);
