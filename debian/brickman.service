@@ -8,6 +8,8 @@ Type=simple
 ExecStart=/usr/sbin/brickman
 StandardInput=tty
 TTYPath=/dev/tty1
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 Alias=display-manager.service

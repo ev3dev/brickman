@@ -32,7 +32,18 @@ To build for the EV3:
 
 * On your host computer (not in `brickstrap shell`), use NFS or sshfs to share
 <some-path-like-home/user/build-brickman> with your EV3.
-* On your EV3, connect the share and run `./brickman`
+* On your EV3, stop the runing service: `sudo systemctl stop brickman`, connect
+the share and run `./brickman` or if you temporarily replaced the one in
+`/usr/sbin` restart it with `sudo systemctl start brickman`.
+* If running brickman from systemd, you find the stdout/stderr in the journal:
+`journalctl -f -u brickman`.
+* To get more details you can create a file
+
+        # cat /etc/systemd/system/brickman.service.d/brickman.conf
+        [Service]
+        Environment="G_MESSAGES_DEBUG=all"
+
+  and then `sudo systemctl daemon-reload` and `sudo systemctl restart brickman`.
 
 To build the desktop test (makes UI development much faster), in a regular terminal,
 not in brickstrap shell:
