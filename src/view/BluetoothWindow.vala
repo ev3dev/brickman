@@ -21,16 +21,16 @@
  * BluetoothWindow.vala: Main Bluetooth Menu
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class BluetoothWindow : BrickManagerWindow {
-        UI.Menu powered_menu;
-        UI.Menu unpowered_menu;
+        Ui.Menu powered_menu;
+        Ui.Menu unpowered_menu;
         CheckboxMenuItem powered_menu_item;
         CheckboxMenuItem visible_menu_item;
-        UI.MenuItem scan_menu_item;
+        Ui.MenuItem scan_menu_item;
 
         bool _powered;
         public bool powered {
@@ -73,38 +73,38 @@ namespace BrickManager {
             content_vbox.spacing = 0;
             powered_menu_item = new CheckboxMenuItem ("Powered");
             powered_menu_item.button.vertical_align = WidgetAlign.START;
-            weak UI.MenuItem weak_powered_menu_item = powered_menu_item;
+            weak Ui.MenuItem weak_powered_menu_item = powered_menu_item;
             powered_menu_item.button.pressed.connect (() => {
                 powered = !powered;
                 weak_powered_menu_item.button.focus ();
             });
             content_vbox.add (powered_menu_item.button);
-            powered_menu = new UI.Menu ();
+            powered_menu = new Ui.Menu ();
             visible_menu_item = new CheckboxMenuItem ("Visible");
             visible_menu_item.checkbox.notify["checked"].connect (() =>
                 notify_property ("bt-visible"));
             powered_menu.add_menu_item (visible_menu_item);
-            scan_menu_item = new UI.MenuItem ("???");
+            scan_menu_item = new Ui.MenuItem ("???");
             scan_menu_item.button.pressed.connect (() => scan_selected ());
             powered_menu.add_menu_item (scan_menu_item);
-            var devices_label_menu_item = new UI.MenuItem ("Devices");
+            var devices_label_menu_item = new Ui.MenuItem ("Devices");
             devices_label_menu_item.label.horizontal_align = WidgetAlign.CENTER;
             devices_label_menu_item.button.border_bottom = 1;
             devices_label_menu_item.button.margin_bottom = 2;
             devices_label_menu_item.button.can_focus = false;
             powered_menu.add_menu_item (devices_label_menu_item);
-            unpowered_menu = new UI.Menu ();
+            unpowered_menu = new Ui.Menu ();
         }
 
-        public void add_menu_item (UI.MenuItem menu_item) {
+        public void add_menu_item (Ui.MenuItem menu_item) {
             powered_menu.add_menu_item (menu_item);
         }
 
-        public void remove_menu_item (UI.MenuItem menu_item) {
+        public void remove_menu_item (Ui.MenuItem menu_item) {
             powered_menu.remove_menu_item (menu_item);
         }
 
-        public UI.MenuItem? find_menu_item (Object represented_object) {
+        public Ui.MenuItem? find_menu_item (Object represented_object) {
             return powered_menu.find_menu_item<Object> (represented_object, (mi, o) =>
                 o == mi.represented_object);
         }

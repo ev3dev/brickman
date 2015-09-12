@@ -23,8 +23,8 @@
  * Version of Brick Manager that runs in GTK for testing.
  */
 
-using EV3devKitDesktop;
-using EV3devKit.UI;
+using Ev3devKitDesktop;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     static int main (string[] args)

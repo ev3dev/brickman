@@ -19,19 +19,19 @@
  * MA 02110-1301, USA.
  */
 
-/* BlueZ5Agent.vala - BlueZ 5 Agent implementation */
+/* Bluez5Agent.vala - BlueZ 5 Agent implementation */
 
-using EV3devKit.UI;
-using BlueZ5;
+using Ev3devKit.Ui;
+using Bluez5;
 
 namespace BrickManager {
     [DBus (name = "org.bluez.Agent1")]
-    public class BlueZ5Agent : Object {
+    public class Bluez5Agent : Object {
         MessageDialog? display_passkey_dialog;
 
         signal void canceled ();
 
-        public BlueZ5Agent () {
+        public Bluez5Agent () {
         }
 
         public void release () {
@@ -226,7 +226,7 @@ namespace BrickManager {
         {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog ("Authorize service for %s:\n\n%s".printf (
-                device.alias, UUID.to_short_profile (uuid)));
+                device.alias, Uuid.to_short_profile (uuid)));
         }
 
         async void display_confirmation_dialog (string message) throws BlueZError {

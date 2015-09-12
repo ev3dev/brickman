@@ -21,7 +21,7 @@
  * Adapter.vala:
  */
 
-namespace BlueZ5 {
+namespace Bluez5 {
     public class Adapter : Object {
         static Gee.HashMap<string, weak Adapter> adapter_map;
 

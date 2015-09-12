@@ -21,16 +21,16 @@
  * PortBrowserWindow.vala: Main Device Browser Menu
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class PortBrowserWindow : BrickManagerWindow {
-        internal UI.Menu menu;
+        internal Ui.Menu menu;
 
         public PortBrowserWindow () {
             title ="Ports";
-            menu = new UI.Menu () {
+            menu = new Ui.Menu () {
                 margin_top = -3
             };
             content_vbox.add (menu);

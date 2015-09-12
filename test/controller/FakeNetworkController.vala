@@ -19,21 +19,21 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeConnManController.vala - Fake Network (ConnMan) controller for testing */
+/* FakeConnmanController.vala - Fake Network (ConnMan) controller for testing */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FakeNetworkController : Object, IBrickManagerModule {
-        const string CONNMAN_SERVICE_IPV4_DIALOG_GLADE_FILE = "ConnManServiceIPv4Dialog.glade";
-        const string CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE = "ConnManAgentRequestInputDialog.glade";
+        const string CONNMAN_SERVICE_IPV4_DIALOG_GLADE_FILE = "ConnmanServiceIPv4Dialog.glade";
+        const string CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE = "ConnmanAgentRequestInputDialog.glade";
 
         NetworkStatusWindow network_status_window;
         NetworkConnectionsWindow network_connections_window;
         public NetworkStatusBarItem network_status_bar_item;
         public WifiStatusBarItem wifi_status_bar_item;
         public WifiController wifi_controller;
-        ConnManAgent agent;
+        ConnmanAgent agent;
         Gtk.Dialog? agent_request_input_dialog;
         Gtk.ListStore network_connections_liststore;
 
@@ -436,8 +436,8 @@ namespace BrickManager {
 
             /* Agent */
 
-            agent = new ConnManAgent ();
-            agent.manager = new ConnMan.Manager ();
+            agent = new ConnmanAgent ();
+            agent.manager = new Connman.Manager ();
             // (builder.get_object ("connman_agent_release_button") as Gtk.Button)
             //     .clicked.connect (() => agent.release ());
             (builder.get_object ("connman_agent_report_error_button") as Gtk.Button)
@@ -446,7 +446,7 @@ namespace BrickManager {
                             "Service error message.", (obj, res) => {
                                 try {
                                     agent.report_error.end (res);
-                                } catch (ConnManAgentError err) {
+                                } catch (ConnmanAgentError err) {
                                     show_message (err.message);
                                 }
                             });
@@ -457,7 +457,7 @@ namespace BrickManager {
                             "Peer error message.", (obj, res) => {
                                 try {
                                     agent.report_peer_error.end (res);
-                                } catch (ConnManAgentError err) {
+                                } catch (ConnmanAgentError err) {
                                     show_message (err.message);
                                 }
                             });
@@ -468,7 +468,7 @@ namespace BrickManager {
                             "http://www.ev3dev.org", (obj, res) => {
                                 try {
                                     agent.request_browser.end (res);
-                                } catch (ConnManAgentError err) {
+                                } catch (ConnmanAgentError err) {
                                     show_message (err.message);
                                 }
                             });
@@ -485,7 +485,7 @@ namespace BrickManager {
                                     result.foreach ((k, v) =>
                                         strbuilder.append ("\n%s: %s".printf (k, v.print (true))));
                                     show_message (strbuilder.str);
-                                } catch (ConnManAgentError err) {
+                                } catch (ConnmanAgentError err) {
                                     show_message (err.message);
                                 }
                             });
@@ -532,7 +532,7 @@ namespace BrickManager {
                 try {
                     builder.add_from_file (CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE);
                     agent_request_input_dialog = builder.get_object ("dialog") as Gtk.Dialog;
-                    agent_request_input_dialog.set_transient_for (EV3devKitDesktop.GtkApp.main_window);
+                    agent_request_input_dialog.set_transient_for (Ev3devKitDesktop.GtkApp.main_window);
                     agent_request_input_dialog.response.connect ((id) => {
                         agent_request_input_dialog.destroy ();
                         agent_request_input_dialog = null;
@@ -608,13 +608,13 @@ namespace BrickManager {
                 actual_result.foreach ((k, v) =>
                     builder.append ("\n%s: %s".printf (k, v.print (true))));
                 show_message (builder.str);
-            } catch (ConnManAgentError err) {
+            } catch (ConnmanAgentError err) {
                 show_message (err.message);
             }
         }
 
         void show_message (string message) {
-            var dialog = new Gtk.MessageDialog (EV3devKitDesktop.GtkApp.main_window,
+            var dialog = new Gtk.MessageDialog (Ev3devKitDesktop.GtkApp.main_window,
                 Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
             dialog.response.connect ((id) => dialog.destroy ());
             dialog.show ();

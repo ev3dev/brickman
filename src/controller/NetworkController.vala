@@ -21,8 +21,8 @@
 
 /* NetworkController.vala - Controller for network connections (ConnMan) */
 
-using ConnMan;
-using EV3devKit.UI;
+using Connman;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class NetworkController : Object, IBrickManagerModule {
@@ -42,7 +42,7 @@ namespace BrickManager {
         internal WifiStatusBarItem wifi_status_bar_item;
         Binding? status_bar_item_binding;
         bool status_bar_item_binding_is_tether;
-        ConnManAgent agent;
+        ConnmanAgent agent;
         ObjectPath agent_object_path;
         Manager? manager;
         Technology? wifi_technology;
@@ -117,10 +117,10 @@ namespace BrickManager {
             });
 
             try {
-                agent = new ConnManAgent ();
+                agent = new ConnmanAgent ();
                 var bus = Bus.get_sync (BusType.SYSTEM);
                 agent_object_path = new ObjectPath ("/org/ev3dev/brickman/connman_agent");
-                bus.register_object<ConnManAgent> (agent_object_path, agent);
+                bus.register_object<ConnmanAgent> (agent_object_path, agent);
             } catch (IOError err) {
                 critical ("%s", err.message);
             }

@@ -34,7 +34,7 @@ namespace BrickManager {
         public FakeDeviceBrowserController device_browser_controller;
         public FakeNetworkController network_controller;
         public FakeBluetoothController bluetooth_controller;
-        public FakeUSBController usb_controller;
+        public FakeUsbController usb_controller;
         public FakeBatteryController battery_controller;
         public FakeAboutController about_controller;
 
@@ -147,7 +147,7 @@ namespace BrickManager {
                 device_browser_controller = new FakeDeviceBrowserController (builder);
                 network_controller = new FakeNetworkController (builder);
                 bluetooth_controller = new FakeBluetoothController (builder);
-                usb_controller = new FakeUSBController (builder);
+                usb_controller = new FakeUsbController (builder);
                 battery_controller = new FakeBatteryController (builder);
                 about_controller = new FakeAboutController (builder);
 
@@ -160,10 +160,10 @@ namespace BrickManager {
 
         [CCode (instance_pos = -1)]
         public void on_quit_button_clicked (Gtk.Button button) {
-            EV3devKitDesktop.GtkApp.quit ();
+            Ev3devKitDesktop.GtkApp.quit ();
         }
 
-        internal static void update_listview_toggle_item (ListStore store,
+        internal static void update_listview_toggle_item (Gtk.ListStore store,
             CellRendererToggle toggle, string path, int column)
         {
             TreePath tree_path = new TreePath.from_string (path);
@@ -172,7 +172,7 @@ namespace BrickManager {
             store.set (iter, column, !toggle.active);
         }
 
-        internal static void update_listview_text_item (ListStore store,
+        internal static void update_listview_text_item (Gtk.ListStore store,
             string path, string new_text, int column)
         {
             TreePath tree_path = new TreePath.from_string (path);

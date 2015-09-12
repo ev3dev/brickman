@@ -21,15 +21,15 @@
 
 /* BluetoothController.vala - Controller for Bluetooth (BlueZ) */
 
-using BlueZ5;
-using EV3devKit.UI;
+using Bluez5;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class BluetoothController : Object, IBrickManagerModule {
         BluetoothWindow main_window;
         internal BluetoothStatusBarItem status_bar_item;
         Manager manager;
-        BlueZ5Agent? agent;
+        Bluez5Agent? agent;
         ObjectPath agent_object_path;
         string? built_in_adapter_address;
         Gee.List<Adapter> adapter_list;
@@ -74,10 +74,10 @@ namespace BrickManager {
             }
 
             try {
-                agent = new BlueZ5Agent ();
+                agent = new Bluez5Agent ();
                 var bus = Bus.get_sync (BusType.SYSTEM);
                 agent_object_path = new ObjectPath ("/org/ev3dev/brickman/bluez5_agent");
-                bus.register_object<BlueZ5Agent> (agent_object_path, agent);
+                bus.register_object<Bluez5Agent> (agent_object_path, agent);
             } catch (IOError err) {
                 critical ("%s", err.message);
             }
@@ -326,7 +326,7 @@ namespace BrickManager {
             target = false;
             var uuids = (string[])source;
             foreach (var uuid in uuids) {
-                if (uuid == UUID.NAP || uuid == UUID.GN || uuid == UUID.PANU) {
+                if (uuid == Uuid.NAP || uuid == Uuid.GN || uuid == Uuid.PANU) {
                     target = true;
                     break;
                 }

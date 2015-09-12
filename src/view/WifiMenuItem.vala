@@ -21,8 +21,8 @@
  * WifiMenuItem.vala: Custom MenuItem for showing Wi-Fi connections.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public enum WifiSecurity {
@@ -31,11 +31,11 @@ namespace BrickManager {
         WPS
     }
 
-    public class WifiMenuItem : UI.MenuItem {
+    public class WifiMenuItem : Ui.MenuItem {
         Box hbox;
         Label connected_label;
-        UI.Icon secure_icon;
-        UI.Icon wps_icon;
+        Ui.Icon secure_icon;
+        Ui.Icon wps_icon;
         SignalBars signal_bars;
 
         public bool connected {
@@ -78,7 +78,7 @@ namespace BrickManager {
                 padding_top = 1,
                 padding_bottom = 1
             }, new Label () {
-                text_horizontal_align = GRX.TextHorizAlign.LEFT
+                text_horizontal_align = Grx.TextHorizAlign.LEFT
             });
             button.pressed.connect (on_button_pressed);
             hbox = new Box.horizontal ();
@@ -90,11 +90,11 @@ namespace BrickManager {
             hbox.add (connected_label);
             hbox.add (label);
             try {
-                secure_icon = new UI.Icon.from_stock (StockIcon.LOCK_7X9) {
+                secure_icon = new Ui.Icon.from_stock (StockIcon.LOCK_7X9) {
                     horizontal_align = WidgetAlign.END,
                     vertical_align = WidgetAlign.CENTER
                 };
-                wps_icon = new UI.Icon.from_stock (StockIcon.WPS_9X9) {
+                wps_icon = new Ui.Icon.from_stock (StockIcon.WPS_9X9) {
                     horizontal_align = WidgetAlign.END,
                     vertical_align = WidgetAlign.CENTER
                 };

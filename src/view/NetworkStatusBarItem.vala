@@ -26,8 +26,8 @@
  * Indicates network IP address in status bar
  */
 
-using EV3devKit.UI;
-using GRX;
+using Ev3devKit.Ui;
+using Grx;
 
 namespace BrickManager {
     public class NetworkStatusBarItem : StatusBarItem {

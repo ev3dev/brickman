@@ -21,7 +21,7 @@
  * Manager.vala:
  */
 
-namespace BlueZ5 {
+namespace Bluez5 {
     public class Manager : Object {
         public const string SERVICE_NAME = "org.bluez";
 

@@ -21,8 +21,8 @@
 
 /* FileBrowserController.vala - File Browser controller */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
@@ -88,7 +88,7 @@ namespace BrickManager {
                                     .printf (ttyname_path, ttyname_path, owner, owner, file.get_path ()),
                             };
                             var subproc = new Subprocess.newv (args, SubprocessFlags.INHERIT_FDS);
-                            global_manager.set_leds (LEDState.USER);
+                            global_manager.set_leds (LedState.USER);
                             // If user presses the back button, kill all processes
                             // running on the new VT.
                             var handler_id = global_manager.back_button_long_pressed.connect (() => {
@@ -121,7 +121,7 @@ namespace BrickManager {
                                 DirUtils.remove (ttyname_dir);
                                 global_manager.disconnect (handler_id);
                                 global_manager.stop_all_sound ();
-                                global_manager.set_leds (LEDState.NORMAL);
+                                global_manager.set_leds (LedState.NORMAL);
                                 global_manager.stop_all_motors ();
                             });
                         } catch (SpawnError err) {
@@ -202,7 +202,7 @@ namespace BrickManager {
             file_browser_window.loading = false;
         }
 
-        static int sort_files (UI.MenuItem a, UI.MenuItem b) {
+        static int sort_files (Ui.MenuItem a, Ui.MenuItem b) {
             var a_text = a.label.text;
             var b_text = b.label.text;
 

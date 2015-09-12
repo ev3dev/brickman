@@ -21,8 +21,8 @@
 
 /* DeviceBrowserController.vala - Controller for Browsing Devices (sensors, motors, etc.) */
 
-using EV3devKit.Devices;
-using EV3devKit.UI;
+using Ev3devKit.Devices;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class DeviceBrowserController : Object, IBrickManagerModule {
@@ -63,7 +63,7 @@ namespace BrickManager {
         }
 
         void on_port_added (Port port) {
-            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow (port.port_name);
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow (port.port_name);
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new PortInfoWindow (port.port_name, port.device_name,
                     port.driver_name);
@@ -173,7 +173,7 @@ namespace BrickManager {
         }
 
         void on_sensor_added (Sensor sensor) {
-            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (sensor.driver_name,
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (sensor.driver_name,
                 sensor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new SensorInfoWindow (sensor.driver_name, sensor.device_name,
@@ -308,7 +308,7 @@ namespace BrickManager {
         }
 
         void on_tacho_motor_added (TachoMotor motor) {
-            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
                 motor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "tacho-motor",
@@ -365,8 +365,8 @@ namespace BrickManager {
             });
         }
 
-        void on_dc_motor_added (DCMotor motor) {
-            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
+        void on_dc_motor_added (DcMotor motor) {
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
                 motor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "dc-motor",
@@ -404,7 +404,7 @@ namespace BrickManager {
         }
 
         void on_servo_motor_added (ServoMotor motor) {
-            var menu_item = new EV3devKit.UI.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
                 motor.port_name));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "servo-motor",

@@ -18,13 +18,13 @@
  */
 
 /*
- * USBWindow.vala:
+ * UsbWindow.vala:
  *
  * Controls USB device port state
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public enum USBDevicePortService {
@@ -33,7 +33,7 @@ namespace BrickManager {
         CDC
     }
 
-    public class USBWindow : BrickManagerWindow {
+    public class UsbWindow : BrickManagerWindow {
         const string device_port_service_none_tip_text = "Disables USB port";
         const string device_port_service_rndis_tip_text = "For connecting to Windows";
         const string device_port_service_cdc_tip_text = "For connecting to Mac/Linux";
@@ -41,7 +41,7 @@ namespace BrickManager {
         const string device_port_service_cdc_label_text = "CDC (%s)";
 
         Label device_port_tip_label;
-        UI.Menu device_port_service_menu;
+        Ui.Menu device_port_service_menu;
         CheckButtonGroup device_port_service_radio_group;
         RadioMenuItem device_port_service_none_menu_item;
         RadioMenuItem device_port_service_rndis_menu_item;
@@ -88,9 +88,9 @@ namespace BrickManager {
 
         public signal void network_connections_selected ();
 
-        public USBWindow () {
+        public UsbWindow () {
             title ="USB";
-            device_port_service_menu = new UI.Menu () {
+            device_port_service_menu = new Ui.Menu () {
                 spacing = 2
             };
             content_vbox.add (device_port_service_menu);

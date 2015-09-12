@@ -19,14 +19,14 @@
  * MA 02110-1301, USA.
  */
 
-/* ConnManAgent.vala - ConnMan Agent implementation */
+/* ConnmanAgent.vala - ConnMan Agent implementation */
 
-using EV3devKit.UI;
-using ConnMan;
+using Ev3devKit.Ui;
+using Connman;
 
 namespace BrickManager {
     [DBus (name = "net.connman.Agent")]
-    public class ConnManAgent : Object {
+    public class ConnmanAgent : Object {
         const string NAME_KEY                   = "Name";
         const string SSID_KEY                   = "SSID";
         const string IDENTITY_KEY               = "Identity";
@@ -45,7 +45,7 @@ namespace BrickManager {
 
         signal void canceled ();
 
-        public ConnManAgent () {
+        public ConnmanAgent () {
         }
 
         public async void release () {
@@ -53,31 +53,31 @@ namespace BrickManager {
         }
 
         public async void report_error (ObjectPath service_path, string error)
-            throws ConnManAgentError
+            throws ConnmanAgentError
         {
             var dialog = new MessageDialog ("Error", error);
             dialog.show ();
             // TODO: get user feedback for retry
-            //throw new ConnManAgentError.RETRY ("User requested retry.");
+            //throw new ConnmanAgentError.RETRY ("User requested retry.");
         }
 
         public async void report_peer_error (ObjectPath peer_path, string error)
-            throws ConnManAgentError
+            throws ConnmanAgentError
         {
             var dialog = new MessageDialog ("Error", error);
             dialog.show ();
             // TODO: get user feedback for retry
-            //throw new ConnManAgentError.RETRY ("User requested retry.");
+            //throw new ConnmanAgentError.RETRY ("User requested retry.");
         }
 
         public async void request_browser (ObjectPath service_path, string url)
-            throws ConnManAgentError
+            throws ConnmanAgentError
         {
-            throw new ConnManAgentError.CANCELED ("Web browser not implemented.");
+            throw new ConnmanAgentError.CANCELED ("Web browser not implemented.");
         }
 
         public async HashTable<string, Variant> request_input (ObjectPath service_path,
-            HashTable<string, Variant> fields) throws ConnManAgentError
+            HashTable<string, Variant> fields) throws ConnmanAgentError
         {
             var service = manager.get_service (service_path);
             var required_field_names = new Gee.ArrayList<string> ();
@@ -95,12 +95,12 @@ namespace BrickManager {
             });
             var result = new HashTable<string, Variant> (null, null);
             foreach (var required_field_name in required_field_names) {
-                var dialog = new ConnManAgentInputDialog (
+                var dialog = new ConnmanAgentInputDialog (
                     "Please enter %s for %s.".printf (field_to_string (required_field_name),
                         service.name),
                     previous_passphrase ?? "");
                 bool dialog_canceled = true;
-                weak ConnManAgentInputDialog weak_dialog = dialog;
+                weak ConnmanAgentInputDialog weak_dialog = dialog;
                 dialog.responded.connect ((accepted) => {
                     dialog_canceled = !accepted;
                     result[required_field_name] = weak_dialog.text_value;
@@ -116,16 +116,16 @@ namespace BrickManager {
                 yield;
                 SignalHandler.disconnect (this, handler_id);
                 if (dialog_canceled)
-                    throw new ConnManAgentError.CANCELED ("Canceled by the user.");
+                    throw new ConnmanAgentError.CANCELED ("Canceled by the user.");
             }
             return result;
         }
 
         public async HashTable<string, Variant> request_peer_authorization (ObjectPath peer_path,
-            HashTable<string, Variant> fields) throws ConnManAgentError
+            HashTable<string, Variant> fields) throws ConnmanAgentError
         {
             //var peer = Peer.from_path_sync (peer_path);
-            throw new ConnManAgentError.CANCELED ("Not implemented.");
+            throw new ConnmanAgentError.CANCELED ("Not implemented.");
         }
 
         public async void cancel () {
@@ -154,7 +154,7 @@ namespace BrickManager {
     }
 
     [DBus (name = "net.connman.Agent.Error")]
-    public errordomain ConnManAgentError {
+    public errordomain ConnmanAgentError {
         CANCELED,
         LAUNCH_BROWSER,
         REJECTED,

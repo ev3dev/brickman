@@ -21,7 +21,7 @@
  * AboutWindow.vala - displays infomation about this program and the EV3 itself
  */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class AboutWindow : BrickManagerWindow {

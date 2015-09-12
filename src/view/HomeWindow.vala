@@ -23,23 +23,23 @@
  * The home window for brickman.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
 
     class HomeWindow : Window {
         internal ShutdownDialog shutdown_dialog;
-        UI.Menu menu;
+        Ui.Menu menu;
 
         public HomeWindow () {
             shutdown_dialog = new ShutdownDialog ();
-            menu = new UI.Menu ();
+            menu = new Ui.Menu ();
             add (menu);
         }
 
         public void add_controller (IBrickManagerModule controller) {
-            var menu_item = new UI.MenuItem.with_right_arrow (controller.start_window.title) {
+            var menu_item = new Ui.MenuItem.with_right_arrow (controller.start_window.title) {
                 represented_object = controller
             };
             menu_item.button.pressed.connect (() =>

@@ -21,8 +21,8 @@
  * WifiInfoWindow.vala: Displays Wi-Fi connection info.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class WifiInfoWindow : BrickManagerWindow {
@@ -88,7 +88,7 @@ namespace BrickManager {
             };
             status_hbox.add (status_label);
             status_value_label = new Label ("???") {
-                text_horizontal_align = GRX.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHorizAlign.RIGHT
             };
             status_hbox .add (status_value_label);
 
@@ -99,7 +99,7 @@ namespace BrickManager {
             };
             signal_hbox.add (signal_label);
             signal_value_label = new Label ("???") {
-                text_horizontal_align = GRX.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHorizAlign.RIGHT
             };
             signal_hbox .add (signal_value_label);
 
@@ -110,7 +110,7 @@ namespace BrickManager {
             };
             security_hbox.add (security_label);
             security_value_label = new Label ("???") {
-                text_horizontal_align = GRX.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHorizAlign.RIGHT
             };
             security_hbox .add (security_value_label);
 
@@ -121,7 +121,7 @@ namespace BrickManager {
             };
             address_hbox.add (address_label);
             address_value_label = new Label ("???") {
-                text_horizontal_align = GRX.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHorizAlign.RIGHT
             };
             address_hbox .add (address_value_label);
 

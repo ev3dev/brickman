@@ -21,16 +21,16 @@
  * FileBrowserWindow.vala - Displays contents of a directory
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FileBrowserWindow : BrickManagerWindow {
         Label current_directory_label;
-        UI.Menu file_menu;
+        Ui.Menu file_menu;
         string? last_focused_text;
 
-        public unowned CompareDataFunc<UI.MenuItem>? sort_files_func;
+        public unowned CompareDataFunc<Ui.MenuItem>? sort_files_func;
 
         public string current_directory {
             get { return current_directory_label.text; }
@@ -42,18 +42,18 @@ namespace BrickManager {
         public FileBrowserWindow () {
             title = "File Browser";
             current_directory_label = new Label ("???") {
-                text_horizontal_align = GRX.TextHorizAlign.LEFT,
+                text_horizontal_align = Grx.TextHorizAlign.LEFT,
                 vertical_align = WidgetAlign.START,
                 padding_bottom = 2,
                 border_bottom = 1
             };
             content_vbox.add (current_directory_label);
-            file_menu = new UI.Menu ();
+            file_menu = new Ui.Menu ();
             content_vbox.add (file_menu);
         }
 
         public void add_file (string file_name, Object represented_object) {
-            var menu_item = new UI.MenuItem (file_name) {
+            var menu_item = new Ui.MenuItem (file_name) {
                 represented_object = represented_object
             };
             menu_item.button.pressed.connect (() =>

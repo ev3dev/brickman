@@ -21,7 +21,7 @@
 
 /* FakeBatteryController.vala - Fake Battery controller for testing */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FakeBatteryController : Object, IBrickManagerModule {

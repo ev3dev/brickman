@@ -21,8 +21,8 @@
 
 /* FakeDeviceBrowserController.vala - Fake Device Browser controller for testing */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FakeDeviceBrowserController : Object, IBrickManagerModule {
@@ -62,7 +62,7 @@ namespace BrickManager {
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.PORT_NAME, out port_name);
                 Value driver_name;
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.DRIVER_NAME, out driver_name);
-                var menu_item = new UI.MenuItem.with_right_arrow (port_name.dup_string ());
+                var menu_item = new Ui.MenuItem.with_right_arrow (port_name.dup_string ());
                 port_browser_window.menu.add_menu_item (menu_item);
                 //liststore USER_DATA is gpointer, so it does not take a ref
                 ports_liststore.set (iter, ControlPanel.PortsColumn.USER_DATA, menu_item.ref ());
@@ -152,7 +152,7 @@ namespace BrickManager {
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.PRESENT, out present);
                 Value user_data;
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.USER_DATA, out user_data);
-                var menu_item = (UI.MenuItem)user_data.get_pointer ();
+                var menu_item = (Ui.MenuItem)user_data.get_pointer ();
                 if (port_browser_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
                     port_browser_window.menu.remove_menu_item (menu_item);
                 else if (!port_browser_window.menu.has_menu_item (menu_item) && present.get_boolean ())
@@ -186,7 +186,7 @@ namespace BrickManager {
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.DRIVER_NAME, out driver_name);
                 Value port_name;
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PORT_NAME, out port_name);
-                var menu_item = new UI.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
+                var menu_item = new Ui.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
                     port_name.get_string ()));
                 if (present.get_boolean ())
                     sensor_browser_window.menu.add_menu_item (menu_item);
@@ -259,7 +259,7 @@ namespace BrickManager {
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PRESENT, out present);
                 Value user_data;
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.USER_DATA, out user_data);
-                var menu_item = (UI.MenuItem)user_data.get_pointer ();
+                var menu_item = (Ui.MenuItem)user_data.get_pointer ();
                 if (sensor_browser_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
                     sensor_browser_window.menu.remove_menu_item (menu_item);
                 else if (!sensor_browser_window.menu.has_menu_item (menu_item) && present.get_boolean ())
@@ -290,7 +290,7 @@ namespace BrickManager {
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
                 Value port_name;
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
-                var menu_item = new UI.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
+                var menu_item = new Ui.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
                     port_name.get_string ()));
                 if (present.get_boolean ())
                     motor_browser_window.menu.add_menu_item (menu_item);
@@ -351,7 +351,7 @@ namespace BrickManager {
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
                 Value user_data;
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.USER_DATA, out user_data);
-                var menu_item = (UI.MenuItem)user_data.get_pointer ();
+                var menu_item = (Ui.MenuItem)user_data.get_pointer ();
                 if (motor_browser_window.menu.has_menu_item (menu_item) && !present.get_boolean ())
                     motor_browser_window.menu.remove_menu_item (menu_item);
                 else if (!motor_browser_window.menu.has_menu_item (menu_item) && present.get_boolean ())

@@ -19,12 +19,12 @@
  * MA 02110-1301, USA.
  */
 
-/* USBController.vala - Controller for USB Gadget stuff */
+/* UsbController.vala - Controller for USB Gadget stuff */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class USBController : Object, IBrickManagerModule {
+    public class UsbController : Object, IBrickManagerModule {
         const Systemd.UnitActiveState active_states[] = {
             Systemd.UnitActiveState.ACTIVE,
             Systemd.UnitActiveState.RELOADING,
@@ -35,15 +35,15 @@ namespace BrickManager {
             Systemd.UnitActiveState.FAILED,
             Systemd.UnitActiveState.DEACTIVATING
         };
-        USBWindow usb_window;
+        UsbWindow usb_window;
         Systemd.Manager manager;
         Systemd.Unit rndis_service;
         Systemd.Unit cdc_service;
 
         public BrickManagerWindow start_window { get { return usb_window; } }
 
-        public USBController () {
-            usb_window = new USBWindow () {
+        public UsbController () {
+            usb_window = new UsbWindow () {
                 loading = true
             };
             init.begin ();

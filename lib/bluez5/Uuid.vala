@@ -18,12 +18,12 @@
  */
 
 /*
- * UUID.vala: Bluetooth UUIDs and string conversion functions.
+ * Uuid.vala: Bluetooth UUIDs and string conversion functions.
  */
 
 using GLib.Bus;
 
-namespace BlueZ5.UUID {
+namespace Bluez5.Uuid {
     const string 16BIT_PREFIX = "0000";
     const string BASE = "-0000-1000-8000-00805f9b34fb";
 
@@ -169,7 +169,7 @@ namespace BlueZ5.UUID {
      *
      * NOTE: The example SDP record in SPP v1.0 does not include a
      * BluetoothProfileDescriptorList attribute, but some implementations
-     * may also use this UUID for the Profile Identifier.
+     * may also use this Uuid for the Profile Identifier.
      *
      * Service Class/ Profile
      */
@@ -747,7 +747,7 @@ namespace BlueZ5.UUID {
     public const string HDP_Sink = 16BIT_PREFIX + "1402" + BASE;
 
     /**
-     * Gets the 3 to 6 (or more) character profile name for a given UUID.
+     * Gets the 3 to 6 (or more) character profile name for a given Uuid.
      */
     public string to_short_profile (string uuid) {
         switch (uuid) {

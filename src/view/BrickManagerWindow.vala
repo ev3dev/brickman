@@ -23,21 +23,21 @@
  * Common base class for windows in Brick Manager (so they all look kind of the same)
  */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
  namespace BrickManager {
     public abstract class BrickManagerWindow : Window {
-        static GRX.Font _small_font;
-        static GRX.Font _big_font;
+        static Grx.Font _small_font;
+        static Grx.Font _big_font;
 
-        public static unowned GRX.Font small_font;
-        public static unowned GRX.Font big_font;
+        public static unowned Grx.Font small_font;
+        public static unowned Grx.Font big_font;
 
         static construct {
-            _small_font = GRX.Font.load ("helv11");
-            small_font = _small_font ?? GRX.Font.default;
-            _big_font = GRX.Font.load ("xm9x15b");
-            big_font = _big_font ?? GRX.Font.default;
+            _small_font = Grx.Font.load ("helv11");
+            small_font = _small_font ?? Grx.Font.default;
+            _big_font = Grx.Font.load ("xm9x15b");
+            big_font = _big_font ?? Grx.Font.default;
         }
 
         Box window_vbox;

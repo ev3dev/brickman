@@ -19,20 +19,37 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeBlueZ5.vala - Fake implementation of BlueZ 5 dbus stuff for testing */
+/* FakeConnman.vala - Fake implementation of ConnMan dbus stuff for testing */
 
-namespace BlueZ5 {
-    public class Device {
+namespace Connman {
+    public class Manager {
+        public Service get_service (ObjectPath path) {
+            return new Service (path);
+        }
+    }
+
+    public class Service {
         public ObjectPath path { get; private set; }
         public string name { get { return path; } }
-        public string alias { get { return path; } }
 
-        public Device (ObjectPath path) {
+        public Service (ObjectPath path) {
             this.path = path;
         }
 
-        public static Device get_for_object_path (ObjectPath path) {
-            return new Device (path);
+        public static Service from_path_sync (ObjectPath path) throws IOError {
+            return new Service (path);
+        }
+    }
+
+    public class Peer {
+        ObjectPath path { get; private set; }
+
+        public Peer (ObjectPath path) {
+            this.path = path;
+        }
+
+        public static Peer from_path_sync (ObjectPath path) throws IOError {
+            return new Peer (path);
         }
     }
 }

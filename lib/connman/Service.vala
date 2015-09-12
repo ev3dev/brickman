@@ -23,7 +23,7 @@
 
 using Gee;
 
-namespace ConnMan {
+namespace Connman {
     public class Service : Object {
         const string IPV4_METHOD_KEY = "Method";
         const string IPV4_ADDRESS_KEY = "Address";
@@ -530,9 +530,9 @@ namespace ConnMan {
         OFF;
 
         // hacks to expose methods created by DBus use_string_marshalling
-        [CCode (cname = "conn_man_ipv4_method_to_string (self)")]
+        [CCode (cname = "connman_ipv4_method_to_string (self)")]
         extern const string to_string_hack;
-        [CCode (cname = "conn_man_ipv4_method_to_string_wrapper")]
+        [CCode (cname = "connman_ipv4_method_to_string_wrapper")]
         public string to_string () {
             return to_string_hack;
         }
@@ -551,9 +551,9 @@ namespace ConnMan {
         OFF;
 
         // hacks to expose methods created by DBus use_string_marshalling
-        [CCode (cname = "conn_man_ipv6_method_to_string (self)")]
+        [CCode (cname = "connman_ipv6_method_to_string (self)")]
         extern const string to_string_hack;
-        [CCode (cname = "conn_man_ipv6_method_to_string_wrapper")]
+        [CCode (cname = "connman_ipv6_method_to_string_wrapper")]
         public string to_string () {
             return to_string_hack;
         }
@@ -570,9 +570,9 @@ namespace ConnMan {
         PREFERRED;
 
         // hacks to expose methods created by DBus use_string_marshalling
-        [CCode (cname = "conn_man_ipv6_privacy_to_string (self)")]
+        [CCode (cname = "connman_ipv6_privacy_to_string (self)")]
         extern const string to_string_hack;
-        [CCode (cname = "conn_man_ipv6_privacy_to_string_wrapper")]
+        [CCode (cname = "connman_ipv6_privacy_to_string_wrapper")]
         public string to_string () {
             return to_string_hack;
         }
@@ -589,9 +589,9 @@ namespace ConnMan {
         MANUAL;
 
         // hacks to expose methods created by DBus use_string_marshalling
-        [CCode (cname = "conn_man_proxy_method_to_string (self)")]
+        [CCode (cname = "connman_proxy_method_to_string (self)")]
         extern const string to_string_hack;
-        [CCode (cname = "conn_man_proxy_method_to_string_wrapper")]
+        [CCode (cname = "connman_proxy_method_to_string_wrapper")]
         public string to_string () {
             return to_string_hack;
         }
@@ -606,9 +606,9 @@ namespace ConnMan {
         MANUAL;
 
         // hacks to expose methods created by DBus use_string_marshalling
-        [CCode (cname = "conn_man_ethernet_method_to_string (self)")]
+        [CCode (cname = "connman_ethernet_method_to_string (self)")]
         extern const string to_string_hack;
-        [CCode (cname = "conn_man_ethernet_method_to_string_wrapper")]
+        [CCode (cname = "connman_ethernet_method_to_string_wrapper")]
         public string to_string () {
             return to_string_hack;
         }
@@ -675,11 +675,11 @@ namespace net.connman {
 
         public signal void property_changed(string name, Variant? value);
 
-        public abstract ConnMan.ServiceState state { get; }
+        public abstract Connman.ServiceState state { get; }
         public abstract string? error { owned get; }
         public abstract string? name { owned get; }
         public abstract string type_ { owned get; }
-        public abstract ConnMan.ServiceSecurity[] security { owned get; }
+        public abstract Connman.ServiceSecurity[] security { owned get; }
         public abstract uint8 strength { get; }
         public abstract bool favorite { get; }
         public abstract bool immutable { get; }

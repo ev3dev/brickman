@@ -19,18 +19,18 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeUSBController.vala - Fake Network (ConnMan) controller for testing */
+/* FakeUsbController.vala - Fake USB controller for testing */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class FakeUSBController : Object, IBrickManagerModule {
-        USBWindow usb_window;
+    public class FakeUsbController : Object, IBrickManagerModule {
+        UsbWindow usb_window;
 
         public BrickManagerWindow start_window { get { return usb_window; } }
 
-        public FakeUSBController (Gtk.Builder builder) {
-            usb_window = new USBWindow ();
+        public FakeUsbController (Gtk.Builder builder) {
+            usb_window = new UsbWindow ();
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             usb_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.USB);
 

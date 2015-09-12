@@ -23,25 +23,25 @@
  * Shows list of types of tethering and allows user to enable/disable them.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class TetheringWindow : BrickManagerWindow {
-        UI.Menu menu;
-        UI.MenuItem tethering_info_menu_item;
+        Ui.Menu menu;
+        Ui.MenuItem tethering_info_menu_item;
 
         public signal void tethering_info_selected ();
 
         public TetheringWindow () {
             title = "Tethering";
-            menu = new UI.Menu () {
+            menu = new Ui.Menu () {
                 margin_top = -3
             };
             content_vbox.add (menu);
-            tethering_info_menu_item = new UI.MenuItem.with_right_arrow ("Network info");
+            tethering_info_menu_item = new Ui.MenuItem.with_right_arrow ("Network info");
             tethering_info_menu_item.button.pressed.connect (() => tethering_info_selected ());
-            tethering_info_menu_item.label.text_horizontal_align = GRX.TextHorizAlign.LEFT;
+            tethering_info_menu_item.label.text_horizontal_align = Grx.TextHorizAlign.LEFT;
             menu.add_menu_item (tethering_info_menu_item);
         }
 

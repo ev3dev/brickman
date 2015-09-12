@@ -21,7 +21,7 @@
  * Error.vala:
  */
 
-namespace BlueZ5 {
+namespace Bluez5 {
     [DBus (name = "org.bluez.Error")]
     public errordomain BlueZError {
         INVALID_ARGUMENTS,

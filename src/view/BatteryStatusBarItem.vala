@@ -23,8 +23,8 @@
  * Indicates battery status
  */
 
-using EV3devKit.UI;
-using GRX;
+using Ev3devKit.Ui;
+using Grx;
 
 namespace BrickManager {
     public class BatteryStatusBarItem : StatusBarItem {

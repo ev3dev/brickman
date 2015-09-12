@@ -24,7 +24,7 @@
  */
 
 using Gee;
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     class NetworkPropertiesWindow : BrickManagerWindow {

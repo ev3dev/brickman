@@ -21,11 +21,11 @@
  * BluetoothDeviceMenuItem.vala: Custom MenuItem for showing bluetooth device status.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class BluetoothDeviceMenuItem : UI.MenuItem {
+    public class BluetoothDeviceMenuItem : Ui.MenuItem {
         const string PERCENT = "%";
 
         Label adapter_label;

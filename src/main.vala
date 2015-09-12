@@ -21,8 +21,8 @@
 
 /* main.vala - main function */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 using Linux.VirtualTerminal;
 using Posix;
 
@@ -99,7 +99,7 @@ namespace BrickManager {
         if (!splash_path_found) {
             critical ("Could not find %s", splash_path);
         } else {
-            if (GRX.Context.screen.load_from_png (splash_path) != 0)
+            if (Grx.Context.screen.load_from_png (splash_path) != 0)
                 critical ("%s", "Could not load splash image.");
         }
 
@@ -116,7 +116,7 @@ namespace BrickManager {
         home_window.add_controller (network_controller);
         var bluetooth_controller = new BluetoothController ();
         network_controller.add_controller (bluetooth_controller);
-        var usb_controller = new USBController ();
+        var usb_controller = new UsbController ();
         network_controller.add_controller (usb_controller);
         network_controller.add_controller (network_controller.wifi_controller);
         var battery_controller = new BatteryController ();
@@ -141,7 +141,7 @@ namespace BrickManager {
                     logind_manager.power_off.begin (false, (obj, res) => {
                         try {
                             logind_manager.power_off.end (res);
-                            global_manager.set_leds (LEDState.BUSY);
+                            global_manager.set_leds (LedState.BUSY);
                             ConsoleApp.quit ();
                         } catch (IOError err) {
                             var dialog = new MessageDialog ("Error", err.message);
@@ -153,7 +153,7 @@ namespace BrickManager {
                     logind_manager.reboot.begin (false, (obj, res) => {
                         try {
                             logind_manager.reboot.end (res);
-                            global_manager.set_leds (LEDState.BUSY);
+                            global_manager.set_leds (LedState.BUSY);
                             ConsoleApp.quit ();
                         } catch (IOError err) {
                             var dialog = new MessageDialog ("Error", err.message);
@@ -167,7 +167,7 @@ namespace BrickManager {
             }
         });
         home_window.show ();
-        global_manager.set_leds (LEDState.NORMAL);
+        global_manager.set_leds (LedState.NORMAL);
 
         ConsoleApp.run ();
 

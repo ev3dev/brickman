@@ -11,46 +11,29 @@ set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/${CMAKE_PROJECT_NAME}")
 set (EXEC_NAME "brickman")
 set (RELEASE_NAME "Brick Manager")
-set (VERSION "0.6.1")
+set (VERSION "0.6.2")
 
 # Comment this out to enable C compiler warnings
 add_definitions (-w)
 
 add_subdirectory (data)
 
-# Currently, ev3devKit is a submodule and we are staticly linking it
-set (EV3DEVKIT_LIBRARIES ev3devKit)
-set (EV3DEVKIT_DIR lib/ev3devKit)
-if (BRICKMAN_TEST)
-    set (EV3DEVKIT_DESKTOP Yes)
-    list (APPEND EV3DEVKIT_LIBRARIES ev3devKit-desktop)
-endif (BRICKMAN_TEST)
-set (EV3DEVKIT_BUILD_DEMO No)
-add_subdirectory (lib/ev3devKit)
-include_directories (${ev3devkit_BINARY_DIR})
-mark_as_advanced (EV3DEVKIT_DESKTOP EV3DEVKIT_BUILD_DEMO)
-set (EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/${ev3devkit_VAPI})
-if (BRICKMAN_TEST)
-    list (APPEND EV3DEVKIT_VAPI ${ev3devkit_BINARY_DIR}/${ev3devkit_DESKTOP_VAPI})
-endif (BRICKMAN_TEST)
-link_libraries (${EV3DEVKIT_LIBRARIES})
-
 configure_file (src/Version.vala.in Version.vala)
 
 if (BRICKMAN_TEST)
-    set (BRICKMAN_TEST_PACKAGES gtk+-3.0)
+    set (BRICKMAN_TEST_PACKAGES gtk+-3.0 ev3devkit-desktop-0.1)
     set (BRICKMAN_SOURCE_FILES
         test/main.vala
         test/ControlPanel.vala
-        test/FakeBlueZ5.vala
-        test/FakeConnMan.vala
+        test/FakeBluez5.vala
+        test/FakeConnman.vala
         test/controller/FakeAboutController.vala
         test/controller/FakeBatteryController.vala
         test/controller/FakeBluetoothController.vala
         test/controller/FakeDeviceBrowserController.vala
         test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
-        test/controller/FakeUSBController.vala
+        test/controller/FakeUsbController.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -68,7 +51,7 @@ else (BRICKMAN_TEST)
         src/controller/DeviceBrowserController.vala
         src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
-        src/controller/USBController.vala
+        src/controller/UsbController.vala
         src/GlobalManager.vala
         src/main.vala
     )
@@ -76,15 +59,15 @@ endif (BRICKMAN_TEST)
 
 set (BRICKMAN_COMMON_SOURCE_FILES
     lib/bluez5/Error.vala
-    lib/bluez5/UUID.vala
+    lib/bluez5/Uuid.vala
     lib/dbus/Properties.vala
     lib/systemd/Logind.vala
     lib/systemd/Systemd.vala
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
     src/controller/IBrickManagerModule.vala
-    src/dbus/BlueZ5Agent.vala
-    src/dbus/ConnManAgent.vala
+    src/dbus/Bluez5Agent.vala
+    src/dbus/ConnmanAgent.vala
     src/view/AboutWindow.vala
     src/view/BatteryInfoWindow.vala
     src/view/BatteryStatusBarItem.vala
@@ -93,7 +76,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/BluetoothStatusBarItem.vala
     src/view/BluetoothWindow.vala
     src/view/BrickManagerWindow.vala
-    src/view/ConnManAgentInputDialog.vala
+    src/view/ConnmanAgentInputDialog.vala
     src/view/DeviceBrowserWindow.vala
     src/view/FileBrowserWindow.vala
     src/view/HomeWindow.vala
@@ -115,7 +98,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/SignalBars.vala
     src/view/TetheringInfoWindow.vala
     src/view/TetheringWindow.vala
-    src/view/USBWindow.vala
+    src/view/UsbWindow.vala
     src/view/WifiInfoWindow.vala
     src/view/WifiMenuItem.vala
     src/view/WifiStatusBarItem.vala
@@ -124,12 +107,14 @@ set (BRICKMAN_COMMON_SOURCE_FILES
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DEPS REQUIRED
+    ev3devkit
     glib-2.0
     gobject-2.0
     gmodule-2.0
     gio-2.0
     gio-unix-2.0
     gee-0.8
+    grx20
     gudev-1.0
     ncurses
 )
@@ -138,13 +123,13 @@ link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
 
 if (BRICKMAN_TEST)
-    pkg_check_modules(BRICKMAN_TEST_DEPS gtk+-3.0)
+    pkg_check_modules(BRICKMAN_TEST_DEPS ev3devkit-desktop gtk+-3.0)
     add_definitions(${BRICKMAN_TEST_DEPS_CFLAGS})
     link_libraries(${BRICKMAN_TEST_DEPS_LIBRARIES})
     link_directories(${BRICKMAN_TEST_DEPS_LIBRARY_DIRS})
 endif (BRICKMAN_TEST)
 
-link_libraries(grx20 m)
+link_libraries(m)
 
 find_package(Vala REQUIRED)
 include(ValaVersion)
@@ -162,20 +147,20 @@ vala_precompile(VALA_C ${EXEC_NAME}
     ${BRICKMAN_SOURCE_FILES}
     ${BRICKMAN_COMMON_SOURCE_FILES}
 PACKAGES
+    ev3devkit-0.1
     glib-2.0
     gobject-2.0
     gmodule-2.0
     gio-2.0
     gio-unix-2.0
     gee-0.8
+    grx20
     gudev-1.0
     curses
     posix
     linux
     ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
-    lib/ev3devKit/bindings/*.vapi
-    ${EV3DEVKIT_VAPI}
     bindings/*.vapi
 OPTIONS
     --target-glib=2.40
@@ -189,11 +174,11 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ControlPanel.glade
     ${CMAKE_CURRENT_BINARY_DIR}/ControlPanel.glade COPYONLY )
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnManServiceIPv4Dialog.glade
-    ${CMAKE_CURRENT_BINARY_DIR}/ConnManServiceIPv4Dialog.glade COPYONLY )
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnmanServiceIPv4Dialog.glade
+    ${CMAKE_CURRENT_BINARY_DIR}/ConnmanServiceIPv4Dialog.glade COPYONLY )
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnManAgentRequestInputDialog.glade
-    ${CMAKE_CURRENT_BINARY_DIR}/ConnManAgentRequestInputDialog.glade COPYONLY )
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/glade/ConnmanAgentRequestInputDialog.glade
+    ${CMAKE_CURRENT_BINARY_DIR}/ConnmanAgentRequestInputDialog.glade COPYONLY )
 endif (BRICKMAN_TEST)
 
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)

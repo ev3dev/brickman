@@ -21,11 +21,11 @@
  * NetworkConnectionMenuItem.vala: Custom MenuItem for showing network connection status.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class NetworkConnectionMenuItem : UI.MenuItem {
+    public class NetworkConnectionMenuItem : Ui.MenuItem {
         Label connected_label;
 
         public bool connected {
@@ -43,7 +43,7 @@ namespace BrickManager {
                 padding_top = 1,
                 padding_bottom = 1
             }, new Label () {
-                text_horizontal_align = GRX.TextHorizAlign.LEFT
+                text_horizontal_align = Grx.TextHorizAlign.LEFT
             });
             button.pressed.connect (on_button_pressed);
             var hbox = new Box.horizontal ();
@@ -55,7 +55,7 @@ namespace BrickManager {
             hbox.add (connected_label);
             hbox.add (label);
             try {
-                var icon = new EV3devKit.UI.Icon.from_png (png_file) {
+                var icon = new Ev3devKit.Ui.Icon.from_png (png_file) {
                     horizontal_align = WidgetAlign.END,
                     vertical_align = WidgetAlign.CENTER
                 };

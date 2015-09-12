@@ -23,16 +23,16 @@
  * Monitors network status and performs other network related functions
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class NetworkStatusWindow : BrickManagerWindow {
         Box state_hbox;
         Label state_label;
         Label state_value_label;
-        UI.Menu menu;
-        UI.MenuItem network_connections_menu_item;
+        Ui.Menu menu;
+        Ui.MenuItem network_connections_menu_item;
         CheckboxMenuItem offline_mode_menu_item;
 
         public string state {
@@ -59,14 +59,14 @@ namespace BrickManager {
             state_hbox.add (state_label);
             state_value_label = new Label ("???");
             state_hbox.add (state_value_label);
-            menu = new UI.Menu () {
+            menu = new Ui.Menu () {
                 border_top = 1
             };
             content_vbox.add (menu);
-            network_connections_menu_item = new UI.MenuItem.with_right_arrow ("All Network Connections");
+            network_connections_menu_item = new Ui.MenuItem.with_right_arrow ("All Network Connections");
             network_connections_menu_item.button.pressed.connect (() => network_connections_selected ());
             menu.add_menu_item (network_connections_menu_item);
-            var tethering_menu_item = new UI.MenuItem.with_right_arrow ("Tethering");
+            var tethering_menu_item = new Ui.MenuItem.with_right_arrow ("Tethering");
             tethering_menu_item.button.pressed.connect (() => tethering_selected ());
             menu.add_menu_item (tethering_menu_item);
             offline_mode_menu_item = new CheckboxMenuItem ("Offline Mode");
@@ -77,7 +77,7 @@ namespace BrickManager {
         }
 
         public void add_technology_window (BrickManagerWindow window) {
-            var menu_item = new UI.MenuItem.with_right_arrow (window.title) {
+            var menu_item = new Ui.MenuItem.with_right_arrow (window.title) {
                 represented_object = window
             };
             menu_item.button.pressed.connect (() => window.show ());

@@ -18,17 +18,17 @@
  */
 
 /*
- * ConnManAgentInputDialog.vala:
+ * ConnmanAgentInputDialog.vala:
  *
  * Dialog for getting user input (text).
  */
 
-// TODO: Move this class to EV3devKit.
+// TODO: Move this class to Ev3devKit.
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class ConnManAgentInputDialog : Dialog {
+    public class ConnmanAgentInputDialog : Dialog {
         Label message_label;
         TextEntry value_entry;
         Button accept_button;
@@ -38,7 +38,7 @@ namespace BrickManager {
 
         public signal void responded (bool accepted);
 
-        public ConnManAgentInputDialog (string message, string inital_value = "") {
+        public ConnmanAgentInputDialog (string message, string inital_value = "") {
             var dialog_vbox = new Box.vertical () {
                 padding = 3,
                 spacing = 6

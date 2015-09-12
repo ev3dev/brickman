@@ -31,7 +31,7 @@ namespace BrickManager {
      * Brickman uses the LEDs on the EV3 to provide feedback to the user using
      * these states.
      */
-    public enum LEDState {
+    public enum LedState {
         /**
          * Indicates that brickman is running normally (ready for input).
          */
@@ -53,16 +53,16 @@ namespace BrickManager {
      */
     public class GlobalManager : Object {
         bool have_ev3_leds = false;
-        EV3devKit.Devices.LED EV3_LEFT_GREEN_led;
-        EV3devKit.Devices.LED EV3_RIGHT_GREEN_led;
-        EV3devKit.Devices.LED EV3_LEFT_RED_led;
-        EV3devKit.Devices.LED EV3_RIGHT_RED_led;
-        EV3devKit.Devices.Input ev3_buttons;
+        Ev3devKit.Devices.Led EV3_LEFT_GREEN_led;
+        Ev3devKit.Devices.Led EV3_RIGHT_GREEN_led;
+        Ev3devKit.Devices.Led EV3_LEFT_RED_led;
+        Ev3devKit.Devices.Led EV3_RIGHT_RED_led;
+        Ev3devKit.Devices.Input ev3_buttons;
 
         /**
          * Gets the device manager for interacting with hardware devices.
          */
-        public EV3devKit.Devices.DeviceManager device_manager { get; private set; }
+        public Ev3devKit.Devices.DeviceManager device_manager { get; private set; }
 
         /**
          * Emitted when the back button is held down for one second.
@@ -70,24 +70,24 @@ namespace BrickManager {
         public signal void back_button_long_pressed ();
 
         public GlobalManager () {
-            device_manager = new EV3devKit.Devices.DeviceManager ();
+            device_manager = new Ev3devKit.Devices.DeviceManager ();
             try {
-                EV3_LEFT_GREEN_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_LEFT_GREEN);
-                EV3_RIGHT_GREEN_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_RIGHT_GREEN);
-                EV3_LEFT_RED_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_LEFT_RED);
-                EV3_RIGHT_RED_led = device_manager.get_led (EV3devKit.Devices.LED.EV3_RIGHT_RED);
+                EV3_LEFT_GREEN_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_GREEN);
+                EV3_RIGHT_GREEN_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_GREEN);
+                EV3_LEFT_RED_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_RED);
+                EV3_RIGHT_RED_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_RED);
                 have_ev3_leds = true;
             } catch (Error err) {
                 critical ("%s", err.message);
             }
             try {
-                ev3_buttons = device_manager.get_input_device (EV3devKit.Devices.Input.EV3_BUTTONS_NAME);
+                ev3_buttons = device_manager.get_input_device (Ev3devKit.Devices.Input.EV3_BUTTONS_NAME);
                 uint timeout_id = 0;
                 var button_down_handler_id = ev3_buttons.key_down.connect ((key_code) => {
                     if (key_code == KEY_BACKSPACE) {
                         timeout_id = Timeout.add (1000, () => {
                             back_button_long_pressed ();
-                            EV3devKit.ConsoleApp.ignore_next_key_press ();
+                            Ev3devKit.ConsoleApp.ignore_next_key_press ();
                             timeout_id = 0;
                             return Source.REMOVE;
                         });
@@ -107,12 +107,12 @@ namespace BrickManager {
             }
         }
 
-        public void set_leds (LEDState state) {
+        public void set_leds (LedState state) {
             if (!have_ev3_leds)
                 return;
             try {
                 switch (state) {
-                case LEDState.NORMAL:
+                case LedState.NORMAL:
                     EV3_LEFT_GREEN_led.set_trigger ("default-on");
                     EV3_RIGHT_GREEN_led.set_trigger ("default-on");
                     EV3_LEFT_RED_led.set_trigger ("none");
@@ -120,7 +120,7 @@ namespace BrickManager {
                     EV3_RIGHT_RED_led.set_trigger ("none");
                     EV3_RIGHT_RED_led.set_brightness (0);
                     break;
-                case LEDState.BUSY:
+                case LedState.BUSY:
                     EV3_LEFT_GREEN_led.set_trigger ("none");
                     EV3_LEFT_GREEN_led.set_brightness (0);
                     EV3_RIGHT_GREEN_led.set_trigger ("none");
@@ -128,7 +128,7 @@ namespace BrickManager {
                     EV3_LEFT_RED_led.set_trigger ("default-on");
                     EV3_RIGHT_RED_led.set_trigger ("default-on");
                     break;
-                case LEDState.USER:
+                case LedState.USER:
                     EV3_LEFT_GREEN_led.set_trigger ("default-on");
                     EV3_RIGHT_GREEN_led.set_trigger ("default-on");
                     EV3_LEFT_RED_led.set_trigger ("default-on");
@@ -180,9 +180,9 @@ namespace BrickManager {
          */
         public void stop_all_sound () {
             device_manager.get_input_devices ().foreach ((input) => {
-                if (input.has_sound_capability (EV3devKit.Devices.SoundCapability.BELL))
+                if (input.has_sound_capability (Ev3devKit.Devices.SoundCapability.BELL))
                     input.do_bell (false);
-                if (input.has_sound_capability (EV3devKit.Devices.SoundCapability.TONE))
+                if (input.has_sound_capability (Ev3devKit.Devices.SoundCapability.TONE))
                     input.do_tone (0);
             });
         }

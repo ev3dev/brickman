@@ -21,7 +21,7 @@
  * MotorInfoWindow.vala: Main Device Browser Menu
  */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class MotorInfoWindow : BrickManagerWindow {

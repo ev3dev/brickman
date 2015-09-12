@@ -23,7 +23,7 @@
 
 using Gee;
 
-namespace ConnMan {
+namespace Connman {
     public class Manager : Object {
         public const string SERVICE_NAME = "net.connman";
 
@@ -310,7 +310,7 @@ namespace net.connman {
         public signal void peers_changed (ManagerObject[] changed, ObjectPath[] removed);
         public signal void property_changed (string name, Variant? value);
 
-        public abstract ConnMan.ManagerState state { get; }
+        public abstract Connman.ManagerState state { get; }
         public abstract bool offline_mode { get; }
         // deprecated
         //public abstract bool session_mode { get; }

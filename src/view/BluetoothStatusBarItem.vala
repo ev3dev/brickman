@@ -23,8 +23,8 @@
  * Indicates Bluetooth connection status
  */
 
-using EV3devKit.UI;
-using GRX;
+using Ev3devKit.Ui;
+using Grx;
 
 namespace BrickManager {
     public class BluetoothStatusBarItem : StatusBarItem {
@@ -38,9 +38,9 @@ namespace BrickManager {
             string file;
             try {
                 file = "bluetooth-connected7x9.png";
-                connected_icon = EV3devKit.UI.Icon.create_context_from_png (file);
+                connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
                 file = "bluetooth7x9.png";
-                idle_icon = EV3devKit.UI.Icon.create_context_from_png (file);
+                idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
             } catch (Error err) {
                 critical ("Error loading icon '%s'.", file);
             }

@@ -23,7 +23,7 @@
 
 using Gee;
 
-namespace ConnMan {
+namespace Connman {
     public class Technology : Object {
         internal net.connman.Technology dbus_proxy;
 

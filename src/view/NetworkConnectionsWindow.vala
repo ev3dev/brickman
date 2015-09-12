@@ -24,18 +24,18 @@
  */
 
 using Gee;
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     class NetworkConnectionsWindow : BrickManagerWindow {
-        internal UI.Menu menu;
+        internal Ui.Menu menu;
 
         public signal void connection_selected (Object user_data);
 
         public NetworkConnectionsWindow () {
             title = "All Network Connections";
-            menu = new UI.Menu () {
+            menu = new Ui.Menu () {
                 spacing = 2
             };
             content_vbox.add (menu);

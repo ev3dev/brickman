@@ -21,7 +21,7 @@
  * Device.vala:
  */
 
-namespace BlueZ5 {
+namespace Bluez5 {
     public class Device : Object {
         static Gee.HashMap<string, weak Device> device_map;
 

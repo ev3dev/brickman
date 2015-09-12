@@ -21,16 +21,16 @@
  * MotorBrowserWindow.vala: Main Device Browser Menu
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class MotorBrowserWindow : BrickManagerWindow {
-        internal UI.Menu menu;
+        internal Ui.Menu menu;
 
         public MotorBrowserWindow () {
             title ="Motors";
-            menu = new UI.Menu () {
+            menu = new Ui.Menu () {
                 margin_top = -3
             };
             content_vbox.add (menu);

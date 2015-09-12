@@ -21,7 +21,7 @@
 
 /* BatteryController.vala - Controller for monitoring battery */
 
-using EV3devKit.UI;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class BatteryController : Object, IBrickManagerModule {

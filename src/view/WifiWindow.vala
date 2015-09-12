@@ -21,15 +21,15 @@
  * WifiWindow.vala: Wi-Fi Menu
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class WifiWindow : BrickManagerWindow {
-        UI.Menu powered_menu;
-        UI.Menu unpowered_menu;
+        Ui.Menu powered_menu;
+        Ui.Menu unpowered_menu;
         CheckboxMenuItem powered_menu_item;
-        UI.MenuItem scan_menu_item;
+        Ui.MenuItem scan_menu_item;
 
         bool _powered;
         public bool powered {
@@ -76,38 +76,38 @@ namespace BrickManager {
             content_vbox.spacing = 0;
             powered_menu_item = new CheckboxMenuItem ("Powered");
             powered_menu_item.button.vertical_align = WidgetAlign.START;
-            weak UI.MenuItem weak_powered_menu_item = powered_menu_item;
+            weak Ui.MenuItem weak_powered_menu_item = powered_menu_item;
             powered_menu_item.button.pressed.connect (() => {
                 powered = !powered;
                 weak_powered_menu_item.button.focus ();
             });
             content_vbox.add (powered_menu_item.button);
-            powered_menu = new UI.Menu () {
+            powered_menu = new Ui.Menu () {
                 spacing = 1
             };
-            scan_menu_item = new UI.MenuItem ("???");
+            scan_menu_item = new Ui.MenuItem ("???");
             scan_menu_item.button.pressed.connect (() => scan_selected ());
             powered_menu.add_menu_item (scan_menu_item);
-            var networks_label_menu_item = new UI.MenuItem ("Networks");
+            var networks_label_menu_item = new Ui.MenuItem ("Networks");
             networks_label_menu_item.label.horizontal_align = WidgetAlign.CENTER;
             networks_label_menu_item.button.border_bottom = 1;
             networks_label_menu_item.button.margin_bottom = 2;
             networks_label_menu_item.button.can_focus = false;
             powered_menu.add_menu_item (networks_label_menu_item);
-            unpowered_menu = new UI.Menu ();
+            unpowered_menu = new Ui.Menu ();
 
             scanning = false;
         }
 
-        public void add_menu_item (UI.MenuItem menu_item) {
+        public void add_menu_item (Ui.MenuItem menu_item) {
             powered_menu.add_menu_item (menu_item);
         }
 
-        public void remove_menu_item (UI.MenuItem menu_item) {
+        public void remove_menu_item (Ui.MenuItem menu_item) {
             powered_menu.remove_menu_item (menu_item);
         }
 
-        public UI.MenuItem? find_menu_item (Object represented_object) {
+        public Ui.MenuItem? find_menu_item (Object represented_object) {
             return powered_menu.find_menu_item<Object> (represented_object,
                 (mi, o) => o == mi.represented_object);
         }

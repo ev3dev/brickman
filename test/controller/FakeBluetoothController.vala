@@ -21,8 +21,8 @@
 
 /* FakeBluetoothController.vala - Fake Bluetooth (BlueZ 5) controller for testing */
 
-using BlueZ5;
-using EV3devKit.UI;
+using Bluez5;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FakeBluetoothController : Object, IBrickManagerModule {
@@ -175,7 +175,7 @@ namespace BrickManager {
 
             var bluetooth_agent_name_entry = builder.get_object ("bluetooth-agent-name-entry") as Gtk.Entry;
             var bluetooth_agent_passkey_entry = builder.get_object ("bluetooth-agent-passkey-entry") as Gtk.Entry;
-            var agent = new BlueZ5Agent ();
+            var agent = new Bluez5Agent ();
             (builder.get_object ("bluetooth-agent-request-pin-code-button") as Gtk.Button)
                 .clicked.connect (() => {
                     var path = new ObjectPath (bluetooth_agent_name_entry.text);
@@ -239,8 +239,8 @@ namespace BrickManager {
             (builder.get_object ("bluetooth-agent-authorize-service-button") as Gtk.Button)
                 .clicked.connect (() => {
                     var path = new ObjectPath (bluetooth_agent_name_entry.text);
-                    // TODO: add UI to change UUID.
-                    agent.authorize_service.begin (path, UUID.SerialPort, (obj, res) => {
+                    // TODO: add UI to change Uuid.
+                    agent.authorize_service.begin (path, Uuid.SerialPort, (obj, res) => {
                         try {
                             agent.authorize_service.end (res);
                             show_message ("Accepted.");
@@ -254,7 +254,7 @@ namespace BrickManager {
         }
 
         void show_message (string message) {
-            var dialog = new Gtk.MessageDialog (EV3devKitDesktop.GtkApp.main_window,
+            var dialog = new Gtk.MessageDialog (Ev3devKitDesktop.GtkApp.main_window,
                 Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
             dialog.response.connect ((id) => dialog.destroy ());
             dialog.show ();

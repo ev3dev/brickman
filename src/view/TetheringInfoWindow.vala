@@ -23,8 +23,8 @@
  * Shows network information about tether interface.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class TetheringInfoWindow : BrickManagerWindow {

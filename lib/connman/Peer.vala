@@ -23,7 +23,7 @@
 
 using Gee;
 
-namespace ConnMan {
+namespace Connman {
     public class Peer : Object {
         const string IPV4_ADDRESS_KEY = "Address";
         const string IPV4_NETMASK_KEY = "Netmask";
@@ -119,7 +119,7 @@ namespace net.connman {
 
         public signal void property_changed (string name, Variant? value);
 
-        public abstract ConnMan.PeerState state { get; }
+        public abstract Connman.PeerState state { get; }
         public abstract string name { owned get; }
         [DBus (name = "IPv4")]
         public abstract HashTable<string, Variant> ipv4 { owned get; }

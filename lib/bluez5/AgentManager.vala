@@ -21,7 +21,7 @@
  * AgentManager.vala:
  */
 
-namespace BlueZ5 {
+namespace Bluez5 {
     public class AgentManager : Object {
         org.bluez.AgentManager1 dbus_proxy;
 
@@ -66,8 +66,8 @@ namespace BlueZ5 {
 namespace org.bluez {
     [DBus (name = "org.bluez.AgentManager1")]
     public interface AgentManager1 : Object {
-        public abstract async void register_agent (ObjectPath agent, BlueZ5.AgentManagerCapability capability) throws IOError, BlueZ5.BlueZError;
-        public abstract async void unregister_agent (ObjectPath agent) throws IOError, BlueZ5.BlueZError;
-        public abstract async void request_default_agent (ObjectPath agent) throws IOError, BlueZ5.BlueZError;
+        public abstract async void register_agent (ObjectPath agent, Bluez5.AgentManagerCapability capability) throws IOError, Bluez5.BlueZError;
+        public abstract async void unregister_agent (ObjectPath agent) throws IOError, Bluez5.BlueZError;
+        public abstract async void request_default_agent (ObjectPath agent) throws IOError, Bluez5.BlueZError;
     }
 }

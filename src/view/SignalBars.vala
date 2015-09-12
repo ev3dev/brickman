@@ -21,8 +21,8 @@
  * SignalBars.vala: Widget for indicating signal strength using bars like a mobile phone.
  */
 
-using EV3devKit;
-using EV3devKit.UI;
+using Ev3devKit;
+using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class SignalBars : Widget {
@@ -52,11 +52,11 @@ namespace BrickManager {
         protected override void draw_content () {
             var one_bar = (max_strength + MAX_BARS - 1) / MAX_BARS;
             var bars = (strength + one_bar - 1) / one_bar;
-            GRX.Color color = window.screen.fg_color;
+            Grx.Color color = window.screen.fg_color;
             if (parent.draw_children_as_focused)
                 color = window.screen.bg_color;
             for (int i = 0; i < bars; i++) {
-                GRX.filled_box (content_bounds.x1 + BAR_WIDTH * i,
+                Grx.filled_box (content_bounds.x1 + BAR_WIDTH * i,
                     content_bounds.y2 - BAR_WIDTH * (i + 1),
                     content_bounds.x1 + BAR_WIDTH * (i + 1),
                     content_bounds.y2, color);
