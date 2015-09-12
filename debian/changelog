@@ -1,3 +1,17 @@
+brickman (0.6.2) stable; urgency=medium
+
+  [ David Lechner ]
+  * Change polling time to 500 ms for watch window.
+
+  [ Stefan Sauer ]
+  * filebrowser: ensure that the tty is accesible to the user
+  * brickman.service: route stdout/err to journal for easier access
+
+  [ David Lechner ]
+  * Now using ev3devKit as shared library.
+
+ -- David Lechner <david@lechnology.com>  Sat, 12 Sep 2015 00:30:26 -0500
+
 brickman (0.6.1) stable; urgency=medium
 
   * Change LED names to match changes in kernel.
@@ -47,7 +61,7 @@ brickman (0.4.0) testing; urgency=medium
 
 brickman (0.3.0) testing; urgency=medium
 
-  * Have BlueZ5.Manager hang on to object instances that it creates
+  * Have Bluez5.Manager hang on to object instances that it creates
     (ev3dev/ev3dev#201)
   * Add Device Browser with support for browsing ports and sensors
     (ev3dev/ev3dev#169)
