@@ -48,7 +48,8 @@ the share and run `./brickman` or if you temporarily replaced the one in
 To build the desktop test (makes UI development much faster), in a regular terminal,
 not in brickstrap shell:
 
-* Install the build-deps listed in `debian/control` and also the package `libgtk-3-dev`.
+* Install the build-deps listed in `debian/control` and also the packages
+  `libev3devkit-desktop-dev` and `libgtk-3-dev`.
 * Then...
 
         mkdir -p <some-build-dir>
