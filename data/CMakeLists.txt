@@ -1,4 +1,6 @@
 set (files
+    openroberta-connected12x9
+    openroberta-idle12x9
     splash
 )
 

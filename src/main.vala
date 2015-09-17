@@ -121,12 +121,15 @@ namespace BrickManager {
         home_window.add_controller (battery_controller);
         var about_controller = new AboutController ();
         home_window.add_controller (about_controller);
+        var open_roberta_controller = new OpenRobertaController ();
+        home_window.add_controller (open_roberta_controller);
 
         Screen.get_active_screen ().status_bar.add_left (network_controller.network_status_bar_item);
 
         Screen.get_active_screen ().status_bar.add_right (battery_controller.battery_status_bar_item);
         Screen.get_active_screen ().status_bar.add_right (network_controller.wifi_status_bar_item);
         Screen.get_active_screen ().status_bar.add_right (bluetooth_controller.status_bar_item);
+        Screen.get_active_screen ().status_bar.add_right (open_roberta_controller.status_bar_item);
 
         global_manager.back_button_long_pressed.connect_after (() =>
             home_window.shutdown_dialog.show ());

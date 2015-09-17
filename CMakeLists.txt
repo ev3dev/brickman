@@ -33,6 +33,7 @@ if (BRICKMAN_TEST)
         test/controller/FakeDeviceBrowserController.vala
         test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
+        test/controller/FakeOpenRobertaController.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -50,6 +51,7 @@ else (BRICKMAN_TEST)
         src/controller/DeviceBrowserController.vala
         src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
+        src/controller/OpenRobertaController.vala
         src/GlobalManager.vala
         src/main.vala
     )
@@ -86,6 +88,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/NetworkPropertiesWindow.vala
     src/view/NetworkStatusBarItem.vala
     src/view/NetworkStatusWindow.vala
+    src/view/OpenRobertaStatusBarItem.vala
+    src/view/OpenRobertaWindow.vala
     src/view/PortBrowserWindow.vala
     src/view/PortInfoWindow.vala
     src/view/SelectFromListDialog.vala

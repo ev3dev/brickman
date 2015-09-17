@@ -36,12 +36,14 @@ namespace BrickManager {
         public FakeBluetoothController bluetooth_controller;
         public FakeBatteryController battery_controller;
         public FakeAboutController about_controller;
+        public FakeOpenRobertaController open_roberta_controller;
 
         enum Tab {
             DEVICE_BROWSER,
             NETWORK,
             BLUETOOTH,
-            BATTERY
+            BATTERY,
+            OPEN_ROBERTA
         }
 
         enum NetworkNotebookTab {
@@ -147,6 +149,7 @@ namespace BrickManager {
                 bluetooth_controller = new FakeBluetoothController (builder);
                 battery_controller = new FakeBatteryController (builder);
                 about_controller = new FakeAboutController (builder);
+                open_roberta_controller = new FakeOpenRobertaController (builder);
 
                 builder.connect_signals (this);
                 window.show_all ();
