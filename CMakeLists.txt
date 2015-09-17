@@ -176,6 +176,7 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/ConnmanAgentRequestInputDialog.glade COPYONLY )
 endif (BRICKMAN_TEST)
 
+add_dependencies(${EXEC_NAME} brickman_data)
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)
 
 add_custom_target(run
