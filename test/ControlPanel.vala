@@ -34,7 +34,6 @@ namespace BrickManager {
         public FakeDeviceBrowserController device_browser_controller;
         public FakeNetworkController network_controller;
         public FakeBluetoothController bluetooth_controller;
-        public FakeUsbController usb_controller;
         public FakeBatteryController battery_controller;
         public FakeAboutController about_controller;
 
@@ -42,7 +41,6 @@ namespace BrickManager {
             DEVICE_BROWSER,
             NETWORK,
             BLUETOOTH,
-            USB,
             BATTERY
         }
 
@@ -147,7 +145,6 @@ namespace BrickManager {
                 device_browser_controller = new FakeDeviceBrowserController (builder);
                 network_controller = new FakeNetworkController (builder);
                 bluetooth_controller = new FakeBluetoothController (builder);
-                usb_controller = new FakeUsbController (builder);
                 battery_controller = new FakeBatteryController (builder);
                 about_controller = new FakeAboutController (builder);
 

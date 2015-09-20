@@ -33,7 +33,6 @@ if (BRICKMAN_TEST)
         test/controller/FakeDeviceBrowserController.vala
         test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
-        test/controller/FakeUsbController.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -51,7 +50,6 @@ else (BRICKMAN_TEST)
         src/controller/DeviceBrowserController.vala
         src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
-        src/controller/UsbController.vala
         src/GlobalManager.vala
         src/main.vala
     )
@@ -98,7 +96,6 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/SignalBars.vala
     src/view/TetheringInfoWindow.vala
     src/view/TetheringWindow.vala
-    src/view/UsbWindow.vala
     src/view/WifiInfoWindow.vala
     src/view/WifiMenuItem.vala
     src/view/WifiStatusBarItem.vala

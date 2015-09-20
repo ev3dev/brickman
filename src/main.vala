@@ -116,8 +116,6 @@ namespace BrickManager {
         home_window.add_controller (network_controller);
         var bluetooth_controller = new BluetoothController ();
         network_controller.add_controller (bluetooth_controller);
-        var usb_controller = new UsbController ();
-        network_controller.add_controller (usb_controller);
         network_controller.add_controller (network_controller.wifi_controller);
         var battery_controller = new BatteryController ();
         home_window.add_controller (battery_controller);

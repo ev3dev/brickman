@@ -47,7 +47,6 @@ namespace BrickManager {
         home_window.add_controller (control_panel.file_browser_controller);
         home_window.add_controller (control_panel.device_browser_controller);
         home_window.add_controller (control_panel.network_controller);
-        control_panel.network_controller.add_controller (control_panel.usb_controller);
         control_panel.network_controller.add_controller (control_panel.bluetooth_controller);
         control_panel.network_controller.add_controller (control_panel.network_controller.wifi_controller);
         control_panel.bluetooth_controller.show_network_connection_requested.connect ((name) =>
