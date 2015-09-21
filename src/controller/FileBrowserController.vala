@@ -27,12 +27,12 @@ using Ev3devKit.Ui;
 namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
         const string PARENT_DIRECTORY_TEXT = "../";
-        const string INITAL_DIRECTORY = "/home";
+        const string INITAL_DIRECTORY = "/home/ev3dev";
+        const string USER_NAME = "ev3dev";
         const string file_attrs = FileAttribute.OWNER_USER
             + "," + FileAttribute.STANDARD_IS_HIDDEN
             + "," + FileAttribute.STANDARD_TYPE
-            + "," + FileAttribute.UNIX_MODE
-            + "," + FileAttribute.UNIX_UID;
+            + "," + FileAttribute.UNIX_MODE;
 
         FileBrowserWindow file_browser_window;
         FileMonitor? monitor;
@@ -50,7 +50,6 @@ namespace BrickManager {
                     var file_info = file.query_info (file_attrs,
                         FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
                     var mode = file_info.get_attribute_uint32 (FileAttribute.UNIX_MODE);
-                    var uid = file_info.get_attribute_uint32 (FileAttribute.UNIX_UID);
                     if (file_info.get_file_type () == FileType.DIRECTORY) {
                         // if the selected file is a directory, then we
                         // open that directory.
@@ -63,17 +62,13 @@ namespace BrickManager {
                             }
                         });
                     } else if ((mode & Posix.S_IXUSR) == Posix.S_IXUSR) {
-                        // if the selected file is executable and not owned by
-                        // a system user then we run the file on a new console
-                        // as the owner of the file.
-                        if (uid < 1000)
-                            throw new IOError.PERMISSION_DENIED ("Cannot run files owned by system users.");
+                        // if the selected file is executable then we run the
+                        // file on a new console as the "ev3dev" user.
                         try {
-                            var owner = file_info.get_attribute_string (FileAttribute.OWNER_USER);
                             // openvt will unfortunately set the ownership of the new /dev/tty<num> to root:root
                             // instead of root:tty. Even with root:tty the new application would fails to configure
                             // the tty. We deal with that by changing the ownership of the new tty to belong to
-                            // the owner of the programm we launch.
+                            // USER_NAME.
                             var ttyname_dir_template = "/tmp/brickman.XXXXXX".dup();
                             var ttyname_dir = DirUtils.mkdtemp (ttyname_dir_template);
                             var ttyname_path = ttyname_dir + "/tty";
@@ -85,7 +80,7 @@ namespace BrickManager {
                                 "/bin/bash",
                                 "-c",
                                 "/usr/bin/tty >%s;tty=$(/bin/cat %s);/bin/chown %s: \$tty;/usr/bin/sudo --login --set-home --non-interactive --user=%s -- %s"
-                                    .printf (ttyname_path, ttyname_path, owner, owner, file.get_path ()),
+                                    .printf (ttyname_path, ttyname_path, USER_NAME, USER_NAME, file.get_path ()),
                             };
                             var subproc = new Subprocess.newv (args, SubprocessFlags.INHERIT_FDS);
                             global_manager.set_leds (LedState.USER);
