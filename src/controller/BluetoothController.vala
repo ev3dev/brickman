@@ -38,7 +38,7 @@ namespace BrickManager {
         Binding? selected_adapter_scanning_binding;
         uint connection_count = 0;
 
-        public BrickManagerWindow start_window { get { return main_window; } }
+        public string display_name { get { return "Bluetooth"; } }
 
         public bool connected { get { return connection_count > 0; } }
 
@@ -46,9 +46,13 @@ namespace BrickManager {
 
         internal uint adapter_count { get; set; default = 0; }
 
+        public void show_main_window () {
+            main_window.show ();
+        }
+
         public BluetoothController () {
             adapter_list = new Gee.LinkedList<Adapter> ();
-            main_window = new BluetoothWindow () {
+            main_window = new BluetoothWindow (display_name) {
                 loading = true
             };
             main_window.scan_selected.connect (on_scan_selected);

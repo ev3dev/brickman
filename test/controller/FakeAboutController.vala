@@ -25,12 +25,13 @@ using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FakeAboutController : Object, IBrickManagerModule {
-        AboutWindow about_window;
-
-        public BrickManagerWindow start_window { get { return about_window; } }
+        public string display_name { get { return "About"; } }
 
         public FakeAboutController (Gtk.Builder builder) {
-            about_window = new AboutWindow () {
+        }
+
+        public void show_main_window () {
+            var about_window = new AboutWindow (display_name) {
                 eeprom_version = "V0.00"
             };
             var utsname = Posix.UTSName ();
@@ -39,6 +40,8 @@ namespace BrickManager {
             } else {
                 critical ("Failed to get kernel version.");
             }
+            about_window.weak_ref (() => message ("about_window disposed."));
+            about_window.show ();
         }
     }
 }

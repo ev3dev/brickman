@@ -52,16 +52,20 @@ namespace BrickManager {
         public class WifiController : Object, IBrickManagerModule {
             weak WifiWindow wifi_window;
 
-            public BrickManagerWindow start_window { get { return wifi_window; } }
+            public string display_name { get { return wifi_window.title; } }
 
             public WifiController (WifiWindow wifi_window) {
                 this.wifi_window = wifi_window;
+            }
+
+            public void show_main_window () {
+                wifi_window.show ();
             }
         }
 
         public WifiController wifi_controller;
 
-        public BrickManagerWindow start_window { get { return status_window; } }
+        public string display_name { get { return "Wireless and Networks"; } }
 
         public bool has_tether { get; set; }
         public string tether_address { get; set; }
@@ -73,7 +77,7 @@ namespace BrickManager {
             technology_map = new Gee.HashMap<weak Technology, weak CheckboxMenuItem> ();
             service_map = new Gee.HashMap<weak Service, weak NetworkConnectionMenuItem> ();
             wifi_service_map = new Gee.HashMap<weak Service, weak WifiMenuItem> ();
-            status_window = new NetworkStatusWindow () {
+            status_window = new NetworkStatusWindow (display_name) {
                 loading = true
             };
             connections_window = new NetworkConnectionsWindow () {
@@ -162,8 +166,12 @@ namespace BrickManager {
                 on_udev_event ("add", tether_device);
         }
 
+        public void show_main_window () {
+            status_window.show ();
+        }
+
         public void add_controller (IBrickManagerModule controller) {
-            status_window.add_technology_window (controller.start_window);
+            status_window.add_technology_controller (controller);
             if (controller is BluetoothController) {
                 bluetooth_controller = (BluetoothController)controller;
                 if (manager != null) {

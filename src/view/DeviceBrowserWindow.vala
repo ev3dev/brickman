@@ -32,8 +32,8 @@ namespace BrickManager {
         public signal void sensors_menu_item_selected ();
         public signal void motors_menu_item_selected ();
 
-        public DeviceBrowserWindow () {
-            title ="Device Browser";
+        public DeviceBrowserWindow (string display_name) {
+            title = display_name;
             menu = new Ui.Menu ();
             content_vbox.add (menu);
             var ports_menu_item = new Ui.MenuItem.with_right_arrow ("Ports");

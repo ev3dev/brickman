@@ -62,8 +62,8 @@ namespace BrickManager {
             }
         }
 
-        public BatteryInfoWindow () {
-            title = "Battery";
+        public BatteryInfoWindow (string display_name) {
+            title = display_name;
             info_grid = new Grid (4, 2);
             content_vbox.add (info_grid);
             tech_label = new Label ("Type:") {

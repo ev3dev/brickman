@@ -37,10 +37,10 @@ namespace BrickManager {
         FileMonitor? monitor;
         File initial_directory;
 
-        public BrickManagerWindow start_window { get { return file_browser_window; } }
+        public string display_name { get { return "File Browser"; } }
 
         public FakeFileBrowserController (Gtk.Builder builder) {
-            file_browser_window = new FileBrowserWindow () {
+            file_browser_window = new FileBrowserWindow (display_name) {
                 sort_files_func = sort_files
             };
             file_browser_window.file_selected.connect ((represented_object) => {
@@ -84,6 +84,10 @@ namespace BrickManager {
             });
             initial_directory = File.new_for_path (INITAL_DIRECTORY);
             file_browser_window.file_selected (initial_directory);
+        }
+
+        public void show_main_window () {
+            file_browser_window.show ();
         }
 
         async void set_directory (File directory) throws Error {

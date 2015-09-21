@@ -39,8 +39,8 @@ namespace BrickManager {
 
         public signal void file_selected (Object represented_object);
 
-        public FileBrowserWindow () {
-            title = "File Browser";
+        public FileBrowserWindow (string display_name) {
+            title = display_name;
             current_directory_label = new Label ("???") {
                 text_horizontal_align = Grx.TextHorizAlign.LEFT,
                 vertical_align = WidgetAlign.START,

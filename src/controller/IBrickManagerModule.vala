@@ -25,6 +25,7 @@ using Ev3devKit.Ui;
 
 namespace BrickManager {
     public interface IBrickManagerModule : Object {
-        public abstract BrickManagerWindow start_window { get; }
+        public abstract string display_name { get; }
+        public abstract void show_main_window ();
     }
 }

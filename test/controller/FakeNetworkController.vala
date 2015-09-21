@@ -40,10 +40,14 @@ namespace BrickManager {
         public class WifiController : Object, IBrickManagerModule {
             public WifiWindow wifi_window;
 
-            public BrickManagerWindow start_window { get { return wifi_window; } }
+            public string display_name { get { return wifi_window.title; } }
+
+            public void show_main_window () {
+                wifi_window.show ();
+            }
         }
 
-        public BrickManagerWindow start_window { get { return network_status_window; } }
+        public string display_name { get { return "Wireless and Networks"; } }
 
         public FakeNetworkController (Gtk.Builder builder) throws Error {
 
@@ -60,7 +64,7 @@ namespace BrickManager {
 
             /* NetworkStatusWindow */
 
-            network_status_window = new NetworkStatusWindow ();
+            network_status_window = new NetworkStatusWindow (display_name);
             network_status_window.shown.connect (() => {
                 control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK;
                 network_notebook.page = (int)ControlPanel.NetworkNotebookTab.MAIN;
@@ -494,8 +498,12 @@ namespace BrickManager {
                 .clicked.connect (() => agent.cancel.begin ());
         }
 
+        public void show_main_window () {
+            network_status_window.show ();
+        }
+
         public void add_controller (IBrickManagerModule controller) {
-            network_status_window.add_technology_window (controller.start_window);
+            network_status_window.add_technology_controller (controller);
         }
 
         public void show_connection (string name) {

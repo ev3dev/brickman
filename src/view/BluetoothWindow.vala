@@ -68,8 +68,8 @@ namespace BrickManager {
 
         public signal void scan_selected ();
 
-        public BluetoothWindow () {
-            title ="Bluetooth";
+        public BluetoothWindow (string display_name) {
+            title = display_name;
             content_vbox.spacing = 0;
             powered_menu_item = new CheckboxMenuItem ("Powered");
             powered_menu_item.button.vertical_align = WidgetAlign.START;

@@ -28,10 +28,10 @@ namespace BrickManager {
     public class FakeDeviceBrowserController : Object, IBrickManagerModule {
         DeviceBrowserWindow device_browser_window;
 
-        public BrickManagerWindow start_window { get { return device_browser_window; } }
+        public string display_name { get { return "Device Browser"; } }
 
         public FakeDeviceBrowserController (Gtk.Builder builder) {
-            device_browser_window = new DeviceBrowserWindow ();
+            device_browser_window = new DeviceBrowserWindow (display_name);
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             device_browser_window.shown.connect (() =>
                 control_panel_notebook.page = (int)ControlPanel.Tab.DEVICE_BROWSER);
@@ -377,6 +377,10 @@ namespace BrickManager {
             (builder.get_object ("tacho-motor-running-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
                     tacho_motors_liststore, toggle, path, ControlPanel.TachoMotorsColumn.RUNNING));
+        }
+
+        public void show_main_window () {
+            device_browser_window.show ();
         }
     }
 }

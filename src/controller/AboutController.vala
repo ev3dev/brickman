@@ -27,10 +27,17 @@ namespace BrickManager {
     public class AboutController : Object, IBrickManagerModule {
         AboutWindow about_window;
 
-        public BrickManagerWindow start_window { get { return about_window; } }
+        public string display_name { get { return "About"; } }
 
-        public AboutController () {
-            about_window = new AboutWindow ();
+        public void show_main_window () {
+            if (about_window == null) {
+                create_about_window ();
+            }
+            about_window.show ();
+        }
+
+        void create_about_window () {
+            about_window = new AboutWindow (display_name);
             var i2c_client = new GUdev.Client ({ "i2c"});
             var ev3_eeprom = i2c_client.query_by_subsystem_and_name ("i2c", "1-0050");
             if (ev3_eeprom == null)

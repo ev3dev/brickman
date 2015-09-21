@@ -39,11 +39,11 @@ namespace BrickManager {
         }
 
         public void add_controller (IBrickManagerModule controller) {
-            var menu_item = new Ui.MenuItem.with_right_arrow (controller.start_window.title) {
+            var menu_item = new Ui.MenuItem.with_right_arrow (controller.display_name) {
                 represented_object = controller
             };
             menu_item.button.pressed.connect (() =>
-                controller.start_window.show ());
+                controller.show_main_window ());
             menu.add_menu_item (menu_item);
         }
 

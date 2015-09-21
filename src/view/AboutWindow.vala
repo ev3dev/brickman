@@ -38,8 +38,8 @@ namespace BrickManager {
             set { eeprom_label.text = value; }
         }
 
-        public AboutWindow () {
-            title = "About";
+        public AboutWindow (string display_name) {
+            title = display_name;
             content_vbox.add (new Label ("%s v%s".printf (EXEC_NAME, VERSION)));
             content_vbox.add (new Label ("The ev3dev Brick Manager"));
             content_vbox.add (new Label ("(C) 2014-2015 ev3dev team"));

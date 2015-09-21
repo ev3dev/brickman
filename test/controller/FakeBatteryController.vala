@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@ namespace BrickManager {
         BatteryInfoWindow battery_window;
         internal BatteryStatusBarItem battery_status_bar_item;
 
-        public BrickManagerWindow start_window { get { return battery_window; } }
+        public string display_name { get { return "Battery"; } }
 
         public FakeBatteryController (Gtk.Builder builder) {
-            battery_window = new BatteryInfoWindow ();
+            battery_window = new BatteryInfoWindow (display_name);
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             battery_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.BATTERY);
 
@@ -47,6 +47,10 @@ namespace BrickManager {
             battery_status_bar_item = new BatteryStatusBarItem ();
             (builder.get_object ("battery_voltage_spinbutton") as Gtk.SpinButton)
                 .bind_property ("value", battery_status_bar_item, "voltage", BindingFlags.SYNC_CREATE);
+        }
+
+        public void show_main_window () {
+            battery_window.show ();
         }
     }
 }

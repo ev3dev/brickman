@@ -48,8 +48,8 @@ namespace BrickManager {
         public signal void network_connections_selected ();
         public signal void tethering_selected ();
 
-        public NetworkStatusWindow () {
-            title = "Wireless and Networks";
+        public NetworkStatusWindow (string display_name) {
+            title = display_name;
             state_hbox = new Box.horizontal () {
                 horizontal_align = WidgetAlign.CENTER,
                 vertical_align = WidgetAlign.CENTER
@@ -76,11 +76,11 @@ namespace BrickManager {
             menu.add_menu_item (offline_mode_menu_item);
         }
 
-        public void add_technology_window (BrickManagerWindow window) {
-            var menu_item = new Ui.MenuItem.with_right_arrow (window.title) {
-                represented_object = window
+        public void add_technology_controller (IBrickManagerModule controller) {
+            var menu_item = new Ui.MenuItem.with_right_arrow (controller.display_name) {
+                represented_object = controller
             };
-            menu_item.button.pressed.connect (() => window.show ());
+            menu_item.button.pressed.connect (() => controller.show_main_window ());
             menu.insert_menu_item (menu_item, network_connections_menu_item);
         }
     }

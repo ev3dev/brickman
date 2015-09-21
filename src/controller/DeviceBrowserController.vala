@@ -34,11 +34,18 @@ namespace BrickManager {
         SensorBrowserWindow? sensor_browser_window;
         MotorBrowserWindow? motor_browser_window;
 
-        public BrickManagerWindow start_window { get { return device_browser_window; } }
+        public string display_name { get { return "Device Browser"; } }
 
-        public DeviceBrowserController () {
+        public void show_main_window () {
+            if (device_browser_window == null) {
+                create_device_browser_window ();
+            }
+            device_browser_window.show ();
+        }
+
+        void create_device_browser_window () {
             manager = global_manager.device_manager;
-            device_browser_window = new DeviceBrowserWindow ();
+            device_browser_window = new DeviceBrowserWindow (display_name);
             device_browser_window.ports_menu_item_selected.connect (
                 on_ports_menu_item_selected);
             device_browser_window.sensors_menu_item_selected.connect (

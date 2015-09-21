@@ -29,7 +29,7 @@ namespace BrickManager {
         BluetoothWindow bluetooth_window;
         public BluetoothStatusBarItem bluetooth_status_bar_item;
 
-        public BrickManagerWindow start_window { get { return bluetooth_window; } }
+        public string display_name { get { return "Bluetooth"; } }
 
         public signal void show_network_connection_requested (string address);
 
@@ -40,7 +40,7 @@ namespace BrickManager {
 
             /* Start/Main Window */
 
-            bluetooth_window = new BluetoothWindow ();
+            bluetooth_window = new BluetoothWindow (display_name);
             bluetooth_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.BLUETOOTH);
             bluetooth_loading_checkbutton.bind_property ("active", bluetooth_window, "loading", BindingFlags.SYNC_CREATE);
             bluetooth_available_checkbutton.bind_property ("active", bluetooth_window, "available", BindingFlags.SYNC_CREATE);
@@ -251,6 +251,10 @@ namespace BrickManager {
                 });
             (builder.get_object ("bluetooth-agent-cancel-button") as Gtk.Button)
                 .clicked.connect (() => agent.cancel ());
+        }
+
+        public void show_main_window () {
+            bluetooth_window.show ();
         }
 
         void show_message (string message) {

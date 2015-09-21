@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,33 +29,49 @@ namespace BrickManager {
         internal BatteryStatusBarItem battery_status_bar_item;
         GUdev.Client power_supply_client;
 
-        public BrickManagerWindow start_window { get { return battery_window; } }
+        public string display_name { get { return "Battery"; } }
+
+        public void show_main_window () {
+            if (battery_window == null) {
+                create_battery_window ();
+            }
+            battery_window.show ();
+        }
 
         public BatteryController () {
-            battery_window = new BatteryInfoWindow ();
             battery_status_bar_item = new BatteryStatusBarItem ();
-            power_supply_client = new GUdev.Client ({ "power_supply"});
+            power_supply_client = new GUdev.Client ({ "power_supply" });
             var ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
             if (ev3_battery == null) {
                 critical ("Could not get legoev3-battery device");
+            } else {
+                update_battery_info ();
+                Timeout.add_seconds (5, update_battery_info);
+            }
+        }
+
+        void create_battery_window () {
+            battery_window = new BatteryInfoWindow (display_name);
+            var ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
+            if (ev3_battery == null) {
                 battery_window.available = false;
             } else {
                 battery_window.technology = ev3_battery.get_sysfs_attr ("technology") ?? "Error";
-                update_battery_info ();
-                Timeout.add_seconds (5, update_battery_info);
             }
         }
 
         bool update_battery_info () {
             var ev3_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
             if (ev3_battery == null) {
-                critical ("could not get legoev3-battery device");
+                critical ("Could not get legoev3-battery device, polling is now stopped.");
                 return false;
             }
             var voltage = ev3_battery.get_sysfs_attr_as_int ("voltage_now") / 1000000.0;
             var current = ev3_battery.get_sysfs_attr_as_int ("current_now") / 1000.0;
-            battery_window.voltage = voltage;
-            battery_window.current = current;
+            if (battery_window != null) {
+                battery_window.voltage = voltage;
+                battery_window.current = current;
+            }
             battery_status_bar_item.voltage = voltage;
             return true;
         }

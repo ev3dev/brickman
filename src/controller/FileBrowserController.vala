@@ -38,10 +38,17 @@ namespace BrickManager {
         FileMonitor? monitor;
         File initial_directory;
 
-        public BrickManagerWindow start_window { get { return file_browser_window; } }
+        public string display_name { get { return "File Browser"; } }
 
-        public FileBrowserController () {
-            file_browser_window = new FileBrowserWindow () {
+        public void show_main_window () {
+            if (file_browser_window == null) {
+                create_main_window ();
+            }
+            file_browser_window.show ();
+        }
+
+        void create_main_window () {
+            file_browser_window = new FileBrowserWindow (display_name) {
                 sort_files_func = sort_files
             };
             file_browser_window.file_selected.connect ((represented_object) => {
