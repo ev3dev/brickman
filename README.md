@@ -37,13 +37,8 @@ the share and run `./brickman` or if you temporarily replaced the one in
 `/usr/sbin` restart it with `sudo systemctl start brickman`.
 * If running brickman from systemd, you find the stdout/stderr in the journal:
 `journalctl -f -u brickman`.
-* To get more details you can create a file
-
-        # cat /etc/systemd/system/brickman.service.d/brickman.conf
-        [Service]
-        Environment="G_MESSAGES_DEBUG=all"
-
-  and then `sudo systemctl daemon-reload` and `sudo systemctl restart brickman`.
+* To get more details you can `sudo systemctl set-environment G_MESSAGES_DEBUG=all` and `sudo systemctl restart brickman`.
+* likewise you can tune down the amount of logging with `sudo systemctl unset-environment G_MESSAGES_DEBUG` followed by `sudo systemctl restart brickman`.
 
 To build the desktop test (makes UI development much faster), in a regular terminal,
 not in brickstrap shell:
