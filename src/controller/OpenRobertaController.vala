@@ -59,9 +59,12 @@ namespace BrickManager {
             bind_property ("available", open_roberta_window.menu, "visible", BindingFlags.SYNC_CREATE);
 
             notify["available"].connect (() => {
-                open_roberta_window.info.text = (available)
-                    ? "Select which server to use:"
-                    : "Service openrobertalab is not running.";
+                if (!available) {
+                    open_roberta_window.info.text =
+                        "Service openrobertalab is not running.";
+                } else {
+                  open_roberta_window.notify_property("connected");
+                }
             });
 
             Bus.watch_name (BusType.SYSTEM, SERVICE_NAME,

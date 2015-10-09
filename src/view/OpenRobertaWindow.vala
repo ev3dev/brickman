@@ -81,12 +81,15 @@ namespace BrickManager {
         void on_connected_changed () {
             menu.remove_all_menu_items ();
             if (!connected) {
+                info.text = "Select which server to use:";
                 menu.add_menu_item (public_server);
                 menu.add_menu_item (local_server);
                 menu.add_menu_item (custom_server);
                 menu.add_menu_item (config_custom);
                 public_server.button.focus ();
             } else {
+                // TODO: tell to which server we are conencted
+                info.text = "Connected to sever.";
                 menu.add_menu_item (disconnect_server);
                 disconnect_server.button.focus ();
             }
