@@ -87,7 +87,7 @@ namespace BrickManager {
                     service = null;
                     // if the service dies (while running code), definitely
                     // switch back to brickman
-                    Posix.system("/bin/chvt 1");
+                    switch_to_brickman_screen ();
                 });
 
             try {
@@ -136,12 +136,12 @@ namespace BrickManager {
                         pin_dialog.close ();
                     } else {
                         debug ("program done, switching to tty1");
-                        Posix.system("/bin/chvt 1");
+                        switch_to_brickman_screen ();
                     }
                 }
                 if (message == "executing") {
                     debug ("program starts, switching to tty2");
-                    Posix.system("/bin/chvt 2");
+                    switch_to_program_screen ();
                 }
             }
         }
@@ -197,6 +197,22 @@ namespace BrickManager {
             } catch (IOError err) {
                 warning ("%s", err.message);
             }
+        }
+
+        void switch_to_program_screen () {
+          Posix.system ("/bin/chvt 2");
+          Type type = global_manager.get_type();
+          uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
+          var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
+          GLib.SignalHandler.block (global_manager, handler_id);
+        }
+
+        void switch_to_brickman_screen () {
+          Posix.system ("/bin/chvt 1");
+          Type type = global_manager.get_type();
+          uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
+          var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
+          GLib.SignalHandler.unblock (global_manager, handler_id);
         }
     }
 }
