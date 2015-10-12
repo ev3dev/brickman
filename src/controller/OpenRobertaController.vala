@@ -63,7 +63,7 @@ namespace BrickManager {
                     open_roberta_window.info.text =
                         "Service openrobertalab is not running.";
                 } else {
-                  open_roberta_window.notify_property("connected");
+                  open_roberta_window.notify_property ("connected");
                 }
             });
 
@@ -94,6 +94,8 @@ namespace BrickManager {
                 config.load_from_file (CONFIG, KeyFileFlags.KEEP_COMMENTS);
                 open_roberta_window.custom_server.label.text =
                     config.get_string ("Common", "CustomServer");
+                open_roberta_window.selected_server = 
+                    config.get_string ("Common", "SelectedServer");
             } catch (FileError err) {
                 warning ("FileError: %s", err.message);
             } catch (KeyFileError err) {
@@ -134,6 +136,14 @@ namespace BrickManager {
                     if (pin_dialog != null) {
                         debug ("connection established, closing the dialog");
                         pin_dialog.close ();
+                        // remember selected server
+                        config.set_string ("Common", "SelectedServer", 
+                            open_roberta_window.selected_server);
+                        try {
+                            config.save_to_file (CONFIG);
+                        } catch (FileError err) {
+                            warning ("FileError: %s", err.message);
+                        }
                     } else {
                         debug ("program done, switching to tty1");
                         switch_to_brickman_screen ();
@@ -177,6 +187,7 @@ namespace BrickManager {
                 on_server_edit ();
             } else {
                 try {
+                    open_roberta_window.selected_server = server;
                     var code = service.connect ("http://" + server);
                     var label = new Label (code) {
                         margin_top = 12,

@@ -95,6 +95,7 @@ namespace BrickManager {
             if ( server == "" || server == "custom server") {
                 // TODO: enter the new address
             } else {
+                open_roberta_window.selected_server = server;
                 var code = "1234abcd";
                 var label = new Label (code) {
                     margin_top = 12,

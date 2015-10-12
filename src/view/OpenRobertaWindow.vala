@@ -56,6 +56,7 @@ namespace BrickManager {
         internal Ui.MenuItem disconnect_server;
 
         public bool connected { get; set; default = false; }
+        public string selected_server { get; set; default = null; }
 
         public OpenRobertaWindow () {
             title = "Open Roberta Lab";
@@ -69,6 +70,7 @@ namespace BrickManager {
             content_vbox.add (menu);
 
             public_server = new Ui.MenuItem ("lab.open-roberta.org");
+            // FIXME: this is lejos usb specific, remove?
             local_server = new Ui.MenuItem ("10.0.1.10:1999");
             custom_server = new Ui.MenuItem ("custom server");
             config_custom = new Ui.MenuItem ("Edit \"custom server\" ...");
@@ -86,10 +88,15 @@ namespace BrickManager {
                 menu.add_menu_item (local_server);
                 menu.add_menu_item (custom_server);
                 menu.add_menu_item (config_custom);
-                public_server.button.focus ();
+                if (selected_server == local_server.label.text) {
+                    local_server.button.focus ();
+                } else if (selected_server == custom_server.label.text) {
+                    custom_server.button.focus ();
+                } else {
+                    public_server.button.focus ();
+                }
             } else {
-                // TODO: tell to which server we are conencted
-                info.text = "Connected to sever.";
+                info.text = "Connected to\n" + selected_server;
                 menu.add_menu_item (disconnect_server);
                 disconnect_server.button.focus ();
             }
