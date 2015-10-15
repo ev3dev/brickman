@@ -21,7 +21,7 @@ add_subdirectory (data)
 configure_file (src/Version.vala.in Version.vala)
 
 if (BRICKMAN_TEST)
-    set (BRICKMAN_TEST_PACKAGES gtk+-3.0 ev3devkit-desktop-0.1)
+    set (BRICKMAN_TEST_PACKAGES gtk+-3.0 ev3devkit-desktop-0.3)
     set (BRICKMAN_SOURCE_FILES
         test/main.vala
         test/ControlPanel.vala
@@ -104,7 +104,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DEPS REQUIRED
-    ev3devkit
+    ev3devkit-0.3
     glib-2.0
     gobject-2.0
     gmodule-2.0
@@ -120,7 +120,7 @@ link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
 
 if (BRICKMAN_TEST)
-    pkg_check_modules(BRICKMAN_TEST_DEPS ev3devkit-desktop gtk+-3.0)
+    pkg_check_modules(BRICKMAN_TEST_DEPS ev3devkit-desktop-0.3 gtk+-3.0)
     add_definitions(${BRICKMAN_TEST_DEPS_CFLAGS})
     link_libraries(${BRICKMAN_TEST_DEPS_LIBRARIES})
     link_directories(${BRICKMAN_TEST_DEPS_LIBRARY_DIRS})
@@ -144,7 +144,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
     ${BRICKMAN_SOURCE_FILES}
     ${BRICKMAN_COMMON_SOURCE_FILES}
 PACKAGES
-    ev3devkit-0.1
+    ev3devkit-0.3
     glib-2.0
     gobject-2.0
     gmodule-2.0

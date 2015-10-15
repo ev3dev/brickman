@@ -137,8 +137,9 @@ namespace BrickManager {
                 return list.to_array ();
             }
             set {
-                while (dns_scroll_vbox.children.size > 0)
-                    dns_scroll_vbox.remove (dns_scroll_vbox.children[0]);
+                while (dns_scroll_vbox.child != null) {
+                    dns_scroll_vbox.remove (dns_scroll_vbox.child);
+                }
                 foreach (var address in value)
                     dns_scroll_vbox.add (new Label (address));
             }
