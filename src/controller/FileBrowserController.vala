@@ -27,7 +27,7 @@ using Ev3devKit.Ui;
 namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
         const string PARENT_DIRECTORY_TEXT = "../";
-        const string INITAL_DIRECTORY = "/home/ev3dev";
+        const string INITAL_DIRECTORY = "/home/robot";
         const string USER_NAME = "ev3dev";
         const string file_attrs = FileAttribute.OWNER_USER
             + "," + FileAttribute.STANDARD_IS_HIDDEN
