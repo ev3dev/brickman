@@ -1,7 +1,7 @@
 /*
  * bluez5 -- DBus bindings for BlueZ 5 <http://www.bluez.org>
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@
 
 namespace Bluez5 {
     public class Device : Object {
-        static Gee.HashMap<string, weak Device> device_map;
+        static HashTable<string, weak Device> device_map;
 
         static construct {
-            device_map = new Gee.HashMap<string, weak Device> ();
+            device_map = new HashTable<string, weak Device> (str_hash, str_equal);
         }
 
         internal org.bluez.Device1 dbus_proxy;
@@ -144,7 +144,7 @@ namespace Bluez5 {
         }
 
         ~Device () {
-            device_map.unset (((DBusProxy)dbus_proxy).g_object_path);
+            device_map.remove (((DBusProxy)dbus_proxy).g_object_path);
         }
 
         internal static Device get_for_object_path (string path) {

@@ -21,16 +21,14 @@
  * Manager.vala:
  */
 
-using Gee;
-
 namespace Connman {
     public class Manager : Object {
         public const string SERVICE_NAME = "net.connman";
 
-        HashMap<ObjectPath, Technology> technology_map;
-        HashMap<ObjectPath, Service> service_map;
-        ArrayList<Service> sorted_service_list;
-        HashMap<ObjectPath, Peer> peer_map;
+        HashTable<ObjectPath, Technology> technology_map;
+        HashTable<ObjectPath, Service> service_map;
+        List<weak Service> sorted_service_list;
+        HashTable<ObjectPath, Peer> peer_map;
         net.connman.Manager dbus_proxy;
         weak Cancellable? on_services_changed_cancellable;
         weak Cancellable? on_peers_changed_cancellable;
@@ -53,14 +51,14 @@ namespace Connman {
         }
 
         public signal void technology_added (Technology technology);
-        public signal void services_changed (Gee.Collection<Service> changed);
-        public signal void peers_changed (Gee.Collection<Peer> changed);
+        public signal void services_changed (List<weak Service> changed);
+        public signal void peers_changed (List<weak Peer> changed);
 
         construct {
-            technology_map = new HashMap<ObjectPath, Technology> ();
-            service_map = new HashMap<ObjectPath, Service> ();
-            sorted_service_list = new ArrayList<Service> ();
-            peer_map = new HashMap<ObjectPath, Peer> ();
+            technology_map = new HashTable<ObjectPath, Technology> (str_hash, str_equal);
+            service_map = new HashTable<ObjectPath, Service> (str_hash, str_equal);
+            sorted_service_list = new List<weak Service> ();
+            peer_map = new HashTable<ObjectPath, Peer> (str_hash, str_equal);
         }
 
         public static async Manager new_async () throws IOError {
@@ -86,8 +84,8 @@ namespace Connman {
             return manager;
         }
 
-        public Gee.Collection<Technology> get_technologies () {
-            return technology_map.values;
+        public List<weak Technology> get_technologies () {
+            return technology_map.get_values ();
         }
 
         public Technology? get_technology (ObjectPath path) {
@@ -95,15 +93,15 @@ namespace Connman {
         }
 
         public Technology? get_technology_by_type (string type) {
-            foreach (var technology in technology_map.values) {
+            foreach (var technology in technology_map.get_values ()) {
                 if (technology.technology_type == type)
                     return technology;
             }
             return null;
         }
 
-        public Collection<Service> get_services () {
-            return sorted_service_list.read_only_view;
+        public List<weak Service> get_services () {
+            return sorted_service_list.copy ();
         }
 
         public Service? get_service (ObjectPath path) {
@@ -111,15 +109,15 @@ namespace Connman {
         }
 
         public Service? get_service_by_name_and_type (string name, string type) {
-            foreach (var service in service_map.values) {
+            foreach (var service in service_map.get_values ()) {
                 if (service.name == name && service.service_type == type)
                     return service;
             }
             return null;
         }
 
-        public Gee.Collection<Peer> get_peers () {
-            return peer_map.values;
+        public List<weak Peer> get_peers () {
+            return peer_map.get_values ();
         }
 
         public async void register_agent (ObjectPath path) throws IOError {
@@ -131,8 +129,9 @@ namespace Connman {
         }
 
         void on_technology_added (ObjectPath path, HashTable<string, Variant> properties) {
-            if (technology_map.has_key (path))
+            if (technology_map.contains (path)) {
                 critical ("technology '%s' already exists.", path);
+            }
             on_technology_added_async.begin (path);
         }
 
@@ -147,17 +146,17 @@ namespace Connman {
         }
 
         void on_technology_removed (ObjectPath path) {
-            if (technology_map.has_key (path)) {
+            if (technology_map.contains (path)) {
                 technology_map[path].removed ();
-                technology_map.unset (path);
+                technology_map.remove (path);
             }
         }
 
         void on_services_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
             foreach (var path in removed) {
-                if (service_map.has_key (path)) {
+                if (service_map.contains (path)) {
                     service_map[path].removed ();
-                    service_map.unset (path);
+                    service_map.remove (path);
                 }
             }
             on_services_changed_async.begin (changed);
@@ -169,8 +168,9 @@ namespace Connman {
             // before the first has completed, we forget about the current list
             // of signal objects and exit the method before emitting the
             // services-changed signal.
-            if (on_services_changed_cancellable != null)
+            if (on_services_changed_cancellable != null) {
                 on_services_changed_cancellable.cancel ();
+            }
             var my_cancellable = new Cancellable ();
             on_services_changed_cancellable = my_cancellable;
 
@@ -184,33 +184,34 @@ namespace Connman {
                 changed_copy[i++] = c;
             }
             try {
-                var services = new Gee.ArrayList<Service>();
+                var services = new List<weak Service> ();
                 foreach (var item in changed_copy) {
-                    if (service_map.has_key (item.path)) {
-                        services.add (service_map[item.path]);
+                    if (service_map.contains (item.path)) {
+                        services.append (service_map[item.path]);
                     } else {
                         var service = yield Service.new_async (item.path);
                         if (my_cancellable.is_cancelled ()) {
                             return;
                         }
                         service_map[item.path] = service;
-                        services.add (service);
+                        services.append (service);
                     }
                 }
-                sorted_service_list = services;
+                sorted_service_list = services.copy ();
                 services_changed (services);
             } catch (IOError err) {
                 critical ("%s", err.message);
             }
-            if (on_services_changed_cancellable == my_cancellable)
+            if (on_services_changed_cancellable == my_cancellable) {
                 on_services_changed_cancellable = null;
+            }
         }
 
         void on_peers_changed (net.connman.ManagerObject[] changed, ObjectPath[] removed) {
             foreach (var path in removed) {
-                if (peer_map.has_key (path)) {
+                if (peer_map.contains (path)) {
                     peer_map[path].removed ();
-                    peer_map.unset (path);
+                    peer_map.remove (path);
                 }
             }
             on_peers_changed_async.begin (changed);
@@ -230,25 +231,26 @@ namespace Connman {
                 changed_copy[i++] = c;
             }
             try {
-                var peers = new Gee.ArrayList<Peer>();
+                var peers = new List<weak Peer> ();
                 foreach (var item in changed_copy) {
-                    if (peer_map.has_key (item.path)) {
-                        peers.add (peer_map[item.path]);
+                    if (peer_map.contains (item.path)) {
+                        peers.append (peer_map[item.path]);
                     } else {
                         var peer = yield Peer.new_async (item.path);
                         if (my_cancellable.is_cancelled ()) {
                             return;
                         }
                         peer_map[item.path] = peer;
-                        peers.add (peer);
+                        peers.append (peer);
                     }
                 }
                 peers_changed (peers);
             } catch (IOError err) {
                 critical ("%s", err.message);
             }
-            if (on_peers_changed_cancellable == my_cancellable)
+            if (on_peers_changed_cancellable == my_cancellable) {
                 on_peers_changed_cancellable = null;
+            }
         }
 
         void on_property_changed (string name, Variant? value) {

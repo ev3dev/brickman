@@ -30,9 +30,9 @@ namespace BrickManager {
         const string NET_SUBSYSTEM = "net";
         const string TETHER_DEVICE_NAME = "tether";
 
-        Gee.Map<weak Technology, weak CheckboxMenuItem> technology_map;
-        Gee.Map<weak Service, weak NetworkConnectionMenuItem> service_map;
-        Gee.Map<weak Service, weak WifiMenuItem> wifi_service_map;
+        HashTable<weak Technology, weak CheckboxMenuItem> technology_map;
+        HashTable<weak Service, weak NetworkConnectionMenuItem> service_map;
+        HashTable<weak Service, weak WifiMenuItem> wifi_service_map;
         NetworkStatusWindow status_window;
         NetworkConnectionsWindow connections_window;
         WifiWindow wifi_window;
@@ -74,9 +74,9 @@ namespace BrickManager {
         public string tether_mac { get; set; }
 
         public NetworkController () {
-            technology_map = new Gee.HashMap<weak Technology, weak CheckboxMenuItem> ();
-            service_map = new Gee.HashMap<weak Service, weak NetworkConnectionMenuItem> ();
-            wifi_service_map = new Gee.HashMap<weak Service, weak WifiMenuItem> ();
+            technology_map = new HashTable<weak Technology, weak CheckboxMenuItem> (null, null);
+            service_map = new HashTable<weak Service, weak NetworkConnectionMenuItem> (null, null);
+            wifi_service_map = new HashTable<weak Service, weak WifiMenuItem> (null, null);
             status_window = new NetworkStatusWindow (display_name) {
                 loading = true
             };
@@ -145,11 +145,11 @@ namespace BrickManager {
                     status_window.loading = true;
                     connections_window.loading = true;
                     wifi_window.loading = true;
-                    var service_keys = service_map.keys.to_array ();
+                    var service_keys = service_map.get_keys ();
                     foreach (var key in service_keys) {
                         key.removed ();
                     }
-                    var technology_keys = technology_map.keys.to_array ();
+                    var technology_keys = technology_map.get_keys ();
                     foreach (var key in technology_keys) {
                         key.removed ();
                     }
@@ -230,12 +230,12 @@ namespace BrickManager {
             add_tethering_technology (technology);
         }
 
-        void on_services_changed (Gee.Collection<Service> changed) {
+        void on_services_changed (List<Service> changed) {
             unbind_status_bar ();
 
             foreach (var service in changed) {
                 NetworkConnectionMenuItem menu_item;
-                if (service_map.has_key (service)) {
+                if (service_map.contains (service)) {
                     menu_item = service_map[service];
                     connections_window.menu.remove_menu_item (menu_item);
                 } else {
@@ -252,7 +252,7 @@ namespace BrickManager {
                     weak Service weak_service = service;
                     service.removed.connect (() => {
                         connections_window.menu.remove_menu_item (weak_menu_item);
-                        service_map.unset (weak_service);
+                        service_map.remove (weak_service);
                     });
                     service_map[service] = menu_item;
                 }
@@ -260,7 +260,7 @@ namespace BrickManager {
 
                 if (service.service_type == "wifi") {
                     WifiMenuItem wifi_menu_item;
-                    if (wifi_service_map.has_key (service)) {
+                    if (wifi_service_map.contains (service)) {
                         wifi_menu_item = wifi_service_map[service];
                         wifi_window.remove_menu_item (wifi_menu_item);
                     } else {
@@ -280,7 +280,7 @@ namespace BrickManager {
                         weak Service weak_service = service;
                         service.removed.connect (() => {
                             wifi_window.remove_menu_item (weak_wifi_menu_item);
-                            wifi_service_map.unset (weak_service);
+                            wifi_service_map.remove (weak_service);
                         });
                         wifi_service_map[service] = wifi_menu_item;
                     }

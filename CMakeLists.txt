@@ -110,7 +110,6 @@ pkg_check_modules(DEPS REQUIRED
     gmodule-2.0
     gio-2.0
     gio-unix-2.0
-    gee-0.8
     grx20
     gudev-1.0
     ncurses
@@ -150,7 +149,6 @@ PACKAGES
     gmodule-2.0
     gio-2.0
     gio-unix-2.0
-    gee-0.8
     grx20
     gudev-1.0
     curses

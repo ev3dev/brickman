@@ -23,7 +23,6 @@
  * Displays list of network connections.
  */
 
-using Gee;
 using Ev3devKit;
 using Ev3devKit.Ui;
 

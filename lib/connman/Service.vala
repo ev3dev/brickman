@@ -21,8 +21,6 @@
  * Service.vala:
  */
 
-using Gee;
-
 namespace Connman {
     public class Service : Object {
         const string IPV4_METHOD_KEY = "Method";

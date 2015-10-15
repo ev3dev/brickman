@@ -1,7 +1,7 @@
 /*
  * systemd -- vala bindings for systemd d-bus
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,10 +47,10 @@ namespace Systemd.Logind {
     }
 
     public class Manager : Object {
-        static Gee.HashMap<ObjectPath, weak Manager> object_map;
+        static HashTable<ObjectPath, weak Manager> object_map;
 
         static construct {
-            object_map = new Gee.HashMap<ObjectPath, weak Manager> ();
+            object_map = new HashTable<ObjectPath, weak Manager> (str_hash, str_equal);
         }
 
         ObjectPath path;
@@ -82,8 +82,9 @@ namespace Systemd.Logind {
         }
 
         static async Manager get_instance_for_path (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
+            if (object_map != null && object_map.contains (path)) {
                 return object_map[path];
+            }
             return yield new_async (path);
         }
 
@@ -109,7 +110,7 @@ namespace Systemd.Logind {
         }
 
         ~Manager () {
-            object_map.unset (path);
+            object_map.remove (path);
         }
 
         //public async ObjectPath get_session (string id) throws IOError;

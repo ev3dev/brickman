@@ -21,8 +21,6 @@
  * Peer.vala:
  */
 
-using Gee;
-
 namespace Connman {
     public class Peer : Object {
         const string IPV4_ADDRESS_KEY = "Address";

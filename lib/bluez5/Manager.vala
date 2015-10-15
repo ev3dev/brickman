@@ -1,7 +1,7 @@
 /*
  * bluez5 -- DBus bindings for BlueZ 5 <http://www.bluez.org>
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ namespace Bluez5 {
         public const string SERVICE_NAME = "org.bluez";
 
         DBusObjectManagerClient client;
-        Gee.HashMap<string,Adapter> adapter_map;
-        Gee.HashMap<string,Device> device_map;
+        HashTable<string,Adapter> adapter_map;
+        HashTable<string,Device> device_map;
 
         delegate Type TypeFunc ();
 
@@ -40,8 +40,8 @@ namespace Bluez5 {
         public signal void device_removed (Device device);
 
         Manager () {
-            adapter_map = new Gee.HashMap<string,Adapter> ();
-            device_map = new Gee.HashMap<string,Device> ();
+            adapter_map = new HashTable<string,Adapter> (str_hash, str_equal);
+            device_map = new HashTable<string,Device> (str_hash, str_equal);
         }
 
         public static async Manager new_async () throws Error {
@@ -93,15 +93,15 @@ namespace Bluez5 {
         /**
          * Return a list of all Adapter objects
          */
-        public Gee.Collection<Adapter> get_adapters () {
-            return adapter_map.values;
+        public List<weak Adapter> get_adapters () {
+            return adapter_map.get_values ();
         }
 
         /**
          * Return a list of all Device objects
          */
-        public Gee.Collection<Device> get_devices () {
-            return device_map.values;
+        public List<weak Device> get_devices () {
+            return device_map.get_values ();
         }
 
         void on_interface_added (DBusObject obj, DBusInterface iface) {
@@ -113,8 +113,9 @@ namespace Bluez5 {
                 adapter_added (adapter);
             }
             var agent_manager_proxy = iface as org.bluez.AgentManager1;
-            if (agent_manager_proxy != null)
+            if (agent_manager_proxy != null) {
                 agent_manager = new AgentManager ((DBusProxy)agent_manager_proxy);
+            }
             var device_proxy = iface as org.bluez.Device1;
             if (device_proxy != null) {
                 var device = new Device ((DBusProxy)device_proxy);
@@ -127,15 +128,16 @@ namespace Bluez5 {
             var path = obj.get_object_path ();
             var adapter = iface as org.bluez.Adapter1;
             if (adapter != null) {
-                adapter_map.unset (path);
+                adapter_map.remove (path);
                 adapter_removed (Adapter.get_for_object_path (path));
             }
             var agent_manager_proxy = iface as org.bluez.AgentManager1;
-            if (agent_manager_proxy != null)
+            if (agent_manager_proxy != null) {
                 agent_manager = null;
+            }
             var device = iface as org.bluez.Device1;
             if (device != null) {
-                device_map.unset (path);
+                device_map.remove (path);
                 device_removed (Device.get_for_object_path (path));
             }
         }

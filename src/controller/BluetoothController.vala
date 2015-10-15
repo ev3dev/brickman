@@ -32,7 +32,7 @@ namespace BrickManager {
         Bluez5Agent? agent;
         ObjectPath agent_object_path;
         string? built_in_adapter_address;
-        Gee.List<Adapter> adapter_list;
+        List<Adapter> adapter_list;
         Adapter? selected_adapter;
         Binding? selected_adapter_visible_binding;
         Binding? selected_adapter_scanning_binding;
@@ -51,7 +51,7 @@ namespace BrickManager {
         }
 
         public BluetoothController () {
-            adapter_list = new Gee.LinkedList<Adapter> ();
+            adapter_list = new List<Adapter> ();
             main_window = new BluetoothWindow (display_name) {
                 loading = true
             };
@@ -181,7 +181,7 @@ namespace BrickManager {
         }
 
         void on_adapter_added (Adapter adapter) {
-            adapter_list.add (adapter);
+            adapter_list.append (adapter);
             adapter_count++;
             // make the new adapter the selected adapter unless it is the built-in adapter.
             if (selected_adapter == null
@@ -193,6 +193,7 @@ namespace BrickManager {
             // if the selected adapter is removed, replace it with the first adapter
             // that is not the built-in adapter.
             adapter_list.remove (adapter);
+            adapter.unref (); // List<G>.remove () does not unref automatically
             adapter_count--;
             if (selected_adapter == adapter) {
                 set_selected_adapter (null);
@@ -203,8 +204,9 @@ namespace BrickManager {
                     }
                 }
                 // If the built-in adapter is the only adapter available, then use it.
-                if (selected_adapter == null && adapter_list.size > 0)
-                    set_selected_adapter (adapter_list[0]);
+                if (selected_adapter == null && adapter_list != null) {
+                    set_selected_adapter (adapter_list.data);
+                }
             }
         }
 

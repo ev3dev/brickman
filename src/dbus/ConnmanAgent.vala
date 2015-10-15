@@ -80,20 +80,23 @@ namespace BrickManager {
             HashTable<string, Variant> fields) throws ConnmanAgentError
         {
             var service = manager.get_service (service_path);
-            var required_field_names = new Gee.ArrayList<string> ();
+            var required_field_names = new SList<string> ();
             string? previous_passphrase = null;
             fields.foreach ((k, v) => {
                 //debug ("%s %s", k, v.print (true));
                 var requirement = v.lookup_value (REQUIREMENT_KEY, VariantType.STRING);
-                if (requirement != null && requirement.get_string () == "mandatory")
-                    required_field_names.add (k);
+                if (requirement != null && requirement.get_string () == "mandatory") {
+                    required_field_names.prepend (k);
+                }
                 if (k == PREVIOUS_PASSPHRASE_KEY) {
                     var previous_passphrase_value = v.lookup_value (VALUE_KEY, VariantType.STRING);
-                    if (previous_passphrase_value != null)
+                    if (previous_passphrase_value != null) {
                         previous_passphrase = previous_passphrase_value.dup_string ();
+                    }
                 }
             });
             var result = new HashTable<string, Variant> (null, null);
+            required_field_names.reverse ();
             foreach (var required_field_name in required_field_names) {
                 var dialog = new ConnmanAgentInputDialog (
                     "Please enter %s for %s.".printf (field_to_string (required_field_name),
@@ -115,8 +118,9 @@ namespace BrickManager {
                 dialog.show ();
                 yield;
                 SignalHandler.disconnect (this, handler_id);
-                if (dialog_canceled)
+                if (dialog_canceled) {
                     throw new ConnmanAgentError.CANCELED ("Canceled by the user.");
+                }
             }
             return result;
         }

@@ -1,7 +1,7 @@
 /*
  * systemd -- vala bindings for systemd d-bus
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,10 +170,10 @@ namespace Systemd {
     }
 
     public class Manager : Object {
-        static Gee.HashMap<ObjectPath, weak Manager> object_map;
+        static HashTable<ObjectPath, weak Manager> object_map;
 
         static construct {
-            object_map = new Gee.HashMap<ObjectPath, weak Manager> ();
+            object_map = new HashTable<ObjectPath, weak Manager> (str_hash, str_equal);
         }
 
         ObjectPath path;
@@ -186,8 +186,9 @@ namespace Systemd {
         }
 
         static async Manager get_instance_for_path (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
+            if (object_map != null && object_map.contains (path)) {
                 return object_map[path];
+            }
             return yield new_async (path);
         }
 
@@ -209,7 +210,7 @@ namespace Systemd {
         }
 
         ~Manager () {
-            object_map.unset (path);
+            object_map.remove (path);
         }
 
         public string[] environment { owned get { return manager.environment; } }
@@ -499,10 +500,10 @@ namespace Systemd {
     }
 */
     public class Unit : Object {
-        static Gee.HashMap<ObjectPath, weak Unit> object_map;
+        static HashTable<ObjectPath, weak Unit> object_map;
 
         static construct {
-            object_map = new Gee.HashMap<ObjectPath, weak Unit> ();
+            object_map = new HashTable<ObjectPath, weak Unit> (str_hash, str_equal);
         }
 
         ObjectPath path;
@@ -550,8 +551,9 @@ namespace Systemd {
         public uint64 job_timeout_usec { get { return unit.job_timeout_usec; } }
 
         internal static async Unit get_instance_for_path (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
+            if (object_map != null && object_map.contains (path)) {
                 return object_map[path];
+            }
             return yield new_async (path);
         }
 
@@ -568,7 +570,7 @@ namespace Systemd {
         }
 
         ~Unit () {
-            object_map.unset (path);
+            object_map.remove (path);
         }
 
         public async Job start (UnitMode mode = UnitMode.REPLACE) throws IOError {
@@ -827,10 +829,10 @@ namespace Systemd {
     }
 */
     public class Job : Object {
-        static Gee.HashMap<ObjectPath, weak Job> object_map;
+        static HashTable<ObjectPath, weak Job> object_map;
 
         static construct {
-            object_map = new Gee.HashMap<ObjectPath, weak Job> ();
+            object_map = new HashTable<ObjectPath, weak Job> (str_hash, str_equal);
         }
 
         ObjectPath path;
@@ -843,8 +845,9 @@ namespace Systemd {
         //public UnitLink unit { owned get { return new UnitLink (job.unit); } }
 
         internal static async Job get_instance_for_path (ObjectPath path) throws IOError {
-            if (object_map != null && object_map.has_key (path))
+            if (object_map != null && object_map.contains (path)) {
                 return object_map[path];
+            }
             return yield new_async (path);
         }
 
@@ -861,7 +864,7 @@ namespace Systemd {
         }
 
         ~Job () {
-            object_map.unset (path);
+            object_map.remove (path);
         }
 
         public async void cancel () throws IOError {

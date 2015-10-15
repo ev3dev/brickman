@@ -23,7 +23,6 @@
  * Displays properties of a network connection.
  */
 
-using Gee;
 using Ev3devKit.Ui;
 
 namespace BrickManager {
@@ -131,17 +130,19 @@ namespace BrickManager {
 
         public string[] dns_addresses {
             owned get {
-                var list = new Gee.ArrayList<string> ();
-                foreach (var child in dns_scroll_vbox.children)
+                var list = new GenericArray<string> ();
+                foreach (var child in dns_scroll_vbox.children) {
                     list.add (((Label)child).text);
-                return list.to_array ();
+                }
+                return list.data;
             }
             set {
                 while (dns_scroll_vbox.child != null) {
                     dns_scroll_vbox.remove (dns_scroll_vbox.child);
                 }
-                foreach (var address in value)
+                foreach (var address in value) {
                     dns_scroll_vbox.add (new Label (address));
+                }
             }
         }
 
@@ -523,10 +524,12 @@ namespace BrickManager {
             };
             add_button.pressed.connect (() => {
                 // TODO: validate values
-                var new_list = new Gee.ArrayList<string> ();
-                new_list.add_all_array (dns_addresses);
+                var new_list = new GenericArray<string> ();
+                foreach (var addr in dns_addresses) {
+                    new_list.add (addr);
+                }
                 new_list.add (text_entry.text);
-                dns_change_requested (new_list.to_array ());
+                dns_change_requested (new_list.data);
                 weak_dialog.close ();
             });
             dialog_vbox.add (add_button);
