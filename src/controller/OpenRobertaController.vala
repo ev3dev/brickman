@@ -45,6 +45,7 @@ namespace BrickManager {
         OpenRobertaLab service;
         KeyFile config;
         MessageDialog pin_dialog;
+        bool executing_user_code = false;
 
         public bool available { get; set; default = false; }
 
@@ -94,7 +95,7 @@ namespace BrickManager {
                 config.load_from_file (CONFIG, KeyFileFlags.KEEP_COMMENTS);
                 open_roberta_window.custom_server.label.text =
                     config.get_string ("Common", "CustomServer");
-                open_roberta_window.selected_server = 
+                open_roberta_window.selected_server =
                     config.get_string ("Common", "SelectedServer");
             } catch (FileError err) {
                 warning ("FileError: %s", err.message);
@@ -137,7 +138,7 @@ namespace BrickManager {
                         debug ("connection established, closing the dialog");
                         pin_dialog.close ();
                         // remember selected server
-                        config.set_string ("Common", "SelectedServer", 
+                        config.set_string ("Common", "SelectedServer",
                             open_roberta_window.selected_server);
                         try {
                             config.save_to_file (CONFIG);
@@ -145,12 +146,16 @@ namespace BrickManager {
                             warning ("FileError: %s", err.message);
                         }
                     } else {
-                        debug ("program done, switching to tty1");
-                        switch_to_brickman_screen ();
+                        if (executing_user_code) {
+                            debug ("program done, switching to tty1");
+                            executing_user_code = false;
+                            switch_to_brickman_screen ();
+                        }
                     }
                 }
                 if (message == "executing") {
                     debug ("program starts, switching to tty2");
+                    executing_user_code = true;
                     switch_to_program_screen ();
                 }
             }
