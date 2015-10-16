@@ -58,8 +58,8 @@ namespace BrickManager {
         public bool connected { get; set; default = false; }
         public string selected_server { get; set; default = null; }
 
-        public OpenRobertaWindow () {
-            title = "Open Roberta Lab";
+        public OpenRobertaWindow (string display_name) {
+            title = display_name;
 
             info = new Label ();
             content_vbox.add (info);

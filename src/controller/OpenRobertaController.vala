@@ -49,10 +49,15 @@ namespace BrickManager {
 
         public bool available { get; set; default = false; }
 
-        public BrickManagerWindow start_window { get { return open_roberta_window; } }
+        public string display_name { get { return "Open Roberta Lab"; } }
+
+        public void show_main_window () {
+            open_roberta_window.show ();
+        }
 
         public OpenRobertaController () {
-            open_roberta_window = new OpenRobertaWindow ();
+            // TODO: defer window creation to show_main_window()
+            open_roberta_window = new OpenRobertaWindow (display_name);
             status_bar_item = new OpenRobertaStatusBarItem ();
             config = new KeyFile ();
 
