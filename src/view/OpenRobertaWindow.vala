@@ -50,7 +50,6 @@ namespace BrickManager {
         internal Label info;
         internal Ui.Menu menu;
         internal Ui.MenuItem public_server;
-        internal Ui.MenuItem local_server;
         internal Ui.MenuItem custom_server;
         internal Ui.MenuItem config_custom;
         internal Ui.MenuItem disconnect_server;
@@ -70,8 +69,6 @@ namespace BrickManager {
             content_vbox.add (menu);
 
             public_server = new Ui.MenuItem ("lab.open-roberta.org");
-            // FIXME: this is lejos usb specific, remove?
-            local_server = new Ui.MenuItem ("10.0.1.10:1999");
             custom_server = new Ui.MenuItem ("custom server");
             config_custom = new Ui.MenuItem ("Edit \"custom server\" ...");
             disconnect_server = new Ui.MenuItem ("Disconnect");
@@ -85,12 +82,9 @@ namespace BrickManager {
             if (!connected) {
                 info.text = "Select which server to use:";
                 menu.add_menu_item (public_server);
-                menu.add_menu_item (local_server);
                 menu.add_menu_item (custom_server);
                 menu.add_menu_item (config_custom);
-                if (selected_server == local_server.label.text) {
-                    local_server.button.focus ();
-                } else if (selected_server == custom_server.label.text) {
+                if (selected_server == custom_server.label.text) {
                     custom_server.button.focus ();
                 } else {
                     public_server.button.focus ();

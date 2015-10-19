@@ -55,7 +55,6 @@ namespace BrickManager {
             });
 
             open_roberta_window.public_server.button.pressed.connect (on_server_connect);
-            open_roberta_window.local_server.button.pressed.connect (on_server_connect);
             open_roberta_window.custom_server.button.pressed.connect (on_server_connect);
 
             open_roberta_window.disconnect_server.button.pressed.connect (on_server_disconnect);
