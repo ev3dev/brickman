@@ -68,17 +68,14 @@ namespace BrickManager {
             (builder.get_object ("openroberta_available_checkbutton") as Gtk.CheckButton)
                 .bind_property ("active", this, "available", BindingFlags.SYNC_CREATE);
 
-            (builder.get_object ("openroberta_status_connencted") as Gtk.Button)
-                .clicked.connect (() => {
-                    status_bar_item.connected = false;
-                    open_roberta_window.connected = false;
-                });
             (builder.get_object ("openroberta_status_disconnencted") as Gtk.Button)
                 .clicked.connect (() => {
                     status_bar_item.connected = false;
                     open_roberta_window.connected = false;
+                    if (pin_dialog != null) {
+                        pin_dialog.close ();
+                    }
                 });
-
             (builder.get_object ("openroberta_status_registered") as Gtk.Button)
                 .clicked.connect (() => {
                     status_bar_item.connected = true;
@@ -86,11 +83,6 @@ namespace BrickManager {
                     if (pin_dialog != null) {
                         pin_dialog.close ();
                     }
-                });
-            (builder.get_object ("openroberta_status_executing") as Gtk.Button)
-                .clicked.connect (() => {
-                    status_bar_item.connected = true;
-                    open_roberta_window.connected = true;
                 });
         }
 
