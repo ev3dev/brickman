@@ -86,10 +86,29 @@ namespace BrickManager {
                 });
         }
 
+        void on_server_edit () {
+            var  custom_server_address = open_roberta_window.custom_server.label.text;
+            if (custom_server_address == "custom server") {
+                custom_server_address = "";
+            }
+            var dialog = new InputDialog (
+                "Please enter server address", custom_server_address);
+            weak InputDialog weak_dialog = dialog;
+            dialog.responded.connect ((accepted) => {
+                if (!accepted) {
+                    return;
+                }
+                custom_server_address = weak_dialog.text_value;
+                open_roberta_window.custom_server.label.text = custom_server_address;
+                on_server_connect (open_roberta_window.custom_server.button);
+            });
+            dialog.show ();
+        }
+
         void on_server_connect (Button button) {
             var server = (button.child as Label).text;
             if ( server == "" || server == "custom server") {
-                // TODO: enter the new address
+                on_server_edit ();
             } else {
                 open_roberta_window.selected_server = server;
                 var code = "1234abcd";
