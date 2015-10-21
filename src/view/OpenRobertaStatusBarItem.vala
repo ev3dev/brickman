@@ -29,7 +29,7 @@ namespace BrickManager {
         unowned Context connected_icon;
         unowned Context idle_icon;
 
-        public bool connected { get; set; default = false; }
+        public bool connected { get; set; }
 
         public OpenRobertaStatusBarItem () {
             visible = false;

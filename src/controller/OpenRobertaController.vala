@@ -47,7 +47,7 @@ namespace BrickManager {
         MessageDialog pin_dialog;
         bool executing_user_code = false;
 
-        public bool available { get; set; default = false; }
+        public bool available { get; set; }
 
         public string display_name { get { return "Open Roberta Lab"; } }
 
@@ -66,10 +66,10 @@ namespace BrickManager {
 
             notify["available"].connect (() => {
                 if (!available) {
-                    open_roberta_window.info.text =
+                    open_roberta_window.status_info.text =
                         "Service openrobertalab is not running.";
                 } else {
-                  open_roberta_window.notify_property ("connected");
+                    open_roberta_window.notify_property ("connected");
                 }
             });
 
@@ -124,17 +124,13 @@ namespace BrickManager {
 
         void on_status_changed (string message) {
             debug ("service status: '%s'", message);
-            string[] offline = { "connected", "disconnected" };
-            if (message in offline) {
-                status_bar_item.connected = false;
-                open_roberta_window.connected = false;
-                if (message == "disconnected") {
-                    if (pin_dialog != null) {
-                        debug ("connection failed, closing the dialog");
-                        pin_dialog.close ();
-                    }
-                }
-            } else {
+            // connected:    we've started the communication with the server
+            // registered:   we're online
+            // disconnected: the communication with the server is stopped or has
+            //               been terminated
+            // executing:    we're online and a program is running
+            string[] online = { "registered", "executing" };
+            if (message in online) {
                 status_bar_item.connected = true;
                 open_roberta_window.connected = true;
                 if (message == "registered") {
@@ -161,6 +157,15 @@ namespace BrickManager {
                     debug ("program starts, switching to tty2");
                     executing_user_code = true;
                     switch_to_program_screen ();
+                }
+            } else {
+                status_bar_item.connected = false;
+                open_roberta_window.connected = false;
+                if (message == "disconnected") {
+                    if (pin_dialog != null) {
+                        debug ("connection failed, closing the dialog");
+                        pin_dialog.close ();
+                    }
                 }
             }
         }
@@ -220,19 +225,19 @@ namespace BrickManager {
         }
 
         void switch_to_program_screen () {
-          Posix.system ("/bin/chvt 2");
-          Type type = global_manager.get_type();
-          uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
-          var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
-          GLib.SignalHandler.block (global_manager, handler_id);
+            Posix.system ("/bin/chvt 2");
+            Type type = global_manager.get_type();
+            uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
+            var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
+            GLib.SignalHandler.block (global_manager, handler_id);
         }
 
         void switch_to_brickman_screen () {
-          Posix.system ("/bin/chvt 1");
-          Type type = global_manager.get_type();
-          uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
-          var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
-          GLib.SignalHandler.unblock (global_manager, handler_id);
+            Posix.system ("/bin/chvt 1");
+            Type type = global_manager.get_type();
+            uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
+            var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
+            GLib.SignalHandler.unblock (global_manager, handler_id);
         }
     }
 }

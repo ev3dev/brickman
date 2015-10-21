@@ -47,21 +47,21 @@ using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class OpenRobertaWindow : BrickManagerWindow {
-        internal Label info;
+        internal Label status_info;
         internal Ui.Menu menu;
         internal Ui.MenuItem public_server;
         internal Ui.MenuItem custom_server;
         internal Ui.MenuItem config_custom;
         internal Ui.MenuItem disconnect_server;
 
-        public bool connected { get; set; default = false; }
+        public bool connected { get; set; }
         public string selected_server { get; set; default = null; }
 
         public OpenRobertaWindow (string display_name) {
             title = display_name;
 
-            info = new Label ();
-            content_vbox.add (info);
+            status_info = new Label ();
+            content_vbox.add (status_info);
 
             menu = new Ui.Menu () {
                 spacing = 2
@@ -79,8 +79,12 @@ namespace BrickManager {
 
         void on_connected_changed () {
             menu.remove_all_menu_items ();
-            if (!connected) {
-                info.text = "Select which server to use:";
+            if (connected) {
+                status_info.text = "Connected to\n" + selected_server;
+                menu.add_menu_item (disconnect_server);
+                disconnect_server.button.focus ();
+            } else {
+                status_info.text = "Select which server to use:";
                 menu.add_menu_item (public_server);
                 menu.add_menu_item (custom_server);
                 menu.add_menu_item (config_custom);
@@ -89,10 +93,6 @@ namespace BrickManager {
                 } else {
                     public_server.button.focus ();
                 }
-            } else {
-                info.text = "Connected to\n" + selected_server;
-                menu.add_menu_item (disconnect_server);
-                disconnect_server.button.focus ();
             }
         }
     }

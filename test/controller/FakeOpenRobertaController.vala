@@ -47,10 +47,10 @@ namespace BrickManager {
 
             notify["available"].connect (() => {
                 if (!available) {
-                    open_roberta_window.info.text =
+                    open_roberta_window.status_info.text =
                         "Service openrobertalab is not running.";
                 } else {
-                  open_roberta_window.notify_property("connected");
+                    open_roberta_window.notify_property("connected");
                 }
             });
 
