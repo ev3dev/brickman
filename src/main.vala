@@ -32,62 +32,14 @@ namespace BrickManager {
     // The global_manager is shared by all of the controller objects
     GlobalManager global_manager;
 
-    /**
-     * Opens the current virtual terminal.
-     *
-     * @param vtfd The file descriptor for the new console.
-     * @param vtnum The number of the virtual terminal.
-     * @throws IOError if we failed to open or activate a new console.
-     */
-    public void open_vt (out int vtfd, out int vtnum) throws IOError {
-        // The compiler complains about unassigned variables if we don't initialize
-        vtfd = 0;
-        vtnum = 0;
-
-        var tty_fd = open ("/dev/tty", O_RDWR, 0);
-        if (tty_fd < 0) {
-            throw (IOError) new Error (IOError.quark (), io_error_from_errno (-tty_fd),
-                "Failed to open /dev/tty: %s", GLib.strerror (-tty_fd));
-        }
+     public static int main (string[] args) {
         try {
-            Linux.VirtualTerminal.Stat vtstat;
-            var err = ioctl (tty_fd, VT_GETSTATE, out vtstat);
-            if (err < 0) {
-                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
-                    "Could not get state for /dev/tty: %s", GLib.strerror (-err));
-            }
-            vtnum = vtstat.v_active;
-            var device = "/dev/tty" + vtnum.to_string ();
-            err = access (device, (W_OK | R_OK));
-            if (err < 0) {
-                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-err),
-                    "Insufficient permission for %s: %s", device, GLib.strerror (-err));
-            }
-            vtfd = open (device, O_RDWR, 0);
-            if (vtfd < 0) {
-                throw (IOError) new Error (IOError.quark (), io_error_from_errno (-vtfd),
-                    "Could not open %s: %s", device, GLib.strerror (-vtfd));
-            }
-        } finally {
-            close (tty_fd);
-        }
-    }
-
-    public static int main (string[] args) {
-        int vtfd, vtnum;
-        try {
-            open_vt (out vtfd, out vtnum);
-        } catch (Error err) {
+            ConsoleApp.init ();
+        } catch (ConsoleApp.ConsoleAppError err) {
             critical ("%s", err.message);
             Process.exit (err.code);
         }
-        try {
-            ConsoleApp.init (vtfd);
-        } catch (Error err) {
-            critical ("%s", err.message);
-            close (vtfd);
-            Process.exit (err.code);
-        }
+
         // Get something up on the screen ASAP.
         var splash_path_found = true;
         var splash_path = Path.build_filename (Environment.get_current_dir (), SPLASH_PNG);
@@ -172,7 +124,6 @@ namespace BrickManager {
 
         ConsoleApp.run ();
 
-        close (vtfd);
         return 0;
     }
 }
