@@ -70,7 +70,7 @@ namespace BrickManager {
                         });
                     } else if ((mode & Posix.S_IXUSR) == Posix.S_IXUSR) {
                         // if the selected file is executable then we run the
-                        // file on a new console as the "ev3dev" user.
+                        // file on a new console as USER_NAME.
                         try {
                             // openvt will unfortunately set the ownership of the new /dev/tty<num> to root:root
                             // instead of root:tty. Even with root:tty the new application would fails to configure
