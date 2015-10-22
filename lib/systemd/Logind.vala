@@ -143,7 +143,7 @@ namespace Systemd.Logind {
         public async void kill_session (string session_id, SessionToKill session, int32 @signal = Posix.SIGTERM) throws IOError {
             yield manager.kill_session (session_id, session, @signal);
         }
-        public async void kill_user (string user_id, int32 @signal = Posix.SIGTERM) throws IOError {
+        public async void kill_user (uint32 user_id, int32 @signal = Posix.SIGTERM) throws IOError {
             yield manager.kill_user (user_id, @signal);
         }
         public async void terminate_session (string session_id) throws IOError {
@@ -206,13 +206,13 @@ namespace Systemd.Logind {
             var session = yield Session.get_instance_for_path (path);
             session_removed (session_id, session);
         }
-        public signal void user_new (string user_id, User user);
-        async void on_user_new (string user_id, ObjectPath path) {
+        public signal void user_new (uint32 user_id, User user);
+        async void on_user_new (uint32 user_id, ObjectPath path) {
             var user = yield User.get_instance_for_path (path);
             user_new (user_id, user);
         }
-        public signal void user_removed (string user_id, User user);
-        async void on_user_removed (string user_id, ObjectPath path) {
+        public signal void user_removed (uint32 user_id, User user);
+        async void on_user_removed (uint32 user_id, ObjectPath path) {
             var user = yield User.get_instance_for_path (path);
             user_removed (user_id, user);
         }
