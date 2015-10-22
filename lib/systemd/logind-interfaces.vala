@@ -68,7 +68,7 @@ namespace org.freedesktop.login1 {
         public abstract async void lock_sessions () throws IOError;
         public abstract async void unlock_sessions () throws IOError;
         public abstract async void kill_session (string session_id, Systemd.Logind.SessionToKill session, int32 @signal) throws IOError;
-        public abstract async void kill_user (string user_id, int32 @signal) throws IOError;
+        public abstract async void kill_user (uint32 user_id, int32 @signal) throws IOError;
         public abstract async void terminate_session (string session_id) throws IOError;
         public abstract async void terminate_user (uint32 user_id) throws IOError;
         public abstract async void terminate_seat (string seat_id) throws IOError;
@@ -88,8 +88,8 @@ namespace org.freedesktop.login1 {
 
         public abstract signal void session_new (string session_id, ObjectPath session);
         public abstract signal void session_removed (string session_id, ObjectPath session);
-        public abstract signal void user_new (string user_id, ObjectPath user);
-        public abstract signal void user_removed (string user_id, ObjectPath user);
+        public abstract signal void user_new (uint32 user_id, ObjectPath user);
+        public abstract signal void user_removed (uint32 user_id, ObjectPath user);
         public abstract signal void seat_new (string seat_id, ObjectPath seat);
         public abstract signal void seat_removed (string seat_id, ObjectPath seat);
         public abstract signal void prepare_for_shutdown (bool before_shutdown);
