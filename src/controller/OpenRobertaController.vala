@@ -21,6 +21,7 @@
 
 /* OpenRobertaController.vala - Controller for openroberta lab service */
 
+using Ev3devKit;
 using Ev3devKit.Ui;
 
 namespace BrickManager {
@@ -39,6 +40,7 @@ namespace BrickManager {
     public class OpenRobertaController : Object, IBrickManagerModule {
         const string SERVICE_NAME = "org.openroberta.lab";
         const string CONFIG = "/etc/openroberta.conf";
+        const int OPEN_ROBERTA_TTY_NUM = 2;
 
         OpenRobertaWindow open_roberta_window;
         internal OpenRobertaStatusBarItem status_bar_item;
@@ -93,7 +95,7 @@ namespace BrickManager {
                     service = null;
                     // if the service dies (while running code), definitely
                     // switch back to brickman
-                    switch_to_brickman_screen ();
+                    chvt (ConsoleApp.get_tty_num ());
                 });
 
             try {
@@ -147,16 +149,17 @@ namespace BrickManager {
                         }
                     } else {
                         if (executing_user_code) {
-                            debug ("program done, switching to tty1");
+                            var tty_num = ConsoleApp.get_tty_num ();
+                            debug ("program done, switching to tty%d", tty_num);
                             executing_user_code = false;
-                            switch_to_brickman_screen ();
+                            chvt (tty_num);
                         }
                     }
                 }
                 if (message == "executing") {
-                    debug ("program starts, switching to tty2");
+                    debug ("program starts, switching to tty%d", OPEN_ROBERTA_TTY_NUM);
                     executing_user_code = true;
-                    switch_to_program_screen ();
+                    chvt (OPEN_ROBERTA_TTY_NUM);
                 }
             } else {
                 status_bar_item.connected = false;
@@ -224,20 +227,9 @@ namespace BrickManager {
             }
         }
 
-        void switch_to_program_screen () {
-            Posix.system ("/bin/chvt 2");
-            Type type = global_manager.get_type();
-            uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
-            var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
-            GLib.SignalHandler.block (global_manager, handler_id);
-        }
-
-        void switch_to_brickman_screen () {
-            Posix.system ("/bin/chvt 1");
-            Type type = global_manager.get_type();
-            uint sig_id = GLib.Signal.lookup("back-button-long-pressed", type);
-            var handler_id =  GLib.SignalHandler.find(global_manager, GLib.SignalMatchType.ID, sig_id, 0, null, null, null);
-            GLib.SignalHandler.unblock (global_manager, handler_id);
+        void chvt (int num) {
+            // TODO: might be better to do this with ioctl
+            Posix.system ("/bin/chvt %d".printf (num));
         }
     }
 }

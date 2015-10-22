@@ -83,8 +83,13 @@ namespace BrickManager {
         Screen.get_active_screen ().status_bar.add_right (bluetooth_controller.status_bar_item);
         Screen.get_active_screen ().status_bar.add_right (open_roberta_controller.status_bar_item);
 
-        global_manager.back_button_long_pressed.connect_after (() =>
-            home_window.shutdown_dialog.show ());
+        // show the shutdown menu on long back button press, but only if
+        // brickman is active.
+        global_manager.back_button_long_pressed.connect_after (() => {
+            if (ConsoleApp.is_active ()) {
+                home_window.shutdown_dialog.show ();
+            }
+        });
 
         Systemd.Logind.Manager logind_manager = null;
         Systemd.Logind.Manager.get_system_manager.begin ((obj, res) => {

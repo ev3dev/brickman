@@ -109,7 +109,6 @@ namespace BrickManager {
                                 } catch (Error err) {
                                     critical ("%s", err.message);
                                 }
-                                Signal.stop_emission_by_name (global_manager, "back-button-long-pressed");
                             });
                             // Wait for the openvt process to end, then clean up
                             // output devices in case the use program didn't

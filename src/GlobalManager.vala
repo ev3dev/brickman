@@ -87,7 +87,9 @@ namespace BrickManager {
                     if (key_code == KEY_BACKSPACE) {
                         timeout_id = Timeout.add (1000, () => {
                             back_button_long_pressed ();
-                            Ev3devKit.ConsoleApp.ignore_next_key_press ();
+                            if (Ev3devKit.ConsoleApp.is_active ()) {
+                                Ev3devKit.ConsoleApp.ignore_next_key_press ();
+                            }
                             timeout_id = 0;
                             return Source.REMOVE;
                         });
