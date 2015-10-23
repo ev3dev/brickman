@@ -40,7 +40,7 @@ using Ev3devKit.Ui;
             big_font = _big_font ?? Grx.Font.default;
         }
 
-        Box window_vbox;
+        Stack window_stack;
         Label title_label;
         Label loading_label;
         Label not_available_label;
@@ -54,21 +54,11 @@ using Ev3devKit.Ui;
         public bool loading {
             get { return _loading; }
             set {
-                if (value == _loading)
+                if (value == _loading) {
                     return;
-                _loading = value;
-                if (!_available)
-                    return;
-                if (value) {
-                    window_vbox.remove (content_vbox);
-                    window_vbox.add (loading_label);
-
-                } else {
-                    window_vbox.remove (loading_label);
-                    window_vbox.add (content_vbox);
-                    if (!_content_vbox.descendant_has_focus)
-                        _content_vbox.focus_first ();
                 }
+                _loading = value;
+                set_active_child ();
             }
         }
 
@@ -76,42 +66,48 @@ using Ev3devKit.Ui;
         public bool available {
             get { return _available; }
             set {
-                if (value == _available)
+                if (value == _available) {
                     return;
-                _available = value;
-                if (value) {
-                    window_vbox.remove (not_available_label);
-                    if (loading)
-                        window_vbox.add (loading_label);
-                    else
-                        window_vbox.add (content_vbox);
-                } else {
-                    window_vbox.remove (content_vbox);
-                    window_vbox.remove (loading_label);
-                    window_vbox.add (not_available_label);
                 }
+                _available = value;
+                set_active_child ();
             }
         }
 
         public Box content_vbox { get; private set; }
 
         protected BrickManagerWindow () {
-            window_vbox = new Box.vertical ();
+            var window_vbox = new Box.vertical ();
             add (window_vbox);
+
             title_label = new Label () {
                 vertical_align = WidgetAlign.START,
                 padding = 3,
                 border_bottom = 1
             };
             window_vbox.add (title_label);
+
+            window_stack = new Stack ();
+            window_vbox.add (window_stack);
+
+            content_vbox = new Box.vertical ();
+            window_stack.add (content_vbox);
+
             loading_label = new Label ("Loading...") {
                 margin_bottom = 30
             };
+            window_stack.add (loading_label);
+
             not_available_label = new Label ("Not available") {
                 margin_bottom = 30
             };
-            content_vbox = new Box.vertical ();
-            window_vbox.add (content_vbox);
+            window_stack.add (not_available_label);
+        }
+
+        void set_active_child () {
+            window_stack.active_child = _available
+            ? (_loading ? (Widget)loading_label : content_vbox)
+            : not_available_label;
         }
     }
  }
