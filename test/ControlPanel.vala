@@ -43,7 +43,8 @@ namespace BrickManager {
             NETWORK,
             BLUETOOTH,
             BATTERY,
-            OPEN_ROBERTA
+            OPEN_ROBERTA,
+            ABOUT
         }
 
         enum NetworkNotebookTab {

@@ -21,6 +21,7 @@
 
 /* AboutController.vala - Controller for about window */
 
+using Ev3devKit.Devices;
 using Ev3devKit.Ui;
 
 namespace BrickManager {
@@ -38,28 +39,15 @@ namespace BrickManager {
 
         void create_about_window () {
             about_window = new AboutWindow (display_name);
-            var i2c_client = new GUdev.Client ({ "i2c"});
-            var ev3_eeprom = i2c_client.query_by_subsystem_and_name ("i2c", "1-0050");
-            if (ev3_eeprom == null)
-                critical ("Could not get EV3 EEPROM device");
-            else {
-                var path = Path.build_filename (ev3_eeprom.get_sysfs_path (), "eeprom");
-                var eeprom_file = File.new_for_path (path);
-                try {
-                    var eeprom_input_stream = eeprom_file.read ();
-                    eeprom_input_stream.seek (0x3f00, SeekType.SET);
-                    var version = eeprom_input_stream.read_bytes (1);
-                    about_window.eeprom_version = "V%d.%d0".printf (version[0] / 10, version[0] % 10);
-                } catch (Error e) {
-                    critical ("%s", e.message);
-                }
-            }
             var utsname = Posix.UTSName ();
             if (Posix.uname (ref utsname) == 0) {
                 about_window.kernel_version = utsname.release;
             } else {
-                critical ("Failed to get kernel version.");
+                warning ("Failed to get kernel version.");
             }
+            about_window.model_name = Cpu.get_model ();
+            about_window.revision = Cpu.get_revision ();
+            about_window.serial_number = Cpu.get_serial_number ();
         }
     }
 }
