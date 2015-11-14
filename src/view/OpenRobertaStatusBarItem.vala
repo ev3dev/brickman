@@ -35,9 +35,9 @@ namespace BrickManager {
             visible = false;
             string file;
             try {
-                file = Path.build_filename (PKGDATADIR, "openroberta-connected12x9.png");
+                file = Path.build_filename (PKGDATADIR, "openroberta-connected16x16.png");
                 connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
-                file = Path.build_filename (PKGDATADIR, "openroberta-idle12x9.png");
+                file = Path.build_filename (PKGDATADIR, "openroberta-idle16x16.png");
                 idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
             } catch (Error err) {
                 critical ("Error loading icon '%s'.", file);
@@ -48,7 +48,7 @@ namespace BrickManager {
         public override int draw (int x, StatusBar.Align align) {
             unowned Context icon = connected ? connected_icon : idle_icon;
             if (icon != null) {
-                bit_blt (Context.current, x - icon.x_max, 1, icon, 0, 0,
+                bit_blt (Context.current, x - icon.x_max, 2, icon, 0, 0,
                     icon.x_max, icon.y_max, Color.white.to_image_mode ());
                 return icon.x_max;
             }

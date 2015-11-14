@@ -37,9 +37,9 @@ namespace BrickManager {
             visible = false;
             string file;
             try {
-                file = "bluetooth-connected7x9.png";
+                file = "bluetooth-connected16x16.png";
                 connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
-                file = "bluetooth7x9.png";
+                file = "bluetooth16x16.png";
                 idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
             } catch (Error err) {
                 critical ("Error loading icon '%s'.", file);
@@ -50,9 +50,10 @@ namespace BrickManager {
         public override int draw (int x, StatusBar.Align align) {
             unowned Context icon = connected ? connected_icon : idle_icon;
             if (icon != null) {
-                bit_blt (Context.current, x - icon.x_max, 1, icon, 0, 0,
-                    icon.x_max, icon.y_max, Color.white.to_image_mode ());
-                return icon.x_max;
+                // this icon has 1 pixel width of whitespace on each side
+                bit_blt (Context.current, x - icon.x_max + 2, 1, icon, 1, 0,
+                    icon.x_max - 2, icon.y_max, Color.white.to_image_mode ());
+                return icon.x_max - 2;
             }
             return -2;
         }

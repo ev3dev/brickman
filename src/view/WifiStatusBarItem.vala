@@ -37,9 +37,9 @@ namespace BrickManager {
             visible = false;
             string file;
             try {
-                file = "wifi12x9.png";
+                file = "wifi16x16.png";
                 connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
-                file = "wifi-idle12x9.png";
+                file = "wifi-idle16x16.png";
                 idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
             } catch (Error err) {
                 critical ("Error loading icon '%s'.", file);

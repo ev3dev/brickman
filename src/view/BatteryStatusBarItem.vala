@@ -31,11 +31,11 @@ namespace BrickManager {
         const ushort END_WIDTH = 2;
         const ushort END_OFFEST = 2;
         const ushort PADDING = 1;
-        const ushort TOP = 1;
+        const ushort TOP = 3;
         static Font font;
 
         static construct {
-            font =  Font.load ("xm4x6");
+            font =  Font.load ("xm5x8");
         }
 
         string _text = "???";
@@ -70,11 +70,11 @@ namespace BrickManager {
             var total_width = main_width + END_WIDTH;
             if (align ==  StatusBar.Align.RIGHT)
                 x -= total_width - 1;
-            box (x, TOP, x + main_width - 1, TOP + HEIGHT - 1, color);
+            box (x, TOP, x + main_width - 1, HEIGHT - TOP, color);
             filled_box (x + main_width, TOP + END_OFFEST,
-                x + main_width + END_WIDTH - 1, TOP + HEIGHT - END_OFFEST - 1,
+                x + main_width + END_WIDTH - 1, HEIGHT - TOP - END_OFFEST,
                 color);
-            draw_vala_string (_text, x + 1 + PADDING, TOP + 1 + PADDING, text_option);
+            draw_vala_string (_text, x + PADDING, TOP + 1 + PADDING, text_option);
             return total_width;
         }
     }

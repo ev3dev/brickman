@@ -32,11 +32,6 @@ using Grx;
 namespace BrickManager {
     public class NetworkStatusBarItem : StatusBarItem {
         const ushort TOP = 2;
-        static Font font;
-
-        static construct {
-            font =  Font.load ("xm6x8");
-        }
 
         string _text = "";
         TextOption text_option;
@@ -51,7 +46,7 @@ namespace BrickManager {
 
         public NetworkStatusBarItem () {
             text_option = new TextOption () {
-                font = NetworkStatusBarItem.font,
+                font = Fonts.get_default (),
                 bg_color = Color.no_color
             };
         }

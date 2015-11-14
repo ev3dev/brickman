@@ -1,6 +1,8 @@
 set (files
     openroberta-connected12x9
+    openroberta-connected16x16
     openroberta-idle12x9
+    openroberta-idle16x16
     splash
 )
 
