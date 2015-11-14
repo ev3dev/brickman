@@ -71,10 +71,10 @@ namespace BrickManager {
         network_controller.add_controller (network_controller.wifi_controller);
         var battery_controller = new BatteryController ();
         home_window.add_controller (battery_controller);
-        var about_controller = new AboutController ();
-        home_window.add_controller (about_controller);
         var open_roberta_controller = new OpenRobertaController ();
         home_window.add_controller (open_roberta_controller);
+        var about_controller = new AboutController ();
+        home_window.add_controller (about_controller);
 
         Screen.get_active_screen ().status_bar.add_left (network_controller.network_status_bar_item);
 

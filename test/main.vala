@@ -52,8 +52,8 @@ namespace BrickManager {
         control_panel.bluetooth_controller.show_network_connection_requested.connect ((name) =>
             control_panel.network_controller.show_connection (name));
         home_window.add_controller (control_panel.battery_controller);
-        home_window.add_controller (control_panel.about_controller);
         home_window.add_controller (control_panel.open_roberta_controller);
+        home_window.add_controller (control_panel.about_controller);
 
         Screen.get_active_screen ().status_bar.visible = true;
         Screen.get_active_screen ().status_bar.add_left (control_panel.network_controller.network_status_bar_item);
