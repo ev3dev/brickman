@@ -21,14 +21,14 @@
 
 /* BatteryController.vala - Controller for monitoring battery */
 
+using Ev3devKit.Devices;
 using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class BatteryController : Object, IBrickManagerModule {
         BatteryInfoWindow battery_window;
         internal BatteryStatusBarItem battery_status_bar_item;
-        GUdev.Client power_supply_client;
-        string battery_name;
+        PowerSupply? system_power_supply;
 
         public string display_name { get { return "Battery"; } }
 
@@ -41,10 +41,10 @@ namespace BrickManager {
 
         public BatteryController () {
             battery_status_bar_item = new BatteryStatusBarItem ();
-            power_supply_client = new GUdev.Client ({ "power_supply" });
-            var system_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
-            if (system_battery == null) {
-                critical ("Could not get legoev3-battery device");
+            system_power_supply = global_manager.device_manager.get_system_power_supply ();
+            if (system_power_supply == null) {
+                battery_status_bar_item.visible = false;
+                warning ("Could not get system power supply.");
             } else {
                 update_battery_info ();
                 Timeout.add_seconds (5, update_battery_info);
@@ -53,27 +53,31 @@ namespace BrickManager {
 
         void create_battery_window () {
             battery_window = new BatteryInfoWindow (display_name);
-            var system_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
-            if (system_battery == null) {
+            if (system_power_supply == null) {
                 battery_window.available = false;
             } else {
-                battery_window.technology = system_battery.get_sysfs_attr ("technology") ?? "Error";
+                battery_window.technology = system_power_supply.technology.to_string ();
+                update_battery_info ();
             }
         }
 
         bool update_battery_info () {
-            var system_battery = power_supply_client.query_by_subsystem_and_name ("power_supply", "legoev3-battery");
-            if (system_battery == null) {
-                critical ("Could not get legoev3-battery device, polling is now stopped.");
+            if (system_power_supply == null) {
                 return false;
             }
-            var voltage = system_battery.get_sysfs_attr_as_int ("voltage_now") / 1000000.0;
-            var current = system_battery.get_sysfs_attr_as_int ("current_now") / 1000.0;
-            if (battery_window != null) {
-                battery_window.voltage = voltage;
-                battery_window.current = current;
-            }
+
+            var voltage = system_power_supply.voltage;
             battery_status_bar_item.voltage = voltage;
+
+            if (battery_window != null) {
+                battery_window.has_voltage = system_power_supply.has_voltage;
+                battery_window.voltage = voltage;
+                battery_window.has_current = system_power_supply.has_current;
+                battery_window.current = system_power_supply.current * 1000;
+                battery_window.has_power = system_power_supply.has_power;
+                battery_window.power = system_power_supply.power;
+            }
+
             return true;
         }
     }

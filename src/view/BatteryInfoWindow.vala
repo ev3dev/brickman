@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright (C) 2014 David Lechner <david@lechnology.com>
+ * Copyright (C) 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,28 @@ namespace BrickManager {
             set { tech_value_label.text = value; }
         }
 
+        public bool has_voltage {
+            get { return voltage_label.visible; }
+            set {
+                voltage_label.visible = value;
+                voltage_value_label.visible = value;
+            }
+        }
+
         double _voltage;
         public double voltage {
             get { return _voltage; }
             set {
                 _voltage = value;
                 voltage_value_label.text = "%.2fV".printf (value);
-                update_power ();
+            }
+        }
+
+        public bool has_current {
+            get { return current_label.visible; }
+            set {
+                current_label.visible = value;
+                current_value_label.visible = value;
             }
         }
 
@@ -58,7 +73,23 @@ namespace BrickManager {
             set {
                 _current = value;
                 current_value_label.text = "%.0fmA".printf (value);
-                update_power ();
+            }
+        }
+
+        public bool has_power {
+            get { return power_label.visible; }
+            set {
+                power_label.visible = value;
+                power_value_label.visible = value;
+            }
+        }
+
+        double _power;
+        public double power {
+            get { return _power; }
+            set {
+                _power = value;
+                power_value_label.text = "%.2fW".printf (value);
             }
         }
 
@@ -107,10 +138,6 @@ namespace BrickManager {
             info_grid.add (power_label);
             info_grid.add (power_value_label);
             content_vbox.add (new Spacer ());
-        }
-
-        void update_power() {
-            power_value_label.text = "%.2fW".printf (voltage * current / 1000.0);
         }
     }
 }

@@ -35,17 +35,25 @@ namespace BrickManager {
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             battery_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.BATTERY);
 
-            var battery_loading_checkbutton = builder.get_object ("battery_loading_checkbutton") as Gtk.CheckButton;
+            var battery_loading_checkbutton = builder.get_object ("battery-loading-checkbutton") as Gtk.CheckButton;
             battery_loading_checkbutton.bind_property ("active", battery_window, "loading", BindingFlags.SYNC_CREATE);
-            (builder.get_object ("battery_tech_comboboxtext") as Gtk.ComboBoxText)
+            (builder.get_object ("battery-tech-comboboxtext") as Gtk.ComboBoxText)
                 .bind_property ("active-id", battery_window, "technology", BindingFlags.SYNC_CREATE);
-            (builder.get_object ("battery_voltage_spinbutton") as Gtk.SpinButton)
+            (builder.get_object ("battery-voltage-checkbutton") as Gtk.CheckButton)
+                .bind_property ("active", battery_window, "has-voltage", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("battery-voltage-spinbutton") as Gtk.SpinButton)
                 .bind_property ("value", battery_window, "voltage", BindingFlags.SYNC_CREATE);
-            (builder.get_object ("battery_current_spinbutton") as Gtk.SpinButton)
+            (builder.get_object ("battery-current-checkbutton") as Gtk.CheckButton)
+                .bind_property ("active", battery_window, "has-current", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("battery-current-spinbutton") as Gtk.SpinButton)
                 .bind_property ("value", battery_window, "current", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("battery-power-checkbutton") as Gtk.CheckButton)
+                .bind_property ("active", battery_window, "has-power", BindingFlags.SYNC_CREATE);
+            (builder.get_object ("battery-power-spinbutton") as Gtk.SpinButton)
+                .bind_property ("value", battery_window, "power", BindingFlags.SYNC_CREATE);
 
             battery_status_bar_item = new BatteryStatusBarItem ();
-            (builder.get_object ("battery_voltage_spinbutton") as Gtk.SpinButton)
+            (builder.get_object ("battery-voltage-spinbutton") as Gtk.SpinButton)
                 .bind_property ("value", battery_status_bar_item, "voltage", BindingFlags.SYNC_CREATE);
         }
 
