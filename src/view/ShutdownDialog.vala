@@ -45,7 +45,8 @@ namespace BrickManager {
             };
             dialog_vbox.add (title);
             button_vbox = new Box.vertical () {
-                margin = 10
+                margin = 4,
+                margin_top = 2
             };
             dialog_vbox.add (button_vbox);
             power_off_button = new Button.with_label ("Power Off");
