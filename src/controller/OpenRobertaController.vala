@@ -53,19 +53,11 @@ namespace BrickManager {
 
         public string display_name { get { return "Open Roberta Lab"; } }
 
-        public void show_main_window () {
-            open_roberta_window.show ();
-        }
-
         public OpenRobertaController () {
-            // TODO: defer window creation to show_main_window()
-            open_roberta_window = new OpenRobertaWindow (display_name);
             status_bar_item = new OpenRobertaStatusBarItem ();
             config = new KeyFile ();
 
             bind_property ("available", status_bar_item, "visible",
-                BindingFlags.SYNC_CREATE);
-            bind_property ("available", open_roberta_window, "available",
                 BindingFlags.SYNC_CREATE);
 
             Bus.watch_name (BusType.SYSTEM, SERVICE_NAME,
@@ -73,15 +65,15 @@ namespace BrickManager {
                     connect_async.begin ((obj, res) => {
                         try {
                             connect_async.end (res);
-                            open_roberta_window.loading = false;
+                            if (open_roberta_window != null) {
+                                open_roberta_window.loading = false;
+                            }
                             available = true;
                         } catch (IOError err) {
                             warning ("%s", err.message);
                         }
                     });
                 }, () => {
-                    open_roberta_window.loading = true;
-                    open_roberta_window.connected = false;
                     status_bar_item.connected = false;
                     available = false;
                     service = null;
@@ -90,6 +82,22 @@ namespace BrickManager {
                     // FIXME: This should only be called if the current tty is the OpenRoberta tty
                     chvt (ConsoleApp.get_tty_num ());
                 });
+        }
+
+        public void show_main_window () {
+            if (open_roberta_window == null) {
+                init_main_window ();
+            }
+            open_roberta_window.show ();
+        }
+
+        void init_main_window () {
+            open_roberta_window = new OpenRobertaWindow (display_name) {
+                loading = !available
+            };
+
+            bind_property ("available", open_roberta_window, "available",
+                BindingFlags.SYNC_CREATE);
 
             try {
                 config.load_from_file (CONFIG, KeyFileFlags.KEEP_COMMENTS);
