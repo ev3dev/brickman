@@ -2,6 +2,7 @@
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
  * Copyright 2015 Stefan Sauer <ensonic@google.com>
+ * Copyright 2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +27,10 @@ using Ev3devKit.Ui;
 namespace BrickManager {
     public class FakeOpenRobertaController : Object, IBrickManagerModule {
         OpenRobertaWindow open_roberta_window;
+        Gtk.RadioButton disconnected_radio_button;
+        Gtk.RadioButton connected_radio_button;
+
         public OpenRobertaStatusBarItem status_bar_item;
-        MessageDialog pin_dialog;
 
         public bool available { get; set; default = false; }
 
@@ -43,88 +46,59 @@ namespace BrickManager {
             status_bar_item = new OpenRobertaStatusBarItem ();
 
             bind_property ("available", status_bar_item, "visible", BindingFlags.SYNC_CREATE);
-            bind_property ("available", open_roberta_window.menu, "visible", BindingFlags.SYNC_CREATE);
+            bind_property ("available", open_roberta_window, "available", BindingFlags.SYNC_CREATE);
 
-            notify["available"].connect (() => {
-                if (!available) {
-                    open_roberta_window.status_info.text =
-                        "Service openrobertalab is not running.";
-                } else {
-                    open_roberta_window.notify_property("connected");
-                }
-            });
-
-            open_roberta_window.public_server.button.pressed.connect (on_server_connect);
-            open_roberta_window.custom_server.button.pressed.connect (on_server_connect);
-
-            open_roberta_window.disconnect_server.button.pressed.connect (on_server_disconnect);
+            open_roberta_window.connect_selected.connect (on_server_connect);
+            open_roberta_window.disconnect_selected.connect (on_server_disconnect);
 
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             open_roberta_window.shown.connect (() => control_panel_notebook.page = (int)ControlPanel.Tab.OPEN_ROBERTA);
 
-            var open_roberta_loading_checkbutton = builder.get_object ("open_roberta_loading_checkbutton1") as Gtk.CheckButton;
+            var open_roberta_loading_checkbutton = builder.get_object ("openroberta-loading-checkbutton") as Gtk.CheckButton;
             open_roberta_loading_checkbutton.bind_property ("active", open_roberta_window, "loading", BindingFlags.SYNC_CREATE);
 
-            (builder.get_object ("openroberta_available_checkbutton") as Gtk.CheckButton)
+            (builder.get_object ("openroberta-available-checkbutton") as Gtk.CheckButton)
                 .bind_property ("active", this, "available", BindingFlags.SYNC_CREATE);
 
-            (builder.get_object ("openroberta_status_disconnencted") as Gtk.Button)
-                .clicked.connect (() => {
-                    status_bar_item.connected = false;
-                    open_roberta_window.connected = false;
-                    if (pin_dialog != null) {
-                        pin_dialog.close ();
-                    }
-                });
-            (builder.get_object ("openroberta_status_registered") as Gtk.Button)
-                .clicked.connect (() => {
-                    status_bar_item.connected = true;
-                    open_roberta_window.connected = true;
-                    if (pin_dialog != null) {
-                        pin_dialog.close ();
-                    }
-                });
-        }
-
-        void on_server_edit () {
-            var  custom_server_address = open_roberta_window.custom_server.label.text;
-            if (custom_server_address == "custom server") {
-                custom_server_address = "";
-            }
-            var dialog = new InputDialog (
-                "Please enter server address", custom_server_address);
-            weak InputDialog weak_dialog = dialog;
-            dialog.responded.connect ((accepted) => {
-                if (!accepted) {
-                    return;
-                }
-                custom_server_address = weak_dialog.text_value;
-                open_roberta_window.custom_server.label.text = custom_server_address;
-                on_server_connect (open_roberta_window.custom_server.button);
+            disconnected_radio_button = builder.get_object ("openroberta-status-disconnected-radiobutton") as Gtk.RadioButton;
+            disconnected_radio_button.clicked.connect (() => {
+                status_bar_item.connected = false;
+                open_roberta_window.connected = false;
             });
-            dialog.show ();
+            connected_radio_button = builder.get_object ("openroberta-status-connected-radiobutton") as Gtk.RadioButton;
+            connected_radio_button.clicked.connect (() => {
+                status_bar_item.connected = true;
+                open_roberta_window.connected = true;
+            });
+
+            (builder.get_object ("openroberta-custom-server-entry") as Gtk.Entry)
+                .bind_property ("text", open_roberta_window, "custom-server-address",
+                    BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+            (builder.get_object ("openroberta-active-server-entry") as Gtk.Entry)
+                .bind_property ("text", open_roberta_window, "selected-server",
+                    BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
+
+            var pin_code_entry = builder.get_object ("openroberta-pin-code-entry") as Gtk.Entry;
+            (builder.get_object ("openroberta-show-pin-dialog-button") as Gtk.Button)
+                .clicked.connect (() => {
+                    var code = pin_code_entry.text;
+                    OpenRobertaWindow.show_pairing_code_dialog (code);
+                });
+            (builder.get_object ("openroberta-close-pin-dialog-button") as Gtk.Button)
+                .clicked.connect (() => OpenRobertaWindow.close_pairing_code_dialog ());
         }
 
-        void on_server_connect (Button button) {
-            var server = (button.child as Label).text;
-            if ( server == "" || server == "custom server") {
-                on_server_edit ();
+        void on_server_connect (string address) {
+            if (address == "") {
+                OpenRobertaWindow.show_no_custom_server_address_dialog ();
             } else {
-                open_roberta_window.selected_server = server;
-                var code = "1234abcd";
-                var label = new Label (code) {
-                    margin_top = 12,
-                    font = BrickManagerWindow.big_font
-                };
-                pin_dialog = new MessageDialog.with_content ("Pairing code", label);
-                pin_dialog.closed.connect (() => { pin_dialog = null; });
-                pin_dialog.show ();
+                open_roberta_window.selected_server = address;
+                connected_radio_button.clicked ();
             }
         }
 
         void on_server_disconnect () {
-            status_bar_item.connected = false;
-            open_roberta_window.connected = false;
+            disconnected_radio_button.clicked ();
         }
     }
 }
