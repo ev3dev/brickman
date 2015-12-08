@@ -28,16 +28,12 @@ using Ev3devKit.Ui;
  namespace BrickManager {
     public abstract class BrickManagerWindow : Window {
         static Grx.Font _small_font;
-        static Grx.Font _big_font;
 
         public static unowned Grx.Font small_font;
-        public static unowned Grx.Font big_font;
 
         static construct {
             _small_font = Grx.Font.load ("helv11");
             small_font = _small_font ?? Grx.Font.default;
-            _big_font = Grx.Font.load ("xm9x15b");
-            big_font = _big_font ?? Grx.Font.default;
         }
 
         Stack window_stack;

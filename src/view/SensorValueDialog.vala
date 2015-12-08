@@ -35,7 +35,7 @@ namespace BrickManager {
         public SensorValueDialog () {
             value_label = new Label ("???") {
                 margin = 12,
-                font = BrickManagerWindow.big_font
+                font = Fonts.get_big ()
             };
             add (value_label);
         }
