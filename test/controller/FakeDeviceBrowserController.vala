@@ -58,16 +58,16 @@ namespace BrickManager {
             ports_liststore.foreach ((model, path, iter) => {
                 Value device_name;
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.DEVICE_NAME, out device_name);
-                Value port_name;
-                ports_liststore.get_value (iter, ControlPanel.PortsColumn.PORT_NAME, out port_name);
+                Value address;
+                ports_liststore.get_value (iter, ControlPanel.PortsColumn.ADDRESS, out address);
                 Value driver_name;
                 ports_liststore.get_value (iter, ControlPanel.PortsColumn.DRIVER_NAME, out driver_name);
-                var menu_item = new Ui.MenuItem.with_right_arrow (port_name.dup_string ());
+                var menu_item = new Ui.MenuItem.with_right_arrow (address.dup_string ());
                 port_browser_window.menu.add_menu_item (menu_item);
                 //liststore USER_DATA is gpointer, so it does not take a ref
                 ports_liststore.set (iter, ControlPanel.PortsColumn.USER_DATA, menu_item.ref ());
                 menu_item.button.pressed.connect (() => {
-                    var window = new PortInfoWindow (port_name.dup_string (), device_name.dup_string (),
+                    var window = new PortInfoWindow (address.dup_string (), device_name.dup_string (),
                         driver_name.dup_string ());
                     var row_changed_handler_id = ports_liststore.row_changed.connect ((path, iter) => {
                         Value present;
@@ -75,7 +75,7 @@ namespace BrickManager {
                         if (!present.get_boolean ()) {
                             window.close ();
                             var dialog = new MessageDialog ("Port Removed",
-                                "Port %s is no longer connected.".printf (port_name.get_string ()));
+                                "Port %s is no longer connected.".printf (address.get_string ()));
                             dialog.show ();
                             return;
                         }
@@ -184,10 +184,10 @@ namespace BrickManager {
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.DEVICE_NAME, out device_name);
                 Value driver_name;
                 sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.DRIVER_NAME, out driver_name);
-                Value port_name;
-                sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PORT_NAME, out port_name);
-                var menu_item = new Ui.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
-                    port_name.get_string ()));
+                Value address;
+                sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.ADDRESS, out address);
+                var menu_item = new Ui.MenuItem.with_right_arrow ("%s at %s".printf (driver_name.get_string (),
+                    address.get_string ()));
                 if (present.get_boolean ())
                     sensor_browser_window.menu.add_menu_item (menu_item);
                 //liststore USER_DATA is gpointer, so it does not take a ref
@@ -196,14 +196,14 @@ namespace BrickManager {
                     Value commands;
                     sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.COMMANDS, out commands);
                     var window = new SensorInfoWindow (driver_name.dup_string (), device_name.dup_string (),
-                        port_name.dup_string (), commands.get_string () != "n/a");
+                        address.dup_string (), commands.get_string () != "n/a");
                     var row_changed_handler_id = sensors_liststore.row_changed.connect ((path, iter) => {
                         sensors_liststore.get_value (iter, ControlPanel.SensorsColumn.PRESENT, out present);
                         if (!present.get_boolean ()) {
                             window.close ();
                             var dialog = new MessageDialog ("Sensor Removed",
-                                "Sensor %s on %s is no longer connected.".printf (driver_name.get_string (),
-                                    port_name.get_string ()));
+                                "Sensor %s at %s is no longer connected.".printf (driver_name.get_string (),
+                                    address.get_string ()));
                             dialog.show ();
                             return;
                         }
@@ -288,10 +288,10 @@ namespace BrickManager {
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DEVICE_NAME, out device_name);
                 Value driver_name;
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
-                Value port_name;
-                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
-                var menu_item = new Ui.MenuItem.with_right_arrow ("%s on %s".printf (driver_name.get_string (),
-                    port_name.get_string ()));
+                Value address;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.ADDRESS, out address);
+                var menu_item = new Ui.MenuItem.with_right_arrow ("%s at %s".printf (driver_name.get_string (),
+                    address.get_string ()));
                 if (present.get_boolean ())
                     motor_browser_window.menu.add_menu_item (menu_item);
                 //liststore USER_DATA is gpointer, so it does not take a ref
@@ -299,11 +299,11 @@ namespace BrickManager {
                 menu_item.button.pressed.connect (() => {
                     tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DEVICE_NAME, out device_name);
                     tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
-                    tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
+                    tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.ADDRESS, out address);
                     Value running;
                     tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.RUNNING, out running);
                     var window = new MotorInfoWindow (driver_name.dup_string (), "tacho-motor",
-                        device_name.dup_string (), port_name.dup_string (), true);
+                        device_name.dup_string (), address.dup_string (), true);
                     window.running = running.get_boolean ();
                     var row_changed_handler_id = tacho_motors_liststore.row_changed.connect ((path, iter) => {
                         tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PRESENT, out present);
@@ -311,8 +311,8 @@ namespace BrickManager {
                         if (!present.get_boolean ()) {
                             window.close ();
                             var dialog = new MessageDialog ("Motor Removed",
-                                "motor %s on %s is no longer connected.".printf (driver_name.get_string (),
-                                    port_name.get_string ()));
+                                "motor %s at %s is no longer connected.".printf (driver_name.get_string (),
+                                    address.get_string ()));
                             dialog.show ();
                             return;
                         }
@@ -347,8 +347,8 @@ namespace BrickManager {
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PRESENT, out present);
                 Value driver_name;
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.DRIVER_NAME, out driver_name);
-                Value port_name;
-                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.PORT_NAME, out port_name);
+                Value address;
+                tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.ADDRESS, out address);
                 Value user_data;
                 tacho_motors_liststore.get_value (iter, ControlPanel.TachoMotorsColumn.USER_DATA, out user_data);
                 var menu_item = (Ui.MenuItem)user_data.get_pointer ();
@@ -356,8 +356,8 @@ namespace BrickManager {
                     motor_browser_window.menu.remove_menu_item (menu_item);
                 else if (!motor_browser_window.menu.has_menu_item (menu_item) && present.get_boolean ())
                     motor_browser_window.menu.add_menu_item (menu_item);
-                menu_item.label.text = "%s on %s".printf (driver_name.get_string (),
-                    port_name.get_string ());
+                menu_item.label.text = "%s at %s".printf (driver_name.get_string (),
+                    address.get_string ());
             });
             (builder.get_object ("tacho-motor-present-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
@@ -365,9 +365,9 @@ namespace BrickManager {
             (builder.get_object ("tacho-motor-device-name-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.DEVICE_NAME));
-            (builder.get_object ("tacho-motor-port-name-cellrenderertext") as Gtk.CellRendererText)
+            (builder.get_object ("tacho-motor-address-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
-                    tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.PORT_NAME));
+                    tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.ADDRESS));
             (builder.get_object ("tacho-motor-driver-name-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
                     tacho_motors_liststore, path, new_text, ControlPanel.TachoMotorsColumn.DRIVER_NAME));

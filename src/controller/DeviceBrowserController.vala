@@ -70,9 +70,9 @@ namespace BrickManager {
         }
 
         void on_port_added (Port port) {
-            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow (port.port_name);
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow (port.address);
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
-                var window = new PortInfoWindow (port.port_name, port.device_name,
+                var window = new PortInfoWindow (port.address, port.device_name,
                     port.driver_name);
                 port.bind_property ("mode", window, "mode", BindingFlags.SYNC_CREATE);
                 port.bind_property ("status", window, "status", BindingFlags.SYNC_CREATE);
@@ -124,7 +124,7 @@ namespace BrickManager {
                 });
                 var notify_connected_handler_id = port.notify["connected"].connect (() => {
                     var dialog = new MessageDialog ("Port Removed",
-                        "Port %s was disconnected.".printf (port.port_name));
+                        "Port %s was disconnected.".printf (port.address));
                     dialog.show ();
                     window.close ();
                 });
@@ -180,11 +180,11 @@ namespace BrickManager {
         }
 
         void on_sensor_added (Sensor sensor) {
-            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (sensor.driver_name,
-                sensor.port_name));
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s at %s".printf (sensor.driver_name,
+                sensor.address));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new SensorInfoWindow (sensor.driver_name, sensor.device_name,
-                    sensor.port_name, sensor.commands != null);
+                    sensor.address, sensor.commands != null);
                 sensor.bind_property ("mode", window, "mode", BindingFlags.SYNC_CREATE);
                 var watch_values_hander_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to support showing more than one value?
@@ -262,8 +262,8 @@ namespace BrickManager {
                 ulong window_closed_handler_id = 0;
                 notify_connected_handler_id = sensor.notify["connected"].connect (() => {
                     var dialog = new MessageDialog ("Sensor Removed",
-                        "Sensor %s on %s was disconnected.".printf (sensor.driver_name,
-                        sensor.port_name));
+                        "Sensor %s at %s was disconnected.".printf (sensor.driver_name,
+                        sensor.address));
                     dialog.show ();
                     window.close ();
                 });
@@ -315,11 +315,11 @@ namespace BrickManager {
         }
 
         void on_tacho_motor_added (TachoMotor motor) {
-            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
-                motor.port_name));
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s at %s".printf (motor.driver_name,
+                motor.address));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "tacho-motor",
-                    motor.device_name, motor.port_name, true);
+                    motor.device_name, motor.address, true);
                 var watch_values_hander_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to also show speed?
                     var value_dialog = new MotorValueDialog ();
@@ -343,8 +343,8 @@ namespace BrickManager {
                 ulong window_closed_handler_id = 0;
                 notify_connected_handler_id = motor.notify["connected"].connect (() => {
                     var dialog = new MessageDialog ("Motor Removed",
-                        "Motor %s on %s was disconnected.".printf (motor.driver_name,
-                        motor.port_name));
+                        "Motor %s at %s was disconnected.".printf (motor.driver_name,
+                        motor.address));
                     dialog.show ();
                     window.close ();
                 });
@@ -373,17 +373,17 @@ namespace BrickManager {
         }
 
         void on_dc_motor_added (DcMotor motor) {
-            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
-                motor.port_name));
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s at %s".printf (motor.driver_name,
+                motor.address));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "dc-motor",
-                    motor.device_name, motor.port_name, false);
+                    motor.device_name, motor.address, false);
                 ulong notify_connected_handler_id = 0;
                 ulong window_closed_handler_id = 0;
                 notify_connected_handler_id = motor.notify["connected"].connect (() => {
                     var dialog = new MessageDialog ("Motor Removed",
-                        "Motor %s on %s was disconnected.".printf (motor.driver_name,
-                        motor.port_name));
+                        "Motor %s at %s was disconnected.".printf (motor.driver_name,
+                        motor.address));
                     dialog.show ();
                     window.close ();
                 });
@@ -411,17 +411,17 @@ namespace BrickManager {
         }
 
         void on_servo_motor_added (ServoMotor motor) {
-            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s on %s".printf (motor.driver_name,
-                motor.port_name));
+            var menu_item = new Ev3devKit.Ui.MenuItem.with_right_arrow ("%s at %s".printf (motor.driver_name,
+                motor.address));
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "servo-motor",
-                    motor.device_name, motor.port_name, false);
+                    motor.device_name, motor.address, false);
                 ulong notify_connected_handler_id = 0;
                 ulong window_closed_handler_id = 0;
                 notify_connected_handler_id = motor.notify["connected"].connect (() => {
                     var dialog = new MessageDialog ("Motor Removed",
-                        "Motor %s on %s was disconnected.".printf (motor.driver_name,
-                        motor.port_name));
+                        "Motor %s at %s was disconnected.".printf (motor.driver_name,
+                        motor.address));
                     dialog.show ();
                     window.close ();
                 });

@@ -38,7 +38,7 @@ namespace BrickManager {
         public signal void set_mode_selected ();
         public signal void send_command_selected ();
 
-        public SensorInfoWindow (string name, string device_name, string port_name, bool supports_commands) {
+        public SensorInfoWindow (string name, string device_name, string address, bool supports_commands) {
             title = name;
             var vscroll = new Scroll.vertical () {
                 can_focus = false,
@@ -59,12 +59,12 @@ namespace BrickManager {
             vbox.add (device_name_label);
             var device_name_value_label = new Label (device_name);
             vbox.add (device_name_value_label);
-            var port_name_label = new Label ("Port name:") {
+            var address_label = new Label ("Address:") {
                 margin_top = SPACING
             };
-            vbox.add (port_name_label);
-            var port_name_value_label = new Label (port_name);
-            vbox.add (port_name_value_label);
+            vbox.add (address_label);
+            var address_value_label = new Label (address);
+            vbox.add (address_value_label);
             var mode_label = new Label ("Mode:") {
                 margin_top = SPACING
             };

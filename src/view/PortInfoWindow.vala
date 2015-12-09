@@ -66,8 +66,8 @@ namespace BrickManager {
         public signal void set_mode_button_pressed ();
         public signal void set_device_button_pressed ();
 
-        public PortInfoWindow (string port_name, string device_name, string driver_name) {
-            title = port_name;
+        public PortInfoWindow (string address, string device_name, string driver_name) {
+            title = address;
             vscroll = new Scroll.vertical () {
                 margin_top = -3,
                 can_focus = false

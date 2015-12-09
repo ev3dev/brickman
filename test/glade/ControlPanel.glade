@@ -302,7 +302,7 @@
       <column type="gboolean"/>
       <!-- column-name DEVICE_NAME -->
       <column type="gchararray"/>
-      <!-- column-name PORT_NAME -->
+      <!-- column-name ADDRESS -->
       <column type="gchararray"/>
       <!-- column-name DRIVER_NAME -->
       <column type="gchararray"/>
@@ -414,7 +414,7 @@
       <column type="gchararray"/>
       <!-- column-name DRIVER_NAME -->
       <column type="gchararray"/>
-      <!-- column-name PORT_NAME -->
+      <!-- column-name ADDRESS -->
       <column type="gchararray"/>
       <!-- column-name FW_VERSION -->
       <column type="gchararray"/>
@@ -501,7 +501,7 @@
       <column type="gboolean"/>
       <!-- column-name DEVICE_NAME -->
       <column type="gchararray"/>
-      <!-- column-name PORT_NAME -->
+      <!-- column-name ADDRESS -->
       <column type="gchararray"/>
       <!-- column-name DRIVER_NAME -->
       <column type="gchararray"/>
@@ -611,10 +611,10 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="ports_port_name_treeviewcolumn">
-                                <property name="title" translatable="yes">Port</property>
+                              <object class="GtkTreeViewColumn" id="ports_address_treeviewcolumn">
+                                <property name="title" translatable="yes">Address</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="ports_port_name_cellrenderertext"/>
+                                  <object class="GtkCellRendererText" id="ports_address_cellrenderertext"/>
                                   <attributes>
                                     <attribute name="text">2</attribute>
                                   </attributes>
@@ -769,10 +769,10 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="sensors_port_name_treeviewcolumn">
-                                <property name="title" translatable="yes">Port</property>
+                              <object class="GtkTreeViewColumn" id="sensors_address_treeviewcolumn">
+                                <property name="title" translatable="yes">Address</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="sensors_port_name_cellrenderertext">
+                                  <object class="GtkCellRendererText" id="sensors_address_cellrenderertext">
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>
@@ -1018,10 +1018,10 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="tacho-motor-port-name-treeviewcolumn">
-                                <property name="title" translatable="yes">Port</property>
+                              <object class="GtkTreeViewColumn" id="tacho-motor-address-treeviewcolumn">
+                                <property name="title" translatable="yes">Address</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="tacho-motor-port-name-cellrenderertext">
+                                  <object class="GtkCellRendererText" id="tacho-motor-address-cellrenderertext">
                                     <property name="editable">True</property>
                                   </object>
                                   <attributes>

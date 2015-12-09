@@ -41,7 +41,7 @@ namespace BrickManager {
         public signal void watch_values_selected ();
 
         public MotorInfoWindow (string name, string class_name, string device_name,
-            string port_name, bool show_watch_button)
+            string address, bool show_watch_button)
         {
             title = name;
             var vscroll = new Scroll.vertical () {
@@ -73,12 +73,12 @@ namespace BrickManager {
             var device_name_value_label = new Label (device_name);
             vbox.add (device_name_value_label);
 
-            var port_name_label = new Label ("Port name:") {
+            var address_label = new Label ("Address:") {
                 margin_top = SPACING
             };
-            vbox.add (port_name_label);
-            var port_name_value_label = new Label (port_name);
-            vbox.add (port_name_value_label);
+            vbox.add (address_label);
+            var address_value_label = new Label (address);
+            vbox.add (address_value_label);
 
             // TODO: driver needs notification support before making this visible
             //var running_label = new Label ("Running:") {

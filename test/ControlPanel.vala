@@ -59,7 +59,7 @@ namespace BrickManager {
         enum PortsColumn {
             PRESENT,
             DEVICE_NAME,
-            PORT_NAME,
+            ADDRESS,
             DRIVER_NAME,
             MODE,
             MODES,
@@ -73,7 +73,7 @@ namespace BrickManager {
             PRESENT,
             DEVICE_NAME,
             DRIVER_NAME,
-            PORT_NAME,
+            ADDRESS,
             FW_VERSION,
             POLL_MS,
             MODES,
@@ -89,7 +89,7 @@ namespace BrickManager {
         enum TachoMotorsColumn {
             PRESENT,
             DEVICE_NAME,
-            PORT_NAME,
+            ADDRESS,
             DRIVER_NAME,
             POLARITY,
             RUNNING,
