@@ -71,41 +71,47 @@ namespace BrickManager {
 
         public GlobalManager () {
             device_manager = new Ev3devKit.Devices.DeviceManager ();
-            try {
-                ev3_left_green_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_GREEN);
-                ev3_right_green_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_GREEN);
-                ev3_left_red_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_RED);
-                ev3_right_red_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_RED);
-                have_ev3_leds = true;
-            } catch (Error err) {
-                critical ("%s", err.message);
-            }
-            try {
-                ev3_buttons = device_manager.get_input_device (Ev3devKit.Devices.Input.EV3_BUTTONS_NAME);
-                uint timeout_id = 0;
-                var button_down_handler_id = ev3_buttons.key_down.connect ((key_code) => {
-                    if (key_code == KEY_BACKSPACE) {
-                        timeout_id = Timeout.add (1000, () => {
-                            back_button_long_pressed ();
-                            if (Ev3devKit.ConsoleApp.is_active ()) {
-                                Ev3devKit.ConsoleApp.ignore_next_key_press ();
-                            }
-                            timeout_id = 0;
-                            return Source.REMOVE;
-                        });
-                    }
-                });
-                var button_up_handler_id = ev3_buttons.key_up.connect ((key_code) => {
-                    if (key_code == KEY_BACKSPACE && timeout_id != 0) {
-                        Source.remove (timeout_id);
-                    }
-                });
-                weak_ref (() => {
-                    ev3_buttons.disconnect (button_down_handler_id);
-                    ev3_buttons.disconnect (button_up_handler_id);
-                });
-            } catch (Error err) {
-                critical ("%s", err.message);
+            if (Ev3devKit.Devices.Cpu.get_model ().has_prefix ("LEGO MINDSTORMS EV3")) {
+                try {
+                    ev3_left_green_led = device_manager.get_led (
+                        Ev3devKit.Devices.Led.EV3_LEFT, "green");
+                    ev3_right_green_led = device_manager.get_led (
+                        Ev3devKit.Devices.Led.EV3_RIGHT, "green");
+                    ev3_left_red_led = device_manager.get_led (
+                        Ev3devKit.Devices.Led.EV3_LEFT, "red");
+                    ev3_right_red_led = device_manager.get_led (
+                        Ev3devKit.Devices.Led.EV3_RIGHT, "red");
+                    have_ev3_leds = true;
+                } catch (Error err) {
+                    warning ("%s", err.message);
+                }
+                try {
+                    ev3_buttons = device_manager.get_input_device (Ev3devKit.Devices.Input.EV3_BUTTONS_NAME);
+                    uint timeout_id = 0;
+                    var button_down_handler_id = ev3_buttons.key_down.connect ((key_code) => {
+                        if (key_code == KEY_BACKSPACE) {
+                            timeout_id = Timeout.add (1000, () => {
+                                back_button_long_pressed ();
+                                if (Ev3devKit.ConsoleApp.is_active ()) {
+                                    Ev3devKit.ConsoleApp.ignore_next_key_press ();
+                                }
+                                timeout_id = 0;
+                                return Source.REMOVE;
+                            });
+                        }
+                    });
+                    var button_up_handler_id = ev3_buttons.key_up.connect ((key_code) => {
+                        if (key_code == KEY_BACKSPACE && timeout_id != 0) {
+                            Source.remove (timeout_id);
+                        }
+                    });
+                    weak_ref (() => {
+                        ev3_buttons.disconnect (button_down_handler_id);
+                        ev3_buttons.disconnect (button_up_handler_id);
+                    });
+                } catch (Error err) {
+                    critical ("%s", err.message);
+                }
             }
         }
 
