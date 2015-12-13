@@ -53,10 +53,10 @@ namespace BrickManager {
      */
     public class GlobalManager : Object {
         bool have_ev3_leds = false;
-        Ev3devKit.Devices.Led EV3_LEFT_GREEN_led;
-        Ev3devKit.Devices.Led EV3_RIGHT_GREEN_led;
-        Ev3devKit.Devices.Led EV3_LEFT_RED_led;
-        Ev3devKit.Devices.Led EV3_RIGHT_RED_led;
+        Ev3devKit.Devices.Led ev3_left_green_led;
+        Ev3devKit.Devices.Led ev3_right_green_led;
+        Ev3devKit.Devices.Led ev3_left_red_led;
+        Ev3devKit.Devices.Led ev3_right_red_led;
         Ev3devKit.Devices.Input ev3_buttons;
 
         /**
@@ -72,10 +72,10 @@ namespace BrickManager {
         public GlobalManager () {
             device_manager = new Ev3devKit.Devices.DeviceManager ();
             try {
-                EV3_LEFT_GREEN_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_GREEN);
-                EV3_RIGHT_GREEN_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_GREEN);
-                EV3_LEFT_RED_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_RED);
-                EV3_RIGHT_RED_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_RED);
+                ev3_left_green_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_GREEN);
+                ev3_right_green_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_GREEN);
+                ev3_left_red_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_LEFT_RED);
+                ev3_right_red_led = device_manager.get_led (Ev3devKit.Devices.Led.EV3_RIGHT_RED);
                 have_ev3_leds = true;
             } catch (Error err) {
                 critical ("%s", err.message);
@@ -115,26 +115,26 @@ namespace BrickManager {
             try {
                 switch (state) {
                 case LedState.NORMAL:
-                    EV3_LEFT_GREEN_led.set_trigger ("default-on");
-                    EV3_RIGHT_GREEN_led.set_trigger ("default-on");
-                    EV3_LEFT_RED_led.set_trigger ("none");
-                    EV3_LEFT_RED_led.set_brightness (0);
-                    EV3_RIGHT_RED_led.set_trigger ("none");
-                    EV3_RIGHT_RED_led.set_brightness (0);
+                    ev3_left_green_led.set_trigger ("default-on");
+                    ev3_right_green_led.set_trigger ("default-on");
+                    ev3_left_red_led.set_trigger ("none");
+                    ev3_left_red_led.set_brightness (0);
+                    ev3_right_red_led.set_trigger ("none");
+                    ev3_right_red_led.set_brightness (0);
                     break;
                 case LedState.BUSY:
-                    EV3_LEFT_GREEN_led.set_trigger ("none");
-                    EV3_LEFT_GREEN_led.set_brightness (0);
-                    EV3_RIGHT_GREEN_led.set_trigger ("none");
-                    EV3_RIGHT_GREEN_led.set_brightness (0);
-                    EV3_LEFT_RED_led.set_trigger ("default-on");
-                    EV3_RIGHT_RED_led.set_trigger ("default-on");
+                    ev3_left_green_led.set_trigger ("none");
+                    ev3_left_green_led.set_brightness (0);
+                    ev3_right_green_led.set_trigger ("none");
+                    ev3_right_green_led.set_brightness (0);
+                    ev3_left_red_led.set_trigger ("default-on");
+                    ev3_right_red_led.set_trigger ("default-on");
                     break;
                 case LedState.USER:
-                    EV3_LEFT_GREEN_led.set_trigger ("default-on");
-                    EV3_RIGHT_GREEN_led.set_trigger ("default-on");
-                    EV3_LEFT_RED_led.set_trigger ("default-on");
-                    EV3_RIGHT_RED_led.set_trigger ("default-on");
+                    ev3_left_green_led.set_trigger ("default-on");
+                    ev3_right_green_led.set_trigger ("default-on");
+                    ev3_left_red_led.set_trigger ("default-on");
+                    ev3_right_red_led.set_trigger ("default-on");
                     break;
                 }
             } catch (Error err) {
