@@ -41,7 +41,7 @@ namespace BrickManager {
         public NetworkConnectionMenuItem (string png_file) {
             base.with_button (new Button () {
                 padding_top = 1,
-                padding_bottom = 1
+                padding_bottom = 2
             }, new Label () {
                 text_horizontal_align = Grx.TextHorizAlign.LEFT
             });

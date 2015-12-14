@@ -109,40 +109,58 @@ namespace BrickManager {
                     menu_item = new NetworkConnectionMenuItem (icon_file);
                     menu_item.button.pressed.connect (() => {
 
-                        /* NetworkPropertiesWindow */
+                        /* NetworkConnectionWindow */
 
-                        var network_connection_info_window = new NetworkPropertiesWindow (name.dup_string ());
+                        var network_connection_info_window = new NetworkConnectionWindow (name.dup_string ());
                         network_connection_info_window.shown.connect (() => {
                             control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK;
                             network_notebook.page = (int)ControlPanel.NetworkNotebookTab.CONNECTION_INFO;
                         });
                         ((builder.get_object ("network-connection-info-state-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
                             .bind_property ("text", network_connection_info_window, "state", BindingFlags.SYNC_CREATE);
-                        ((builder.get_object ("network-connection-info-security-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "security", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-strength-spinbutton") as Gtk.SpinButton)
-                            .bind_property ("value", network_connection_info_window, "strength", BindingFlags.SYNC_CREATE);
                         (builder.get_object ("network-connection-info-auto-connect-checkbutton") as Gtk.CheckButton)
                             .bind_property ("active", network_connection_info_window, "auto-connect", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
-                        (builder.get_object ("network-connection-info-method-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "ipv4-method", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-address-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "ipv4-address", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-netmask-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "ipv4-netmask", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-gateway-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "ipv4-gateway", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-dns-textbuffer") as Gtk.TextBuffer)
-                            .bind_property ("text", network_connection_info_window, "dns-addresses", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL,
-                                transform_string_to_strv, transform_strv_to_string);
-                        (builder.get_object ("network-connection-info-enet-method-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "enet-method", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-enet-iface-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "enet-interface", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-enet-mac-entry") as Gtk.Entry)
-                            .bind_property ("text", network_connection_info_window, "enet-address", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-connection-info-enet-mtu-spinbutton") as Gtk.SpinButton)
-                            .bind_property ("value", network_connection_info_window, "enet-mtu", BindingFlags.SYNC_CREATE);
+
+                        /* NetworkConnectionIpv4Window */
+
+                        network_connection_info_window.ipv4_button_pressed.connect (() => {
+                            var ipv4_window = new NetworkConnectionIpv4Window (name.dup_string ());
+                            (builder.get_object ("network-connection-info-method-entry") as Gtk.Entry)
+                                .bind_property ("text", ipv4_window, "method", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-connection-info-address-entry") as Gtk.Entry)
+                                .bind_property ("text", ipv4_window, "address", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-connection-info-netmask-entry") as Gtk.Entry)
+                                .bind_property ("text", ipv4_window, "netmask", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-connection-info-gateway-entry") as Gtk.Entry)
+                                .bind_property ("text", ipv4_window, "gateway", BindingFlags.SYNC_CREATE);
+                            ipv4_window.show ();
+                        });
+
+                        /* NetworkConnectionDnsWindow */
+
+                        network_connection_info_window.dns_button_pressed.connect (() => {
+                            var dns_window = new NetworkConnectionDnsWindow (name.dup_string ());
+                            (builder.get_object ("network-connection-info-dns-textbuffer") as Gtk.TextBuffer)
+                                .bind_property ("text", dns_window, "addresses", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL,
+                                    transform_string_to_strv, transform_strv_to_string);
+                            dns_window.show ();
+                        });
+
+                        /* NetworkConnectionEnetWindow */
+
+                        network_connection_info_window.enet_button_pressed.connect (() => {
+                            var enet_window = new NetworkConnectionEnetWindow (name.dup_string ());
+                            (builder.get_object ("network-connection-info-enet-method-entry") as Gtk.Entry)
+                                .bind_property ("text", enet_window, "method", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-connection-info-enet-iface-entry") as Gtk.Entry)
+                                .bind_property ("text", enet_window, "interface", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-connection-info-enet-mac-entry") as Gtk.Entry)
+                                .bind_property ("text", enet_window, "address", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-connection-info-enet-mtu-spinbutton") as Gtk.SpinButton)
+                                .bind_property ("value", enet_window, "mtu", BindingFlags.SYNC_CREATE);
+                            enet_window.show ();
+                        });
+
                         network_connection_info_window.show ();
                     });
 

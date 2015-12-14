@@ -83,9 +83,12 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/MotorBrowserWindow.vala
     src/view/MotorInfoWindow.vala
     src/view/MotorValueDialog.vala
+    src/view/NetworkConnectionDnsWindow.vala
+    src/view/NetworkConnectionEnetWindow.vala
+    src/view/NetworkConnectionIpv4Window.vala
     src/view/NetworkConnectionMenuItem.vala
+    src/view/NetworkConnectionWindow.vala
     src/view/NetworkConnectionsWindow.vala
-    src/view/NetworkPropertiesWindow.vala
     src/view/NetworkStatusBarItem.vala
     src/view/NetworkStatusWindow.vala
     src/view/OpenRobertaStatusBarItem.vala
