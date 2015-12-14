@@ -75,6 +75,9 @@ namespace BrickManager {
                     });
                 }, () => {
                     status_bar_item.connected = false;
+                    if (open_roberta_window != null) {
+                        open_roberta_window.connected = false;
+                    }
                     available = false;
                     service = null;
                     // if the service dies (while running code), definitely
