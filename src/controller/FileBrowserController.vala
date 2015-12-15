@@ -28,7 +28,7 @@ namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
         const string PARENT_DIRECTORY_TEXT = "../";
         const string INITAL_DIRECTORY = "/home/robot";
-        const string USER_NAME = "ev3dev";
+        const string USER_NAME = "robot";
         const string file_attrs = FileAttribute.OWNER_USER
             + "," + FileAttribute.STANDARD_IS_HIDDEN
             + "," + FileAttribute.STANDARD_TYPE
