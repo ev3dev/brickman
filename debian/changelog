@@ -1,3 +1,18 @@
+brickman (0.7.0) stable; urgency=medium
+
+  * Use XDG_DATA_DIRS for data files.
+  * Add platform checks for EV3 specific stuff.
+  * Update for ev3dev kernel level 9.
+  * Make Battery window work on non-EV3 devices.
+  * Make About window work on non-EV3 devices.
+  * UI changes to handle bigger font.
+  * Add UI for OpenRoberta (thanks @ensonic).
+  * File browser is now limited to /home/robot
+  * Remove dependency on libgee (improves performance).
+  * USB menu is removed.
+
+ -- David Lechner <david@lechnology.com>  Tue, 15 Dec 2015 17:16:54 -0600
+
 brickman (0.6.2) stable; urgency=medium
 
   [ David Lechner ]
