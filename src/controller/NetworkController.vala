@@ -240,6 +240,7 @@ namespace BrickManager {
                     connections_window.menu.remove_menu_item (menu_item);
                 } else {
                     var icon_file = service.service_type.replace ("gadget", "usb") + "12x12.png";
+                    icon_file = Path.build_filename (Ev3devKit.DATA_DIR, icon_file);
                     menu_item = new NetworkConnectionMenuItem (icon_file);
                     menu_item.represented_object = service;
                     service.bind_property ("state", menu_item, "connected",

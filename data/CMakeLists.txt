@@ -6,14 +6,18 @@ set (files
     splash
 )
 
+set (destination_directory ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME})
+
 set (generated_files "")
 foreach (file ${files})
     set (in_file ${CMAKE_CURRENT_SOURCE_DIR}/${file}.pbm)
-    set (out_file ${CMAKE_BINARY_DIR}/${file}.png)
+    set (out_file ${destination_directory}/${file}.png)
     list (APPEND generated_files ${out_file})
     add_custom_command (
         OUTPUT
             ${out_file}
+        COMMAND
+            mkdir -p ${destination_directory}
         COMMAND
             ${CMAKE_COMMAND} -Din_file="${in_file}" -Dout_file="${out_file}" -P ${CMAKE_CURRENT_SOURCE_DIR}/pnmtopng.cmake
         WORKING_DIRECTORY
@@ -27,7 +31,7 @@ add_custom_target (brickman_data
         ${generated_files})
 
 install (
-    FILES
-        ${generated_files}
+    DIRECTORY
+        ${destination_directory}
     DESTINATION
-        share/${CMAKE_PROJECT_NAME})
+        share)

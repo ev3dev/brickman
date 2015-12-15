@@ -41,18 +41,16 @@ namespace BrickManager {
         }
 
         // Get something up on the screen ASAP.
-        var splash_path_found = true;
-        var splash_path = Path.build_filename (Environment.get_current_dir (), SPLASH_PNG);
-        if (!FileUtils.test (splash_path, FileTest.EXISTS)) {
-            splash_path = Path.build_filename (PKGDATADIR, SPLASH_PNG);;
-            if (!FileUtils.test (splash_path, FileTest.EXISTS))
-                splash_path_found = false;
+        var splash_path = Path.build_filename (DATA_DIR, SPLASH_PNG);
+        foreach (var dir in Environment.get_system_data_dirs ()) {
+            var new_path = Path.build_filename (dir, splash_path);
+            if (FileUtils.test (new_path, FileTest.EXISTS)) {
+                splash_path = new_path;
+                break;
+            }
         }
-        if (!splash_path_found) {
-            critical ("Could not find %s", splash_path);
-        } else {
-            if (Grx.Context.screen.load_from_png (splash_path) != 0)
-                critical ("%s", "Could not load splash image.");
+        if (Grx.Context.screen.load_from_png (splash_path) != 0) {
+            warning ("%s", "Could not load splash image.");
         }
 
         global_manager = new GlobalManager ();

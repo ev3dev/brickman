@@ -37,9 +37,9 @@ namespace BrickManager {
             visible = false;
             string file;
             try {
-                file = "bluetooth-connected16x16.png";
+                file = Path.build_filename (Ev3devKit.DATA_DIR, "bluetooth-connected16x16.png");
                 connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
-                file = "bluetooth16x16.png";
+                file = Path.build_filename (Ev3devKit.DATA_DIR, "bluetooth16x16.png");
                 idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
             } catch (Error err) {
                 critical ("Error loading icon '%s'.", file);

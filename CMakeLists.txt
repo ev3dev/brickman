@@ -8,7 +8,6 @@ list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 
-set (PKGDATADIR "${DATADIR}/${CMAKE_PROJECT_NAME}")
 set (EXEC_NAME "brickman")
 set (RELEASE_NAME "Brick Manager")
 set (VERSION "0.6.2")
@@ -17,6 +16,7 @@ set (VERSION "0.6.2")
 add_definitions (-w)
 
 add_subdirectory (data)
+set (XDG_DATA_DIR data)
 
 configure_file (src/Version.vala.in Version.vala)
 
@@ -187,7 +187,9 @@ add_dependencies(${EXEC_NAME} brickman_data)
 install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)
 
 add_custom_target(run
-    COMMAND ${EXEC_NAME}
+    COMMAND
+        XDG_DATA_DIRS=${XDG_DATA_DIR}:/usr/local/share:/usr/share
+        ./${EXEC_NAME}
     DEPENDS ${EXEC_NAME}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
