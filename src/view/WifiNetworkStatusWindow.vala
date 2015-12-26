@@ -18,20 +18,18 @@
  */
 
 /*
- * WifiInfoWindow.vala: Displays Wi-Fi connection info.
+ * WifiNetworkStatusWindow.vala: View for displaying status of a single Wi-Fi network.
  */
 
 using Ev3devKit;
 using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class WifiInfoWindow : BrickManagerWindow {
+    public class WifiNetworkStatusWindow : BrickManagerWindow {
         Label status_value_label;
         Label signal_value_label;
         Label security_value_label;
         Label address_value_label;
-        Button action_button;
-        Button forget_button;
 
         public string status {
             get { return status_value_label.text; }
@@ -53,24 +51,23 @@ namespace BrickManager {
             set { address_value_label.text = value; }
         }
 
-        public string action {
-            get { return (action_button.child as Label).text; }
-            set { (action_button.child as Label).text = value; }
-        }
-
-        public bool can_forget {
-            get { return forget_button.visible; }
-            set { forget_button.visible = value; }
-        }
-
-        public signal void action_selected ();
-
-        public signal void forget_selected ();
-
-        public signal void network_connection_selected ();
-
-        public WifiInfoWindow (string name) {
+        public WifiNetworkStatusWindow (string name) {
             title = name;
+
+            var status_hbox = new Box.horizontal () {
+                padding_top = -6,
+                padding_bottom = -3,
+                border_bottom = 1
+            };
+            content_vbox.add (status_hbox);
+            var status_label = new Label ("Status:") {
+                text_horizontal_align = Grx.TextHorizAlign.RIGHT
+            };
+            status_hbox.add (status_label);
+            status_value_label = new Label ("???") {
+                text_horizontal_align = Grx.TextHorizAlign.LEFT
+            };
+            status_hbox .add (status_value_label);
 
             var vscroll = new Scroll.vertical () {
                 can_focus = false
@@ -80,17 +77,6 @@ namespace BrickManager {
                 spacing = 3
             };
             vscroll.add (scroll_vbox);
-
-            var status_hbox = new Box.horizontal ();
-            scroll_vbox.add (status_hbox);
-            var status_label = new Label ("Status:") {
-                horizontal_align = WidgetAlign.START
-            };
-            status_hbox.add (status_label);
-            status_value_label = new Label ("???") {
-                text_horizontal_align = Grx.TextHorizAlign.RIGHT
-            };
-            status_hbox .add (status_value_label);
 
             var signal_hbox = new Box.horizontal ();
             scroll_vbox.add (signal_hbox);
@@ -124,19 +110,6 @@ namespace BrickManager {
                 text_horizontal_align = Grx.TextHorizAlign.RIGHT
             };
             address_hbox .add (address_value_label);
-
-            var button_hbox = new Box.horizontal ();
-            scroll_vbox.add (button_hbox);
-            action_button = new Button.with_label ("???");
-            action_button.pressed.connect (() => action_selected ());
-            button_hbox.add (action_button);
-            forget_button = new Button.with_label ("Forget");
-            forget_button.pressed.connect (() => forget_selected ());
-            button_hbox.add (forget_button);
-
-            var network_connection_button = new Button.with_label ("Network Connection");
-            network_connection_button.pressed.connect (() => network_connection_selected ());
-            scroll_vbox.add (network_connection_button);
         }
     }
 }

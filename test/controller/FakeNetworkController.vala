@@ -265,9 +265,9 @@ namespace BrickManager {
                     menu_item = new WifiMenuItem ();
                     menu_item.button.pressed.connect (() => {
 
-                        /* WifiInfoWindow */
+                        /* WifiNetworkWindow */
 
-                        var wifi_info_window = new WifiInfoWindow (name.dup_string ());
+                        var wifi_info_window = new WifiNetworkWindow (name.dup_string ());
                         wifi_info_window.shown.connect (() => {
                             control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK;
                             network_notebook.page = (int)ControlPanel.NetworkNotebookTab.WIFI_INFO;
@@ -275,19 +275,30 @@ namespace BrickManager {
 
                         ((builder.get_object ("network-wifi-info-status-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
                             .bind_property ("text", wifi_info_window, "status", BindingFlags.SYNC_CREATE);
-                        ((builder.get_object ("network-wifi-info-security-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
-                            .bind_property ("text", wifi_info_window, "security", BindingFlags.SYNC_CREATE);
-                        var signal_spinbutton = builder.get_object ("network-wifi-info-signal-spinbutton") as Gtk.SpinButton;
-                        signal_spinbutton.text = strength.dup_string ();
-                        signal_spinbutton.bind_property ("text", wifi_info_window, "signal-strength", BindingFlags.SYNC_CREATE);
-                        (builder.get_object ("network-wifi-info-address-entry") as Gtk.Entry)
-                            .bind_property ("text", wifi_info_window, "address", BindingFlags.SYNC_CREATE);
                         ((builder.get_object ("network-wifi-info-action-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
                             .bind_property ("text", wifi_info_window, "action", BindingFlags.SYNC_CREATE);
                         var can_forget_checkbutton = builder.get_object ("network-wifi-info-can-forget-checkbutton") as Gtk.CheckButton;
                         can_forget_checkbutton.active = connected.get_boolean ();
                         can_forget_checkbutton.bind_property ("active", wifi_info_window, "can-forget", BindingFlags.SYNC_CREATE);
 
+                        wifi_info_window.status_selected.connect (() => {
+
+                            /* WifiNetworkStatusWindow */
+
+                            var wifi_network_status_window = new WifiNetworkStatusWindow (name.dup_string ());
+
+                            ((builder.get_object ("network-wifi-info-status-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
+                            .bind_property ("text", wifi_network_status_window, "status", BindingFlags.SYNC_CREATE);
+                            ((builder.get_object ("network-wifi-info-security-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
+                            .bind_property ("text", wifi_network_status_window, "security", BindingFlags.SYNC_CREATE);
+                            var signal_spinbutton = builder.get_object ("network-wifi-info-signal-spinbutton") as Gtk.SpinButton;
+                            signal_spinbutton.text = strength.dup_string ();
+                            signal_spinbutton.bind_property ("text", wifi_network_status_window, "signal-strength", BindingFlags.SYNC_CREATE);
+                            (builder.get_object ("network-wifi-info-address-entry") as Gtk.Entry)
+                                .bind_property ("text", wifi_network_status_window, "address", BindingFlags.SYNC_CREATE);
+
+                            wifi_network_status_window.show ();
+                        });
                         wifi_info_window.action_selected.connect (() => message ("action selected"));
                         wifi_info_window.forget_selected.connect (() => can_forget_checkbutton.active = false);
                         wifi_info_window.network_connection_selected.connect (() => message ("network connection selected"));

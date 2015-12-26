@@ -421,19 +421,27 @@ namespace BrickManager {
 
         void on_wifi_connection_selected (Object represented_object) {
             var service = (Service)represented_object;
-            var info_window = new WifiInfoWindow (service.name);
+            var info_window = new WifiNetworkWindow (service.name);
             service.bind_property ("state", info_window, "status",
                 BindingFlags.SYNC_CREATE, transform_service_state_to_string);
-            service.bind_property ("strength", info_window, "signal-strength",
-                BindingFlags.SYNC_CREATE);
-            service.bind_property ("security", info_window, "security",
-                BindingFlags.SYNC_CREATE, transform_service_security_array_to_string);
-            service.bind_property ("ipv4", info_window, "address",
-                BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
             service.bind_property ("state", info_window, "action",
                 BindingFlags.SYNC_CREATE, transform_service_state_to_wifi_action);
             service.bind_property ("favorite", info_window, "can-forget",
                 BindingFlags.SYNC_CREATE);
+
+            info_window.status_selected.connect (() => {
+                var wifi_network_status_window = new WifiNetworkStatusWindow (service.name);
+                service.bind_property ("state", wifi_network_status_window, "status",
+                    BindingFlags.SYNC_CREATE, transform_service_state_to_string);
+                service.bind_property ("strength", wifi_network_status_window, "signal-strength",
+                    BindingFlags.SYNC_CREATE);
+                service.bind_property ("security", wifi_network_status_window, "security",
+                    BindingFlags.SYNC_CREATE, transform_service_security_array_to_string);
+                service.bind_property ("ipv4", wifi_network_status_window, "address",
+                    BindingFlags.SYNC_CREATE, transform_service_ipv4_to_address_string);
+
+                wifi_network_status_window.show ();
+            });
             info_window.action_selected.connect (() => handle_wifi_action (service));
             info_window.forget_selected.connect (() => {
                 service.remove.begin ((obj, res) => {

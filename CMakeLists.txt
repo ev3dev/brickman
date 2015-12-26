@@ -103,8 +103,9 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/SignalBars.vala
     src/view/TetheringInfoWindow.vala
     src/view/TetheringWindow.vala
-    src/view/WifiInfoWindow.vala
     src/view/WifiMenuItem.vala
+    src/view/WifiNetworkStatusWindow.vala
+    src/view/WifiNetworkWindow.vala
     src/view/WifiStatusBarItem.vala
     src/view/WifiWindow.vala
 )
