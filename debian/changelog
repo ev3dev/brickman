@@ -1,3 +1,9 @@
+brickman (0.7.1) stable; urgency=medium
+
+  * Change Wi-Fi window for larger font size
+
+ -- David Lechner <david@lechnology.com>  Sat, 26 Dec 2015 16:03:01 -0600
+
 brickman (0.7.0) stable; urgency=medium
 
   * Use XDG_DATA_DIRS for data files.
