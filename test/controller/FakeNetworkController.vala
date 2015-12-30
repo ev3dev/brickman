@@ -118,6 +118,10 @@ namespace BrickManager {
                         });
                         ((builder.get_object ("network-connection-info-state-comboboxtext") as Gtk.ComboBoxText).get_child () as Gtk.Entry)
                             .bind_property ("text", network_connection_info_window, "state", BindingFlags.SYNC_CREATE);
+                        (builder.get_object ("network-connection-info-is-connected-checkbutton") as Gtk.CheckButton)
+                            .bind_property ("active", network_connection_info_window, "is-connected", BindingFlags.SYNC_CREATE);
+                        (builder.get_object ("network-connection-info-is-busy-checkbutton") as Gtk.CheckButton)
+                            .bind_property ("active", network_connection_info_window, "is-connect-busy", BindingFlags.SYNC_CREATE);
                         (builder.get_object ("network-connection-info-auto-connect-checkbutton") as Gtk.CheckButton)
                             .bind_property ("active", network_connection_info_window, "auto-connect", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
 

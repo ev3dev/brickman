@@ -106,23 +106,6 @@
   <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
   <object class="GtkListStore" id="dc-motors-liststore"/>
   <object class="GtkListStore" id="leds_liststore"/>
-  <object class="GtkListStore" id="networ-wifi-security-liststore">
-    <columns>
-      <!-- column-name NAME -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">open</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">secured</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">wps</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="network-connection-info-dns-liststore">
     <columns>
       <!-- column-name ADDRESS -->
@@ -293,6 +276,23 @@
         <col id="2" translatable="yes">Open Network</col>
         <col id="3" translatable="yes">open</col>
         <col id="4" translatable="yes">32</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="network-wifi-security-liststore">
+    <columns>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">open</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">secured</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">wps</col>
       </row>
     </data>
   </object>
@@ -1738,6 +1738,7 @@
                               <object class="GtkLabel" id="label5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">State:</property>
                               </object>
                               <packing>
@@ -1753,8 +1754,8 @@
                                 <property name="has_entry">True</property>
                                 <property name="active_id">Online</property>
                                 <items>
-                                  <item translatable="yes">Idle</item>
-                                  <item translatable="yes">Ready</item>
+                                  <item translatable="yes">Disconnected</item>
+                                  <item translatable="yes">Connecting</item>
                                   <item translatable="yes">Online</item>
                                 </items>
                                 <child internal-child="entry">
@@ -1769,93 +1770,10 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="label35">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Security:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBoxText" id="network-connection-info-security-comboboxtext">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="active">0</property>
-                                <property name="has_entry">True</property>
-                                <property name="active_id">N/A</property>
-                                <items>
-                                  <item translatable="yes">N/A</item>
-                                  <item translatable="yes">None</item>
-                                  <item translatable="yes">WEP</item>
-                                  <item translatable="yes">WPA</item>
-                                </items>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry" id="network-connection-info-security-entry">
-                                    <property name="can_focus">True</property>
-                                    <property name="text" translatable="yes">WEP</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label36">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Strength:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="network-connection-info-strength-spinbutton">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="input_purpose">alpha</property>
-                                <property name="adjustment">network-strength-adjustment</property>
-                                <property name="numeric">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label37">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Auto-connect:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="network-connection-info-auto-connect-checkbutton">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">0</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="label38">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">Method:</property>
                               </object>
                               <packing>
@@ -1867,6 +1785,7 @@
                               <object class="GtkLabel" id="label39">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">Address:</property>
                               </object>
                               <packing>
@@ -1878,6 +1797,7 @@
                               <object class="GtkLabel" id="label40">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">Netmask:</property>
                               </object>
                               <packing>
@@ -1889,6 +1809,7 @@
                               <object class="GtkLabel" id="label41">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">Gateway:</property>
                               </object>
                               <packing>
@@ -1944,6 +1865,7 @@
                               <object class="GtkLabel" id="label43">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">Method:</property>
                               </object>
                               <packing>
@@ -1955,6 +1877,7 @@
                               <object class="GtkLabel" id="label44">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">Interface:</property>
                               </object>
                               <packing>
@@ -1966,6 +1889,7 @@
                               <object class="GtkLabel" id="label45">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">MAC:</property>
                               </object>
                               <packing>
@@ -1977,6 +1901,7 @@
                               <object class="GtkLabel" id="label46">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
                                 <property name="label" translatable="yes">MTU:</property>
                               </object>
                               <packing>
@@ -2061,6 +1986,173 @@
                                 <property name="top_attach">1</property>
                                 <property name="height">3</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label61">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Is connected:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="network-connection-info-is-connected-checkbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="network-connection-info-strength-spinbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="input_purpose">alpha</property>
+                                <property name="adjustment">network-strength-adjustment</property>
+                                <property name="numeric">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label36">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Strength:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label35">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Security:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="network-connection-info-security-comboboxtext">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="active">0</property>
+                                <property name="has_entry">True</property>
+                                <property name="active_id">N/A</property>
+                                <items>
+                                  <item translatable="yes">N/A</item>
+                                  <item translatable="yes">None</item>
+                                  <item translatable="yes">WEP</item>
+                                  <item translatable="yes">WPA</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry" id="network-connection-info-security-entry">
+                                    <property name="can_focus">True</property>
+                                    <property name="text" translatable="yes">WEP</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label37">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Auto-connect:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="network-connection-info-auto-connect-checkbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label62">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Is busy:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="network-connection-info-is-busy-checkbutton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>
@@ -2147,7 +2239,7 @@
                                           <object class="GtkCellRendererCombo" id="network-wifi-security-cellrenderercombo">
                                             <property name="editable">True</property>
                                             <property name="has_entry">False</property>
-                                            <property name="model">networ-wifi-security-liststore</property>
+                                            <property name="model">network-wifi-security-liststore</property>
                                             <property name="text_column">0</property>
                                           </object>
                                           <attributes>
