@@ -1,3 +1,11 @@
+brickman (0.7.2) stable; urgency=medium
+
+  * Fix network name not changing on child windows in FakeNetworkController
+  * Fixup BlueZ5 agent dialogs for larger font size.
+  * Add controls for connection status to brickman test.
+
+ -- David Lechner <david@lechnology.com>  Tue, 29 Dec 2015 22:48:39 -0600
+
 brickman (0.7.1) stable; urgency=medium
 
   * Change Wi-Fi window for larger font size
