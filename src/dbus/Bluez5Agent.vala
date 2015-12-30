@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014 David Lechner <david@lechnology.com>
+ * Copyright 2014-2015 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,19 +52,19 @@ namespace BrickManager {
                 request_pin_code.callback ();
             });
             var dialog_vbox = new Box.vertical () {
-                spacing = 6
+                spacing = 3
             };
             dialog.add (dialog_vbox);
-            var title_label = new Label ("Bluetooth") {
+            var title_label = new Label (device.alias) {
                 vertical_align = WidgetAlign.START,
                 padding = 3,
                 border_bottom = 1
             };
             dialog_vbox.add (title_label);
-            var message_label = new Label ("Enter PIN for %s:".printf (device.alias));
+            var message_label = new Label ("Enter PIN:");
             dialog_vbox.add (message_label);
             // TODO: may need to allow alpha and symbol chars.
-            var text_entry = new TextEntry ("                ") {
+            var text_entry = new TextEntry ("1234            ") {
                 valid_chars = TextEntry.NUMERIC + " ",
                 use_on_screen_keyboard = false,
                 horizontal_align = WidgetAlign.CENTER
@@ -103,8 +103,8 @@ namespace BrickManager {
 
         public void display_pin_code (ObjectPath device_path, string pincode) {
             var device = Device.get_for_object_path (device_path);
-            var dialog = new MessageDialog ("Bluetooth",
-                "PIN code for %s:\n\n%s".printf (device.alias, pincode));
+            var dialog = new MessageDialog (device.alias,
+                "PIN code is:\n%s".printf (pincode));
             weak Dialog weak_dialog = dialog;
             var canceled_handler_id = canceled.connect(() => {
                 dialog.close ();
@@ -133,13 +133,13 @@ namespace BrickManager {
                 spacing = 6
             };
             dialog.add (dialog_vbox);
-            var title_label = new Label ("Bluetooth") {
+            var title_label = new Label (device.alias) {
                 vertical_align = WidgetAlign.START,
                 padding = 3,
                 border_bottom = 1
             };
             dialog_vbox.add (title_label);
-            var message_label = new Label ("Enter passkey for %s:".printf (device.alias));
+            var message_label = new Label ("Enter passkey");
             dialog_vbox.add (message_label);
             var text_entry = new TextEntry ("000000") {
                 valid_chars = TextEntry.NUMERIC,
@@ -186,8 +186,8 @@ namespace BrickManager {
             // dialog and display a new one.
             if (display_passkey_dialog != null)
                 display_passkey_dialog.close ();
-            display_passkey_dialog = new MessageDialog ("Bluetooth",
-                "Passkey for %s is: \n\n%s".printf (device.alias, "%06u".printf (passkey)));
+            display_passkey_dialog = new MessageDialog (device.alias,
+                "Passkey is: \n%s".printf ("%06u".printf (passkey)));
             weak Dialog weak_dialog = display_passkey_dialog;
             var canceled_handler_id = canceled.connect(() => {
                 display_passkey_dialog.close ();
@@ -210,26 +210,27 @@ namespace BrickManager {
             throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
-            yield display_confirmation_dialog ("Confirm passkey for %s:\n\n%s".printf (
-                device.alias, "%06u".printf (passkey)));
+            yield display_confirmation_dialog (device.alias,
+                "Confirm passkey\n%s".printf ("%06u".printf (passkey)));
         }
 
         public async void request_authorization (ObjectPath device_path)
             throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
-            yield display_confirmation_dialog ("Authorize %s.".printf (device.alias));
+            yield display_confirmation_dialog (device.alias,
+                "Authorize\nthis device?");
         }
 
         public async void authorize_service (ObjectPath device_path, string uuid)
             throws BlueZError
         {
             var device = Device.get_for_object_path (device_path);
-            yield display_confirmation_dialog ("Authorize service for %s:\n\n%s".printf (
-                device.alias, Uuid.to_short_profile (uuid)));
+            yield display_confirmation_dialog (device.alias,
+                "Authorize service\n%s?".printf (Uuid.to_short_profile (uuid)));
         }
 
-        async void display_confirmation_dialog (string message) throws BlueZError {
+        async void display_confirmation_dialog (string title, string message) throws BlueZError {
             var result = ConfirmationDialogResult.CANCELED;
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
@@ -241,10 +242,10 @@ namespace BrickManager {
                 display_confirmation_dialog.callback ();
             });
             var dialog_vbox = new Box.vertical () {
-                spacing = 6
+                spacing = 3
             };
             dialog.add (dialog_vbox);
-            var title_label = new Label ("Bluetooth") {
+            var title_label = new Label (title) {
                 vertical_align = WidgetAlign.START,
                 padding = 3,
                 border_bottom = 1
