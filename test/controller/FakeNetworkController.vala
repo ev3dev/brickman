@@ -111,7 +111,7 @@ namespace BrickManager {
 
                         /* NetworkConnectionWindow */
 
-                        var network_connection_info_window = new NetworkConnectionWindow (name.dup_string ());
+                        var network_connection_info_window = new NetworkConnectionWindow (menu_item.connection_name);
                         network_connection_info_window.shown.connect (() => {
                             control_panel_notebook.page = (int)ControlPanel.Tab.NETWORK;
                             network_notebook.page = (int)ControlPanel.NetworkNotebookTab.CONNECTION_INFO;
@@ -124,7 +124,7 @@ namespace BrickManager {
                         /* NetworkConnectionIpv4Window */
 
                         network_connection_info_window.ipv4_button_pressed.connect (() => {
-                            var ipv4_window = new NetworkConnectionIpv4Window (name.dup_string ());
+                            var ipv4_window = new NetworkConnectionIpv4Window (menu_item.connection_name);
                             (builder.get_object ("network-connection-info-method-entry") as Gtk.Entry)
                                 .bind_property ("text", ipv4_window, "method", BindingFlags.SYNC_CREATE);
                             (builder.get_object ("network-connection-info-address-entry") as Gtk.Entry)
@@ -139,7 +139,7 @@ namespace BrickManager {
                         /* NetworkConnectionDnsWindow */
 
                         network_connection_info_window.dns_button_pressed.connect (() => {
-                            var dns_window = new NetworkConnectionDnsWindow (name.dup_string ());
+                            var dns_window = new NetworkConnectionDnsWindow (menu_item.connection_name);
                             (builder.get_object ("network-connection-info-dns-textbuffer") as Gtk.TextBuffer)
                                 .bind_property ("text", dns_window, "addresses", BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL,
                                     transform_string_to_strv, transform_strv_to_string);
@@ -149,7 +149,7 @@ namespace BrickManager {
                         /* NetworkConnectionEnetWindow */
 
                         network_connection_info_window.enet_button_pressed.connect (() => {
-                            var enet_window = new NetworkConnectionEnetWindow (name.dup_string ());
+                            var enet_window = new NetworkConnectionEnetWindow (menu_item.connection_name);
                             (builder.get_object ("network-connection-info-enet-method-entry") as Gtk.Entry)
                                 .bind_property ("text", enet_window, "method", BindingFlags.SYNC_CREATE);
                             (builder.get_object ("network-connection-info-enet-iface-entry") as Gtk.Entry)
