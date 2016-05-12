@@ -1,6 +1,12 @@
 project ("brickman" C)
 
-cmake_minimum_required (VERSION 2.6)
+if (CMAKE_CROSSCOMPILING)
+    # we are depending on CMAKE_SYSROOT feature introduce in CMake 3.x
+    # and we only support cross compiling using Ubuntu 16.04
+    cmake_minimum_required (VERSION 3.5)
+else (CMAKE_CROSSCOMPILING)
+    cmake_minimum_required (VERSION 2.6)
+endif (CMAKE_CROSSCOMPILING)
 
 option (BRICKMAN_TEST "Build the desktop test version.")
 
@@ -136,16 +142,9 @@ endif (BRICKMAN_TEST)
 link_libraries(m)
 
 if (CMAKE_CROSSCOMPILING)
-    # In CMake 3.x you can use CMAKE_SYSROOT in CMAKE_TOOLCHAIN_FILE instead of
-    # this line
-    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} --sysroot=${SYSROOT_PATH}")
-
-    # Hack for broken --libs returned by pkg-config for ncurses
-    link_directories("${SYSROOT_PATH}/lib/${SYSROOT_TRIPLET}")
-
     # These need to be added manually for some reason. It is important that they
     # come after other calls to link_libraries or you will get linker errors.
-    link_libraries(pcre pthread)
+    link_libraries(pcre resolv pthread)
 endif(CMAKE_CROSSCOMPILING)
 
 find_package(Vala REQUIRED)
