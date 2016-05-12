@@ -156,7 +156,7 @@ namespace BrickManager {
                         motor.send_command ("reset");
                     } else if ("stop" in supported_commands) {
                         // TODO: Might need to check if "coast" is supported
-                        motor.set_stop_command ("coast");
+                        motor.set_stop_action ("coast");
                         motor.send_command ("stop");
                     }
                 } catch (Error e) {
@@ -165,7 +165,7 @@ namespace BrickManager {
             });
             device_manager.get_dc_motors ().foreach ((motor) => {
                 try {
-                    motor.set_stop_command ("coast");
+                    motor.set_stop_action ("coast");
                     motor.send_command ("stop");
                 } catch (Error e) {
                     critical ("%s", e.message);
