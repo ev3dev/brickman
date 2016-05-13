@@ -1,7 +1,7 @@
 /*
  * brickman -- Brick Manager for LEGO MINDSTORMS EV3/ev3dev
  *
- * Copyright 2014-2015 David Lechner <david@lechnology.com>
+ * Copyright 2014-2016 David Lechner <david@lechnology.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -578,6 +578,7 @@ namespace BrickManager {
                         agent_request_input_dialog.destroy ();
                         agent_request_input_dialog = null;
                     });
+                    unowned Gtk.Entry service_name_entry = builder.get_object ("service-name-entry") as Gtk.Entry;
                     (builder.get_object ("done_button") as Gtk.Button)
                         .clicked.connect (() => agent_request_input_dialog.response (0));
                     (builder.get_object ("request_psk_passphrase_button") as Gtk.Button)
@@ -589,7 +590,7 @@ namespace BrickManager {
                             paramaters["Passphrase"] = passphrase_args;
                             var expected_result = new HashTable<string, Variant> (null, null);
                             expected_result["Passphrase"] = "secret123";
-                            call_agent_request_input.begin (paramaters, expected_result);
+                            call_agent_request_input.begin (service_name_entry.text, paramaters, expected_result);
                         });
                     (builder.get_object ("request_psk_passphrase_with_previous_button") as Gtk.Button)
                         .clicked.connect (() => {
@@ -605,7 +606,7 @@ namespace BrickManager {
                             paramaters["PreviousPassphrase"] = prev_passphrase_args;
                             var expected_result = new HashTable<string, Variant> (null, null);
                             expected_result["Passphrase"] = "anything-but-secret123";
-                            call_agent_request_input.begin (paramaters, expected_result);
+                            call_agent_request_input.begin (service_name_entry.text, paramaters, expected_result);
                         });
                     (builder.get_object ("request_hiddend_ssid_button") as Gtk.Button)
                         .clicked.connect (() => {
@@ -626,7 +627,7 @@ namespace BrickManager {
                             var expected_result = new HashTable<string, Variant> (null, null);
                             expected_result["Name"] = "SSID";
                             expected_result["Passphrase"] = "secret123";
-                            call_agent_request_input.begin (paramaters, expected_result);
+                            call_agent_request_input.begin (service_name_entry.text, paramaters, expected_result);
                         });
                 } catch (Error err) {
                     critical ("%s", err.message);
@@ -635,11 +636,12 @@ namespace BrickManager {
             agent_request_input_dialog.show ();
         }
 
-        async void call_agent_request_input (HashTable<string, Variant> paramaters,
+        async void call_agent_request_input (string service_name,
+            HashTable<string, Variant> paramaters,
             HashTable<string, Variant> expected_result)
         {
             try {
-                var actual_result = yield agent.request_input (new ObjectPath ("/service/path"), paramaters);
+                var actual_result = yield agent.request_input (new ObjectPath (service_name), paramaters);
                 var builder = new StringBuilder ();
                 builder.append ("Expected result (%u):".printf (expected_result.size ()));
                 expected_result.foreach ((k, v) =>
