@@ -371,7 +371,7 @@ namespace Connman {
             if (long_timeout)
                 try {
                     yield ((DBusProxy)dbus_proxy).call ("Connect", null,
-                        DBusCallFlags.NONE, 120000);
+                        DBusCallFlags.NONE, 300000);
                 } catch (IOError ioerr) {
                     throw ioerr;
                 } catch (Error err) {
