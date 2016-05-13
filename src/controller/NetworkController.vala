@@ -392,6 +392,15 @@ namespace BrickManager {
                         critical ("Failed to convert method '%s' to IPv4Info", method);
                     }
                 });
+
+                weak Window weak_ipv4_window = ipv4_window;
+                var handler_id = service.removed.connect (() => {
+                    weak_ipv4_window.close ();
+                });
+                ipv4_window.closed.connect (() => {
+                    service.disconnect (handler_id);
+                });
+
                 ipv4_window.show ();
             });
 
@@ -401,6 +410,15 @@ namespace BrickManager {
                     BindingFlags.SYNC_CREATE);
                 dns_window.change_requested.connect ((addresses) =>
                     service.nameservers_configuration = addresses);
+
+                weak Window weak_dns_window = dns_window;
+                var handler_id = service.removed.connect (() => {
+                    weak_dns_window.close ();
+                });
+                dns_window.closed.connect (() => {
+                    service.disconnect (handler_id);
+                });
+
                 dns_window.show ();
             });
 
@@ -414,8 +432,28 @@ namespace BrickManager {
                     BindingFlags.SYNC_CREATE, transform_service_ethernet_to_address_string);
                 service.bind_property ("ethernet", enet_window, "mtu",
                     BindingFlags.SYNC_CREATE, transform_service_ethernet_to_mtu_int);
+
+                weak Window weak_enet_window = enet_window;
+                var handler_id = service.removed.connect (() => {
+                    weak_enet_window.close ();
+                });
+                enet_window.closed.connect (() => {
+                    service.disconnect (handler_id);
+                });
+
                 enet_window.show ();
             });
+
+            var handler_id = service.removed.connect (() => {
+                weak_connection_window.close ();
+                var dialog = new MessageDialog ("Network",
+                    "%s is no longer available.".printf (service.name));
+                dialog.show ();
+            });
+            connection_window.closed.connect (() => {
+                service.disconnect (handler_id);
+            });
+
             connection_window.show ();
         }
 
