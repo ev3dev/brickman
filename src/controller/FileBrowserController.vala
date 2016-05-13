@@ -172,7 +172,7 @@ namespace BrickManager {
 
                         file_browser_window.add_file (file_name, src);
                     } catch (Error err) {
-                        // If file was deleted immediatly after creation, no need
+                        // If file was deleted immediately after creation, no need
                         // to show error message.
                         if (err is IOError.NOT_FOUND)
                             break;
