@@ -37,6 +37,8 @@ namespace BrickManager {
         Scroll connect_scroll;
         Box disconnect_vbox;
         Label custom_server_label;
+        weak Button weak_default_server_connect_button;
+        weak Button weak_custom_server_connect_button;
 
         public string custom_server_address {
             owned get {
@@ -88,7 +90,7 @@ namespace BrickManager {
             var default_server_connect_button = new Button.with_label ("Connect") {
                 horizontal_align = WidgetAlign.CENTER
             };
-            weak Button weak_default_server_connect_button = default_server_connect_button;
+            weak_default_server_connect_button = default_server_connect_button;
             default_server_connect_button.notify["has-focus"].connect (() => {
                 if (weak_default_server_connect_button.has_focus) {
                     weak_connect_scroll.scroll_to_child (default_server_label);
@@ -110,7 +112,7 @@ namespace BrickManager {
             var custom_server_connect_button = new Button.with_label ("Connect") {
                 horizontal_align = WidgetAlign.CENTER
             };
-            weak Button weak_custom_server_connect_button = custom_server_connect_button;
+            weak_custom_server_connect_button = custom_server_connect_button;
             custom_server_connect_button.notify["has-focus"].connect (() => {
                 if (weak_custom_server_connect_button.has_focus) {
                     weak_connect_scroll.scroll_to_child (weak_custom_server_button_hbox);
@@ -141,6 +143,10 @@ namespace BrickManager {
             };
             disconnect_button.pressed.connect (() => disconnect_selected ());
             disconnect_vbox.add (disconnect_button);
+
+            shown.connect (() => {
+                focus_selected_server ();
+            });
 
             notify["connected"].connect (on_connected_changed);
             on_connected_changed ();
@@ -189,7 +195,11 @@ namespace BrickManager {
         void on_connected_changed () {
             var new_child = connected ? (Container)disconnect_vbox : connect_scroll;
             stack.active_child = new_child;
-            new_child.focus_first ();
+            if (connected) {
+                new_child.focus_first ();
+            } else {
+                focus_selected_server ();
+            }
             update_status_info ();
         }
 
@@ -197,6 +207,15 @@ namespace BrickManager {
             status_info.text = connected
                 ? "Connected to\n%s".printf (_selected_server)
                 : "Disconnected";
+            focus_selected_server ();
+        }
+
+        void focus_selected_server () {
+            if (selected_server == custom_server_address) {
+                weak_custom_server_connect_button.focus();
+            } else {
+                weak_default_server_connect_button.focus();
+            }
         }
     }
 }
