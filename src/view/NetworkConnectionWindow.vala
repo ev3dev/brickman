@@ -46,11 +46,8 @@ namespace BrickManager {
         public bool is_connected {
             get { return _is_connected; }
             set {
-                if (value)
-                    ((Label)connect_button.child).text = "Disconnect";
-                else
-                    ((Label)connect_button.child).text = "Connect";
                 _is_connected = value;
+                set_connect_button_text ();
             }
         }
 
@@ -58,10 +55,8 @@ namespace BrickManager {
         public bool is_connect_busy {
             get { return _is_connect_busy; }
             set {
-                if (value) {
-                    ((Label)connect_button.child).text = "Cancel";
-                }
                 _is_connect_busy = value;
+                set_connect_button_text ();
             }
         }
 
@@ -125,9 +120,22 @@ namespace BrickManager {
             enet_menu_item.button.pressed.connect (on_enet_button_pressed);
         }
 
+        void set_connect_button_text () {
+            if (_is_connect_busy) {
+                ((Label)connect_button.child).text = "Cancel";
+            } else {
+                if (_is_connected) {
+                    ((Label)connect_button.child).text = "Disconnect";
+                } else {
+                    ((Label)connect_button.child).text = "Connect";
+                }
+            }
+        }
+
         void on_connect_button_pressed () {
-            if (!_is_connect_busy)
-                connect_requested (_is_connected);
+            // this has the effect of disconnecting if we are connected
+            // or canceling the connect if we are connecting
+            connect_requested (_is_connected || _is_connect_busy);
         }
 
         void on_ipv4_button_pressed () {
