@@ -26,7 +26,7 @@ using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class NetworkController : Object, IBrickManagerModule {
-        const string[] TETHRING_TECHNOLOGIES = { "bluetooth", "gadget" };
+        const string[] TETHERING_TECHNOLOGIES = { "bluetooth", "gadget" };
         const string NET_SUBSYSTEM = "net";
         const string TETHER_DEVICE_NAME = "tether";
 
@@ -575,7 +575,7 @@ namespace BrickManager {
         void add_tethering_technology (Technology technology) {
             if (tethering_window == null)
                 return;
-            if (technology.technology_type in TETHRING_TECHNOLOGIES) {
+            if (technology.technology_type in TETHERING_TECHNOLOGIES) {
                 var menu_item = tethering_window.add_menu_item (technology.name);
                 technology.bind_property ("tethering", menu_item.checkbox, "checked",
                     BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL);
