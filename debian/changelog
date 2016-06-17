@@ -1,3 +1,18 @@
+brickman (0.8.0) stable; urgency=medium
+
+  [ Stefan Sauer ]
+  * openroberta: focus on the previously selected 'connect' button
+
+  [ David Lechner ]
+  * Remove libgrx-dev from build-dep
+  * update to ev3devKit 0.4
+  * Change to directory of file before executing
+  * Extend wifi connect timeout to 5 minutes
+  * Close network info windows when service is removed
+  * Make connecting to network cancelable
+
+ -- David Lechner <david@lechnology.com>  Fri, 17 Jun 2016 15:30:53 -0500
+
 brickman (0.7.2) stable; urgency=medium
 
   * Fix network name not changing on child windows in FakeNetworkController
