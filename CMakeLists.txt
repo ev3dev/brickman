@@ -34,6 +34,7 @@ if (BRICKMAN_TEST)
         test/FakeBluez5.vala
         test/FakeConnman.vala
         test/controller/FakeAboutController.vala
+        test/controller/FakeAudioController.vala
         test/controller/FakeBatteryController.vala
         test/controller/FakeBluetoothController.vala
         test/controller/FakeDeviceBrowserController.vala
@@ -52,12 +53,14 @@ else (BRICKMAN_TEST)
         lib/connman/Service.vala
         lib/connman/Technology.vala
         src/controller/AboutController.vala
+        src/controller/AudioController.vala
         src/controller/BatteryController.vala
         src/controller/BluetoothController.vala
         src/controller/DeviceBrowserController.vala
         src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
         src/controller/OpenRobertaController.vala
+        src/AlsaBackedMixerElement.vala
         src/GlobalManager.vala
         src/main.vala
     )
@@ -71,6 +74,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/systemd/Systemd.vala
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
+    src/AlsaInterface.vala
     src/controller/IBrickManagerModule.vala
     src/dbus/Bluez5Agent.vala
     src/dbus/ConnmanAgent.vala
@@ -86,6 +90,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/DeviceBrowserWindow.vala
     src/view/FileBrowserWindow.vala
     src/view/HomeWindow.vala
+    src/view/MixerElementSelectorWindow.vala
+    src/view/MixerElementVolumeWindow.vala
     src/view/MotorBrowserWindow.vala
     src/view/MotorInfoWindow.vala
     src/view/MotorValueDialog.vala
@@ -118,6 +124,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DEPS REQUIRED
+    alsa
     ev3devkit-0.4
     glib-2.0
     gobject-2.0
@@ -129,7 +136,7 @@ pkg_check_modules(DEPS REQUIRED
     ncurses
 )
 add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES})
+link_libraries(${DEPS_LIBRARIES} asound)
 link_directories(${DEPS_LIBRARY_DIRS})
 
 if (BRICKMAN_TEST)
@@ -174,6 +181,7 @@ PACKAGES
     curses
     posix
     linux
+    alsa
     ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
     bindings/*.vapi
