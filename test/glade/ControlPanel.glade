@@ -2972,6 +2972,7 @@
                                 <child>
                                   <object class="GtkCellRendererToggle" id="mixer-element-mute-cellrenderertoggle">
                                     <property name="xalign">0</property>
+                                    <property name="sensitive">False</property>
                                   </object>
                                   <attributes>
                                     <attribute name="active">4</attribute>

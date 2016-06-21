@@ -136,7 +136,7 @@ pkg_check_modules(DEPS REQUIRED
     ncurses
 )
 add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES} asound)
+link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
 
 if (BRICKMAN_TEST)

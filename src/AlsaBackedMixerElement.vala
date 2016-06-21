@@ -19,12 +19,12 @@
  * MA 02110-1301, USA.
  */
 
-/* AlsaBackedMixerElement.vala - Implementation of ITestableMixerElement using ALSA API */
+/* AlsaBackedMixerElement.vala - Implementation of IMixerElementViewModel using ALSA API */
 
 using Alsa;
 
 namespace BrickManager {
-    public class AlsaBackedMixerElement: ITestableMixerElement, Object {
+    public class AlsaBackedMixerElement: IMixerElementViewModel, Object {
         private const SimpleChannelId primary_channel_id = SimpleChannelId.MONO;
 
         private unowned MixerElement alsa_element;
@@ -69,7 +69,13 @@ namespace BrickManager {
 
                 int constrained_volume = int.min(100, int.max(0, value));
                 float scaled_volume = constrained_volume * (max_volume - min_volume) / 100f + min_volume;
-                alsa_element.set_playback_volume_all((long)Math.round(scaled_volume));
+                long rounded_volume = (long)Math.round(scaled_volume);
+
+                alsa_element.set_playback_volume_all(rounded_volume);
+
+                bool should_mute = rounded_volume <= min_volume;
+                if(is_muted != should_mute)
+                    set_is_muted(should_mute);
             }
         }
 
@@ -89,10 +95,11 @@ namespace BrickManager {
 
                 return mute_switch == 0;
             }
-            set {
-                if(can_mute)
-                    alsa_element.set_playback_switch_all(value ? 0 : 1);
-            }
+        }
+
+        protected void set_is_muted(bool is_muted) {
+            if(can_mute)
+                alsa_element.set_playback_switch_all(is_muted ? 0 : 1);
         }
     }
 }

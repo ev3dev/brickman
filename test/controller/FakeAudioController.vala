@@ -26,12 +26,12 @@ using Ev3devKit.Ui;
 
 namespace BrickManager {
     public class FakeAudioController : Object, IBrickManagerModule {
-        private const int VOLUME_STEP = 5;
+        private const int VOLUME_STEP = 10;
 
         MixerElementSelectorWindow mixer_select_window;
         MixerElementVolumeWindow volume_window;
 
-        public string display_name { get { return "Audio"; } }
+        public string display_name { get { return "Sound"; } }
 
         public FakeAudioController (Gtk.Builder builder) {
             // Initialize windows that the controller needs
@@ -88,7 +88,7 @@ namespace BrickManager {
                         ControlPanel.AudioMixerElementsColumn.VOLUME,
                         ControlPanel.AudioMixerElementsColumn.CAN_MUTE,
                         ControlPanel.AudioMixerElementsColumn.MUTE
-                    }, new Value[] { "New Element", 0, ITestableMixerElement.HALF_VOLUME, true, false });
+                    }, new Value[] { "New Element", 0, IMixerElementViewModel.HALF_VOLUME, true, false });
             });
 
             // Store references to the remove button
@@ -144,23 +144,8 @@ namespace BrickManager {
                 update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
             });
 
-            volume_window.volume_half.connect(() => {
-                volume_window.current_element.volume = ITestableMixerElement.HALF_VOLUME;
-                update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
-            });
-
             volume_window.volume_min.connect(() => {
-                volume_window.current_element.volume = ITestableMixerElement.MIN_VOLUME;
-                update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
-            });
-
-            volume_window.volume_max.connect(() => {
-                volume_window.current_element.volume = ITestableMixerElement.MAX_VOLUME;
-                update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
-            });
-
-            volume_window.mute_toggled.connect((is_muted) => {
-                volume_window.current_element.is_muted = is_muted;
+                volume_window.current_element.volume = IMixerElementViewModel.MIN_VOLUME;
                 update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
             });
 
@@ -182,18 +167,17 @@ namespace BrickManager {
             Value index = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.INDEX);
             Value volume = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.VOLUME);
             Value can_mute = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.CAN_MUTE);
-            Value mute = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.MUTE);
             Value user_data = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.USER_DATA);
 
             // The mixer elements will make sure that these numbers are within proper bounds later
             int parsed_index = (int)parse_double_with_default(index.get_string(), 0);        
-            int parsed_volume = (int)parse_double_with_default(volume.get_string(), ITestableMixerElement.HALF_VOLUME);
+            int parsed_volume = (int)parse_double_with_default(volume.get_string(), IMixerElementViewModel.HALF_VOLUME);
 
             // This is guaranteed to be a fake mixer element; as such, it is referenced by the concrete implementation name
             FakeMixerElement? mixer_element = (FakeMixerElement?)user_data.get_pointer ();
 
             if(mixer_element == null) {
-                mixer_element = new FakeMixerElement(name.get_string(), parsed_index, parsed_volume, can_mute.get_boolean(), mute.get_boolean());
+                mixer_element = new FakeMixerElement(name.get_string(), parsed_index, parsed_volume, can_mute.get_boolean());
                 mixer_select_window.add_element(mixer_element);
                 
                 mixer_elems_liststore.set(iter, ControlPanel.AudioMixerElementsColumn.USER_DATA, mixer_element.ref ());
@@ -204,7 +188,6 @@ namespace BrickManager {
                 mixer_element.set_index(parsed_index);
                 mixer_element.volume = parsed_volume;
                 mixer_element.set_can_mute(can_mute.get_boolean());
-                mixer_element.is_muted = mute.get_boolean();
                 mixer_element.thaw_notify();
 
                 // If the original value was invalid and the mixer object modified it, replace the entered text with the valid version
@@ -219,7 +202,7 @@ namespace BrickManager {
          * Updates the ListStore entry associated with the specified mixer element with data from
          * the mixer element.
          */
-        private void update_liststore_for_element(Gtk.ListStore mixer_elems_liststore, ITestableMixerElement element, Gtk.TreeIter? iter = null) {
+        private void update_liststore_for_element(Gtk.ListStore mixer_elems_liststore, IMixerElementViewModel element, Gtk.TreeIter? iter = null) {
             // Find the iter pointing to this element if one was not supplied
             if(iter == null) {
                 mixer_elems_liststore.foreach((model, path, current_iter) => {

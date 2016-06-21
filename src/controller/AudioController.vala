@@ -27,13 +27,13 @@ using Alsa;
 
 namespace BrickManager {
     public class AudioController : Object, IBrickManagerModule {
-        private const int VOLUME_STEP = 5;
+        private const int VOLUME_STEP = 10;
 
         Mixer mixer;
         MixerElementSelectorWindow mixer_select_window;
         MixerElementVolumeWindow volume_window;
 
-        public string display_name { get { return "Audio"; } }
+        public string display_name { get { return "Sound"; } }
 
         protected void initialize_mixer() {
             mixer = null;
@@ -66,17 +66,8 @@ namespace BrickManager {
             volume_window.volume_down.connect(() =>
                 volume_window.current_element.volume -= VOLUME_STEP);
 
-            volume_window.volume_half.connect(() =>
-                volume_window.current_element.volume = ITestableMixerElement.HALF_VOLUME);
-
             volume_window.volume_min.connect(() =>
-                volume_window.current_element.volume = ITestableMixerElement.MIN_VOLUME);
-
-            volume_window.volume_max.connect(() =>
-                volume_window.current_element.volume = ITestableMixerElement.MAX_VOLUME);
-
-            volume_window.mute_toggled.connect((is_muted) =>
-                volume_window.current_element.is_muted = is_muted);
+                volume_window.current_element.volume = IMixerElementViewModel.MIN_VOLUME);
         }
         
         public void show_main_window () {

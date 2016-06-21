@@ -29,10 +29,10 @@ namespace BrickManager {
     public class MixerElementSelectorWindow : BrickManagerWindow {
         Ui.Menu element_menu;
 
-        public signal void mixer_elem_selected (ITestableMixerElement selected_element);
+        public signal void mixer_elem_selected (IMixerElementViewModel selected_element);
 
         private class MixerElementWithSignalIds: Object {
-            public ITestableMixerElement element;
+            public IMixerElementViewModel element;
             public ulong notify_signal_handler_id = 0;
             public ulong button_press_signal_handler_id = 0;
         }
@@ -43,7 +43,7 @@ namespace BrickManager {
             content_vbox.add (element_menu);
         }
 
-        protected string get_element_label_text(ITestableMixerElement element) {
+        protected string get_element_label_text(IMixerElementViewModel element) {
             string mute_string = (element.can_mute && element.is_muted) ? ", muted" : "";
             return "[%u] %s (%ld%%%s)".printf(element.index, element.name, element.volume, mute_string);
         }
@@ -53,8 +53,8 @@ namespace BrickManager {
             // the item in the correct place instead of sorting the entire list
             // each time an item is inserted.
             element_menu.sort_menu_items ((a, b) => {
-                ITestableMixerElement element_a = (a.represented_object as MixerElementWithSignalIds).element;
-                ITestableMixerElement element_b = (b.represented_object as MixerElementWithSignalIds).element;
+                IMixerElementViewModel element_a = (a.represented_object as MixerElementWithSignalIds).element;
+                IMixerElementViewModel element_b = (b.represented_object as MixerElementWithSignalIds).element;
 
                 // Group by name, and sort by index within the same name
                 if(element_a.name == element_b.name)
@@ -64,7 +64,7 @@ namespace BrickManager {
             });
         }
 
-        public void add_element (ITestableMixerElement element) {
+        public void add_element (IMixerElementViewModel element) {
             var menu_item = new Ui.MenuItem (get_element_label_text(element));
 
             var represented_object = new MixerElementWithSignalIds() {
@@ -95,8 +95,8 @@ namespace BrickManager {
             }
         }
 
-        public void remove_element (ITestableMixerElement element) {
-            var menu_item = element_menu.find_menu_item<ITestableMixerElement> (element, (menu_item, target_element) => {
+        public void remove_element (IMixerElementViewModel element) {
+            var menu_item = element_menu.find_menu_item<IMixerElementViewModel> (element, (menu_item, target_element) => {
                 var other_element = (menu_item.represented_object as MixerElementWithSignalIds).element;
                 return target_element == other_element;
             });
@@ -116,7 +116,7 @@ namespace BrickManager {
             }
         }
 
-        public ITestableMixerElement? first_element {
+        public IMixerElementViewModel? first_element {
             get {
                 if(element_menu.menu_item_iter().size <= 0)
                     return null;

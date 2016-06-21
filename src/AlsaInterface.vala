@@ -24,7 +24,7 @@
 using Alsa;
 
 namespace BrickManager {
-    public interface ITestableMixerElement : Object {
+    public interface IMixerElementViewModel : Object {
         public const int MIN_VOLUME = 0;
         public const int MAX_VOLUME = 100;
         public const int HALF_VOLUME = (MAX_VOLUME + MIN_VOLUME) / 2;
@@ -33,14 +33,15 @@ namespace BrickManager {
         public abstract uint index { get; }
         public abstract int volume { get; set; }
         public abstract bool can_mute { get; }
-        public abstract bool is_muted { get; set; }
+        public abstract bool is_muted { get; }
     }
 
-    public class FakeMixerElement: ITestableMixerElement, Object {
+    public class FakeMixerElement: IMixerElementViewModel, Object {
         private string _name;
         private uint _index;
         private int _volume;
         private bool _can_mute;
+        private bool _is_muted;
 
         public string name {
             get {
@@ -54,13 +55,12 @@ namespace BrickManager {
             }
         }
 
-        public FakeMixerElement(string name, uint index, int volume, bool can_mute, bool is_muted) {
+        public FakeMixerElement(string name, uint index, int volume, bool can_mute) {
             set_name(name);
             set_index(index);
             this.volume = volume;
 
             set_can_mute(can_mute);
-            this.is_muted = is_muted;
         }
 
         public int volume {
@@ -69,6 +69,10 @@ namespace BrickManager {
             }
             set {
                 _volume = int.min(100, int.max(0, value));
+
+                bool should_mute = _volume <= 0;
+                if(_is_muted != should_mute)
+                    set_is_muted(should_mute);
             }
         }
 
@@ -77,7 +81,11 @@ namespace BrickManager {
                 return _can_mute;
             }
         }
-        public bool is_muted { get; set; }
+        public bool is_muted {
+            get {
+                return _is_muted;
+            }
+        }
 
         public void set_name(string new_name) {
             this._name = new_name;
@@ -92,6 +100,11 @@ namespace BrickManager {
         public void set_can_mute(bool can_mute) {
             this._can_mute = can_mute;
             notify_property("can_mute");
+        }
+
+        public void set_is_muted(bool is_muted) {
+            this._is_muted = is_muted;
+            notify_property("is_muted");
         }
     }
 }
