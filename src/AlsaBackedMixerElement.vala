@@ -25,10 +25,10 @@ using Alsa;
 
 namespace BrickManager {
     public class AlsaBackedMixerElement: IMixerElementViewModel, Object {
-        private const SimpleChannelId primary_channel_id = SimpleChannelId.MONO;
+        const SimpleChannelId primary_channel_id = SimpleChannelId.MONO;
 
-        private unowned MixerElement alsa_element;
-        private SimpleElementId alsa_id;
+        unowned MixerElement alsa_element;
+        SimpleElementId alsa_id;
 
         public AlsaBackedMixerElement(MixerElement element) {
             this.alsa_element = element;
@@ -53,7 +53,7 @@ namespace BrickManager {
                 long volume = 0;
                 alsa_element.get_playback_volume(primary_channel_id, out volume);
 
-                long min_volume, max_volume;
+                long min_volume = 0, max_volume = 0;
                 alsa_element.get_playback_volume_range(out min_volume, out max_volume);
                 
                 // Prevent division by zero
@@ -67,15 +67,16 @@ namespace BrickManager {
                 long min_volume, max_volume;
                 alsa_element.get_playback_volume_range(out min_volume, out max_volume);
 
-                int constrained_volume = int.min(100, int.max(0, value));
+                var constrained_volume = int.min(100, int.max(0, value));
                 float scaled_volume = constrained_volume * (max_volume - min_volume) / 100f + min_volume;
                 long rounded_volume = (long)Math.round(scaled_volume);
 
                 alsa_element.set_playback_volume_all(rounded_volume);
 
                 bool should_mute = rounded_volume <= min_volume;
-                if(is_muted != should_mute)
+                if (is_muted != should_mute) {
                     set_is_muted(should_mute);
+                }
             }
         }
 
@@ -87,11 +88,14 @@ namespace BrickManager {
 
         public bool is_muted {
             get {
-                if(!can_mute)
+                if (!can_mute) {
                     return false;
+                }
 
-                int mute_switch = 0;
-                alsa_element.get_playback_switch(primary_channel_id, out mute_switch);
+                int mute_switch = 1;
+                if(alsa_element.get_playback_switch(primary_channel_id, out mute_switch) != 0) {
+                    critical("Error while getting mute switch state");
+                }
 
                 return mute_switch == 0;
             }

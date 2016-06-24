@@ -81,6 +81,7 @@ namespace BrickManager {
                 return _can_mute;
             }
         }
+
         public bool is_muted {
             get {
                 return _is_muted;

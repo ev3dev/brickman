@@ -28,9 +28,9 @@ namespace BrickManager {
     public class MixerElementVolumeWindow : BrickManagerWindow {
         public signal void volume_up ();
         public signal void volume_down ();
-        public signal void volume_min ();
+        public signal void mute ();
 
-        IMixerElementViewModel _current_element = null;
+        IMixerElementViewModel _current_element;
         bool _show_element_details = true;
 
         Ui.Label element_label;
@@ -57,12 +57,12 @@ namespace BrickManager {
             });
             controls_menu.add_menu_item(volume_down_item);
 
-            var volume_min_item = new Ui.MenuItem("Mute");
-            volume_min_item.button.pressed.connect(() => {
+            var mute_item = new Ui.MenuItem("Mute");
+            mute_item.button.pressed.connect(() => {
                 if(_current_element != null)
-                    volume_min();
+                    mute();
             });
-            controls_menu.add_menu_item(volume_min_item);
+            controls_menu.add_menu_item(mute_item);
 
             content_vbox.add (controls_menu);
 

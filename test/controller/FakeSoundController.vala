@@ -19,13 +19,13 @@
  * MA 02110-1301, USA.
  */
 
-/* FakeAudioController.vala - Fake Audio controller for testing */
+/* FakeSoundController.vala - Fake sound controller for testing */
 
 using Ev3devKit;
 using Ev3devKit.Ui;
 
 namespace BrickManager {
-    public class FakeAudioController : Object, IBrickManagerModule {
+    public class FakeSoundController : Object, IBrickManagerModule {
         private const int VOLUME_STEP = 10;
 
         MixerElementSelectorWindow mixer_select_window;
@@ -33,7 +33,7 @@ namespace BrickManager {
 
         public string display_name { get { return "Sound"; } }
 
-        public FakeAudioController (Gtk.Builder builder) {
+        public FakeSoundController (Gtk.Builder builder) {
             // Initialize windows that the controller needs
             mixer_select_window = new MixerElementSelectorWindow ();
             volume_window = new MixerElementVolumeWindow();
@@ -42,9 +42,9 @@ namespace BrickManager {
             // the first time either window is invoked
             var control_panel_notebook = builder.get_object ("control-panel-notebook") as Gtk.Notebook;
             mixer_select_window.shown.connect (() =>
-                control_panel_notebook.page = (int)ControlPanel.Tab.AUDIO);
+                control_panel_notebook.page = (int)ControlPanel.Tab.SOUND);
             volume_window.shown.connect (() =>
-                control_panel_notebook.page = (int)ControlPanel.Tab.AUDIO);
+                control_panel_notebook.page = (int)ControlPanel.Tab.SOUND);
             
             // Initialize items in brickman for all current elements
             var mixer_elems_liststore = builder.get_object ("mixer-elements-liststore") as Gtk.ListStore;
@@ -61,19 +61,19 @@ namespace BrickManager {
             // Link liststore and control panel GUI
             (builder.get_object ("mixer-element-name-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
-                    mixer_elems_liststore, path, new_text, ControlPanel.AudioMixerElementsColumn.NAME));
+                    mixer_elems_liststore, path, new_text, ControlPanel.SoundMixerElementsColumn.NAME));
             (builder.get_object ("mixer-element-index-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
-                    mixer_elems_liststore, path, new_text, ControlPanel.AudioMixerElementsColumn.INDEX));
+                    mixer_elems_liststore, path, new_text, ControlPanel.SoundMixerElementsColumn.INDEX));
             (builder.get_object ("mixer-element-volume-cellrenderertext") as Gtk.CellRendererText)
                 .edited.connect ((path, new_text) => ControlPanel.update_listview_text_item (
-                    mixer_elems_liststore, path, new_text, ControlPanel.AudioMixerElementsColumn.VOLUME));
+                    mixer_elems_liststore, path, new_text, ControlPanel.SoundMixerElementsColumn.VOLUME));
             (builder.get_object ("mixer-element-can-mute-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
-                    mixer_elems_liststore, toggle, path, ControlPanel.AudioMixerElementsColumn.CAN_MUTE));
+                    mixer_elems_liststore, toggle, path, ControlPanel.SoundMixerElementsColumn.CAN_MUTE));
             (builder.get_object ("mixer-element-mute-cellrenderertoggle") as Gtk.CellRendererToggle)
                 .toggled.connect ((toggle, path) => ControlPanel.update_listview_toggle_item (
-                    mixer_elems_liststore, toggle, path, ControlPanel.AudioMixerElementsColumn.MUTE));
+                    mixer_elems_liststore, toggle, path, ControlPanel.SoundMixerElementsColumn.MUTE));
 
             // Configure the add button
             (builder.get_object ("mixer-element-add-button") as Gtk.Button).clicked.connect (() => {
@@ -83,11 +83,11 @@ namespace BrickManager {
                 // Doing this all at once ensures that the row_changed handler is only called once,
                 // and never called with partial data.
                 mixer_elems_liststore.set_valuesv(iter, new int[] {
-                        ControlPanel.AudioMixerElementsColumn.NAME,
-                        ControlPanel.AudioMixerElementsColumn.INDEX,
-                        ControlPanel.AudioMixerElementsColumn.VOLUME,
-                        ControlPanel.AudioMixerElementsColumn.CAN_MUTE,
-                        ControlPanel.AudioMixerElementsColumn.MUTE
+                        ControlPanel.SoundMixerElementsColumn.NAME,
+                        ControlPanel.SoundMixerElementsColumn.INDEX,
+                        ControlPanel.SoundMixerElementsColumn.VOLUME,
+                        ControlPanel.SoundMixerElementsColumn.CAN_MUTE,
+                        ControlPanel.SoundMixerElementsColumn.MUTE
                     }, new Value[] { "New Element", 0, IMixerElementViewModel.HALF_VOLUME, true, false });
             });
 
@@ -102,7 +102,7 @@ namespace BrickManager {
 
                 if (mixer_element_treeview_selection.get_selected (out model, out iter)) {
                     Value user_data;
-                    model.get_value (iter, ControlPanel.AudioMixerElementsColumn.USER_DATA, out user_data);
+                    model.get_value (iter, ControlPanel.SoundMixerElementsColumn.USER_DATA, out user_data);
 
                     var mixer_element = (FakeMixerElement)user_data.get_pointer ();
                     if (mixer_element != null)
@@ -121,10 +121,10 @@ namespace BrickManager {
             mixer_element_treeview_selection.changed ();
 
             // Configure the direct window link buttons
-            (builder.get_object ("audio-mixer-select-window-button") as Gtk.Button).clicked.connect (() => 
+            (builder.get_object ("sound-mixer-select-window-button") as Gtk.Button).clicked.connect (() => 
                 mixer_select_window.show());
 
-            (builder.get_object ("audio-volume-window-button") as Gtk.Button).clicked.connect (() => {
+            (builder.get_object ("sound-volume-window-button") as Gtk.Button).clicked.connect (() => {
                 if(mixer_select_window.first_element == null)
                     return;
 
@@ -144,13 +144,13 @@ namespace BrickManager {
                 update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
             });
 
-            volume_window.volume_min.connect(() => {
+            volume_window.mute.connect(() => {
                 volume_window.current_element.volume = IMixerElementViewModel.MIN_VOLUME;
                 update_liststore_for_element(mixer_elems_liststore, volume_window.current_element);
             });
 
             // Show volume window when mixer element is selected
-            mixer_select_window.mixer_elem_selected.connect ((selected_element) => {
+            mixer_select_window.mixer_element_selected.connect ((selected_element) => {
                 volume_window.current_element = selected_element;
                 volume_window.show_element_details = true;
                 volume_window.show();
@@ -163,11 +163,11 @@ namespace BrickManager {
          * already exist.
          */
         private void update_fake_element_from_liststore(Gtk.TreeIter iter, Gtk.ListStore mixer_elems_liststore) {
-            Value name = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.NAME);
-            Value index = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.INDEX);
-            Value volume = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.VOLUME);
-            Value can_mute = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.CAN_MUTE);
-            Value user_data = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.AudioMixerElementsColumn.USER_DATA);
+            Value name = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.SoundMixerElementsColumn.NAME);
+            Value index = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.SoundMixerElementsColumn.INDEX);
+            Value volume = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.SoundMixerElementsColumn.VOLUME);
+            Value can_mute = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.SoundMixerElementsColumn.CAN_MUTE);
+            Value user_data = get_liststore_value(mixer_elems_liststore, iter, ControlPanel.SoundMixerElementsColumn.USER_DATA);
 
             // The mixer elements will make sure that these numbers are within proper bounds later
             int parsed_index = (int)parse_double_with_default(index.get_string(), 0);        
@@ -180,7 +180,7 @@ namespace BrickManager {
                 mixer_element = new FakeMixerElement(name.get_string(), parsed_index, parsed_volume, can_mute.get_boolean());
                 mixer_select_window.add_element(mixer_element);
                 
-                mixer_elems_liststore.set(iter, ControlPanel.AudioMixerElementsColumn.USER_DATA, mixer_element.ref ());
+                mixer_elems_liststore.set(iter, ControlPanel.SoundMixerElementsColumn.USER_DATA, mixer_element.ref ());
             }
             else {
                 mixer_element.freeze_notify();
@@ -206,7 +206,7 @@ namespace BrickManager {
             // Find the iter pointing to this element if one was not supplied
             if(iter == null) {
                 mixer_elems_liststore.foreach((model, path, current_iter) => {
-                    Value user_data = get_liststore_value(mixer_elems_liststore, current_iter, ControlPanel.AudioMixerElementsColumn.USER_DATA);
+                    Value user_data = get_liststore_value(mixer_elems_liststore, current_iter, ControlPanel.SoundMixerElementsColumn.USER_DATA);
                     FakeMixerElement other_element = (FakeMixerElement)user_data.get_pointer();
 
                     if(other_element == element) {
@@ -220,11 +220,11 @@ namespace BrickManager {
 
             mixer_elems_liststore.set_valuesv (iter,
                 new int[] { 
-                    ControlPanel.AudioMixerElementsColumn.NAME,
-                    ControlPanel.AudioMixerElementsColumn.INDEX,
-                    ControlPanel.AudioMixerElementsColumn.VOLUME,
-                    ControlPanel.AudioMixerElementsColumn.CAN_MUTE,
-                    ControlPanel.AudioMixerElementsColumn.MUTE
+                    ControlPanel.SoundMixerElementsColumn.NAME,
+                    ControlPanel.SoundMixerElementsColumn.INDEX,
+                    ControlPanel.SoundMixerElementsColumn.VOLUME,
+                    ControlPanel.SoundMixerElementsColumn.CAN_MUTE,
+                    ControlPanel.SoundMixerElementsColumn.MUTE
                 }, new Value[] {
                     element.name,
                     element.index.to_string(),

@@ -34,13 +34,13 @@ if (BRICKMAN_TEST)
         test/FakeBluez5.vala
         test/FakeConnman.vala
         test/controller/FakeAboutController.vala
-        test/controller/FakeAudioController.vala
         test/controller/FakeBatteryController.vala
         test/controller/FakeBluetoothController.vala
         test/controller/FakeDeviceBrowserController.vala
         test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeOpenRobertaController.vala
+        test/controller/FakeSoundController.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -53,13 +53,13 @@ else (BRICKMAN_TEST)
         lib/connman/Service.vala
         lib/connman/Technology.vala
         src/controller/AboutController.vala
-        src/controller/AudioController.vala
         src/controller/BatteryController.vala
         src/controller/BluetoothController.vala
         src/controller/DeviceBrowserController.vala
         src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
         src/controller/OpenRobertaController.vala
+        src/controller/SoundController.vala
         src/AlsaBackedMixerElement.vala
         src/GlobalManager.vala
         src/main.vala

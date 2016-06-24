@@ -33,7 +33,7 @@ namespace BrickManager {
         public FakeFileBrowserController file_browser_controller;
         public FakeDeviceBrowserController device_browser_controller;
         public FakeNetworkController network_controller;
-        public FakeAudioController audio_controller;
+        public FakeSoundController sound_controller;
         public FakeBluetoothController bluetooth_controller;
         public FakeBatteryController battery_controller;
         public FakeAboutController about_controller;
@@ -42,7 +42,7 @@ namespace BrickManager {
         enum Tab {
             DEVICE_BROWSER,
             NETWORK,
-            AUDIO,
+            SOUND,
             BLUETOOTH,
             BATTERY,
             OPEN_ROBERTA,
@@ -131,7 +131,7 @@ namespace BrickManager {
             COLUMN_COUNT;
         }
 
-        enum AudioMixerElementsColumn {
+        enum SoundMixerElementsColumn {
             NAME,
             INDEX,
             VOLUME,
@@ -158,7 +158,7 @@ namespace BrickManager {
                 file_browser_controller = new FakeFileBrowserController (builder);
                 device_browser_controller = new FakeDeviceBrowserController (builder);
                 network_controller = new FakeNetworkController (builder);
-                audio_controller = new FakeAudioController(builder);
+                sound_controller = new FakeSoundController (builder);
                 bluetooth_controller = new FakeBluetoothController (builder);
                 battery_controller = new FakeBatteryController (builder);
                 about_controller = new FakeAboutController (builder);

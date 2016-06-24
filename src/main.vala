@@ -67,8 +67,8 @@ namespace BrickManager {
         var bluetooth_controller = new BluetoothController ();
         network_controller.add_controller (bluetooth_controller);
         network_controller.add_controller (network_controller.wifi_controller);
-        var audio_controller = new AudioController ();
-        home_window.add_controller (audio_controller);
+        var sound_controller = new SoundController ();
+        home_window.add_controller (sound_controller);
         var battery_controller = new BatteryController ();
         home_window.add_controller (battery_controller);
         var open_roberta_controller = new OpenRobertaController ();
