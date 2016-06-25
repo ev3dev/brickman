@@ -37,12 +37,12 @@ namespace BrickManager {
             content_vbox.add (element_menu);
         }
 
-        protected string get_element_label_text(IMixerElementViewModel element) {
+        protected string get_element_label_text (IMixerElementViewModel element) {
             string mute_string = (element.can_mute && element.is_muted) ? ", muted" : "";
-            return "[%u] %s (%ld%%%s)".printf(element.index, element.name, element.volume, mute_string);
+            return "[%u] %s (%ld%%%s)".printf (element.index, element.name, element.volume, mute_string);
         }
 
-        protected void sort_element_menu() {
+        protected void sort_element_menu () {
             // TODO: we would get much better performance if we just inserted
             // the item in the correct place instead of sorting the entire list
             // each time an item is inserted.
@@ -51,23 +51,23 @@ namespace BrickManager {
                 IMixerElementViewModel element_b = b.represented_object as IMixerElementViewModel;
 
                 // Group by name, and sort by index within the same name
-                if(element_a.name == element_b.name)
+                if (element_a.name == element_b.name)
                     return (int)element_a.index - (int)element_b.index;
                 else
-                    return element_a.name.ascii_casecmp(element_b.name);
+                    return element_a.name.ascii_casecmp (element_b.name);
             });
         }
 
         public void add_element (IMixerElementViewModel element) {
-            var menu_item = new Ui.MenuItem (get_element_label_text(element)) {
+            var menu_item = new Ui.MenuItem (get_element_label_text (element)) {
                 represented_object = (Object)element
             };
 
             weak IMixerElementViewModel weak_element = element;
             // Update the menu item whenever the represented element changes
-            element.notify.connect((sender, property) => {
-                menu_item.label.text = get_element_label_text(weak_element);
-                sort_element_menu();
+            element.notify.connect ((sender, property) => {
+                menu_item.label.text = get_element_label_text (weak_element);
+                sort_element_menu ();
             });
 
             // Emit a selection signal for this element when its menu item is selected
@@ -88,28 +88,28 @@ namespace BrickManager {
                 return target_element == (menu_item.represented_object as IMixerElementViewModel);
             });
 
-            remove_menu_item(menu_item);
+            remove_menu_item (menu_item);
         }
 
         public void clear_elements () {
             var iter = element_menu.menu_item_iter ();
             while (iter.size > 0) {
-                remove_menu_item(iter[0]);
+                remove_menu_item (iter[0]);
             }
         }
 
         public bool has_single_element {
             get {
-                return element_menu.menu_item_iter().size == 1;
+                return element_menu.menu_item_iter ().size == 1;
             }
         }
 
         public IMixerElementViewModel? first_element {
             get {
-                if(element_menu.menu_item_iter().size <= 0)
+                if (element_menu.menu_item_iter ().size <= 0)
                     return null;
                 
-                return element_menu.menu_item_iter().get(0).represented_object as IMixerElementViewModel;
+                return element_menu.menu_item_iter ().get (0).represented_object as IMixerElementViewModel;
             }
         }
     }

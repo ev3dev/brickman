@@ -38,35 +38,35 @@ namespace BrickManager {
         public MixerElementVolumeWindow () {
             title = "Volume control";
 
-            element_label = new Ui.Label();
-            content_vbox.add(element_label);
+            element_label = new Ui.Label ();
+            content_vbox.add (element_label);
 
-            var controls_menu = new Ui.Menu();
+            var controls_menu = new Ui.Menu ();
 
-            var volume_up_item = new Ui.MenuItem("+ Volume up");
-            volume_up_item.button.pressed.connect(() => {
-                if(_current_element != null)
-                    volume_up();
+            var volume_up_item = new Ui.MenuItem ("+ Volume up");
+            volume_up_item.button.pressed.connect (() => {
+                if (_current_element != null)
+                    volume_up ();
             });
-            controls_menu.add_menu_item(volume_up_item);
+            controls_menu.add_menu_item (volume_up_item);
 
-            var volume_down_item = new Ui.MenuItem("- Volume down");
-            volume_down_item.button.pressed.connect(() => {
-                if(_current_element != null)
-                    volume_down();
+            var volume_down_item = new Ui.MenuItem ("- Volume down");
+            volume_down_item.button.pressed.connect (() => {
+                if (_current_element != null)
+                    volume_down ();
             });
-            controls_menu.add_menu_item(volume_down_item);
+            controls_menu.add_menu_item (volume_down_item);
 
-            var mute_item = new Ui.MenuItem("Mute");
-            mute_item.button.pressed.connect(() => {
-                if(_current_element != null)
-                    mute();
+            var mute_item = new Ui.MenuItem ("Mute");
+            mute_item.button.pressed.connect (() => {
+                if (_current_element != null)
+                    mute ();
             });
-            controls_menu.add_menu_item(mute_item);
+            controls_menu.add_menu_item (mute_item);
 
             content_vbox.add (controls_menu);
 
-            update_from_element();
+            update_from_element ();
         }
 
         public IMixerElementViewModel current_element {
@@ -75,13 +75,13 @@ namespace BrickManager {
             }
 
             set {
-                if(_current_element != null) {
-                    _current_element.notify.disconnect(update_from_element);
+                if (_current_element != null) {
+                    _current_element.notify.disconnect (update_from_element);
                 }
 
                 _current_element = value;
-                _current_element.notify.connect(update_from_element);
-                update_from_element();
+                _current_element.notify.connect (update_from_element);
+                update_from_element ();
             }
         }
 
@@ -91,17 +91,17 @@ namespace BrickManager {
             }
             set {
                 _show_element_details = value;
-                update_from_element();
+                update_from_element ();
             }
         }
 
-        private void update_from_element() {
-            if(_current_element == null) {
+        private void update_from_element () {
+            if (_current_element == null) {
                 element_label.text = "???";
             }
             else {
-                string elem_details_string = show_element_details ? " ([%u] %s)".printf(_current_element.index, _current_element.name) : "";
-                string volume_string = _current_element.is_muted ? "muted" : "%ld%%".printf(_current_element.volume);
+                string elem_details_string = show_element_details ? " ([%u] %s)".printf (_current_element.index, _current_element.name) : "";
+                string volume_string = _current_element.is_muted ? "muted" : "%ld%%".printf (_current_element.volume);
                 element_label.text = volume_string + elem_details_string;
             }
         }

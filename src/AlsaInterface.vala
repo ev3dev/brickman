@@ -55,12 +55,12 @@ namespace BrickManager {
             }
         }
 
-        public FakeMixerElement(string name, uint index, int volume, bool can_mute) {
-            set_name(name);
-            set_index(index);
+        public FakeMixerElement (string name, uint index, int volume, bool can_mute) {
+            set_name (name);
+            set_index (index);
             this.volume = volume;
 
-            set_can_mute(can_mute);
+            set_can_mute (can_mute);
         }
 
         public int volume {
@@ -68,11 +68,11 @@ namespace BrickManager {
                 return _volume;
             }
             set {
-                _volume = int.min(100, int.max(0, value));
+                _volume = int.min (100, int.max (0, value));
 
                 bool should_mute = _volume <= 0;
-                if(_is_muted != should_mute)
-                    set_is_muted(should_mute);
+                if (_is_muted != should_mute)
+                    set_is_muted (should_mute);
             }
         }
 
@@ -88,24 +88,24 @@ namespace BrickManager {
             }
         }
 
-        public void set_name(string new_name) {
+        public void set_name (string new_name) {
             this._name = new_name;
-            notify_property("name");
+            notify_property ("name");
         }
 
-        public void set_index(uint new_index) {
+        public void set_index (uint new_index) {
             this._index = new_index;
-            notify_property("index");
+            notify_property ("index");
         }
 
-        public void set_can_mute(bool can_mute) {
+        public void set_can_mute (bool can_mute) {
             this._can_mute = can_mute;
-            notify_property("can_mute");
+            notify_property ("can_mute");
         }
 
-        public void set_is_muted(bool is_muted) {
+        public void set_is_muted (bool is_muted) {
             this._is_muted = is_muted;
-            notify_property("is_muted");
+            notify_property ("is_muted");
         }
     }
 }
