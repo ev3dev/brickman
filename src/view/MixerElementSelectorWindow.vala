@@ -39,7 +39,8 @@ namespace BrickManager {
 
         protected string get_element_label_text (IMixerElementViewModel element) {
             string mute_string = (element.can_mute && element.is_muted) ? ", muted" : "";
-            return "[%u] %s (%ld%%%s)".printf (element.index, element.name, element.volume, mute_string);
+            string index_string = element.index == 0 ? "" : " [%u]".printf(element.index);
+            return "%s%s (%ld%%%s)".printf (element.name, index_string, element.volume, mute_string);
         }
 
         protected void sort_element_menu () {

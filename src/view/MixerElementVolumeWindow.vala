@@ -100,7 +100,8 @@ namespace BrickManager {
                 element_label.text = "???";
             }
             else {
-                string elem_details_string = show_element_details ? " ([%u] %s)".printf (_current_element.index, _current_element.name) : "";
+                string index_string = _current_element.index == 0 ? "" : " [%u]".printf(_current_element.index);
+                string elem_details_string = show_element_details ? " (%s%s)".printf (_current_element.name, index_string) : "";
                 string volume_string = _current_element.is_muted ? "muted" : "%ld%%".printf (_current_element.volume);
                 element_label.text = volume_string + elem_details_string;
             }
