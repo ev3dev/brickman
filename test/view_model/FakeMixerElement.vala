@@ -19,23 +19,9 @@
  * MA 02110-1301, USA.
  */
 
-/* AlsaInterface.vala - Definitions for interfacing with ALSA */
-
-using Alsa;
+/* FakeMixerElement.vala - Fake implementation of mixer element */
 
 namespace BrickManager {
-    public interface IMixerElementViewModel : Object {
-        public const int MIN_VOLUME = 0;
-        public const int MAX_VOLUME = 100;
-        public const int HALF_VOLUME = (MAX_VOLUME + MIN_VOLUME) / 2;
-
-        public abstract string name { get; }
-        public abstract uint index { get; }
-        public abstract int volume { get; set; }
-        public abstract bool can_mute { get; }
-        public abstract bool is_muted { get; }
-    }
-
     public class FakeMixerElement: IMixerElementViewModel, Object {
         private string _name;
         private uint _index;
@@ -70,9 +56,12 @@ namespace BrickManager {
             set {
                 _volume = int.min (100, int.max (0, value));
 
-                bool should_mute = _volume <= 0;
-                if (_is_muted != should_mute)
-                    set_is_muted (should_mute);
+                if(_can_mute) {
+                    bool should_mute = _volume <= 0;
+                    if (_is_muted != should_mute) {
+                        set_is_muted (should_mute);
+                    }
+                }
             }
         }
 

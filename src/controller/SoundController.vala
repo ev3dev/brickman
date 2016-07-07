@@ -66,9 +66,10 @@ namespace BrickManager {
         void create_main_window () {
             mixer_select_window = new MixerElementSelectorWindow ();
 
-            mixer_select_window.mixer_elem_selected.connect ((selected_element) => {
-                if (volume_window == null)
+            mixer_select_window.mixer_element_selected.connect ((selected_element) => {
+                if (volume_window == null) {
                     create_volume_window ();
+                }
 
                 volume_window.current_element = selected_element;
                 volume_window.show_element_details = true;
@@ -87,7 +88,7 @@ namespace BrickManager {
             volume_window.volume_down.connect (() =>
                 weak_volume_window.current_element.volume -= VOLUME_STEP);
 
-            volume_window.volume_min.connect (() =>
+            volume_window.mute.connect (() =>
                 weak_volume_window.current_element.volume = IMixerElementViewModel.MIN_VOLUME);
         }
         

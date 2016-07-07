@@ -45,22 +45,25 @@ namespace BrickManager {
 
             var volume_up_item = new Ui.MenuItem ("+ Volume up");
             volume_up_item.button.pressed.connect (() => {
-                if (_current_element != null)
+                if (current_element != null) {
                     volume_up ();
+                }
             });
             controls_menu.add_menu_item (volume_up_item);
 
             var volume_down_item = new Ui.MenuItem ("- Volume down");
             volume_down_item.button.pressed.connect (() => {
-                if (_current_element != null)
+                if (current_element != null) {
                     volume_down ();
+                }
             });
             controls_menu.add_menu_item (volume_down_item);
 
             var mute_item = new Ui.MenuItem ("Mute");
             mute_item.button.pressed.connect (() => {
-                if (_current_element != null)
+                if (current_element != null) {
                     mute ();
+                }
             });
             controls_menu.add_menu_item (mute_item);
 
@@ -98,12 +101,25 @@ namespace BrickManager {
         private void update_from_element () {
             if (_current_element == null) {
                 element_label.text = "???";
-            }
-            else {
-                string index_string = _current_element.index == 0 ? "" : " [%u]".printf(_current_element.index);
-                string elem_details_string = show_element_details ? " (%s%s)".printf (_current_element.name, index_string) : "";
-                string volume_string = _current_element.is_muted ? "muted" : "%ld%%".printf (_current_element.volume);
-                element_label.text = volume_string + elem_details_string;
+            } else {
+                var builder = new StringBuilder();
+                if(_current_element.can_mute && _current_element.is_muted) {
+                    builder.append("muted");
+                } else {
+                    builder.append_printf("%ld%%", _current_element.volume);
+                }
+
+                if(show_element_details) {
+                    builder.append_printf(" (%s", _current_element.name);
+
+                    if(_current_element.index != 0) {
+                        builder.append_printf(" [%u]", _current_element.index);
+                    }
+
+                    builder.append(")");
+                }
+
+                element_label.text = builder.str;
             }
         }
     }

@@ -102,8 +102,9 @@ namespace BrickManager {
         }
 
         protected void set_is_muted (bool is_muted) {
-            if (can_mute)
+            if (can_mute) {
                 alsa_element.set_playback_switch_all (is_muted ? 0 : 1);
+            }
         }
     }
 }

@@ -32,15 +32,26 @@ namespace BrickManager {
         public signal void mixer_element_selected (IMixerElementViewModel selected_element);
 
         public MixerElementSelectorWindow () {
-            title = "Sound mixer elements";
+            title = "Volume Controls";
             element_menu = new Ui.Menu ();
             content_vbox.add (element_menu);
         }
 
         protected string get_element_label_text (IMixerElementViewModel element) {
-            string mute_string = (element.can_mute && element.is_muted) ? ", muted" : "";
-            string index_string = element.index == 0 ? "" : " [%u]".printf(element.index);
-            return "%s%s (%ld%%%s)".printf (element.name, index_string, element.volume, mute_string);
+            var builder = new StringBuilder ();
+            builder.append (element.name);
+
+            if (element.index != 0) {
+                builder.append_printf ("[%u]", element.index);
+            }
+
+            if (element.can_mute && element.is_muted) {
+                builder.append (" (muted)");
+            } else {
+                builder.append_printf (" (%ld%%)", element.volume);
+            }
+
+            return builder.str;
         }
 
         protected void sort_element_menu () {
@@ -48,14 +59,15 @@ namespace BrickManager {
             // the item in the correct place instead of sorting the entire list
             // each time an item is inserted.
             element_menu.sort_menu_items ((a, b) => {
-                IMixerElementViewModel element_a = a.represented_object as IMixerElementViewModel;
-                IMixerElementViewModel element_b = b.represented_object as IMixerElementViewModel;
+                var element_a = a.represented_object as IMixerElementViewModel;
+                var element_b = b.represented_object as IMixerElementViewModel;
 
                 // Group by name, and sort by index within the same name
-                if (element_a.name == element_b.name)
+                if (element_a.name == element_b.name) {
                     return (int)element_a.index - (int)element_b.index;
-                else
+                } else {
                     return element_a.name.ascii_casecmp (element_b.name);
+                }
             });
         }
 
@@ -66,7 +78,7 @@ namespace BrickManager {
 
             weak IMixerElementViewModel weak_element = element;
             // Update the menu item whenever the represented element changes
-            element.notify.connect ((sender, property) => {
+            weak_element.notify.connect ((sender, property) => {
                 menu_item.label.text = get_element_label_text (weak_element);
                 sort_element_menu ();
             });
@@ -85,11 +97,11 @@ namespace BrickManager {
         }
 
         public void remove_element (IMixerElementViewModel element) {
-            var menu_item = element_menu.find_menu_item<IMixerElementViewModel> (element, (menu_item, target_element) => {
+            var item = element_menu.find_menu_item<IMixerElementViewModel> (element, (menu_item, target_element) => {
                 return target_element == (menu_item.represented_object as IMixerElementViewModel);
             });
 
-            remove_menu_item (menu_item);
+            remove_menu_item (item);
         }
 
         public void clear_elements () {
@@ -107,8 +119,9 @@ namespace BrickManager {
 
         public IMixerElementViewModel? first_element {
             get {
-                if (element_menu.menu_item_iter ().size <= 0)
+                if (element_menu.menu_item_iter ().size <= 0) {
                     return null;
+                }
                 
                 return element_menu.menu_item_iter ().get (0).represented_object as IMixerElementViewModel;
             }

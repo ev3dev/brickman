@@ -41,6 +41,7 @@ if (BRICKMAN_TEST)
         test/controller/FakeNetworkController.vala
         test/controller/FakeOpenRobertaController.vala
         test/controller/FakeSoundController.vala
+        test/view_model/FakeMixerElement.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -60,7 +61,7 @@ else (BRICKMAN_TEST)
         src/controller/NetworkController.vala
         src/controller/OpenRobertaController.vala
         src/controller/SoundController.vala
-        src/AlsaBackedMixerElement.vala
+        src/view_model/AlsaBackedMixerElement.vala
         src/GlobalManager.vala
         src/main.vala
     )
@@ -74,7 +75,6 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     lib/systemd/Systemd.vala
     lib/systemd/logind-interfaces.vala
     lib/systemd/systemd-interfaces.vala
-    src/AlsaInterface.vala
     src/controller/IBrickManagerModule.vala
     src/dbus/Bluez5Agent.vala
     src/dbus/ConnmanAgent.vala
@@ -120,6 +120,7 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/WifiNetworkWindow.vala
     src/view/WifiStatusBarItem.vala
     src/view/WifiWindow.vala
+    src/view_model/IMixerElementViewModel.vala
 )
 
 find_package(PkgConfig REQUIRED)
