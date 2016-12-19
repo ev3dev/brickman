@@ -86,8 +86,8 @@ namespace BrickManager {
                                 "--",
                                 "/bin/bash",
                                 "-c",
-                                "/usr/bin/tty >%s;tty=$(/bin/cat %s);/bin/chown %s: \$tty;/sbin/runuser --login --shell /bin/bash --command '(cd %s && exec %s)' %s"
-                                    .printf (ttyname_path, ttyname_path, USER_NAME, file.get_parent().get_path (), file.get_path (), USER_NAME),
+                                "/usr/bin/tty >%s;tty=$(/bin/cat %s);/bin/chown %s: \$tty;/usr/bin/sudo -u %s /bin/bash -c '(cd %s && exec %s)'"
+                                    .printf (ttyname_path, ttyname_path, USER_NAME, USER_NAME, file.get_parent().get_path (), file.get_path ()),
                             };
                             var subproc = new Subprocess.newv (args, SubprocessFlags.INHERIT_FDS);
                             global_manager.set_leds (LedState.USER);
