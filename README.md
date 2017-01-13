@@ -21,24 +21,23 @@ Get the code:
 
 To build for the EV3:
 
-* [Setup brickstrap]
-* In `brickstrap shell`:
+*   Install [Docker] (requires Linux/macOS 10.10.3+/Window 10 Pro)
+*   In the source code directory, run the Docker setup script
 
-        sudo apt-get build-dep brickman
-        mkdir -p /host-rootfs/<some-path-like-home/user/build-brickman>
-        cd /host-rootfs/<some-path-like-home/user/build-brickman>
-        cmake /host-rootfs/<path-to-brickman-repo> -DCMAKE_BUILD_TYPE=string:Debug
-        make
+        ./docker/setup.sh $BUILD_AREA $ARCH
 
-* On your host computer (not in `brickstrap shell`), use NFS or sshfs to share
-<some-path-like-home/user/build-brickman> with your EV3.
-* On your EV3, stop the runing service: `sudo systemctl stop brickman`, connect
-the share and run `./brickman` or if you temporarily replaced the one in
-`/usr/sbin` restart it with `sudo systemctl start brickman`.
-* If running brickman from systemd, you find the stdout/stderr in the journal:
-`journalctl -f -u brickman`.
-* To get more details you can `sudo systemctl set-environment G_MESSAGES_DEBUG=all` and `sudo systemctl restart brickman`.
-* likewise you can tune down the amount of logging with `sudo systemctl unset-environment G_MESSAGES_DEBUG` followed by `sudo systemctl restart brickman`.
+    where `$BUILD_AREA` is any directory you would like. This is where the
+    build output will be saved. The directory will be created if it does not
+    exist. And `$ARCH` is `armel` (or `armhf` if you are building for RPi
+    or BeagleBone).
+
+*   Build the code by running...
+
+        docker exec --tty brickman_armel make install
+
+*   Copy the contents of `$BUILD_AREA/dist/` to the EV3 and run it.
+
+[Docker]: https://www.docker.com/
 
 To build the desktop test (makes UI development much faster), in a regular terminal,
 not in brickstrap shell:
