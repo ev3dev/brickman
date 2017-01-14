@@ -53,7 +53,8 @@ namespace BrickManager {
         public BluetoothController () {
             adapter_list = new List<Adapter> ();
             main_window = new BluetoothWindow (display_name) {
-                loading = true
+                loading = true,
+                available = false
             };
             main_window.scan_selected.connect (on_scan_selected);
             main_window.closed.connect (() => {
@@ -153,6 +154,7 @@ namespace BrickManager {
                 selected_adapter_scanning_binding = selected_adapter.bind_property (
                     "discovering", main_window, "scanning", BindingFlags.SYNC_CREATE);
             }
+            main_window.available = selected_adapter != null;
         }
 
         void on_scan_selected () {
