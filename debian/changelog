@@ -1,3 +1,16 @@
+brickman (0.8.1) stable; urgency=medium
+
+  [ Denis Demidov ]
+  * Use /usr/bin/sudo instead of /sbin/runuser to launch processes from file
+    browser
+
+  [ David Lechner ]
+  * Fix running programs with space in name
+  * Change ownership of /dev/tty when running files
+  * Make bluetooth "unavailible" when there are no adapters
+
+ -- David Lechner <david@lechnology.com>  Fri, 13 Jan 2017 20:15:22 -0600
+
 brickman (0.8.0) stable; urgency=medium
 
   [ Stefan Sauer ]
