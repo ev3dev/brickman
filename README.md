@@ -40,10 +40,9 @@ To build for the EV3:
 [Docker]: https://www.docker.com/
 
 To build the desktop test (makes UI development much faster), in a regular terminal,
-not in brickstrap shell:
+not in Docker:
 
-* Install the build-deps listed in `debian/control` and also the packages
-  `libev3devkit-desktop-dev` and `libgtk-3-dev`.
+* Install the build-deps listed in `debian/control`.
 * Then...
 
         mkdir -p <some-build-dir>
@@ -51,5 +50,3 @@ not in brickstrap shell:
         cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=string:Debug -DBRICKMAN_TEST=bool:Yes
         make
         make run
-
-[Setup brickstrap]: https://github.com/ev3dev/ev3dev/wiki/Using-brickstrap-to-cross-compile-and-debug
