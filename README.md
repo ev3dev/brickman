@@ -52,9 +52,4 @@ not in brickstrap shell:
         make
         make run
 
-* Also see `brickman.sublime-project` for more build hints.
-
-Note: `brickman.sublime-project` is for [Sublime Text].
-
 [Setup brickstrap]: https://github.com/ev3dev/ev3dev/wiki/Using-brickstrap-to-cross-compile-and-debug
-[Sublime Text]: http://www.sublimetext.com/
