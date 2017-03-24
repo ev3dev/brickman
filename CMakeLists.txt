@@ -1,11 +1,12 @@
-project ("brickman" C)
+cmake_policy (SET CMP0048 NEW)
+project ("brickman" LANGUAGES C VERSION 0.9.0)
 
 if (CMAKE_CROSSCOMPILING)
     # we are depending on CMAKE_SYSROOT feature introduce in CMake 3.x
     # and we only support cross compiling using Ubuntu 16.04
     cmake_minimum_required (VERSION 3.5)
 else (CMAKE_CROSSCOMPILING)
-    cmake_minimum_required (VERSION 2.6)
+    cmake_minimum_required (VERSION 3.0)
 endif (CMAKE_CROSSCOMPILING)
 
 option (BRICKMAN_TEST "Build the desktop test version.")
@@ -16,7 +17,6 @@ set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 
 set (EXEC_NAME "brickman")
 set (RELEASE_NAME "Brick Manager")
-set (VERSION "0.8.1")
 
 # Comment this out to enable C compiler warnings
 add_definitions (-w)
