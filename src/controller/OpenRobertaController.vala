@@ -83,7 +83,8 @@ namespace BrickManager {
                     // if the service dies (while running code), definitely
                     // switch back to brickman
                     // FIXME: This should only be called if the current tty is the OpenRoberta tty
-                    chvt (ConsoleApp.get_tty_num ());
+                    // FIXME: need to figure out how console switching is going to work with GRX3
+                    // chvt (ConsoleApp.get_tty_num ());
                 });
         }
 
@@ -141,10 +142,11 @@ namespace BrickManager {
                 open_roberta_window.connected = true;
                 if (message == "registered") {
                     if (executing_user_code) {
-                        var tty_num = ConsoleApp.get_tty_num ();
-                        debug ("program done, switching to tty%d", tty_num);
-                        executing_user_code = false;
-                        chvt (tty_num);
+                        // FIXME: need to figure out how console switching is going to work with GRX3
+                        // var tty_num = ConsoleApp.get_tty_num ();
+                        // debug ("program done, switching to tty%d", tty_num);
+                        // executing_user_code = false;
+                        // chvt (tty_num);
                     } else {
                         debug ("connection established, closing the dialog");
                         OpenRobertaWindow.close_pairing_code_dialog ();

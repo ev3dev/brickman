@@ -4,7 +4,7 @@ Priority: standard
 Maintainer: David Lechner <david@lechnology.com>
 Build-Depends: debhelper (>= 9), dh-systemd, cmake, valac (>= 0.24),
                libgirepository1.0-dev, libgudev-1.0-dev,
-               libncurses5-dev, libev3devkit-dev, netpbm
+               libev3devkit-dev, netpbm
 Standards-Version: 3.9.5
 Homepage: https://www.ev3dev.org
 Vcs-Git: git://github.com/ev3dev/brickman.git

@@ -161,7 +161,8 @@ namespace BrickManager {
 
         [CCode (instance_pos = -1)]
         public void on_quit_button_clicked (Gtk.Button button) {
-            Ev3devKitDesktop.GtkApp.quit ();
+            // FIXME:
+            //Ev3devKitDesktop.GtkApp.quit ();
         }
 
         internal static void update_listview_toggle_item (Gtk.ListStore store,

@@ -34,7 +34,7 @@ namespace BrickManager {
         const ushort TOP = 2;
 
         string _text = "";
-        TextOption text_option;
+        TextOptions text_options;
 
         public string text {
             get { return _text; }
@@ -45,18 +45,19 @@ namespace BrickManager {
         }
 
         public NetworkStatusBarItem () {
-            text_option = new TextOption () {
-                font = Fonts.get_default (),
-                bg_color = Color.no_color
-            };
+            text_options = new TextOptions (
+                Fonts.get_default (),
+                Color.NONE,
+                Color.NONE
+            );
         }
 
         public override int draw (int x, StatusBar.Align align) {
             var color = status_bar.screen.fg_color;
-            text_option.fg_color = color;
-            var main_width = text_option.vala_string_width(_text) + 2;
+            text_options.fg_color = color;
+            var main_width = text_options.font.get_text_width (_text) + 2;
 
-            draw_vala_string (_text, x + 1, TOP, text_option);
+            draw_text (_text, x + 1, TOP, text_options);
             return main_width;
         }
     }

@@ -61,11 +61,11 @@ namespace BrickManager {
             };
             content_vbox.add (status_hbox);
             var status_label = new Label ("Status:") {
-                text_horizontal_align = Grx.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHAlign.RIGHT
             };
             status_hbox.add (status_label);
             status_value_label = new Label ("???") {
-                text_horizontal_align = Grx.TextHorizAlign.LEFT
+                text_horizontal_align = Grx.TextHAlign.LEFT
             };
             status_hbox .add (status_value_label);
 
@@ -85,7 +85,7 @@ namespace BrickManager {
             };
             signal_hbox.add (signal_label);
             signal_value_label = new Label ("???") {
-                text_horizontal_align = Grx.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHAlign.RIGHT
             };
             signal_hbox .add (signal_value_label);
 
@@ -96,7 +96,7 @@ namespace BrickManager {
             };
             security_hbox.add (security_label);
             security_value_label = new Label ("???") {
-                text_horizontal_align = Grx.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHAlign.RIGHT
             };
             security_hbox .add (security_value_label);
 
@@ -107,7 +107,7 @@ namespace BrickManager {
             };
             address_hbox.add (address_label);
             address_value_label = new Label ("???") {
-                text_horizontal_align = Grx.TextHorizAlign.RIGHT
+                text_horizontal_align = Grx.TextHAlign.RIGHT
             };
             address_hbox .add (address_value_label);
         }

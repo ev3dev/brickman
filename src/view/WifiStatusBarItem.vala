@@ -41,7 +41,7 @@ namespace BrickManager {
                 connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
                 file = Path.build_filename (Ev3devKit.DATA_DIR, "wifi-idle16x16.png");
                 idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
-            } catch (Error err) {
+            } catch (GLib.Error err) {
                 critical ("Error loading icon '%s'.", file);
             }
             notify["connected"].connect (redraw);
@@ -50,9 +50,9 @@ namespace BrickManager {
         public override int draw (int x, StatusBar.Align align) {
             unowned Context icon = connected ? connected_icon : idle_icon;
             if (icon != null) {
-                bit_blt (Context.current, x - icon.x_max, 1, icon, 0, 0,
-                    icon.x_max, icon.y_max, Color.white.to_image_mode ());
-                return icon.x_max;
+                Context.current.bit_blt (x - icon.max_x, 1, icon, 0, 0,
+                    icon.max_x, icon.max_y, Color.WHITE.to_image_mode ());
+                return icon.max_x;
             }
             return -2;
         }

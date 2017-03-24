@@ -57,7 +57,6 @@ namespace BrickManager {
         Ev3devKit.Devices.Led ev3_right_green_led;
         Ev3devKit.Devices.Led ev3_left_red_led;
         Ev3devKit.Devices.Led ev3_right_red_led;
-        Ev3devKit.Devices.Input ev3_buttons;
 
         /**
          * Gets the device manager for interacting with hardware devices.
@@ -84,33 +83,6 @@ namespace BrickManager {
                     have_ev3_leds = true;
                 } catch (Error err) {
                     warning ("%s", err.message);
-                }
-                try {
-                    ev3_buttons = device_manager.get_input_device (Ev3devKit.Devices.Input.EV3_BUTTONS_NAME);
-                    uint timeout_id = 0;
-                    var button_down_handler_id = ev3_buttons.key_down.connect ((key_code) => {
-                        if (key_code == KEY_BACKSPACE) {
-                            timeout_id = Timeout.add (1000, () => {
-                                back_button_long_pressed ();
-                                if (Ev3devKit.ConsoleApp.is_active ()) {
-                                    Ev3devKit.ConsoleApp.ignore_next_key_press ();
-                                }
-                                timeout_id = 0;
-                                return Source.REMOVE;
-                            });
-                        }
-                    });
-                    var button_up_handler_id = ev3_buttons.key_up.connect ((key_code) => {
-                        if (key_code == KEY_BACKSPACE && timeout_id != 0) {
-                            Source.remove (timeout_id);
-                        }
-                    });
-                    weak_ref (() => {
-                        ev3_buttons.disconnect (button_down_handler_id);
-                        ev3_buttons.disconnect (button_up_handler_id);
-                    });
-                } catch (Error err) {
-                    critical ("%s", err.message);
                 }
             }
         }

@@ -258,7 +258,7 @@ namespace BrickManager {
         }
 
         void show_message (string message) {
-            var dialog = new Gtk.MessageDialog (Ev3devKitDesktop.GtkApp.main_window,
+            var dialog = new Gtk.MessageDialog (Gtk.Window.list_toplevels ().nth_data (0),
                 Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
             dialog.response.connect ((id) => dialog.destroy ());
             dialog.show ();

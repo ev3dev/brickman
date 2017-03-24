@@ -162,9 +162,9 @@ namespace BrickManager {
 
         public static void show_pairing_code_dialog (string code) {
             var label = new Label (code) {
-                margin_top = 12,
-                font = Fonts.get_big ()
+                margin_top = 12
             };
+            label.font = Fonts.get_big ();
             pin_dialog = new MessageDialog.with_content ("Pairing code", label);
             ulong pin_dialog_closed_id = 0;
             pin_dialog_closed_id = pin_dialog.closed.connect (() => {

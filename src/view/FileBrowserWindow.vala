@@ -42,7 +42,7 @@ namespace BrickManager {
         public FileBrowserWindow (string display_name) {
             title = display_name;
             current_directory_label = new Label ("???") {
-                text_horizontal_align = Grx.TextHorizAlign.LEFT,
+                text_horizontal_align = Grx.TextHAlign.LEFT,
                 vertical_align = WidgetAlign.START,
                 padding_bottom = 2,
                 border_bottom = 1

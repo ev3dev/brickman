@@ -573,7 +573,7 @@ namespace BrickManager {
                 try {
                     builder.add_from_file (CONNMAN_AGENT_REQUEST_INPUT_DIALOG_GLADE_FILE);
                     agent_request_input_dialog = builder.get_object ("dialog") as Gtk.Dialog;
-                    agent_request_input_dialog.set_transient_for (Ev3devKitDesktop.GtkApp.main_window);
+                    agent_request_input_dialog.set_transient_for (Gtk.Window.list_toplevels ().nth_data (0));
                     agent_request_input_dialog.response.connect ((id) => {
                         agent_request_input_dialog.destroy ();
                         agent_request_input_dialog = null;
@@ -657,7 +657,7 @@ namespace BrickManager {
         }
 
         void show_message (string message) {
-            var dialog = new Gtk.MessageDialog (Ev3devKitDesktop.GtkApp.main_window,
+            var dialog = new Gtk.MessageDialog (Gtk.Window.list_toplevels ().nth_data (0),
                 Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, message);
             dialog.response.connect ((id) => dialog.destroy ());
             dialog.show ();

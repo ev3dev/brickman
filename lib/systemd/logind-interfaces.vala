@@ -84,7 +84,12 @@ namespace org.freedesktop.login1 {
         public abstract async Systemd.Logind.CanResponse can_reboot () throws IOError;
         public abstract async Systemd.Logind.CanResponse can_suspend () throws IOError;
         public abstract async Systemd.Logind.CanResponse can_hybrid_sleep () throws IOError;
+        // FIXME: This does not build on stretch
+        // logind-interfaces.c: In function 'org_freedesktop_login1_manager_proxy_inhibit_async':
+        // logind-interfaces.c:3185:2: error: '_fd_list' undeclared (first use in this function)
+#if 0
         public abstract async UnixInputStream inhibit (string who, string what, string why, Systemd.Logind.InhibitMode mode) throws IOError;
+#endif
 
         public abstract signal void session_new (string session_id, ObjectPath session);
         public abstract signal void session_removed (string session_id, ObjectPath session);

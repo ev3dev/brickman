@@ -78,7 +78,7 @@ namespace BrickManager {
                 padding_top = 1,
                 padding_bottom = 1
             }, new Label () {
-                text_horizontal_align = Grx.TextHorizAlign.LEFT
+                text_horizontal_align = Grx.TextHAlign.LEFT
             });
             button.pressed.connect (on_button_pressed);
             hbox = new Box.horizontal ();

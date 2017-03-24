@@ -56,7 +56,7 @@ namespace BrickManager {
             if (parent.draw_children_as_focused)
                 color = window.screen.bg_color;
             for (int i = 0; i < bars; i++) {
-                Grx.filled_box (content_bounds.x1 + BAR_WIDTH * i,
+                Grx.draw_filled_box (content_bounds.x1 + BAR_WIDTH * i,
                     content_bounds.y2 - BAR_WIDTH * (i + 1),
                     content_bounds.x1 + BAR_WIDTH * (i + 1),
                     content_bounds.y2, color);

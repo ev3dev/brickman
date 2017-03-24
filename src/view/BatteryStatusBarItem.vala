@@ -35,11 +35,15 @@ namespace BrickManager {
         static Font font;
 
         static construct {
-            font =  Font.load ("xm5x8");
+            try {
+                font =  Font.load ("fixed sans", 4);
+            } catch (GLib.Error err) {
+                critical ("%s", err.message);
+            }
         }
 
         string _text = "???";
-        TextOption text_option;
+        TextOptions text_options;
 
         double _voltage;
         public double voltage {
@@ -57,24 +61,21 @@ namespace BrickManager {
         }
 
         public BatteryStatusBarItem () {
-            text_option = new TextOption () {
-                font = BatteryStatusBarItem.font,
-                bg_color = Color.no_color
-            };
+            text_options = new TextOptions (BatteryStatusBarItem.font, Color.NONE, Color.NONE);
         }
 
         public override int draw (int x, StatusBar.Align align) {
             var color = status_bar.screen.fg_color;
-            text_option.fg_color = color;
-            var main_width = text_option.vala_string_width(_text) + PADDING * 2 + 2;
+            text_options.fg_color = color;
+            var main_width = text_options.font.get_text_width (_text) + PADDING * 2 + 2;
             var total_width = main_width + END_WIDTH;
             if (align ==  StatusBar.Align.RIGHT)
                 x -= total_width - 1;
-            box (x, TOP, x + main_width - 1, HEIGHT - TOP, color);
-            filled_box (x + main_width, TOP + END_OFFEST,
+            draw_box (x, TOP, x + main_width - 1, HEIGHT - TOP, color);
+            draw_filled_box (x + main_width, TOP + END_OFFEST,
                 x + main_width + END_WIDTH - 1, HEIGHT - TOP - END_OFFEST,
                 color);
-            draw_vala_string (_text, x + PADDING, TOP + 1 + PADDING, text_option);
+            draw_text (_text, x + PADDING, TOP + 1 + PADDING, text_options);
             return total_width;
         }
     }

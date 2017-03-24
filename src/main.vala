@@ -34,99 +34,104 @@ namespace BrickManager {
 
      public static int main (string[] args) {
         try {
-            ConsoleApp.init ();
-        } catch (ConsoleApp.ConsoleAppError err) {
+            var app = new ConsoleApp ();
+
+            // Get something up on the screen ASAP.
+            var splash_path = Path.build_filename (DATA_DIR, SPLASH_PNG);
+            foreach (var dir in Environment.get_system_data_dirs ()) {
+                var new_path = Path.build_filename (dir, splash_path);
+                if (FileUtils.test (new_path, FileTest.EXISTS)) {
+                    splash_path = new_path;
+                    break;
+                }
+            }
+            if (!Grx.Context.screen.load_from_png (splash_path)) {
+                warning ("%s", "Could not load splash image.");
+            }
+
+            var activate_id = app.activate.connect (() => {
+                global_manager = new GlobalManager ();
+
+                Screen.get_active_screen ().status_bar.visible = true;
+
+                var home_window = new HomeWindow ();
+                var file_browser_controller = new FileBrowserController ();
+                home_window.add_controller (file_browser_controller);
+                var device_browser_controller = new DeviceBrowserController ();
+                home_window.add_controller (device_browser_controller);
+                var network_controller = new NetworkController ();
+                home_window.add_controller (network_controller);
+                var bluetooth_controller = new BluetoothController ();
+                network_controller.add_controller (bluetooth_controller);
+                network_controller.add_controller (network_controller.wifi_controller);
+                var battery_controller = new BatteryController ();
+                home_window.add_controller (battery_controller);
+                var open_roberta_controller = new OpenRobertaController ();
+                home_window.add_controller (open_roberta_controller);
+                var about_controller = new AboutController ();
+                home_window.add_controller (about_controller);
+
+                Screen.get_active_screen ().status_bar.add_left (network_controller.network_status_bar_item);
+
+                Screen.get_active_screen ().status_bar.add_right (battery_controller.battery_status_bar_item);
+                Screen.get_active_screen ().status_bar.add_right (network_controller.wifi_status_bar_item);
+                Screen.get_active_screen ().status_bar.add_right (bluetooth_controller.status_bar_item);
+                Screen.get_active_screen ().status_bar.add_right (open_roberta_controller.status_bar_item);
+
+                // show the shutdown menu on long back button press, but only if
+                // brickman is active.
+                global_manager.back_button_long_pressed.connect_after (() => {
+                    if (app.is_active) {
+                        home_window.shutdown_dialog.show ();
+                    }
+                });
+
+                Systemd.Logind.Manager logind_manager = null;
+                Systemd.Logind.Manager.get_system_manager.begin ((obj, res) => {
+                    try {
+                        logind_manager = Systemd.Logind.Manager.get_system_manager.end (res);
+                        home_window.shutdown_dialog.power_off_button_pressed.connect (() => {
+                            logind_manager.power_off.begin (false, (obj, res) => {
+                                try {
+                                    logind_manager.power_off.end (res);
+                                    global_manager.set_leds (LedState.BUSY);
+                                    app.quit ();
+                                } catch (IOError err) {
+                                    var dialog = new MessageDialog ("Error", err.message);
+                                    dialog.show ();
+                                }
+                            });
+                        });
+                        home_window.shutdown_dialog.reboot_button_pressed.connect (() => {
+                            logind_manager.reboot.begin (false, (obj, res) => {
+                                try {
+                                    logind_manager.reboot.end (res);
+                                    global_manager.set_leds (LedState.BUSY);
+                                    app.quit ();
+                                } catch (IOError err) {
+                                    var dialog = new MessageDialog ("Error", err.message);
+                                    dialog.show ();
+                                }
+                            });
+                        });
+                    } catch (IOError err) {
+                        var dialog = new MessageDialog ("Error", err.message);
+                        dialog.show ();
+                    }
+                });
+                home_window.show ();
+                global_manager.set_leds (LedState.NORMAL);
+            });
+
+            // FIXME: Need to hook into input events here to get long back press
+
+            app.run ();
+            app.disconnect (activate_id);
+
+            return 0;
+        } catch (GLib.Error err) {
             critical ("%s", err.message);
             Process.exit (err.code);
         }
-
-        // Get something up on the screen ASAP.
-        var splash_path = Path.build_filename (DATA_DIR, SPLASH_PNG);
-        foreach (var dir in Environment.get_system_data_dirs ()) {
-            var new_path = Path.build_filename (dir, splash_path);
-            if (FileUtils.test (new_path, FileTest.EXISTS)) {
-                splash_path = new_path;
-                break;
-            }
-        }
-        if (Grx.Context.screen.load_from_png (splash_path) != 0) {
-            warning ("%s", "Could not load splash image.");
-        }
-
-        global_manager = new GlobalManager ();
-
-        Screen.get_active_screen ().status_bar.visible = true;
-
-        var home_window = new HomeWindow ();
-        var file_browser_controller = new FileBrowserController ();
-        home_window.add_controller (file_browser_controller);
-        var device_browser_controller = new DeviceBrowserController ();
-        home_window.add_controller (device_browser_controller);
-        var network_controller = new NetworkController ();
-        home_window.add_controller (network_controller);
-        var bluetooth_controller = new BluetoothController ();
-        network_controller.add_controller (bluetooth_controller);
-        network_controller.add_controller (network_controller.wifi_controller);
-        var battery_controller = new BatteryController ();
-        home_window.add_controller (battery_controller);
-        var open_roberta_controller = new OpenRobertaController ();
-        home_window.add_controller (open_roberta_controller);
-        var about_controller = new AboutController ();
-        home_window.add_controller (about_controller);
-
-        Screen.get_active_screen ().status_bar.add_left (network_controller.network_status_bar_item);
-
-        Screen.get_active_screen ().status_bar.add_right (battery_controller.battery_status_bar_item);
-        Screen.get_active_screen ().status_bar.add_right (network_controller.wifi_status_bar_item);
-        Screen.get_active_screen ().status_bar.add_right (bluetooth_controller.status_bar_item);
-        Screen.get_active_screen ().status_bar.add_right (open_roberta_controller.status_bar_item);
-
-        // show the shutdown menu on long back button press, but only if
-        // brickman is active.
-        global_manager.back_button_long_pressed.connect_after (() => {
-            if (ConsoleApp.is_active ()) {
-                home_window.shutdown_dialog.show ();
-            }
-        });
-
-        Systemd.Logind.Manager logind_manager = null;
-        Systemd.Logind.Manager.get_system_manager.begin ((obj, res) => {
-            try {
-                logind_manager = Systemd.Logind.Manager.get_system_manager.end (res);
-                home_window.shutdown_dialog.power_off_button_pressed.connect (() => {
-                    logind_manager.power_off.begin (false, (obj, res) => {
-                        try {
-                            logind_manager.power_off.end (res);
-                            global_manager.set_leds (LedState.BUSY);
-                            ConsoleApp.quit ();
-                        } catch (IOError err) {
-                            var dialog = new MessageDialog ("Error", err.message);
-                            dialog.show ();
-                        }
-                    });
-                });
-                home_window.shutdown_dialog.reboot_button_pressed.connect (() => {
-                    logind_manager.reboot.begin (false, (obj, res) => {
-                        try {
-                            logind_manager.reboot.end (res);
-                            global_manager.set_leds (LedState.BUSY);
-                            ConsoleApp.quit ();
-                        } catch (IOError err) {
-                            var dialog = new MessageDialog ("Error", err.message);
-                            dialog.show ();
-                        }
-                    });
-                });
-            } catch (IOError err) {
-                var dialog = new MessageDialog ("Error", err.message);
-                dialog.show ();
-            }
-        });
-        home_window.show ();
-        global_manager.set_leds (LedState.NORMAL);
-
-        ConsoleApp.run ();
-
-        return 0;
     }
 }

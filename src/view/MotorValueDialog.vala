@@ -34,9 +34,9 @@ namespace BrickManager {
 
         public MotorValueDialog () {
             value_label = new Label ("???") {
-                margin = 12,
-                font = Fonts.get_big ()
+                margin = 12
             };
+            value_label.font = Fonts.get_big ();
             add (value_label);
         }
     }

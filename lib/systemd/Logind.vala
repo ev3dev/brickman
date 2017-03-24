@@ -191,10 +191,14 @@ namespace Systemd.Logind {
         public async CanResponse can_hybrid_sleep () throws IOError {
             return yield manager.can_hybrid_sleep ();
         }
+        // FIXME: this fails to build in stretch
+        // logind-interfaces.c: In function 'org_freedesktop_login1_manager_proxy_inhibit_async':
+        // logind-interfaces.c:3185:2: error: '_fd_list' undeclared (first use in this function)
+#if 0
         public async UnixInputStream inhibit (string who, string what, string why, InhibitMode mode) throws IOError {
             return yield manager.inhibit (who, what, why, mode);
         }
-
+#endif
 /*
         public signal void session_new (string session_id, Session session);
         async void on_session_new (string session_id, ObjectPath path) {

@@ -41,7 +41,7 @@ namespace BrickManager {
                 connected_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
                 file = Path.build_filename (Ev3devKit.DATA_DIR, "bluetooth16x16.png");
                 idle_icon = Ev3devKit.Ui.Icon.create_context_from_png (file);
-            } catch (Error err) {
+            } catch (GLib.Error err) {
                 critical ("Error loading icon '%s'.", file);
             }
             notify["connected"].connect (redraw);
@@ -51,9 +51,9 @@ namespace BrickManager {
             unowned Context icon = connected ? connected_icon : idle_icon;
             if (icon != null) {
                 // this icon has 1 pixel width of whitespace on each side
-                bit_blt (Context.current, x - icon.x_max + 2, 1, icon, 1, 0,
-                    icon.x_max - 2, icon.y_max, Color.white.to_image_mode ());
-                return icon.x_max - 2;
+                Context.current.bit_blt (x - icon.max_x + 2, 1, icon, 1, 0,
+                    icon.max_x - 2, icon.max_y, Color.WHITE.to_image_mode ());
+                return icon.max_x - 2;
             }
             return -2;
         }

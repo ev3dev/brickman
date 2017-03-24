@@ -130,7 +130,7 @@ namespace BrickManager {
             var windows_menu_item = new Ui.MenuItem ("Load Windows defaults");
             windows_menu_item.button.border = 1;
             windows_menu_item.button.border_radius = 3;
-            windows_menu_item.label.text_horizontal_align = Grx.TextHorizAlign.CENTER;
+            windows_menu_item.label.text_horizontal_align = Grx.TextHAlign.CENTER;
             windows_menu_item.button.pressed.connect (() => {
                 change_requested ("manual", "192.168.137.3", "255.255.255.0",
                     "192.168.137.1", { "192.168.137.1" });
@@ -141,7 +141,7 @@ namespace BrickManager {
             var mac_menu_item = new Ui.MenuItem ("Load OSX defaults");
             mac_menu_item.button.border = 1;
             mac_menu_item.button.border_radius = 3;
-            mac_menu_item.label.text_horizontal_align = Grx.TextHorizAlign.CENTER;
+            mac_menu_item.label.text_horizontal_align = Grx.TextHAlign.CENTER;
             mac_menu_item.button.pressed.connect (() => {
                 change_requested ("manual", "192.168.2.3", "255.255.255.0",
                     "192.168.2.1", { "192.168.2.1" });
@@ -152,7 +152,7 @@ namespace BrickManager {
             var linux_menu_item = new Ui.MenuItem ("Load Linux defaults");
             linux_menu_item.button.border = 1;
             linux_menu_item.button.border_radius = 3;
-            linux_menu_item.label.text_horizontal_align = Grx.TextHorizAlign.CENTER;
+            linux_menu_item.label.text_horizontal_align = Grx.TextHAlign.CENTER;
             linux_menu_item.button.pressed.connect (() => {
                 change_requested ("manual", "10.42.0.3", "255.255.255.0",
                     "10.42.0.1", { "10.42.0.1" });
@@ -163,7 +163,7 @@ namespace BrickManager {
             var custom_menu_item = new Ui.MenuItem ("Enter custom values");
             custom_menu_item.button.border = 1;
             custom_menu_item.button.border_radius = 3;
-            custom_menu_item.label.text_horizontal_align = Grx.TextHorizAlign.CENTER;
+            custom_menu_item.label.text_horizontal_align = Grx.TextHAlign.CENTER;
             custom_menu_item.button.pressed.connect (() => {
                 weak_dialog.close ();
                 on_change_custom_button_pressed ();
@@ -173,7 +173,7 @@ namespace BrickManager {
             var dchp_menu_item = new Ui.MenuItem ("Use DHCP");
             dchp_menu_item.button.border = 1;
             dchp_menu_item.button.border_radius = 3;
-            dchp_menu_item.label.text_horizontal_align = Grx.TextHorizAlign.CENTER;
+            dchp_menu_item.label.text_horizontal_align = Grx.TextHAlign.CENTER;
             dchp_menu_item.button.pressed.connect (() => {
                 change_requested ("dhcp", null, null, null, { });
                 weak_dialog.close ();
