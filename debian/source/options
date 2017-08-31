@@ -1,0 +1,4 @@
+tar-ignore=.*
+tar-ignore=build*
+tar-ignore=doc/sphinx/_build
+tar-ignore=doc/sphinx/_html_extra
