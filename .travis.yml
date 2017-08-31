@@ -15,9 +15,6 @@ before_install:
 - sudo cp .travis/ev3dev-archive-keyring.gpg /etc/apt/trusted.gpg.d/
 - sudo apt-get update
 - sudo apt-get install --yes pbuilder-ev3dev dh-systemd
-- if [ ! -d /usr/share/debootstrap/scripts/stretch ]; then
-      sudo ln -s /usr/share/debootstrap/scripts/sid /usr/share/debootstrap/scripts/stretch;
-  fi
 before_script:
 - pbuilder-ev3dev base
 - git checkout -B ev3dev-stretch
