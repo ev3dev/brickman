@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9), dh-systemd, cmake, valac (>= 0.24),
                libev3devkit-dev, netpbm
 Standards-Version: 3.9.8
 Homepage: https://www.ev3dev.org
-Vcs-Git: git://github.com/ev3dev/brickman.git
+Vcs-Git: https://github.com/ev3dev/brickman.git
 Vcs-Browser: https://github.com/ev3dev/brickman
 
 Package: brickman
