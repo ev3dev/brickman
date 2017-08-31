@@ -1,7 +1,8 @@
 brickman (0.10.0) testing; urgency=medium
 
-  * Update for GRX 3.0.0
+  * Update for GRX 3.0.0 (fixes console switching)
   * Use brickrun to launch programs and log stderr to file
+  * Remove long back press feature
 
  -- David Lechner <david@lechnology.com>  Thu, 31 Aug 2017 15:57:10 -0500
 

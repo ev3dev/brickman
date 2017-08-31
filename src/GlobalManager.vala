@@ -63,11 +63,6 @@ namespace BrickManager {
          */
         public Ev3devKit.Devices.DeviceManager device_manager { get; private set; }
 
-        /**
-         * Emitted when the back button is held down for one second.
-         */
-        public signal void back_button_long_pressed ();
-
         public GlobalManager () {
             device_manager = new Ev3devKit.Devices.DeviceManager ();
             if (Ev3devKit.Devices.Cpu.get_model ().has_prefix ("LEGO MINDSTORMS EV3")) {
