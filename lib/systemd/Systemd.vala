@@ -87,7 +87,7 @@ namespace Systemd {
         [DBus (value = "failed")]
         FAILED, 
         [DBus (value = "dependency")]
-        DEPENENCY, 
+        DEPENDENCY, 
         [DBus (value = "skipped")]
         SKIPPED;
 
