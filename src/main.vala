@@ -45,11 +45,13 @@ namespace BrickManager {
                     break;
                 }
             }
-            if (!Grx.Context.screen.load_from_png (splash_path)) {
+            if (!Grx.get_screen_context ().load_from_png (splash_path)) {
                 warning ("%s", "Could not load splash image.");
             }
 
             var activate_id = app.activate.connect (() => {
+                app.hold ();
+
                 global_manager = new GlobalManager ();
 
                 Screen.get_active_screen ().status_bar.visible = true;

@@ -48,7 +48,7 @@ namespace BrickManager {
         public override int draw (int x, StatusBar.Align align) {
             unowned Context icon = connected ? connected_icon : idle_icon;
             if (icon != null) {
-                Context.current.bit_blt (x - icon.max_x, 2, icon, 0, 0,
+                get_current_context ().bit_blt (x - icon.max_x, 2, icon, 0, 0,
                     icon.max_x, icon.max_y, Color.WHITE.to_image_mode ());
                 return icon.max_x;
             }

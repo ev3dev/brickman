@@ -51,7 +51,7 @@ namespace BrickManager {
             unowned Context icon = connected ? connected_icon : idle_icon;
             if (icon != null) {
                 // this icon has 1 pixel width of whitespace on each side
-                Context.current.bit_blt (x - icon.max_x + 2, 1, icon, 1, 0,
+                get_current_context ().bit_blt (x - icon.max_x + 2, 1, icon, 1, 0,
                     icon.max_x - 2, icon.max_y, Color.WHITE.to_image_mode ());
                 return icon.max_x - 2;
             }

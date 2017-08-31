@@ -51,7 +51,7 @@ namespace BrickManager {
          * Default handler for the key_pressed signal.
          */
         protected override bool key_pressed (uint key_code) {
-            if (key_code == Grx.Key.BackSpace) {
+            if (key_code == Grx.Key.BACK_SPACE) {
                 shutdown_dialog.show ();
                 Signal.stop_emission_by_name (this, "key-pressed");
                 return true;
