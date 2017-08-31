@@ -119,52 +119,5 @@ namespace BrickManager {
                 critical ("%s", err.message);
             }
         }
-
-        public void stop_all_motors () {
-            device_manager.get_tacho_motors ().foreach ((motor) => {
-                try {
-                    var supported_commands = motor.commands;
-                    if ("reset" in supported_commands) {
-                        motor.send_command ("reset");
-                    } else if ("stop" in supported_commands) {
-                        // TODO: Might need to check if "coast" is supported
-                        motor.set_stop_action ("coast");
-                        motor.send_command ("stop");
-                    }
-                } catch (Error e) {
-                    critical ("%s", e.message);
-                }
-            });
-            device_manager.get_dc_motors ().foreach ((motor) => {
-                try {
-                    motor.set_stop_action ("coast");
-                    motor.send_command ("stop");
-                } catch (Error e) {
-                    critical ("%s", e.message);
-                }
-            });
-            device_manager.get_servo_motors ().foreach ((motor) => {
-                try {
-                    motor.send_command ("float");
-                } catch (Error e) {
-                    critical ("%s", e.message);
-                }
-            });
-        }
-
-        /**
-         * Stop all sound devices.
-         *
-         * Note: This just stops sound input devices (beep). It does not stop
-         * ALSA playback.
-         */
-        public void stop_all_sound () {
-            device_manager.get_input_devices ().foreach ((input) => {
-                if (input.has_sound_capability (Ev3devKit.Devices.SoundCapability.BELL))
-                    input.do_bell (false);
-                if (input.has_sound_capability (Ev3devKit.Devices.SoundCapability.TONE))
-                    input.do_tone (0);
-            });
-        }
     }
 }
