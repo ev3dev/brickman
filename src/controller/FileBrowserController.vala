@@ -32,6 +32,8 @@ namespace BrickManager {
         const string file_attrs = FileAttribute.OWNER_USER
             + "," + FileAttribute.STANDARD_IS_HIDDEN
             + "," + FileAttribute.STANDARD_TYPE
+            + "," + FileAttribute.UNIX_UID
+            + "," + FileAttribute.UNIX_GID
             + "," + FileAttribute.UNIX_MODE;
 
         FileBrowserWindow file_browser_window;
@@ -69,62 +71,49 @@ namespace BrickManager {
                             }
                         });
                     } else if ((mode & Posix.S_IXUSR) == Posix.S_IXUSR) {
-                        // if the selected file is executable then we run the
-                        // file on a new console as USER_NAME.
+                        // If the selected file is executable then we run the
+                        // file via brickrun as USER_NAME. brickrun takes
+                        // care of switching consoles, stopping motors, etc.
                         try {
-                            // openvt will unfortunately set the ownership of the new /dev/tty<num> to root:root
-                            // instead of root:tty. Even with root:tty the new application would fails to configure
-                            // the tty. We deal with that by changing the ownership of the new tty to belong to
-                            // USER_NAME.
-                            var ttyname_dir_template = "/tmp/brickman.XXXXXX".dup();
-                            var ttyname_dir = DirUtils.mkdtemp (ttyname_dir_template);
-                            var ttyname_path = ttyname_dir + "/tty";
                             string[] args = {
-                                "/bin/openvt",
-                                "--switch",
-                                "--wait",
+                                "/usr/bin/sudo",
+                                "--login",
+                                "--non-interactive",
+                                "--user",
+                                USER_NAME,
                                 "--",
-                                "/bin/bash",
-                                "-c",
-                                "/usr/bin/tty >%s;tty=$(/bin/cat %s);/bin/chown %s: $tty;/bin/chown %s: /dev/tty;/usr/bin/sudo --login --non-interactive --user %s /bin/bash -c '(cd %s && exec \"%s\")'"
-                                    .printf (ttyname_path, ttyname_path, USER_NAME, USER_NAME, USER_NAME, file.get_parent().get_path (), file.get_path ()),
+                                "/usr/bin/brickrun",
+                                "--directory",
+                                file.get_parent().get_path (),
+                                "--",
+                                file.get_path ()
                             };
-                            var subproc = new Subprocess.newv (args, SubprocessFlags.INHERIT_FDS);
-                            global_manager.set_leds (LedState.USER);
-                            // If user presses the back button, kill all processes
-                            // running on the new VT.
-                            var handler_id = global_manager.back_button_long_pressed.connect (() => {
-                                // Use pkill to find all processes on the tty opened
-                                // by openvt and send them SIGTERM.
-                                try {
-                                    var ttyname_is = new DataInputStream (File.new_for_path (ttyname_path).read ());
-                                    var line = ttyname_is.read_line ();
-                                    var tty = int.parse (line[line.last_index_of_char ('y') + 1:line.length]);
-                                    string[] args2 = {
-                                        "pkill",
-                                        "--terminal",
-                                        "tty%d".printf (tty)
-                                    };
-                                    new Subprocess.newv (args2, SubprocessFlags.NONE);
-                                } catch (Error err) {
-                                    critical ("%s", err.message);
-                                }
-                            });
-                            // Wait for the openvt process to end, then clean up
-                            // output devices in case the use program didn't
-                            subproc.wait_async.begin (null, (obj, res) => {
-                                try {
-                                    subproc.wait_async.end (res);
-                                } catch (Error err) {
-                                    // shouldn't happen since it is not cancellable
-                                }
-                                FileUtils.unlink (ttyname_path);
-                                DirUtils.remove (ttyname_dir);
-                                global_manager.disconnect (handler_id);
-                                global_manager.stop_all_sound ();
-                                global_manager.set_leds (LedState.NORMAL);
-                                global_manager.stop_all_motors ();
-                            });
+                            var subproc = new Subprocess.newv (args, SubprocessFlags.STDERR_PIPE);
+                            try {
+                                var err_log_filename = file.get_path () + ".err.log";
+                                var err_log = File.new_for_path (err_log_filename);
+                                var err_log_out = err_log.replace (null, false, FileCreateFlags.REPLACE_DESTINATION);
+                                err_log_out.splice_async.begin (subproc.get_stderr_pipe (),
+                                    OutputStreamSpliceFlags.CLOSE_TARGET, Priority.DEFAULT, null, (obj, res) => {
+                                        try {
+                                            var size = err_log_out.splice_async.end (res);
+                                            if (size == 0) {
+                                                // delete the file if there was nothing logged.
+                                                err_log.delete ();
+                                            } else {
+                                                // change the owner to match the executable,
+                                                // otherwise it is owned by root and can't be deleted
+                                                var uid = file_info.get_attribute_uint32 (FileAttribute.UNIX_UID);
+                                                var gid = file_info.get_attribute_uint32 (FileAttribute.UNIX_GID);
+                                                Posix.chown (err_log_filename, uid, gid);
+                                            }
+                                        } catch (Error err) {
+                                            warning ("Error writing log file: %s", err.message);
+                                        }
+                                    });
+                            } catch (Error err) {
+                                warning ("Failed to create error log: %s", err.message);
+                            }
                         } catch (SpawnError err) {
                             var dialog = new MessageDialog ("Error", err.message);
                             dialog.show ();
