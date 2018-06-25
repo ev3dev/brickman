@@ -160,12 +160,12 @@ namespace BrickManager {
             dialog.show ();
         }
 
-        public static void show_pairing_code_dialog (string code) {
-            var label = new Label (code) {
+        public static void show_connection_dialog (string title, string message) {
+            var label = new Label (message) {
                 margin_top = 12,
                 font = Fonts.get_big ()
             };
-            pin_dialog = new MessageDialog.with_content ("Pairing code", label);
+            pin_dialog = new MessageDialog.with_content (title, label);
             ulong pin_dialog_closed_id = 0;
             pin_dialog_closed_id = pin_dialog.closed.connect (() => {
                 pin_dialog.disconnect (pin_dialog_closed_id);
@@ -174,7 +174,7 @@ namespace BrickManager {
             pin_dialog.show ();
         }
 
-        public static void close_pairing_code_dialog () {
+        public static void close_connection_dialog () {
             if (pin_dialog != null) {
                 pin_dialog.close ();
             }

@@ -147,7 +147,7 @@ namespace BrickManager {
                         chvt (tty_num);
                     } else {
                         debug ("connection established, closing the dialog");
-                        OpenRobertaWindow.close_pairing_code_dialog ();
+                        OpenRobertaWindow.close_connection_dialog ();
                         // remember selected server
                         config.set_string ("Common", "SelectedServer",
                             open_roberta_window.selected_server);
@@ -168,7 +168,7 @@ namespace BrickManager {
                 open_roberta_window.connected = false;
                 if (message == "disconnected") {
                     debug ("connection failed, closing the dialog");
-                    OpenRobertaWindow.close_pairing_code_dialog ();
+                    OpenRobertaWindow.close_connection_dialog ();
                 }
             }
         }
@@ -186,8 +186,13 @@ namespace BrickManager {
         void on_server_connect (string address) {
             try {
                 open_roberta_window.selected_server = address;
-                var code = service.connect ("http://" + address);
-                OpenRobertaWindow.show_pairing_code_dialog (code);
+                OpenRobertaWindow.show_connection_dialog ("Connect to server", "Connecting ...");
+                Idle.add (() => {
+                    var code = service.connect ("http://" + address);
+                    OpenRobertaWindow.close_connection_dialog ();
+                    OpenRobertaWindow.show_connection_dialog ("Pairing code", code);
+                    return Source.REMOVE;
+                });
             } catch (IOError err) {
                 warning ("%s", err.message);
             }
