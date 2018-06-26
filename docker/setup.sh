@@ -36,7 +36,7 @@ docker run \
     --volume "$(readlink -f $build_dir):/build" \
     --volume "$(pwd):/src" \
     --workdir /build \
-    --user $(id -u):$(id -g)
+    --user $(id -u):$(id -g) \
     --name $container_name \
     --env "TERM=$TERM" \
     --env "DESTDIR=/build/dist" \
