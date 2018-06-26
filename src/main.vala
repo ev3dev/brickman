@@ -32,7 +32,12 @@ namespace BrickManager {
     // The global_manager is shared by all of the controller objects
     GlobalManager global_manager;
 
-     public static int main (string[] args) {
+    public static int main (string[] args) {
+        if (args.length > 1 && args[1] == "--version") {
+            Posix.stdout.printf("%s v%s\n", EXEC_NAME, VERSION);
+            Process.exit (0);
+        }
+
         try {
             ConsoleApp.init ();
         } catch (ConsoleApp.ConsoleAppError err) {
