@@ -22,20 +22,24 @@ Get the code:
 To build for the EV3:
 
 *   Install [Docker] (requires Linux/macOS 10.10.3+/Window 10 Pro)
+*   Install build dependancies
+
+        sudo apt-add-repository ppa:ev3dev/tools
+        sudo apt-get update
+        sudo apt-get install qemu-user-static libgrx-3.0-dev
+
 *   In the source code directory, run the Docker setup script
 
-        ./docker/setup.sh $BUILD_AREA $ARCH
+        ./docker/setup.sh $ARCH
 
-    where `$BUILD_AREA` is any directory you would like. This is where the
-    build output will be saved. The directory will be created if it does not
-    exist. And `$ARCH` is `armel` (or `armhf` if you are building for RPi
-    or BeagleBone).
+    Where `$ARCH` is `armel` (or `armhf` if you are building for RPi
+    or BeagleBone).  Output will be saved to a `build-$ARCH` directory.
 
 *   Build the code by running...
 
         docker exec --tty brickman_armel make install
 
-*   Copy the contents of `$BUILD_AREA/dist/` to the EV3 and run it.
+*   Copy the contents of `build-$ARCH/dist/` to the EV3 and run it.
 
 [Docker]: https://www.docker.com/
 
