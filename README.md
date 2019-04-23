@@ -22,11 +22,9 @@ Get the code:
 To build for the EV3:
 
 *   Install [Docker] (requires Linux/macOS 10.10.3+/Window 10 Pro)
-*   Install build dependancies
+*   Install build dependancies (Linux only)
 
-        sudo apt-add-repository ppa:ev3dev/tools
-        sudo apt-get update
-        sudo apt-get install qemu-user-static libgrx-3.0-dev
+        sudo apt-get install qemu-user-static
 
 *   In the source code directory, run the Docker setup script
 
@@ -45,6 +43,13 @@ To build for the EV3:
 
 To build the desktop test (makes UI development much faster), in a regular terminal,
 not in Docker:
+
+*   Install build dependancies
+
+        sudo apt-add-repository -u -s  ppa:ev3dev/tools
+        sudo apt-get update
+        sudo apt-get install devscripts
+        sudo mk-build-deps --install debian/control
 
 * Install the build-deps listed in `debian/control`.
 * Then...
