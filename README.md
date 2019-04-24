@@ -46,7 +46,7 @@ not in Docker:
 
 *   Install build dependancies
 
-        sudo apt-add-repository -u -s  ppa:ev3dev/tools
+        sudo apt-add-repository ppa:ev3dev/tools
         sudo apt-get update
         sudo apt-get install devscripts
         sudo mk-build-deps --install debian/control
