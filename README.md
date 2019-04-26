@@ -48,7 +48,7 @@ not in Docker:
 
         sudo apt-add-repository ppa:ev3dev/tools
         sudo apt-get update
-        sudo apt-get install devscripts
+        sudo apt-get install devscripts equivs
         sudo mk-build-deps --install debian/control
 
 * Then...
