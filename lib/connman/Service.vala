@@ -350,6 +350,20 @@ namespace Connman {
             }
         }
 
+        public bool mdns { get { return dbus_proxy.mdns; } }
+        public bool mdns_configuration {
+            get { return dbus_proxy.mdns_configuration; }
+            set {
+                if (value == mdns_configuration)
+                    return;
+                try {
+                    dbus_proxy.set_property_sync ("mDNS.Configuration", value);
+                } catch (Error err) {
+                    critical ("%s", err.message);
+                }
+            }
+        }
+
         public signal void removed ();
 
         internal static async Service new_async (ObjectPath path) throws IOError {
@@ -478,6 +492,12 @@ namespace Connman {
                 break;
             case "Ethernet":
                 notify_property ("ethernet");
+                break;
+            case "mDNS":
+                notify_property ("mdns");
+                break;
+            case "mDNS.Configuration":
+                notify_property ("mdns-configuration");
                 break;
             default:
                 critical ("Unknown dbus property '%s'", name);
@@ -705,5 +725,7 @@ namespace net.connman {
         public abstract HashTable<string, Variant> proxy_configuration { owned get; }
         public abstract HashTable<string, Variant> provider { owned get; }
         public abstract HashTable<string, Variant> ethernet { owned get; }
+        public abstract bool mdns { owned get; }
+        public abstract bool mdns_configuration { owned get; }
     }
 }
