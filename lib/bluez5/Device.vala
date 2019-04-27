@@ -151,27 +151,27 @@ namespace Bluez5 {
             return device_map[path];
         }
 
-        public async void connect_device () throws IOError {
+        public async void connect_device () throws DBusError, IOError {
             yield dbus_proxy.connect ();
         }
 
-        public async void disconnect_device () throws IOError {
+        public async void disconnect_device () throws DBusError, IOError {
             yield dbus_proxy.disconnect ();
         }
 
-        public async void connect_profile (string uuid) throws IOError {
+        public async void connect_profile (string uuid) throws DBusError, IOError {
             yield dbus_proxy.connect_profile (uuid);
         }
 
-        public async void disconnect_profile (string uuid) throws IOError {
+        public async void disconnect_profile (string uuid) throws DBusError, IOError {
             yield dbus_proxy.disconnect_profile (uuid);
         }
 
-        public async void pair () throws IOError {
+        public async void pair () throws DBusError, IOError {
             yield dbus_proxy.pair ();
         }
 
-        public async void cancel_pairing () throws IOError {
+        public async void cancel_pairing () throws DBusError, IOError {
             yield dbus_proxy.cancel_pairing ();
         }
     }
@@ -180,12 +180,12 @@ namespace Bluez5 {
 namespace org.bluez {
     [DBus (name = "org.bluez.Device1")]
     public interface Device1 : Object {
-        public abstract async void connect () throws IOError;
-        public abstract async void disconnect () throws IOError;
-        public abstract async void connect_profile (string uuid) throws IOError;
-        public abstract async void disconnect_profile (string uuid) throws IOError;
-        public abstract async void pair () throws IOError;
-        public abstract async void cancel_pairing () throws IOError;
+        public abstract async void connect () throws DBusError, IOError;
+        public abstract async void disconnect () throws DBusError, IOError;
+        public abstract async void connect_profile (string uuid) throws DBusError, IOError;
+        public abstract async void disconnect_profile (string uuid) throws DBusError, IOError;
+        public abstract async void pair () throws DBusError, IOError;
+        public abstract async void cancel_pairing () throws DBusError, IOError;
 
         public abstract string address { owned get; }
         public abstract string name { owned get; }

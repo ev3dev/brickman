@@ -124,54 +124,54 @@ namespace org.freedesktop.systemd1 {
         public abstract string virtualization { owned get; }
         public abstract string architecture { owned get; }
 
-        public abstract async ObjectPath get_unit (string name) throws IOError;
-        public abstract async ObjectPath get_unit_by_pid (uint32 pid) throws IOError;
-        public abstract async ObjectPath load_unit (string name) throws IOError;
-        public abstract async ObjectPath start_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath start_unit_replace (string old_unit, string new_unit, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath stop_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath reload_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath restart_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath try_restart_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath reload_or_restart_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath reload_or_try_restart_unit (string name, Systemd.UnitMode mode) throws IOError;
-        public abstract async void kill_unit (string name, Systemd.Who who, int32 @signal) throws IOError;
-        public abstract async void reset_failed_unit (string name) throws IOError;
-        public abstract async ObjectPath get_job (uint32 id) throws IOError;
-        public abstract async void cancel_job (uint32 id) throws IOError;
-        public abstract async void clear_jobs () throws IOError;
-        public abstract async void reset_failed () throws IOError;
-        public abstract async UnitInfo[] list_units () throws IOError;
-        public abstract async JobInfo[] list_jobs () throws IOError;
-        public abstract async void subscribe () throws IOError;
-        public abstract async void unsubscribe () throws IOError;
-        public abstract async ObjectPath create_snapshot (string name, bool cleanup) throws IOError;
-        public abstract async void remove_snapshot (string name) throws IOError;
-        public abstract async void reload () throws IOError;
-        public abstract async void reexecute () throws IOError;
-        public abstract async void exit () throws IOError;
-        public abstract async void reboot () throws IOError;
-        public abstract async void power_off () throws IOError;
-        public abstract async void halt () throws IOError;
+        public abstract async ObjectPath get_unit (string name) throws DBusError, IOError;
+        public abstract async ObjectPath get_unit_by_pid (uint32 pid) throws DBusError, IOError;
+        public abstract async ObjectPath load_unit (string name) throws DBusError, IOError;
+        public abstract async ObjectPath start_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath start_unit_replace (string old_unit, string new_unit, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath stop_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath reload_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath restart_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath try_restart_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath reload_or_restart_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath reload_or_try_restart_unit (string name, Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async void kill_unit (string name, Systemd.Who who, int32 @signal) throws DBusError, IOError;
+        public abstract async void reset_failed_unit (string name) throws DBusError, IOError;
+        public abstract async ObjectPath get_job (uint32 id) throws DBusError, IOError;
+        public abstract async void cancel_job (uint32 id) throws DBusError, IOError;
+        public abstract async void clear_jobs () throws DBusError, IOError;
+        public abstract async void reset_failed () throws DBusError, IOError;
+        public abstract async UnitInfo[] list_units () throws DBusError, IOError;
+        public abstract async JobInfo[] list_jobs () throws DBusError, IOError;
+        public abstract async void subscribe () throws DBusError, IOError;
+        public abstract async void unsubscribe () throws DBusError, IOError;
+        public abstract async ObjectPath create_snapshot (string name, bool cleanup) throws DBusError, IOError;
+        public abstract async void remove_snapshot (string name) throws DBusError, IOError;
+        public abstract async void reload () throws DBusError, IOError;
+        public abstract async void reexecute () throws DBusError, IOError;
+        public abstract async void exit () throws DBusError, IOError;
+        public abstract async void reboot () throws DBusError, IOError;
+        public abstract async void power_off () throws DBusError, IOError;
+        public abstract async void halt () throws DBusError, IOError;
         [DBus  (name = "KExec")]
-        public abstract async void kexec () throws IOError;
-        public abstract async void switch_root (string new_root, string init) throws IOError;
-        public abstract async void set_environment (string[] names) throws IOError;
-        public abstract async void unset_environment (string[] names) throws IOError;
-        public abstract async void unset_and_set_environment (string[] unset, string[] @set) throws IOError;
-        public abstract async UnitFileInfo[] list_unit_files () throws IOError;
-        public abstract async Systemd.UnitFileState get_unit_file_state (string file) throws IOError;
-        public abstract async UnitLinkChangeInfo[] enable_unit_files (string[] files, bool runtime, bool force, out bool carries_install_info) throws IOError;
-        public abstract async UnitLinkChangeInfo[] disable_unit_files (string[] files, bool runtime) throws IOError;
-        public abstract async UnitLinkChangeInfo[] reenable_unit_files (string[] files, bool runtime, bool force, out bool carries_install_info) throws IOError;
-        public abstract async UnitLinkChangeInfo[] link_unit_files (string[] files, bool runtime) throws IOError;
-        public abstract async UnitLinkChangeInfo[] preset_unit_files (string[] files, bool runtime, bool force, out bool carries_install_info) throws IOError;
-        public abstract async UnitLinkChangeInfo[] mask_unit_files (string[] files, bool runtime) throws IOError;
-        public abstract async UnitLinkChangeInfo[] unmask_unit_files (string[] files, bool runtime) throws IOError;
-        public abstract async UnitLinkChangeInfo[] set_default_target (string[] files) throws IOError;
-        public abstract async string get_default_target () throws IOError;
-        public abstract async void set_unit_properties (string name, bool runtime, UnitProperty[] properties) throws IOError;
-        public abstract async ObjectPath start_transiend_unit (string name, string mode, UnitProperty[] properties, UnitPropertyGroup[] aux) throws IOError;
+        public abstract async void kexec () throws DBusError, IOError;
+        public abstract async void switch_root (string new_root, string init) throws DBusError, IOError;
+        public abstract async void set_environment (string[] names) throws DBusError, IOError;
+        public abstract async void unset_environment (string[] names) throws DBusError, IOError;
+        public abstract async void unset_and_set_environment (string[] unset, string[] @set) throws DBusError, IOError;
+        public abstract async UnitFileInfo[] list_unit_files () throws DBusError, IOError;
+        public abstract async Systemd.UnitFileState get_unit_file_state (string file) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] enable_unit_files (string[] files, bool runtime, bool force, out bool carries_install_info) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] disable_unit_files (string[] files, bool runtime) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] reenable_unit_files (string[] files, bool runtime, bool force, out bool carries_install_info) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] link_unit_files (string[] files, bool runtime) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] preset_unit_files (string[] files, bool runtime, bool force, out bool carries_install_info) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] mask_unit_files (string[] files, bool runtime) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] unmask_unit_files (string[] files, bool runtime) throws DBusError, IOError;
+        public abstract async UnitLinkChangeInfo[] set_default_target (string[] files) throws DBusError, IOError;
+        public abstract async string get_default_target () throws DBusError, IOError;
+        public abstract async void set_unit_properties (string name, bool runtime, UnitProperty[] properties) throws DBusError, IOError;
+        public abstract async ObjectPath start_transiend_unit (string name, string mode, UnitProperty[] properties, UnitPropertyGroup[] aux) throws DBusError, IOError;
 
         public abstract signal void unit_new (string id, ObjectPath path);
         public abstract signal void unit_removed (string id, ObjectPath path);
@@ -229,15 +229,15 @@ namespace org.freedesktop.systemd1 {
         public abstract bool need_daemon_reload { get; }
         public abstract uint64 job_timeout_usec { get; }
 
-        public abstract async ObjectPath start (Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath stop (Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath reload (Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath restart (Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath try_restart (Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath reload_or_restart (Systemd.UnitMode mode) throws IOError;
-        public abstract async ObjectPath reload_or_try_restart (Systemd.UnitMode mode) throws IOError;
+        public abstract async ObjectPath start (Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath stop (Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath reload (Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath restart (Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath try_restart (Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath reload_or_restart (Systemd.UnitMode mode) throws DBusError, IOError;
+        public abstract async ObjectPath reload_or_try_restart (Systemd.UnitMode mode) throws DBusError, IOError;
 
-        public abstract async void reset_failed () throws IOError;
+        public abstract async void reset_failed () throws DBusError, IOError;
     }
 
     [DBus (name = "org.freedesktop.systemd1.Job")]
@@ -252,6 +252,6 @@ namespace org.freedesktop.systemd1 {
         public abstract string job_type { owned get; }
         public abstract UnitLink unit { owned get; }
 
-        public abstract async void cancel () throws IOError;
+        public abstract async void cancel () throws DBusError, IOError;
     }
 }

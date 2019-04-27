@@ -137,7 +137,7 @@ namespace BrickManager {
                             status_window.loading = false;
                             connections_window.loading = false;
                             wifi_window.loading = false;
-                        } catch (IOError err) {
+                        } catch (Error err) {
                             critical ("%s", err.message);
                         }
                     });
@@ -190,7 +190,7 @@ namespace BrickManager {
             }
         }
 
-        async void init_async () throws IOError {
+        async void init_async () throws DBusError, IOError {
             manager = yield Manager.new_async ();
             manager.bind_property ("state", status_window, "state",
                 BindingFlags.SYNC_CREATE, transform_manager_state_to_string);
@@ -554,7 +554,7 @@ namespace BrickManager {
                 try {
                     connection_window.is_connect_busy = true;
                     yield service.disconnect_service ();
-                } catch (IOError err) {
+                } catch (Error err) {
                     var dialog = new MessageDialog ("Error", err.message);
                     dialog.show ();
                     connection_window.is_connect_busy = false;
@@ -564,7 +564,7 @@ namespace BrickManager {
                     connection_window.is_connect_busy = true;
                     // Do long timeout for WiFi since we have to wait for password entry
                     yield service.connect_service (service.service_type == "wifi");
-                } catch (IOError err) {
+                } catch (Error err) {
                     var dialog = new MessageDialog ("Error", err.message);
                     dialog.show ();
                     connection_window.is_connect_busy = false;

@@ -221,79 +221,79 @@ namespace Systemd {
          * @return A Unit object.
          * @throws IOError Unit has not been loaded yet or DBus error
          */
-        public async Unit get_unit (string name) throws IOError {
+        public async Unit get_unit (string name) throws DBusError, IOError {
             var path = yield manager.get_unit (name);
             return yield Unit.get_instance_for_path (path);
         }
 
-        public async Unit get_unit_by_pid (uint32 pid) throws IOError {
+        public async Unit get_unit_by_pid (uint32 pid) throws DBusError, IOError {
             var path = yield manager.get_unit_by_pid (pid);
             return yield Unit.get_instance_for_path (path);
         }
 
-        public async Unit load_unit (string name) throws IOError {
+        public async Unit load_unit (string name) throws DBusError, IOError {
             var path = yield manager.load_unit (name);
             return yield Unit.get_instance_for_path (path);
         }
 
-        public async Job start_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job start_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield manager.start_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job start_unit_replace (string old_unit, string new_unit, UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job start_unit_replace (string old_unit, string new_unit, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield manager.start_unit_replace (old_unit, new_unit, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job stop_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job stop_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield manager.stop_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job reload_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job reload_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield manager.reload_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+        public async Job restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError{
             var path = yield manager.restart_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+        public async Job try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError{
             var path = yield manager.try_restart_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job reload_or_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+        public async Job reload_or_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError{
             var path = yield manager.reload_or_restart_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async Job reload_or_try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws IOError{
+        public async Job reload_or_try_restart_unit (string name, UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError{
             var path = yield manager.reload_or_try_restart_unit (name, mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async void kill_unit (string name, Who who, int32 @signal = Posix.SIGKILL) throws IOError {
+        public async void kill_unit (string name, Who who, int32 @signal = Posix.SIGKILL) throws DBusError, IOError {
             yield manager.kill_unit (name, who, @signal);
         }
 
-        public async Job get_job (uint32 id) throws IOError {
+        public async Job get_job (uint32 id) throws DBusError, IOError {
             var path = yield manager.get_job (id);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async void clear_jobs () throws IOError {
+        public async void clear_jobs () throws DBusError, IOError {
             yield manager.clear_jobs ();
         }
 
-        public async void reset_failed_unit (string name) throws IOError {
+        public async void reset_failed_unit (string name) throws DBusError, IOError {
             yield manager.reset_failed_unit (name);
         }
 
-        public async UnitInfo[] list_units () throws IOError {
+        public async UnitInfo[] list_units () throws DBusError, IOError {
             var units = yield manager.list_units ();
             var result = new UnitInfo[units.length];
             var i = 0;
@@ -303,7 +303,7 @@ namespace Systemd {
             return result;
         }
 
-        public async JobInfo[] list_jobs () throws IOError {
+        public async JobInfo[] list_jobs () throws DBusError, IOError {
             var jobs = yield manager.list_jobs ();
             var result = new JobInfo[jobs.length];
             var i = 0;
@@ -313,45 +313,45 @@ namespace Systemd {
             return result;
         }
 
-        public async void subscribe () throws IOError {
+        public async void subscribe () throws DBusError, IOError {
             yield manager.subscribe ();
         }
 
-        public async void unsubscribe () throws IOError {
+        public async void unsubscribe () throws DBusError, IOError {
             yield manager.unsubscribe ();
         }
 
-        public async Unit create_snapshot (string name, bool cleanup = true) throws IOError {
+        public async Unit create_snapshot (string name, bool cleanup = true) throws DBusError, IOError {
             var path = yield manager.create_snapshot (name, cleanup);
             return yield Unit.get_instance_for_path (path);
         }
 
-        public async void remove_snapshot (string name) throws IOError {
+        public async void remove_snapshot (string name) throws DBusError, IOError {
             yield manager.remove_snapshot (name);
         }
 
-        public async void reload () throws IOError {
+        public async void reload () throws DBusError, IOError {
             yield manager.reload ();
         }
-        public async void reexecute () throws IOError {
+        public async void reexecute () throws DBusError, IOError {
             yield manager.reexecute ();
         }
-        public async void exit () throws IOError {
+        public async void exit () throws DBusError, IOError {
             yield manager.exit ();
         }
 
-        public async void set_environment (string[] names) throws IOError {
+        public async void set_environment (string[] names) throws DBusError, IOError {
             yield manager.set_environment (names);
         }
-        public async void unset_environment (string[] names) throws IOError {
+        public async void unset_environment (string[] names) throws DBusError, IOError {
             yield manager.unset_environment (names);
         }
 
-        public async void unset_and_set_environment (string[] unset, string[] @set) throws IOError {
+        public async void unset_and_set_environment (string[] unset, string[] @set) throws DBusError, IOError {
             yield manager.unset_and_set_environment (unset, @set);
         }
 
-        public async UnitFileInfo[] list_unit_files () throws IOError {
+        public async UnitFileInfo[] list_unit_files () throws DBusError, IOError {
             var info = yield manager.list_unit_files ();
             var result = new UnitFileInfo[info.length];
             for (int i = 0; i < info.length; i++) {
@@ -365,7 +365,7 @@ namespace Systemd {
             return result;
         }
 
-        public async UnitFileState get_unit_file_state (string file) throws IOError {
+        public async UnitFileState get_unit_file_state (string file) throws DBusError, IOError {
             return yield manager.get_unit_file_state (file);
         }
 
@@ -384,55 +384,55 @@ namespace Systemd {
          * any enablement information (i.e. an [Install]) section.
          * @return The changes list.
          */
-        public async UnitLinkChangeInfo[] enable_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws IOError {
+        public async UnitLinkChangeInfo[] enable_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws DBusError, IOError {
             var info = yield manager.enable_unit_files (files, runtime, force, out carries_install_info);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] disable_unit_files (string[] files, bool runtime = false) throws IOError {
+        public async UnitLinkChangeInfo[] disable_unit_files (string[] files, bool runtime = false) throws DBusError, IOError {
             var info = yield manager.disable_unit_files (files, runtime);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] reenable_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws IOError {
+        public async UnitLinkChangeInfo[] reenable_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws DBusError, IOError {
             var info =  yield manager.reenable_unit_files (files, runtime, force, out carries_install_info);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] link_unit_files (string[] files, bool runtime = false) throws IOError {
+        public async UnitLinkChangeInfo[] link_unit_files (string[] files, bool runtime = false) throws DBusError, IOError {
             var info =  yield manager.link_unit_files (files, runtime);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] preset_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws IOError {
+        public async UnitLinkChangeInfo[] preset_unit_files (string[] files, bool runtime = false, bool force = false, out bool carries_install_info) throws DBusError, IOError {
             var info =  yield manager.preset_unit_files (files, runtime, force, out carries_install_info);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] mask_unit_files (string[] files, bool runtime = false) throws IOError {
+        public async UnitLinkChangeInfo[] mask_unit_files (string[] files, bool runtime = false) throws DBusError, IOError {
             var info =  yield manager.mask_unit_files (files, runtime);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] unmask_unit_files (string[] files, bool runtime = false) throws IOError {
+        public async UnitLinkChangeInfo[] unmask_unit_files (string[] files, bool runtime = false) throws DBusError, IOError {
             var info =  yield manager.unmask_unit_files (files, runtime);
             return marshal_unit_link_change_info (info);
         }
 
-        public async UnitLinkChangeInfo[] set_default_target (string[] files) throws IOError {
+        public async UnitLinkChangeInfo[] set_default_target (string[] files) throws DBusError, IOError {
             var info =  yield manager.set_default_target (files);
             return marshal_unit_link_change_info (info);
         }
 
-        public async string get_default_target () throws IOError {
+        public async string get_default_target () throws DBusError, IOError {
             return yield manager.get_default_target ();
         }
 
-//      public async void set_unit_properties (string name, bool runtime, UnitProperty[] properties) throws IOError {
+//      public async void set_unit_properties (string name, bool runtime, UnitProperty[] properties) throws DBusError, IOError {
 //          yield manager.set_unit_properties (name, runtime, properties);
 //      }
 
-//      public async Unit start_transiend_unit (string name, string mode, UnitProperty[] properties, UnitPropertyGroup[] aux) throws IOError {
+//      public async Unit start_transiend_unit (string name, string mode, UnitProperty[] properties, UnitPropertyGroup[] aux) throws DBusError, IOError {
 //          var path = yield manager.start_transiend_unit (name, mode, properties, aux);
 //          return yield Unit.get_instance_from_path (path);
 //      }
@@ -491,7 +491,7 @@ namespace Systemd {
         public uint32 id { get { return id; } }
         public Job job { get; private set; }
 
-        public static async JobLink new_async (org.freedesktop.systemd1.Unit.JobLink job_link) throws IOError {
+        public static async JobLink new_async (org.freedesktop.systemd1.Unit.JobLink job_link) throws DBusError, IOError {
             var instance = new JobLink ();
             instance.job_link = job_link;
             instance._job = yield Job.get_instance_for_path (job_link.path);
@@ -573,36 +573,36 @@ namespace Systemd {
             object_map.remove (path);
         }
 
-        public async Job start (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job start (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.start (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job stop (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job stop (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.stop (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job reload (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job reload (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.reload (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job restart (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.restart (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job try_restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job try_restart (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.try_restart (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job reload_or_restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job reload_or_restart (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.reload_or_restart (mode);
             return yield Job.get_instance_for_path (path);
         }
-        public async Job reload_or_try_restart (UnitMode mode = UnitMode.REPLACE) throws IOError {
+        public async Job reload_or_try_restart (UnitMode mode = UnitMode.REPLACE) throws DBusError, IOError {
             var path = yield unit.reload_or_try_restart (mode);
             return yield Job.get_instance_for_path (path);
         }
 
-        public async void reset_failed () throws IOError {
+        public async void reset_failed () throws DBusError, IOError {
             yield unit.reset_failed ();
         }
 
@@ -867,7 +867,7 @@ namespace Systemd {
             object_map.remove (path);
         }
 
-        public async void cancel () throws IOError {
+        public async void cancel () throws DBusError, IOError {
             yield job.cancel ();
         }
 

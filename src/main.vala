@@ -90,7 +90,7 @@ namespace BrickManager {
                                     logind_manager.power_off.end (res);
                                     global_manager.set_leds (LedState.BUSY);
                                     app.quit ();
-                                } catch (IOError err) {
+                                } catch (Error err) {
                                     var dialog = new MessageDialog ("Error", err.message);
                                     dialog.show ();
                                 }
@@ -102,7 +102,7 @@ namespace BrickManager {
                                     logind_manager.reboot.end (res);
                                     global_manager.set_leds (LedState.BUSY);
                                     app.quit ();
-                                } catch (IOError err) {
+                                } catch (Error err) {
                                     var dialog = new MessageDialog ("Error", err.message);
                                     dialog.show ();
                                 }

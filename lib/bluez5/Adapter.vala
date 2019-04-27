@@ -134,15 +134,15 @@ namespace Bluez5 {
             return adapter_map[path];
         }
 
-        public async void start_discovery () throws IOError {
+        public async void start_discovery () throws DBusError, IOError {
             yield dbus_proxy.start_discovery ();
         }
 
-        public async void stop_discovery () throws IOError {
+        public async void stop_discovery () throws DBusError, IOError {
             yield dbus_proxy.stop_discovery ();
         }
 
-        public async void remove_device (Device device) throws IOError {
+        public async void remove_device (Device device) throws DBusError, IOError {
             var path = new ObjectPath (device.object_path);
             yield dbus_proxy.remove_device (path);
         }
@@ -152,9 +152,9 @@ namespace Bluez5 {
 namespace org.bluez {
     [DBus (name = "org.bluez.Adapter1")]
     public interface Adapter1 : Object {
-        public abstract async void start_discovery () throws IOError;
-        public abstract async void stop_discovery () throws IOError;
-        public abstract async void remove_device (ObjectPath device) throws IOError;
+        public abstract async void start_discovery () throws DBusError, IOError;
+        public abstract async void stop_discovery () throws DBusError, IOError;
+        public abstract async void remove_device (ObjectPath device) throws DBusError, IOError;
 
         public abstract string address { owned get; }
         public abstract string name { owned get; }

@@ -122,80 +122,80 @@ namespace Systemd.Logind {
         //public async UserInfo[] list_users () throws IOError;
         //public async SeatInfo[] list_seats () throws IOError;
         //public async SeatInfo[] list_inhibitors () throws IOError;
-        public async void activate_session (string session_id) throws IOError {
+        public async void activate_session (string session_id) throws DBusError, IOError {
             yield manager.activate_session (session_id);
         }
-        public async void activate_session_on_seat (string session_id, string seat_id) throws IOError {
+        public async void activate_session_on_seat (string session_id, string seat_id) throws DBusError, IOError {
             yield manager.activate_session_on_seat (session_id, seat_id);
         }
-        public async void lock_session (string session_id) throws IOError {
+        public async void lock_session (string session_id) throws DBusError, IOError {
             yield manager.lock_session (session_id);
         }
-        public async void unlock_session (string session_id) throws IOError {
+        public async void unlock_session (string session_id) throws DBusError, IOError {
             yield manager.unlock_session (session_id);
         }
-        public async void lock_sessions () throws IOError {
+        public async void lock_sessions () throws DBusError, IOError {
             yield manager.lock_sessions ();
         }
-        public async void unlock_sessions () throws IOError {
+        public async void unlock_sessions () throws DBusError, IOError {
             yield manager.unlock_sessions ();
         }
-        public async void kill_session (string session_id, SessionToKill session, int32 @signal = Posix.SIGTERM) throws IOError {
+        public async void kill_session (string session_id, SessionToKill session, int32 @signal = Posix.SIGTERM) throws DBusError, IOError {
             yield manager.kill_session (session_id, session, @signal);
         }
-        public async void kill_user (uint32 user_id, int32 @signal = Posix.SIGTERM) throws IOError {
+        public async void kill_user (uint32 user_id, int32 @signal = Posix.SIGTERM) throws DBusError, IOError {
             yield manager.kill_user (user_id, @signal);
         }
-        public async void terminate_session (string session_id) throws IOError {
+        public async void terminate_session (string session_id) throws DBusError, IOError {
             yield manager.terminate_session (session_id);
         }
-        public async void terminate_user (uint32 user_id) throws IOError {
+        public async void terminate_user (uint32 user_id) throws DBusError, IOError {
             yield manager.terminate_user (user_id);
         }
-        public async void terminate_seat (string seat_id) throws IOError {
+        public async void terminate_seat (string seat_id) throws DBusError, IOError {
             yield manager.terminate_seat (seat_id);
         }
-        public async void set_user_linger (uint32 user_id, bool enable, bool interactive = false) throws IOError {
+        public async void set_user_linger (uint32 user_id, bool enable, bool interactive = false) throws DBusError, IOError {
             yield manager.set_user_linger (user_id, enable, interactive);
         }
-        public async void attach_Device (string seat_id, string sysfs_path, bool interactive = false) throws IOError {
+        public async void attach_Device (string seat_id, string sysfs_path, bool interactive = false) throws DBusError, IOError {
             yield manager.attach_Device (seat_id, sysfs_path, interactive);
         }
-        public async void flush_devices (bool interactive = false) throws IOError {
+        public async void flush_devices (bool interactive = false) throws DBusError, IOError {
             yield manager.flush_devices (interactive);
         }
-        public async void power_off (bool interactive = false) throws IOError {
+        public async void power_off (bool interactive = false) throws DBusError, IOError {
             yield manager.power_off (interactive);
         }
-        public async void reboot (bool interactive = false) throws IOError {
+        public async void reboot (bool interactive = false) throws DBusError, IOError {
             yield manager.reboot (interactive);
         }
-        public async void suspend (bool interactive = false) throws IOError {
+        public async void suspend (bool interactive = false) throws DBusError, IOError {
             yield manager.suspend (interactive);
         }
-        public async void hibernate (bool interactive = false) throws IOError {
+        public async void hibernate (bool interactive = false) throws DBusError, IOError {
             yield manager.hibernate (interactive);
         }
-        public async void hybrid_sleep (bool interactive = false) throws IOError {
+        public async void hybrid_sleep (bool interactive = false) throws DBusError, IOError {
             yield manager.hybrid_sleep (interactive);
         }
-        public async CanResponse can_power_off () throws IOError {
+        public async CanResponse can_power_off () throws DBusError, IOError {
             return yield manager.can_power_off ();
         }
-        public async CanResponse can_reboot () throws IOError {
+        public async CanResponse can_reboot () throws DBusError, IOError {
             return yield manager.can_reboot ();
         }
-        public async CanResponse can_suspend () throws IOError {
+        public async CanResponse can_suspend () throws DBusError, IOError {
             return yield manager.can_suspend ();
         }
-        public async CanResponse can_hybrid_sleep () throws IOError {
+        public async CanResponse can_hybrid_sleep () throws DBusError, IOError {
             return yield manager.can_hybrid_sleep ();
         }
         // FIXME: this fails to build in stretch
         // logind-interfaces.c: In function 'org_freedesktop_login1_manager_proxy_inhibit_async':
         // logind-interfaces.c:3185:2: error: '_fd_list' undeclared (first use in this function)
 #if 0
-        public async UnixInputStream inhibit (string who, string what, string why, InhibitMode mode) throws IOError {
+        public async UnixInputStream inhibit (string who, string what, string why, InhibitMode mode) throws DBusError, IOError {
             return yield manager.inhibit (who, what, why, mode);
         }
 #endif

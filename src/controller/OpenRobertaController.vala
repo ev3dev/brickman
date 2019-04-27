@@ -33,9 +33,9 @@ namespace BrickManager {
         public signal void status (string message);
 
         [DBus (name = "connect")]
-        public abstract string connect (string address) throws IOError;
+        public abstract string connect (string address) throws DBusError, IOError;
         [DBus (name = "disconnect")]
-        public abstract void disconnect () throws IOError;
+        public abstract void disconnect () throws DBusError, IOError;
     }
 
     public class OpenRobertaController : Object, IBrickManagerModule {
@@ -190,7 +190,7 @@ namespace BrickManager {
                 open_roberta_window.selected_server = address;
                 var code = service.connect ("http://" + address);
                 OpenRobertaWindow.show_pairing_code_dialog (code);
-            } catch (IOError err) {
+            } catch (Error err) {
                 warning ("%s", err.message);
             }
         }
@@ -198,7 +198,7 @@ namespace BrickManager {
         void on_server_disconnect () {
             try {
                 service.disconnect ();
-            } catch (IOError err) {
+            } catch (Error err) {
                 warning ("%s", err.message);
             }
         }

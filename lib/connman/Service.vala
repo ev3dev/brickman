@@ -366,7 +366,7 @@ namespace Connman {
 
         public signal void removed ();
 
-        internal static async Service new_async (ObjectPath path) throws IOError {
+        internal static async Service new_async (ObjectPath path) throws DBusError, IOError {
             var service = new Service ();
             service.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 Manager.SERVICE_NAME, path);
@@ -381,7 +381,7 @@ namespace Connman {
             return service;
         }
 
-        public async void connect_service (bool long_timeout = false) throws IOError {
+        public async void connect_service (bool long_timeout = false) throws DBusError, IOError {
             if (long_timeout)
                 try {
                     yield ((DBusProxy)dbus_proxy).call ("Connect", null,
@@ -398,23 +398,23 @@ namespace Connman {
                 yield dbus_proxy.connect ();
         }
 
-        public async void disconnect_service () throws IOError {
+        public async void disconnect_service () throws DBusError, IOError {
             yield dbus_proxy.disconnect ();
         }
 
-        public async void remove() throws IOError {
+        public async void remove() throws DBusError, IOError {
             yield dbus_proxy.remove();
         }
 
-        public async void move_before(Service service) throws IOError {
+        public async void move_before(Service service) throws DBusError, IOError {
             yield dbus_proxy.move_before(service.object_path);
         }
 
-        public async void move_after(Service service) throws IOError {
+        public async void move_after(Service service) throws DBusError, IOError {
             yield dbus_proxy.move_after(service.object_path);
         }
 
-        public async void reset_counters() throws IOError {
+        public async void reset_counters() throws DBusError, IOError {
             yield dbus_proxy.reset_counters();
         }
 
@@ -679,17 +679,17 @@ namespace net.connman {
     [DBus (name = "net.connman.Service")]
     public interface Service : Object {
         [Deprecated]
-        public abstract async HashTable<string, Variant> get_properties() throws IOError;
-        public abstract async void set_property(string name, Variant? value) throws IOError;
+        public abstract async HashTable<string, Variant> get_properties() throws DBusError, IOError;
+        public abstract async void set_property(string name, Variant? value) throws DBusError, IOError;
         [DBus (name = "SetProperty")]
-        public abstract void set_property_sync(string name, Variant? value) throws IOError;
-        public abstract async void clear_property(string name) throws IOError;
-        public abstract async void connect() throws IOError;
-        public abstract async void disconnect() throws IOError;
-        public abstract async void remove() throws IOError;
-        public abstract async void move_before(ObjectPath service) throws IOError;
-        public abstract async void move_after(ObjectPath service) throws IOError;
-        public abstract async void reset_counters() throws IOError;
+        public abstract void set_property_sync(string name, Variant? value) throws DBusError, IOError;
+        public abstract async void clear_property(string name) throws DBusError, IOError;
+        public abstract async void connect() throws DBusError, IOError;
+        public abstract async void disconnect() throws DBusError, IOError;
+        public abstract async void remove() throws DBusError, IOError;
+        public abstract async void move_before(ObjectPath service) throws DBusError, IOError;
+        public abstract async void move_after(ObjectPath service) throws DBusError, IOError;
+        public abstract async void reset_counters() throws DBusError, IOError;
 
         public signal void property_changed(string name, Variant? value);
 

@@ -52,43 +52,43 @@ namespace org.freedesktop.login1 {
             uint32 process_id;
         }
 
-        public abstract async ObjectPath get_session (string id) throws IOError;
-        public abstract async ObjectPath get_session_by_pid (uint process_id) throws IOError;
-        public abstract async ObjectPath get_user (uint32 user_id) throws IOError;
-        public abstract async ObjectPath get_user_by_pid (uint pid) throws IOError;
-        public abstract async ObjectPath get_seat (string seat_id) throws IOError;
-        public abstract async SessionInfo[] list_sessions () throws IOError;
-        public abstract async UserInfo[] list_users () throws IOError;
-        public abstract async SeatInfo[] list_seats () throws IOError;
-        public abstract async SeatInfo[] list_inhibitors () throws IOError;
-        public abstract async void activate_session (string session_id) throws IOError;
-        public abstract async void activate_session_on_seat (string session_id, string seat_id) throws IOError;
-        public abstract async void lock_session (string session_id) throws IOError;
-        public abstract async void unlock_session (string session_id) throws IOError;
-        public abstract async void lock_sessions () throws IOError;
-        public abstract async void unlock_sessions () throws IOError;
-        public abstract async void kill_session (string session_id, Systemd.Logind.SessionToKill session, int32 @signal) throws IOError;
-        public abstract async void kill_user (uint32 user_id, int32 @signal) throws IOError;
-        public abstract async void terminate_session (string session_id) throws IOError;
-        public abstract async void terminate_user (uint32 user_id) throws IOError;
-        public abstract async void terminate_seat (string seat_id) throws IOError;
-        public abstract async void set_user_linger (uint32 user_id, bool enable, bool interactive) throws IOError;
-        public abstract async void attach_Device (string seat_id, string sysfs_path, bool interactive) throws IOError;
-        public abstract async void flush_devices (bool interactive) throws IOError;
-        public abstract async void power_off (bool interactive) throws IOError;
-        public abstract async void reboot (bool interactive) throws IOError;
-        public abstract async void suspend (bool interactive) throws IOError;
-        public abstract async void hibernate (bool interactive) throws IOError;
-        public abstract async void hybrid_sleep (bool interactive) throws IOError;
-        public abstract async Systemd.Logind.CanResponse can_power_off () throws IOError;
-        public abstract async Systemd.Logind.CanResponse can_reboot () throws IOError;
-        public abstract async Systemd.Logind.CanResponse can_suspend () throws IOError;
-        public abstract async Systemd.Logind.CanResponse can_hybrid_sleep () throws IOError;
+        public abstract async ObjectPath get_session (string id) throws DBusError, IOError;
+        public abstract async ObjectPath get_session_by_pid (uint process_id) throws DBusError, IOError;
+        public abstract async ObjectPath get_user (uint32 user_id) throws DBusError, IOError;
+        public abstract async ObjectPath get_user_by_pid (uint pid) throws DBusError, IOError;
+        public abstract async ObjectPath get_seat (string seat_id) throws DBusError, IOError;
+        public abstract async SessionInfo[] list_sessions () throws DBusError, IOError;
+        public abstract async UserInfo[] list_users () throws DBusError, IOError;
+        public abstract async SeatInfo[] list_seats () throws DBusError, IOError;
+        public abstract async SeatInfo[] list_inhibitors () throws DBusError, IOError;
+        public abstract async void activate_session (string session_id) throws DBusError, IOError;
+        public abstract async void activate_session_on_seat (string session_id, string seat_id) throws DBusError, IOError;
+        public abstract async void lock_session (string session_id) throws DBusError, IOError;
+        public abstract async void unlock_session (string session_id) throws DBusError, IOError;
+        public abstract async void lock_sessions () throws DBusError, IOError;
+        public abstract async void unlock_sessions () throws DBusError, IOError;
+        public abstract async void kill_session (string session_id, Systemd.Logind.SessionToKill session, int32 @signal) throws DBusError, IOError;
+        public abstract async void kill_user (uint32 user_id, int32 @signal) throws DBusError, IOError;
+        public abstract async void terminate_session (string session_id) throws DBusError, IOError;
+        public abstract async void terminate_user (uint32 user_id) throws DBusError, IOError;
+        public abstract async void terminate_seat (string seat_id) throws DBusError, IOError;
+        public abstract async void set_user_linger (uint32 user_id, bool enable, bool interactive) throws DBusError, IOError;
+        public abstract async void attach_Device (string seat_id, string sysfs_path, bool interactive) throws DBusError, IOError;
+        public abstract async void flush_devices (bool interactive) throws DBusError, IOError;
+        public abstract async void power_off (bool interactive) throws DBusError, IOError;
+        public abstract async void reboot (bool interactive) throws DBusError, IOError;
+        public abstract async void suspend (bool interactive) throws DBusError, IOError;
+        public abstract async void hibernate (bool interactive) throws DBusError, IOError;
+        public abstract async void hybrid_sleep (bool interactive) throws DBusError, IOError;
+        public abstract async Systemd.Logind.CanResponse can_power_off () throws DBusError, IOError;
+        public abstract async Systemd.Logind.CanResponse can_reboot () throws DBusError, IOError;
+        public abstract async Systemd.Logind.CanResponse can_suspend () throws DBusError, IOError;
+        public abstract async Systemd.Logind.CanResponse can_hybrid_sleep () throws DBusError, IOError;
         // FIXME: This does not build on stretch
         // logind-interfaces.c: In function 'org_freedesktop_login1_manager_proxy_inhibit_async':
         // logind-interfaces.c:3185:2: error: '_fd_list' undeclared (first use in this function)
 #if 0
-        public abstract async UnixInputStream inhibit (string who, string what, string why, Systemd.Logind.InhibitMode mode) throws IOError;
+        public abstract async UnixInputStream inhibit (string who, string what, string why, Systemd.Logind.InhibitMode mode) throws DBusError, IOError;
 #endif
 
         public abstract signal void session_new (string session_id, ObjectPath session);

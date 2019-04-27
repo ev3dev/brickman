@@ -49,7 +49,7 @@ namespace Connman {
 
         public signal void removed ();
 
-        internal static async Peer new_async (ObjectPath path) throws IOError {
+        internal static async Peer new_async (ObjectPath path) throws DBusError, IOError {
             var peer = new Peer();
             peer.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 Manager.SERVICE_NAME, path);
@@ -63,11 +63,11 @@ namespace Connman {
             return peer;
         }
 
-        public async void connect_peer() throws IOError {
+        public async void connect_peer() throws DBusError, IOError {
             yield dbus_proxy.connect ();
         }
 
-        public async void disconnect_peer() throws IOError {
+        public async void disconnect_peer() throws DBusError, IOError {
             yield dbus_proxy.disconnect ();
         }
 
@@ -111,9 +111,9 @@ namespace net.connman {
     [DBus (name = "net.connman.Peer")]
     public interface Peer : Object {
         [Deprecated]
-        public abstract async HashTable<string, Variant> get_properties () throws IOError;
-        public abstract async void connect () throws IOError;
-        public abstract async void disconnect () throws IOError;
+        public abstract async HashTable<string, Variant> get_properties () throws DBusError, IOError;
+        public abstract async void connect () throws DBusError, IOError;
+        public abstract async void disconnect () throws DBusError, IOError;
 
         public signal void property_changed (string name, Variant? value);
 

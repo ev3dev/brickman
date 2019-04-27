@@ -20,9 +20,9 @@
 namespace org.freedesktop.DBus {
     [DBus (name = "org.freedesktop.DBus.Properties")]
     public interface Properties : DBusProxy {
-        public abstract async Variant? get (string interface_name, string property_name) throws IOError;
-        public abstract async void set (string interface_name, string property_name, Variant? value) throws IOError;
-        public abstract async HashTable<string, Variant> get_all (string interface_name) throws IOError;
+        public abstract async Variant? get (string interface_name, string property_name) throws DBusError, IOError;
+        public abstract async void set (string interface_name, string property_name, Variant? value) throws DBusError, IOError;
+        public abstract async HashTable<string, Variant> get_all (string interface_name) throws DBusError, IOError;
 
         public abstract signal void properties_changed (string interface_name, HashTable<string, Variant> changed_properties, string[] invalidated_properties);
     }

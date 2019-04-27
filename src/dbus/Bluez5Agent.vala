@@ -34,12 +34,11 @@ namespace BrickManager {
         public Bluez5Agent () {
         }
 
-        public void release () {
+        public void release () throws DBusError, IOError {
             //debug ("Released.");
         }
 
-        public async string request_pin_code (ObjectPath device_path) throws BlueZError
-        {
+        public async string request_pin_code (ObjectPath device_path) throws DBusError, IOError, BlueZError {
             var result = ConfirmationDialogResult.CANCELED;
             var device = Device.get_for_object_path (device_path);
             var dialog = new Dialog ();
@@ -101,7 +100,7 @@ namespace BrickManager {
             return text_entry.text.replace (" ", "");
         }
 
-        public void display_pin_code (ObjectPath device_path, string pincode) {
+        public void display_pin_code (ObjectPath device_path, string pincode) throws DBusError, IOError {
             var device = Device.get_for_object_path (device_path);
             var dialog = new MessageDialog (device.alias,
                 "PIN code is:\n%s".printf (pincode));
@@ -117,7 +116,7 @@ namespace BrickManager {
             dialog.show ();
         }
 
-        public async uint32 request_passkey (ObjectPath device_path) throws BlueZError {
+        public async uint32 request_passkey (ObjectPath device_path) throws DBusError, IOError, BlueZError {
             var result = ConfirmationDialogResult.CANCELED;
             var device = Device.get_for_object_path (device_path);
             var dialog = new Dialog ();
@@ -178,7 +177,7 @@ namespace BrickManager {
             return (uint32)int.parse (text_entry.text);
         }
 
-        public void display_passkey (ObjectPath device_path, uint32 passkey, uint16 entered) {
+        public void display_passkey (ObjectPath device_path, uint32 passkey, uint16 entered) throws DBusError, IOError {
             // TODO: Do we want/need to do something with the `entered` parameter?
             var device = Device.get_for_object_path (device_path);
             // This particular function can be called multiple times while the
@@ -206,31 +205,25 @@ namespace BrickManager {
             display_passkey_dialog = null;
         }
 
-        public async void request_confirmation (ObjectPath device_path, uint32 passkey)
-            throws BlueZError
-        {
+        public async void request_confirmation (ObjectPath device_path, uint32 passkey) throws DBusError, IOError, BlueZError {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog (device.alias,
                 "Confirm passkey\n%s".printf ("%06u".printf (passkey)));
         }
 
-        public async void request_authorization (ObjectPath device_path)
-            throws BlueZError
-        {
+        public async void request_authorization (ObjectPath device_path) throws DBusError, IOError, BlueZError {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog (device.alias,
                 "Authorize\nthis device?");
         }
 
-        public async void authorize_service (ObjectPath device_path, string uuid)
-            throws BlueZError
-        {
+        public async void authorize_service (ObjectPath device_path, string uuid) throws DBusError, IOError, BlueZError {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog (device.alias,
                 "Authorize service\n%s?".printf (Uuid.to_short_profile (uuid)));
         }
 
-        async void display_confirmation_dialog (string title, string message) throws BlueZError {
+        async void display_confirmation_dialog (string title, string message) throws DBusError, IOError, BlueZError {
             var result = ConfirmationDialogResult.CANCELED;
             var dialog = new Dialog ();
             weak Dialog weak_dialog = dialog;
@@ -282,7 +275,7 @@ namespace BrickManager {
                 throw new BlueZError.CANCELED ("Canceled.");
         }
 
-        public void cancel () {
+        public void cancel () throws DBusError, IOError {
             canceled ();
         }
 

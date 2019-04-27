@@ -171,7 +171,7 @@ namespace BrickManager {
                 selected_adapter.stop_discovery.begin ((obj, res) => {
                     try {
                         selected_adapter.stop_discovery.end (res);
-                    } catch (IOError err) {
+                    } catch (Error err) {
                         critical ("%s", err.message);
                     }
                 });
@@ -179,7 +179,7 @@ namespace BrickManager {
                 selected_adapter.start_discovery.begin ((obj, res) => {
                     try {
                         selected_adapter.start_discovery.end (res);
-                    } catch (IOError err) {
+                    } catch (Error err) {
                         critical ("%s", err.message);
                     }
                 });
@@ -295,7 +295,7 @@ namespace BrickManager {
         async void remove_device (Device device) {
             try {
                 yield device.adapter.remove_device (device);
-            } catch (IOError err) {
+            } catch (Error err) {
                 var dialog = new MessageDialog ("Error", err.message);
                 dialog.show ();
             }
@@ -305,7 +305,7 @@ namespace BrickManager {
             try {
                 yield device.pair ();
                 device.trusted = true;
-            } catch (IOError err) {
+            } catch (Error err) {
                 var dialog = new MessageDialog ("Error", err.message);
                 dialog.show ();
             }
@@ -314,7 +314,7 @@ namespace BrickManager {
         async void disconnect_device (Device device) {
             try {
                 yield device.disconnect_device ();
-            } catch (IOError err) {
+            } catch (Error err) {
                 var dialog = new MessageDialog ("Error", err.message);
                 dialog.show ();
             }
@@ -323,7 +323,7 @@ namespace BrickManager {
         async void connect_device (Device device) {
             try {
                 yield device.connect_device ();
-            } catch (IOError err) {
+            } catch (Error err) {
                 var dialog = new MessageDialog ("Error", err.message);
                 dialog.show ();
             }

@@ -81,7 +81,7 @@ namespace Connman {
 
         public signal void removed ();
 
-        internal static async Technology new_async (ObjectPath path) throws IOError {
+        internal static async Technology new_async (ObjectPath path) throws DBusError, IOError {
             var technology = new Technology ();
             technology.dbus_proxy = yield Bus.get_proxy (BusType.SYSTEM,
                 Manager.SERVICE_NAME, path);
@@ -95,7 +95,7 @@ namespace Connman {
             return technology;
         }
 
-        public async void scan() throws IOError {
+        public async void scan() throws DBusError, IOError {
             yield dbus_proxy.scan();
         }
 
@@ -135,14 +135,14 @@ namespace net.connman {
     [DBus (name = "net.connman.Technology")]
     public interface Technology : Object {
         [Deprecated]
-        public abstract async HashTable<string, Variant> get_properties () throws IOError;
+        public abstract async HashTable<string, Variant> get_properties () throws DBusError, IOError;
         [DBus (name = "GetProperties")]
         [Deprecated]
-        public abstract HashTable<string, Variant> get_properties_sync () throws IOError;
-        public abstract async void set_property (string name, Variant? value) throws IOError;
+        public abstract HashTable<string, Variant> get_properties_sync () throws DBusError, IOError;
+        public abstract async void set_property (string name, Variant? value) throws DBusError, IOError;
         [DBus (name = "SetProperty")]
-        public abstract void set_property_sync (string name, Variant? value) throws IOError;
-        public abstract async void scan () throws IOError;
+        public abstract void set_property_sync (string name, Variant? value) throws DBusError, IOError;
+        public abstract async void scan () throws DBusError, IOError;
 
         public signal void property_changed (string name, Variant? value);
 

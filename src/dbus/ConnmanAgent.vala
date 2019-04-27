@@ -48,37 +48,29 @@ namespace BrickManager {
         public ConnmanAgent () {
         }
 
-        public async void release () {
+        public async void release () throws DBusError, IOError {
             //debug ("Released.");
         }
 
-        public async void report_error (ObjectPath service_path, string error)
-            throws ConnmanAgentError
-        {
+        public async void report_error (ObjectPath service_path, string error) throws DBusError, IOError, ConnmanAgentError {
             var dialog = new MessageDialog ("Error", error);
             dialog.show ();
             // TODO: get user feedback for retry
             //throw new ConnmanAgentError.RETRY ("User requested retry.");
         }
 
-        public async void report_peer_error (ObjectPath peer_path, string error)
-            throws ConnmanAgentError
-        {
+        public async void report_peer_error (ObjectPath peer_path, string error) throws DBusError, IOError, ConnmanAgentError {
             var dialog = new MessageDialog ("Error", error);
             dialog.show ();
             // TODO: get user feedback for retry
             //throw new ConnmanAgentError.RETRY ("User requested retry.");
         }
 
-        public async void request_browser (ObjectPath service_path, string url)
-            throws ConnmanAgentError
-        {
+        public async void request_browser (ObjectPath service_path, string url) throws DBusError, IOError, ConnmanAgentError {
             throw new ConnmanAgentError.CANCELED ("Web browser not implemented.");
         }
 
-        public async HashTable<string, Variant> request_input (ObjectPath service_path,
-            HashTable<string, Variant> fields) throws ConnmanAgentError
-        {
+        public async HashTable<string, Variant> request_input (ObjectPath service_path, HashTable<string, Variant> fields) throws DBusError, IOError, ConnmanAgentError {
             var service = manager.get_service (service_path);
             var required_field_names = new SList<string> ();
             string? previous_passphrase = null;
@@ -125,14 +117,12 @@ namespace BrickManager {
             return result;
         }
 
-        public async HashTable<string, Variant> request_peer_authorization (ObjectPath peer_path,
-            HashTable<string, Variant> fields) throws ConnmanAgentError
-        {
+        public async HashTable<string, Variant> request_peer_authorization (ObjectPath peer_path, HashTable<string, Variant> fields) throws DBusError, IOError, ConnmanAgentError {
             //var peer = Peer.from_path_sync (peer_path);
             throw new ConnmanAgentError.CANCELED ("Not implemented.");
         }
 
-        public async void cancel () {
+        public async void cancel () throws DBusError, IOError {
             canceled ();
         }
 

@@ -29,20 +29,17 @@ namespace Bluez5 {
             dbus_proxy = (org.bluez.AgentManager1)proxy;
         }
 
-        public async void register_agent (ObjectPath path, AgentManagerCapability capability)
-            throws IOError, BlueZError
+        public async void register_agent (ObjectPath path, AgentManagerCapability capability) throws DBusError, IOError, BlueZError
         {
             yield dbus_proxy.register_agent (path, capability);
         }
 
-        public async void unregister_agent (ObjectPath path)
-            throws IOError, BlueZError
+        public async void unregister_agent (ObjectPath path) throws DBusError, IOError, BlueZError
         {
             yield dbus_proxy.unregister_agent (path);
         }
 
-        public async void request_default_agent (ObjectPath path)
-            throws IOError, BlueZError
+        public async void request_default_agent (ObjectPath path) throws DBusError, IOError, BlueZError
         {
             yield dbus_proxy.request_default_agent (path);
         }
@@ -66,8 +63,8 @@ namespace Bluez5 {
 namespace org.bluez {
     [DBus (name = "org.bluez.AgentManager1")]
     public interface AgentManager1 : Object {
-        public abstract async void register_agent (ObjectPath agent, Bluez5.AgentManagerCapability capability) throws IOError, Bluez5.BlueZError;
-        public abstract async void unregister_agent (ObjectPath agent) throws IOError, Bluez5.BlueZError;
-        public abstract async void request_default_agent (ObjectPath agent) throws IOError, Bluez5.BlueZError;
+        public abstract async void register_agent (ObjectPath agent, Bluez5.AgentManagerCapability capability) throws DBusError, IOError, Bluez5.BlueZError;
+        public abstract async void unregister_agent (ObjectPath agent) throws DBusError, IOError, Bluez5.BlueZError;
+        public abstract async void request_default_agent (ObjectPath agent) throws DBusError, IOError, Bluez5.BlueZError;
     }
 }
