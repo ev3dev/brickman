@@ -53,8 +53,6 @@ not in Docker:
 
 * Then...
 
-        mkdir -p <some-build-dir>
-        cd <some-build-dir>
-        cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=string:Debug -DBRICKMAN_TEST=bool:Yes
-        make
-        make run
+        cmake -P setup.cmake
+        make -C build
+        make -C build run
