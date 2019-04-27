@@ -60,7 +60,6 @@ namespace BrickManager {
                 }
                 _can_set_device = value;
             }
-            default = false;
         }
 
         public signal void set_mode_button_pressed ();
