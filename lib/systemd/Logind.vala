@@ -140,10 +140,10 @@ namespace Systemd.Logind {
         public async void unlock_sessions () throws DBusError, IOError {
             yield manager.unlock_sessions ();
         }
-        public async void kill_session (string session_id, SessionToKill session, int32 @signal = Posix.SIGTERM) throws DBusError, IOError {
+        public async void kill_session (string session_id, SessionToKill session, int32 @signal = Posix.Signal.TERM) throws DBusError, IOError {
             yield manager.kill_session (session_id, session, @signal);
         }
-        public async void kill_user (uint32 user_id, int32 @signal = Posix.SIGTERM) throws DBusError, IOError {
+        public async void kill_user (uint32 user_id, int32 @signal = Posix.Signal.TERM) throws DBusError, IOError {
             yield manager.kill_user (user_id, @signal);
         }
         public async void terminate_session (string session_id) throws DBusError, IOError {

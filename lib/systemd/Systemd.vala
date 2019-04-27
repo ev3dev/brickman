@@ -276,7 +276,7 @@ namespace Systemd {
             return yield Job.get_instance_for_path (path);
         }
 
-        public async void kill_unit (string name, Who who, int32 @signal = Posix.SIGKILL) throws DBusError, IOError {
+        public async void kill_unit (string name, Who who, int32 @signal = Posix.Signal.KILL) throws DBusError, IOError {
             yield manager.kill_unit (name, who, @signal);
         }
 
