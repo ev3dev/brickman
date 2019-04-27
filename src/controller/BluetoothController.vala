@@ -72,8 +72,12 @@ namespace BrickManager {
                 foreach (var udev_device in udev_devices) {
                     var parent = udev_device.get_parent ();
                     if (parent != null && parent.get_name () == "ttyS2") {
-                        built_in_adapter_address = udev_device.get_sysfs_attr ("address").up ();
-                        break;
+                        // FIXME: there is no such sysfs attr
+                        var address = udev_device.get_sysfs_attr ("address");
+                        if (address != null) {
+                            built_in_adapter_address = address.up ();
+                            break;
+                        }
                     }
                 }
             }
