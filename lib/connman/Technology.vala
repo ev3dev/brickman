@@ -134,10 +134,9 @@ namespace Connman {
 namespace net.connman {
     [DBus (name = "net.connman.Technology")]
     public interface Technology : Object {
-        [Deprecated]
+        // Docs say get_properties is deprecated, but it is needed to avoid race condition
         public abstract async HashTable<string, Variant> get_properties () throws DBusError, IOError;
         [DBus (name = "GetProperties")]
-        [Deprecated]
         public abstract HashTable<string, Variant> get_properties_sync () throws DBusError, IOError;
         public abstract async void set_property (string name, Variant? value) throws DBusError, IOError;
         [DBus (name = "SetProperty")]

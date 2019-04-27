@@ -48,9 +48,8 @@ namespace Bluez5.Uuid {
     public const string TCP = 16BIT_PREFIX + "0004" + BASE;
 
     /**
-     * Telephony Control Specification / TCS Binary
+     * Telephony Control Specification / TCS Binary [DEPRECATED]
      */
-    [Deprecated]
     public const string TCS_BIN = 16BIT_PREFIX + "0005" + BASE;
 
     /**
@@ -94,9 +93,8 @@ namespace Bluez5.Uuid {
     public const string BNEP = 16BIT_PREFIX + "000f" + BASE;
 
     /**
-     * Extended Service Discovery Profile (ESDP)
+     * Extended Service Discovery Profile (ESDP) [DEPRECATED]
      */
-    [Deprecated]
     public const string UPNP = 16BIT_PREFIX + "0010" + BASE;
 
     /**
@@ -130,9 +128,8 @@ namespace Bluez5.Uuid {
     public const string AVDTP = 16BIT_PREFIX + "0019" + BASE;
 
     /**
-     * Common ISDN Access Profile (CIP)
+     * Common ISDN Access Profile (CIP) [DEPRECATED]
      */
-    [Deprecated]
     public const string CMTP = 16BIT_PREFIX + "001B" + BASE;
 
     /**
@@ -176,15 +173,14 @@ namespace Bluez5.Uuid {
     public const string SerialPort = 16BIT_PREFIX + "1101" + BASE;
 
     /**
-     * LAN Access
-     *
-     * Profile
+     * LAN Access Profile
+     * 
+     * [DEPRECATED]
      *
      * NOTE: Used as both Service Class Identifier and Profile Identifier.
      *
      * Service Class/ Profile
      */
-    [Deprecated]
     public const string LANAccessUsingPPP = 16BIT_PREFIX + "1102" + BASE;
 
     /**
@@ -241,10 +237,11 @@ namespace Bluez5.Uuid {
      * Cordless Telephony Profile (CTP)
      *
      * NOTE: Used as both Service Class Identifier and Profile Identifier.
+     * 
+     * [DEPRECATED]
      *
      * Service Class/ Profile
      */
-    [Deprecated]
     public const string CordlessTelephony = 16BIT_PREFIX + "1109" + BASE;
 
     /**
@@ -300,9 +297,10 @@ namespace Bluez5.Uuid {
      *
      * NOTE: Used as both Service Class Identifier and Profile Identifier.
      *
+     * [DEPRECATED]
+     * 
      * Service Class
      */
-    [Deprecated]
     public const string Intercom = 16BIT_PREFIX + "1110" + BASE;
 
     /**
@@ -310,9 +308,10 @@ namespace Bluez5.Uuid {
      *
      * NOTE: Used as both Service Class Identifier and Profile Identifier.
      *
+     * [DEPRECATED]
+     * 
      * Service Class
      */
-    [Deprecated]
     public const string Fax = 16BIT_PREFIX + "1111" + BASE;
 
     /**
@@ -324,20 +323,18 @@ namespace Bluez5.Uuid {
 
     /**
      * Interoperability Requirements for Bluetooth technology as a WAP,
-     * Bluetooth SIG
-     *
+     * Bluetooth SIG [DEPRECATED]
+     * 
      * Service Class
      */
-    [Deprecated]
     public const string WAP = 16BIT_PREFIX + "1113" + BASE;
 
     /**
      * Interoperability Requirements for Bluetooth technology as a WAP,
-     * Bluetooth SIG
+     * Bluetooth SIG [DEPRECATED]
      *
      * Service Class
      */
-    [Deprecated]
     public const string WAP_CLIENT = 16BIT_PREFIX + "1114" + BASE;
 
     /**
@@ -491,9 +488,10 @@ namespace Bluez5.Uuid {
      *
      * NOTE: Used as both Service Class Identifier and Profile Identifier.
      *
+     * [DEPRECATED]
+     * 
      * Service Class / Profile
      */
-    [Deprecated]
     public const string Common_ISDN_Access = 16BIT_PREFIX + "1128" + BASE;
 
     /**
@@ -665,43 +663,38 @@ namespace Bluez5.Uuid {
     public const string GenericTelephony = 16BIT_PREFIX + "1204" + BASE;
 
     /**
-     * Enhanced Service Discovery Profile (ESDP)
+     * Enhanced Service Discovery Profile (ESDP) [DEPRECATED]
      *
      * Service Class
      */
-    [Deprecated]
     public const string UPNP_Service = 16BIT_PREFIX + "1205" + BASE;
 
     /**
-     * Enhanced Service Discovery Profile (ESDP)
+     * Enhanced Service Discovery Profile (ESDP) [DEPRECATED]
      *
      * Service Class
      */
-    [Deprecated]
     public const string UPNP_IP_Service = 16BIT_PREFIX + "1206" + BASE;
 
     /**
-     * Enhanced Service Discovery Profile (ESDP)
+     * Enhanced Service Discovery Profile (ESDP) [DEPRECATED]
      *
      * Service Class
      */
-    [Deprecated]
     public const string ESDP_UPNP_IP_PAN = 16BIT_PREFIX + "1300" + BASE;
 
     /**
-     * Enhanced Service Discovery Profile (ESDP)
+     * Enhanced Service Discovery Profile (ESDP) [DEPRECATED]
      *
      * Service Class
      */
-    [Deprecated]
     public const string ESDP_UPNP_IP_LAP = 16BIT_PREFIX + "1301" + BASE;
 
     /**
-     * Enhanced Service Discovery Profile (ESDP)
+     * Enhanced Service Discovery Profile (ESDP) [DEPRECATED]
      *
      * Service Class
      */
-    [Deprecated]
     public const string ESDP_UPNP_L2CAP = 16BIT_PREFIX + "1302" + BASE;
 
     /**

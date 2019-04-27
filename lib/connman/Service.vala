@@ -678,7 +678,7 @@ namespace Connman {
 namespace net.connman {
     [DBus (name = "net.connman.Service")]
     public interface Service : Object {
-        [Deprecated]
+        // Docs say get_properties is deprecated, but it is needed to avoid race condition
         public abstract async HashTable<string, Variant> get_properties() throws DBusError, IOError;
         public abstract async void set_property(string name, Variant? value) throws DBusError, IOError;
         [DBus (name = "SetProperty")]

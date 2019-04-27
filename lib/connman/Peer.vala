@@ -110,7 +110,7 @@ namespace Connman {
 namespace net.connman {
     [DBus (name = "net.connman.Peer")]
     public interface Peer : Object {
-        [Deprecated]
+        // Docs say get_properties is deprecated, but it is needed to avoid race condition
         public abstract async HashTable<string, Variant> get_properties () throws DBusError, IOError;
         public abstract async void connect () throws DBusError, IOError;
         public abstract async void disconnect () throws DBusError, IOError;
