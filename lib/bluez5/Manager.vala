@@ -47,7 +47,7 @@ namespace Bluez5 {
         public static async Manager new_async () throws Error {
             var manager = new Manager ();
             weak Manager weak_manager = manager;
-            manager.client = yield DBusObjectManagerClient.new_for_bus (
+            manager.client = yield new DBusObjectManagerClient.for_bus (
                 BusType.SYSTEM, DBusObjectManagerClientFlags.NONE, SERVICE_NAME,
                 "/", (manager, object_path, interface_name) => {
                     if (interface_name == null)
