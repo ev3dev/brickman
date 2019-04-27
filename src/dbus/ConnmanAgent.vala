@@ -52,15 +52,15 @@ namespace BrickManager {
             //debug ("Released.");
         }
 
-        public async void report_error (ObjectPath service_path, string error) throws DBusError, IOError, ConnmanAgentError {
-            var dialog = new MessageDialog ("Error", error);
+        public async void report_error (ObjectPath service_path, string err) throws DBusError, IOError, ConnmanAgentError {
+            var dialog = new MessageDialog ("Error", err);
             dialog.show ();
             // TODO: get user feedback for retry
             //throw new ConnmanAgentError.RETRY ("User requested retry.");
         }
 
-        public async void report_peer_error (ObjectPath peer_path, string error) throws DBusError, IOError, ConnmanAgentError {
-            var dialog = new MessageDialog ("Error", error);
+        public async void report_peer_error (ObjectPath peer_path, string err) throws DBusError, IOError, ConnmanAgentError {
+            var dialog = new MessageDialog ("Error", err);
             dialog.show ();
             // TODO: get user feedback for retry
             //throw new ConnmanAgentError.RETRY ("User requested retry.");
