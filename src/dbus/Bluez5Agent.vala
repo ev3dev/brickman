@@ -220,7 +220,7 @@ namespace BrickManager {
         public async void authorize_service (ObjectPath device_path, string uuid) throws DBusError, IOError, BlueZError {
             var device = Device.get_for_object_path (device_path);
             yield display_confirmation_dialog (device.alias,
-                "Authorize service\n%s?".printf (Uuid.to_short_profile (uuid)));
+                "Authorize service\n%s?".printf (Bluez5.Uuid.to_short_profile (uuid)));
         }
 
         async void display_confirmation_dialog (string title, string message) throws DBusError, IOError, BlueZError {

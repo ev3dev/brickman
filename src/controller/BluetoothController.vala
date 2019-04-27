@@ -338,7 +338,7 @@ namespace BrickManager {
             target = false;
             var uuids = (string[])source;
             foreach (var uuid in uuids) {
-                if (uuid == Uuid.NAP || uuid == Uuid.GN || uuid == Uuid.PANU) {
+                if (uuid == Bluez5.Uuid.NAP || uuid == Bluez5.Uuid.GN || uuid == Bluez5.Uuid.PANU) {
                     target = true;
                     break;
                 }
