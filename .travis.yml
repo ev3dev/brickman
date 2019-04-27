@@ -4,16 +4,16 @@ dist: xenial
 env:
 - OS=debian ARCH=amd64 DIST=buster
 - OS=debian ARCH=i386 DIST=buster
-- OS=debian ARCH=armhf DIST=buster
-- OS=raspbian ARCH=armhf DIST=buster
-- OS=debian ARCH=armel DIST=buster
+- OS=debian ARCH=armhf DIST=buster QEMU_USER_STATIC=qemu-user-static
+- OS=raspbian ARCH=armhf DIST=buster QEMU_USER_STATIC=qemu-user-static
+- OS=debian ARCH=armel DIST=buster QEMU_USER_STATIC=qemu-user-static
 cache:
   directories:
   - "$HOME/cache"
 before_install:
 - sudo apt-add-repository -y ppa:ev3dev/tools
 - sudo apt-get update
-- sudo apt-get install --yes pbuilder-ev3dev dh-systemd
+- sudo apt-get install --yes debhelper pbuilder-ev3dev dh-systemd $QEMU_USER_STATIC
 before_script:
 - pbuilder-ev3dev base
 - git checkout -B ev3dev-buster
