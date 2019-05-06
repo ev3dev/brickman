@@ -48,7 +48,7 @@ not in brickstrap shell:
 
         mkdir -p <some-build-dir>
         cd <some-build-dir>
-        cmake <path-to-brickdm-source> -DCMAKE_BUILD_TYPE=string:Debug -DBRICKMAN_TEST=bool:Yes
+        cmake <path-to-brickman-source> -DCMAKE_BUILD_TYPE=string:Debug -DBRICKMAN_TEST=bool:Yes
         make
         make run
 

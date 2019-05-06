@@ -106,6 +106,31 @@
   <object class="GtkAccelGroup" id="control_panel_accelgroup"/>
   <object class="GtkListStore" id="dc-motors-liststore"/>
   <object class="GtkListStore" id="leds_liststore"/>
+  <object class="GtkListStore" id="mixer-elements-liststore">
+    <columns>
+      <!-- column-name NAME -->
+      <column type="gchararray"/>
+      <!-- column-name INDEX -->
+      <column type="gchararray"/>
+      <!-- column-name VOLUME -->
+      <column type="gchararray"/>
+      <!-- column-name CAN_MUTE -->
+      <column type="gboolean"/>
+      <!-- column-name MUTE -->
+      <column type="gboolean"/>
+      <!-- column-name USER_DATA -->
+      <column type="gpointer"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Playback</col>
+        <col id="1" translatable="yes">0</col>
+        <col id="2" translatable="yes">75</col>
+        <col id="3">True</col>
+        <col id="4">False</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="network-connection-info-dns-liststore">
     <columns>
       <!-- column-name ADDRESS -->
@@ -2855,6 +2880,239 @@
               </packing>
             </child>
             <child>
+              <object class="GtkBox" id="sound-box">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="mixer-element-label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Mixer elements</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="mixer-element-list-controls-box">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="mixer-elements-scrolledwindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="hscrollbar_policy">never</property>
+                        <property name="vscrollbar_policy">never</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="mixer-elements-treeview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="hscroll_policy">natural</property>
+                            <property name="model">mixer-elements-liststore</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection20"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="mixer-element-name-treeviewcolumn">
+                                <property name="title" translatable="yes">Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="mixer-element-name-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="mixer-element-index-treeviewcolumn">
+                                <property name="title" translatable="yes">Index</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="mixer-element-index-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="mixer-element-volume-treeviewcolumn">
+                                <property name="title" translatable="yes">Volume</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="mixer-element-volume-cellrenderertext">
+                                    <property name="editable">True</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="mixer-element-can-mute-treeviewcolumn">
+                                <property name="title" translatable="yes">Can mute</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="mixer-element-can-mute-cellrenderertoggle"/>
+                                  <attributes>
+                                    <attribute name="active">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="mixer-element-mute-treeviewcolumn">
+                                <property name="title" translatable="yes">Is muted</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="mixer-element-mute-cellrenderertoggle">
+                                    <property name="xalign">0</property>
+                                    <property name="sensitive">False</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="active">4</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="mixer-element-button-container">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkButton" id="mixer-element-add-button">
+                            <property name="label" translatable="yes">Add</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="mixer-element-remove-button">
+                            <property name="label" translatable="yes">Remove</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="audio-meta-controls-frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="top_padding">6</property>
+                        <property name="bottom_padding">6</property>
+                        <property name="left_padding">12</property>
+                        <property name="right_padding">12</property>
+                        <child>
+                          <object class="GtkBox" id="box30">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkButton" id="sound-mixer-select-window-button">
+                                <property name="label" translatable="yes">Mixer select</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="sound-volume-window-button">
+                                <property name="label" translatable="yes">Volume control</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label63">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Audio windows</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="sound-page-label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Sound</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkBox" id="bluetooth-box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -3547,7 +3805,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child type="tab">
@@ -3557,7 +3815,7 @@
                 <property name="label" translatable="yes">Bluetooth</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -3786,7 +4044,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child type="tab">
@@ -3796,7 +4054,7 @@
                 <property name="label" translatable="yes">Battery</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -4129,7 +4387,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child type="tab">
@@ -4140,7 +4398,7 @@
                 <property name="justify">right</property>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">5</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -4308,7 +4566,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">5</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child type="tab">
@@ -4318,7 +4576,7 @@
                 <property name="label" translatable="yes">About</property>
               </object>
               <packing>
-                <property name="position">5</property>
+                <property name="position">6</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>

@@ -40,6 +40,8 @@ if (BRICKMAN_TEST)
         test/controller/FakeFileBrowserController.vala
         test/controller/FakeNetworkController.vala
         test/controller/FakeOpenRobertaController.vala
+        test/controller/FakeSoundController.vala
+        test/view_model/FakeMixerElement.vala
     )
 else (BRICKMAN_TEST)
     set (BRICKMAN_SOURCE_FILES
@@ -58,6 +60,8 @@ else (BRICKMAN_TEST)
         src/controller/FileBrowserController.vala
         src/controller/NetworkController.vala
         src/controller/OpenRobertaController.vala
+        src/controller/SoundController.vala
+        src/view_model/AlsaBackedMixerElement.vala
         src/GlobalManager.vala
         src/main.vala
     )
@@ -86,6 +90,8 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/DeviceBrowserWindow.vala
     src/view/FileBrowserWindow.vala
     src/view/HomeWindow.vala
+    src/view/MixerElementSelectorWindow.vala
+    src/view/MixerElementVolumeWindow.vala
     src/view/MotorBrowserWindow.vala
     src/view/MotorInfoWindow.vala
     src/view/MotorValueDialog.vala
@@ -114,10 +120,12 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/WifiNetworkWindow.vala
     src/view/WifiStatusBarItem.vala
     src/view/WifiWindow.vala
+    src/view_model/IMixerElementViewModel.vala
 )
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DEPS REQUIRED
+    alsa
     ev3devkit-0.4
     glib-2.0
     gobject-2.0
@@ -174,6 +182,7 @@ PACKAGES
     curses
     posix
     linux
+    alsa
     ${BRICKMAN_TEST_PACKAGES}
 CUSTOM_VAPIS
     bindings/*.vapi
