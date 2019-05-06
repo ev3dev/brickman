@@ -163,7 +163,8 @@ namespace BrickManager {
                 if (message == "executing") {
                     debug ("program starts, switching to tty%d", OPEN_ROBERTA_TTY_NUM);
                     executing_user_code = true;
-                    chvt (OPEN_ROBERTA_TTY_NUM);
+                    // FIXME: need to figure out how console switching is going to work with GRX3
+                    //  chvt (OPEN_ROBERTA_TTY_NUM);
                 }
             } else {
                 status_bar_item.connected = false;
@@ -203,9 +204,9 @@ namespace BrickManager {
             }
         }
 
-        void chvt (int num) {
-            // TODO: might be better to do this with ioctl
-            Posix.system ("/bin/chvt %d".printf (num));
-        }
+        //  void chvt (int num) {
+        //      // TODO: might be better to do this with ioctl
+        //      Posix.system ("/bin/chvt %d".printf (num));
+        //  }
     }
 }
