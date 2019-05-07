@@ -145,8 +145,9 @@ namespace BrickManager {
                         // FIXME: need to figure out how console switching is going to work with GRX3
                         // var tty_num = ConsoleApp.get_tty_num ();
                         // debug ("program done, switching to tty%d", tty_num);
-                        // executing_user_code = false;
+                        executing_user_code = false;
                         // chvt (tty_num);
+                        global_manager.set_leds (LedState.NORMAL);
                     } else {
                         debug ("connection established, closing the dialog");
                         OpenRobertaWindow.close_pairing_code_dialog ();
