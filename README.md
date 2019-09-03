@@ -44,7 +44,7 @@ To build for the EV3:
 To build the desktop test (makes UI development much faster), in a regular terminal,
 not in Docker:
 
-*   Install build dependancies:
+*   Install build dependencies:
 
         sudo apt-add-repository ppa:ev3dev/tools
         sudo apt-get update

@@ -38,14 +38,14 @@ namespace BrickManager {
 
         public signal void responded (bool accepted);
 
-        public ConnmanAgentInputDialog (string message, string inital_value = "") {
+        public ConnmanAgentInputDialog (string message, string initial_value = "") {
             var dialog_vbox = new Box.vertical () {
                 padding = 3,
                 spacing = 6
             };
             message_label = new Label (message);
             dialog_vbox.add (message_label);
-            value_entry = new TextEntry (inital_value);
+            value_entry = new TextEntry (initial_value);
             dialog_vbox.add (value_entry);
             dialog_vbox.add (new Spacer ());
             var button_vbox = new Box.vertical ();

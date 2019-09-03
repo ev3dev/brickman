@@ -18,7 +18,7 @@
  */
 
 /*
- * AboutWindow.vala - displays infomation about this program and the EV3 itself
+ * AboutWindow.vala - displays information about this program and the EV3 itself
  */
 
 using Ev3devKit.Ui;

@@ -29,7 +29,7 @@ using Grx;
 namespace BrickManager {
     public class BatteryStatusBarItem : StatusBarItem {
         const ushort END_WIDTH = 2;
-        const ushort END_OFFEST = 2;
+        const ushort END_OFFSET = 2;
         const ushort PADDING = 1;
         const ushort TOP = 3;
         static Font font;
@@ -72,8 +72,8 @@ namespace BrickManager {
             if (align ==  StatusBar.Align.RIGHT)
                 x -= total_width - 1;
             draw_box (x, TOP, x + main_width - 1, HEIGHT - TOP, color);
-            draw_filled_box (x + main_width, TOP + END_OFFEST,
-                x + main_width + END_WIDTH - 1, HEIGHT - TOP - END_OFFEST,
+            draw_filled_box (x + main_width, TOP + END_OFFSET,
+                x + main_width + END_WIDTH - 1, HEIGHT - TOP - END_OFFSET,
                 color);
             draw_text (_text, x + PADDING, TOP + 1 + PADDING, text_options);
             return total_width;

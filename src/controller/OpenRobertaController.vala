@@ -125,7 +125,7 @@ namespace BrickManager {
             service = yield Bus.get_proxy (BusType.SYSTEM, SERVICE_NAME,
                 "/org/openroberta/Lab1");
             service.status.connect (on_status_changed);
-            //TODO: DBus service does not provide the inital state of "status".
+            //TODO: DBus service does not provide the initial state of "status".
             //on_status_changed (service.status);
         }
 

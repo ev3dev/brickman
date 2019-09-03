@@ -18,7 +18,7 @@
  */
 
 /*
- * BatteryInfoWindow.vala - displays infomation about the battery
+ * BatteryInfoWindow.vala - displays information about the battery
  */
 
 using Ev3devKit.Ui;

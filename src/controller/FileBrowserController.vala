@@ -27,7 +27,7 @@ using Ev3devKit.Ui;
 namespace BrickManager {
     public class FileBrowserController : Object, IBrickManagerModule {
         const string PARENT_DIRECTORY_TEXT = "../";
-        const string INITAL_DIRECTORY = "/home/robot";
+        const string INITIAL_DIRECTORY = "/home/robot";
         const string USER_NAME = "robot";
         const string file_attrs = FileAttribute.OWNER_USER
             + "," + FileAttribute.STANDARD_IS_HIDDEN
@@ -128,7 +128,7 @@ namespace BrickManager {
                     dialog.show ();
                 }
             });
-            initial_directory = File.new_for_path (INITAL_DIRECTORY);
+            initial_directory = File.new_for_path (INITIAL_DIRECTORY);
             file_browser_window.file_selected (initial_directory);
         }
 

@@ -78,7 +78,7 @@ namespace BrickManager {
                 port.bind_property ("status", window, "status", BindingFlags.SYNC_CREATE);
                 port.bind_property ("status", window, "can-set-device", BindingFlags.SYNC_CREATE,
                     transform_port_status_to_can_set_device);
-                var set_device_button_pressed_hander_id = window.set_device_button_pressed.connect (() => {
+                var set_device_button_pressed_handler_id = window.set_device_button_pressed.connect (() => {
                     // TODO: when we add support for more types of drivers here, we will
                     // need to add some logic here to lookup status.
                     var device_dialog = new SelectFromListDialog (manager.get_nxt_analog_sensor_driver_names ());
@@ -101,7 +101,7 @@ namespace BrickManager {
                     });
                     device_dialog.show ();
                 });
-                var set_mode_button_pressed_hander_id = window.set_mode_button_pressed.connect (() => {
+                var set_mode_button_pressed_handler_id = window.set_mode_button_pressed.connect (() => {
                     var mode_dialog = new SelectFromListDialog (port.modes);
                     var item_selected_handler_id = mode_dialog.item_selected.connect ((item) => {
                         try {
@@ -130,8 +130,8 @@ namespace BrickManager {
                 });
                 ulong window_closed_handler_id = 0;
                 window_closed_handler_id = window.closed.connect (() => {
-                    window.disconnect (set_device_button_pressed_hander_id);
-                    window.disconnect (set_mode_button_pressed_hander_id);
+                    window.disconnect (set_device_button_pressed_handler_id);
+                    window.disconnect (set_mode_button_pressed_handler_id);
                     port.disconnect (notify_connected_handler_id);
                     window.disconnect (window_closed_handler_id);
                 });
@@ -186,10 +186,10 @@ namespace BrickManager {
                 var window = new SensorInfoWindow (sensor.driver_name, sensor.device_name,
                     sensor.address, sensor.commands != null);
                 sensor.bind_property ("mode", window, "mode", BindingFlags.SYNC_CREATE);
-                var watch_values_hander_id = window.watch_values_selected.connect (() => {
+                var watch_values_handler_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to support showing more than one value?
                     var value_dialog = new SensorValueDialog ();
-                    var value_timout_id = Timeout.add (WATCH_MS, () => {
+                    var value_timeout_id = Timeout.add (WATCH_MS, () => {
                         try {
                             value_dialog.value_text = "%.*f".printf (sensor.decimals,
                                 sensor.get_float_value (0));
@@ -199,7 +199,7 @@ namespace BrickManager {
                             value_dialog.close ();
                             var error_dialog = new MessageDialog ("Error", err.message);
                             error_dialog.show ();
-                            // this Timeout is removed by the value_dialog.closed hander
+                            // this Timeout is removed by the value_dialog.closed handler
                             // so we just fall through and return CONTINUE here instead
                             // of returning REMOVE.
                         }
@@ -210,13 +210,13 @@ namespace BrickManager {
                     });
                     ulong dialog_closed_handler_id = 0;
                     dialog_closed_handler_id = value_dialog.closed.connect (() => {
-                        Source.remove (value_timout_id);
+                        Source.remove (value_timeout_id);
                         sensor.disconnect (notify_connected_handler_id);
                         value_dialog.disconnect (dialog_closed_handler_id);
                     });
                     value_dialog.show ();
                 });
-                var set_mode_selected_hander_id = window.set_mode_selected.connect (() => {
+                var set_mode_selected_handler_id = window.set_mode_selected.connect (() => {
                     var mode_dialog = new SelectFromListDialog (sensor.modes);
                     var item_selected_handler_id = mode_dialog.item_selected.connect ((item) => {
                         try {
@@ -237,7 +237,7 @@ namespace BrickManager {
                     });
                     mode_dialog.show ();
                 });
-                var send_command_selected_hander_id = window.send_command_selected.connect (() => {
+                var send_command_selected_handler_id = window.send_command_selected.connect (() => {
                     var command_dialog = new SelectFromListDialog (sensor.commands);
                     var item_selected_handler_id = command_dialog.item_selected.connect ((item) => {
                         try {
@@ -268,9 +268,9 @@ namespace BrickManager {
                     window.close ();
                 });
                 window_closed_handler_id = window.closed.connect (() => {
-                    window.disconnect (watch_values_hander_id);
-                    window.disconnect (set_mode_selected_hander_id);
-                    window.disconnect (send_command_selected_hander_id);
+                    window.disconnect (watch_values_handler_id);
+                    window.disconnect (set_mode_selected_handler_id);
+                    window.disconnect (send_command_selected_handler_id);
                     sensor.disconnect (notify_connected_handler_id);
                     window.disconnect (window_closed_handler_id);
                 });
@@ -302,7 +302,7 @@ namespace BrickManager {
             var servo_motor_added_handler_id = manager.servo_motor_added.connect (on_servo_motor_added);
             manager.get_servo_motors ().foreach (on_servo_motor_added);
             // connect_after ensures that this signal handler is called after
-            // the others that are added in on_tacho_mootr_added (). This is important
+            // the others that are added in on_tacho_motor_added(). This is important
             // so that we don't set motor_browser_window = null before all of
             // the other signal handlers have run.
             motor_browser_window.closed.connect_after (() => {
@@ -320,10 +320,10 @@ namespace BrickManager {
             var button_pressed_handler_id = menu_item.button.pressed.connect (() => {
                 var window = new MotorInfoWindow (motor.driver_name, "tacho-motor",
                     motor.device_name, motor.address, true);
-                var watch_values_hander_id = window.watch_values_selected.connect (() => {
+                var watch_values_handler_id = window.watch_values_selected.connect (() => {
                     // TODO: Do we want to also show speed?
                     var value_dialog = new MotorValueDialog ();
-                    var value_timout_id = Timeout.add (WATCH_MS, () => {
+                    var value_timeout_id = Timeout.add (WATCH_MS, () => {
                         // TODO: Convert to degrees
                         value_dialog.value_text = "%d".printf (motor.position);
                         return Source.CONTINUE;
@@ -333,7 +333,7 @@ namespace BrickManager {
                     });
                     ulong dialog_closed_handler_id = 0;
                     dialog_closed_handler_id = value_dialog.closed.connect (() => {
-                        Source.remove (value_timout_id);
+                        Source.remove (value_timeout_id);
                         motor.disconnect (notify_connected_handler_id);
                         value_dialog.disconnect (dialog_closed_handler_id);
                     });
@@ -349,7 +349,7 @@ namespace BrickManager {
                     window.close ();
                 });
                 window_closed_handler_id = window.closed.connect (() => {
-                    window.disconnect (watch_values_hander_id);
+                    window.disconnect (watch_values_handler_id);
                     motor.disconnect (notify_connected_handler_id);
                     window.disconnect (window_closed_handler_id);
                 });
