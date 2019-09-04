@@ -1,13 +1,6 @@
+cmake_minimum_required (VERSION 3.10)
 cmake_policy (SET CMP0048 NEW)
 project ("brickman" LANGUAGES C VERSION 0.10.0)
-
-if (CMAKE_CROSSCOMPILING)
-    # we are depending on CMAKE_SYSROOT feature introduce in CMake 3.x
-    # and we only support cross compiling using Ubuntu 16.04
-    cmake_minimum_required (VERSION 3.5)
-else (CMAKE_CROSSCOMPILING)
-    cmake_minimum_required (VERSION 3.0)
-endif (CMAKE_CROSSCOMPILING)
 
 option (BRICKMAN_TEST "Build the desktop test version.")
 
