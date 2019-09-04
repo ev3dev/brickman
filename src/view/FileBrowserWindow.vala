@@ -28,7 +28,7 @@ namespace BrickManager {
     public class FileBrowserWindow : BrickManagerWindow {
         Label current_directory_label;
         Ui.Menu file_menu;
-        string? last_focused_text;
+        File? selected_file;
 
         public unowned CompareDataFunc<Ui.MenuItem>? sort_files_func;
 
@@ -37,7 +37,7 @@ namespace BrickManager {
             set { current_directory_label.text = value; }
         }
 
-        public signal void file_selected (Object represented_object);
+        public signal void file_selected (File file);
 
         public FileBrowserWindow (string display_name) {
             title = display_name;
@@ -52,36 +52,42 @@ namespace BrickManager {
             content_vbox.add (file_menu);
         }
 
-        public void add_file (string file_name, Object represented_object) {
+        public void add_file (string file_name, File file) {
+            // make sure we don't end up with duplicates
+            remove_file (file);
+
             var menu_item = new Ui.MenuItem (file_name) {
-                represented_object = represented_object
+                represented_object = file
             };
-            menu_item.button.pressed.connect (() =>
-                file_selected (represented_object));
+            menu_item.button.pressed.connect (() => {
+                selected_file = file;
+                file_selected (file);
+            });
             file_menu.add_menu_item (menu_item);
             // TODO: we would get much better performance if we just inserted
             // the item in the correct place instead of sorting the entire list
             // each time an item is inserted.
             file_menu.sort_menu_items (sort_files_func);
-            if (menu_item.label.text == last_focused_text)
+
+            // if this file was the most recently selected, make sure it retains
+            // focus.
+            if (selected_file != null && file.equal (selected_file)) {
                 menu_item.button.focus ();
+            }
         }
 
-        public void remove_file (Object represented_object) {
-            var file = represented_object as File;
+        public void remove_file (File file) {
             var menu_item = file_menu.find_menu_item<File> (file, (mi, f1) => {
                 var f2 = mi.represented_object as File;
                 return f1.equal (f2);
             });
             if (menu_item != null) {
-                last_focused_text = menu_item.label.text;
                 file_menu.remove_menu_item (menu_item);
             }
         }
 
         public void clear_files () {
             file_menu.remove_all_menu_items ();
-            last_focused_text = null;
         }
     }
 }
