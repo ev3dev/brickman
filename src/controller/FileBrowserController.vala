@@ -53,9 +53,8 @@ namespace BrickManager {
             file_browser_window = new FileBrowserWindow (display_name) {
                 sort_files_func = sort_files
             };
-            file_browser_window.file_selected.connect ((represented_object) => {
+            file_browser_window.file_selected.connect ((file) => {
                 try {
-                    var file = represented_object as File;
                     var file_info = file.query_info (file_attrs,
                         FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
                     var mode = file_info.get_attribute_uint32 (FileAttribute.UNIX_MODE);
@@ -139,8 +138,13 @@ namespace BrickManager {
                 monitor.cancel ();
             monitor = directory.monitor_directory (FileMonitorFlags.NONE);
             monitor.changed.connect ((src, dest, event) => {
+                message ("src: %s, dest %s, event: %s",
+                    src == null ? "<none>" : src.get_basename(),
+                    dest == null ? "<none>" : dest.get_basename(),
+                    event.to_string());
                 switch (event) {
                 case FileMonitorEvent.CREATED:
+                case FileMonitorEvent.ATTRIBUTE_CHANGED:
                     try {
                         var file_info = src.query_info (file_attrs,
                             FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
