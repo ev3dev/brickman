@@ -22,7 +22,7 @@ set (RELEASE_NAME "Brick Manager")
 add_definitions (-w)
 
 add_subdirectory (data)
-set (XDG_DATA_DIR data)
+set (XDG_DATA_DIRS data)
 
 configure_file (src/Version.vala.in Version.vala)
 
@@ -116,17 +116,50 @@ set (BRICKMAN_COMMON_SOURCE_FILES
     src/view/WifiWindow.vala
 )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(DEPS REQUIRED
-    ev3devkit-0.5
+set (DEPS_MODULES
     glib-2.0
     gobject-2.0
     gmodule-2.0
     gio-2.0
     gio-unix-2.0
-    grx-3.0
     gudev-1.0
 )
+
+# see if we have a local copy of ev3devkit-0.5 that was exported by cmake
+find_package (ev3devkit-0.5 QUIET)
+
+# if we have a local build of ev3devkit-0.5, use it, otherwise use pkg-config to find it
+if (ev3devkit-0.5_FOUND)
+    set(EV3DEVKIT_INCLUDEDIR ${ev3devkit-0.5_INCLUDEDIR})
+    set(EV3DEVKIT_SHARED_LIB ev3devkit-0.5-shared)
+    set(EV3DEVKIT_STATIC_LIB ev3devkit-0.5-static)
+    set(EV3DEVKIT_VAPIDIR_OPTION "--vapidir=${ev3devkit-0.5_VAPIDIR}")
+    set(EV3DEVKIT_GIRDIR_OPTION "--girdir=${ev3devkit-0.5_GIRDIR}")
+    set(EV3DEVKIT_INCLUDEDIR_OPTION "--includedir=${ev3devkit-0.5_GIRDIR}")
+    set(XDG_DATA_DIRS "${XDG_DATA_DIRS}:${ev3devkit-0.5_DATADIR}")
+else (ev3devkit-0.5_FOUND)
+    list(APPEND DEPS_MODULES ev3devkit-0.5)
+endif (ev3devkit-0.5_FOUND)
+
+# see if we have a local copy of grx-3.0 that was exported by cmake
+find_package (grx-3.0 QUIET)
+
+# if we have a local build of grx-3.0, use it, otherwise use pkg-config to find it
+if (grx-3.0_FOUND)
+    set(GRX3_INCLUDEDIR ${grx-3.0_INCLUDEDIR})
+    set(GRX3_SHARED_LIB grx-3.0-shared)
+    set(GRX3_STATIC_LIB grx-3.0-static)
+    set(GRX3_VAPIDIR_OPTION "--vapidir=${grx-3.0_VAPIDIR}")
+    set(GRX3_GIRDIR_OPTION "--girdir=${grx-3.0_GIRDIR}")
+    set(GRX3_INCLUDEDIR_OPTION "--includedir=${grx-3.0_GIRDIR}")
+    set(GRX3_PLUGINDIR_ENV "GRX_PLUGIN_PATH=${grx-3.0_PLUGINDIR}")
+    set(GRX3_FONTCONFIG_PATH_ENV "FONTCONFIG_PATH=${grx-3.0_FONTCONFIG_PATH}")
+else (grx-3.0_FOUND)
+    list(APPEND DEPS_MODULES grx-3.0)
+endif (grx-3.0_FOUND)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(DEPS REQUIRED ${DEPS_MODULES})
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
@@ -178,9 +211,13 @@ CUSTOM_VAPIS
 OPTIONS
     --target-glib=2.40
     --thread
+    ${EV3DEVKIT_VAPIDIR_OPTION}
+    ${GRX3_VAPIDIR_OPTION}
 )
 
 add_executable(${EXEC_NAME} ${VALA_C})
+target_include_directories(${EXEC_NAME} PRIVATE ${EV3DEVKIT_INCLUDEDIR} ${GRX3_INCLUDEDIR})
+target_link_libraries(${EXEC_NAME} PRIVATE ${EV3DEVKIT_SHARED_LIB} ${GRX3_SHARED_LIB})
 
 if (BRICKMAN_TEST)
 configure_file(
@@ -199,7 +236,9 @@ install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION sbin)
 
 add_custom_target(run
     COMMAND
-        XDG_DATA_DIRS=${XDG_DATA_DIR}:/usr/local/share:/usr/share
+        XDG_DATA_DIRS=${XDG_DATA_DIRS}:/usr/local/share:/usr/share
+        ${GRX3_PLUGINDIR_ENV}
+        ${GRX3_FONTCONFIG_PATH_ENV}
         ./${EXEC_NAME}
     DEPENDS ${EXEC_NAME}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
