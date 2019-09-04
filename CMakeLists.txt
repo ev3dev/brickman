@@ -1,5 +1,4 @@
 cmake_minimum_required (VERSION 3.10)
-cmake_policy (SET CMP0048 NEW)
 project ("brickman" LANGUAGES C VERSION 0.10.0)
 
 option (BRICKMAN_TEST "Build the desktop test version.")
