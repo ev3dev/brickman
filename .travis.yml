@@ -1,6 +1,6 @@
 language: bash
 sudo: required
-dist: xenial
+dist: bionic
 env:
 - OS=debian ARCH=amd64 DIST=buster
 - OS=debian ARCH=i386 DIST=buster
