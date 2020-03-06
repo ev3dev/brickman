@@ -1,5 +1,5 @@
 cmake_policy (SET CMP0048 NEW)
-project ("brickman" LANGUAGES C VERSION 0.10.2)
+project ("brickman" LANGUAGES C VERSION 0.10.3)
 
 if (CMAKE_CROSSCOMPILING)
     # we are depending on CMAKE_SYSROOT feature introduce in CMake 3.x
