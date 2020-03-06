@@ -138,10 +138,6 @@ namespace BrickManager {
                 monitor.cancel ();
             monitor = directory.monitor_directory (FileMonitorFlags.NONE);
             monitor.changed.connect ((src, dest, event) => {
-                message ("src: %s, dest %s, event: %s",
-                    src == null ? "<none>" : src.get_basename(),
-                    dest == null ? "<none>" : dest.get_basename(),
-                    event.to_string());
                 switch (event) {
                 case FileMonitorEvent.CREATED:
                 case FileMonitorEvent.ATTRIBUTE_CHANGED:
