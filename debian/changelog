@@ -1,3 +1,9 @@
+brickman (0.10.3) stretch; urgency=medium
+
+  * Remove debug print
+
+ -- David Lechner <david@lechnology.com>  Fri, 06 Mar 2020 10:24:06 -0600
+
 brickman (0.10.2) stretch; urgency=medium
 
   * fix multiple entries of same file in file browser
