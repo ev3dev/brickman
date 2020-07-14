@@ -1,3 +1,20 @@
+brickman (0.11.0) bullseye; urgency=medium
+
+  * lib/connman/Service: add new mDNS properties
+  * BluetoothController: fix critical message due to missing sysfs attribute
+  * Fix all of the DBusError warnings
+  * Fix warnings about deprecated Posix.SIG*
+  * Fix errors about ambiguous Uuid type
+  * fix error where default is not allowed with custom get/set in property
+  * Fix warning about deprecated DBusObjectManagerClient.new_for_bus method
+  * Fix all warnings about [Deprecated] attribute
+  * ConnmanAgent: fix C compiler error due to bad generated code
+  * fix multiple entries of same file in file browser
+  * openroberta: don't switch consoles
+  * openroberta: restore LEDs to normal after run
+
+ -- David Lechner <david@lechnology.com>  Tue, 14 Jul 2020 16:37:31 -0500
+
 brickman (0.10.0) testing; urgency=medium
 
   * Update for GRX 3.0.0 (fixes console switching)
