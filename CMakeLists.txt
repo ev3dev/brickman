@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.10)
-project ("brickman" LANGUAGES C VERSION 0.10.0)
+project ("brickman" LANGUAGES C VERSION 0.11.0)
 
 option (BRICKMAN_TEST "Build the desktop test version.")
 
