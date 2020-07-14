@@ -2,11 +2,8 @@ language: bash
 sudo: required
 dist: bionic
 env:
-- OS=debian ARCH=amd64 DIST=buster
-- OS=debian ARCH=i386 DIST=buster
-- OS=debian ARCH=armhf DIST=buster QEMU_USER_STATIC=qemu-user-static
-- OS=raspbian ARCH=armhf DIST=buster QEMU_USER_STATIC=qemu-user-static
-- OS=debian ARCH=armel DIST=buster QEMU_USER_STATIC=qemu-user-static
+- OS=debian ARCH=amd64 DIST=bullseye
+- OS=debian ARCH=armel DIST=bullseye QEMU_USER_STATIC=qemu-user-static
 cache:
   directories:
   - "$HOME/cache"
@@ -16,6 +13,6 @@ before_install:
 - sudo apt-get install --yes debhelper pbuilder-ev3dev dh-systemd $QEMU_USER_STATIC
 before_script:
 - pbuilder-ev3dev base
-- git checkout -B ev3dev-buster
+- git checkout -B ev3dev-bullseye
 script:
 - pbuilder-ev3dev build

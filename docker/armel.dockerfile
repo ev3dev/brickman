@@ -1,4 +1,4 @@
-FROM ev3dev/debian-buster-armel-cross
+FROM ev3dev/debian-bullseye-armel-cross
 
 RUN sudo apt-get update && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get install --yes --no-install-recommends \
