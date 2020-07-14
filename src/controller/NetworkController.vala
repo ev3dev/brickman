@@ -230,7 +230,7 @@ namespace BrickManager {
             add_tethering_technology (technology);
         }
 
-        void on_services_changed (List<Service> changed) {
+        void on_services_changed (List<weak Service> changed) {
             unbind_status_bar ();
 
             foreach (var service in changed) {
