@@ -10,7 +10,7 @@ cache:
 before_install:
 - sudo apt-add-repository -y ppa:ev3dev/tools
 - sudo apt-get update
-- sudo apt-get install --yes debhelper pbuilder-ev3dev dh-systemd $QEMU_USER_STATIC
+- sudo apt-get install --yes debhelper pbuilder-ev3dev $QEMU_USER_STATIC
 before_script:
 - pbuilder-ev3dev base
 - git checkout -B ev3dev-bullseye
